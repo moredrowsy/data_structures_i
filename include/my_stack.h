@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : MY_STACK
+ * DESCRIPTION : This header defines a templated Stack and its associated
+ *      functions. The Stack will pop and push at the front.
+ ******************************************************************************/
 #ifndef MY_STACK_H
 #define MY_STACK_H
 
@@ -12,61 +20,142 @@ public:
     Stack() : _top(NULL) {}
 
     ~Stack();
-    Stack(const Stack<T>& other);
-    Stack<T>& operator=(const Stack<T>& rhs);
+    Stack(const Stack<T>& other);              // make deep copy
+    Stack<T>& operator=(const Stack<T>& rhs);  // make deep copy
 
-    void push(T item);
-    T pop();
-    T top() const;
-    bool empty() const;
+    void push(T item);   // add item at top
+    T pop();             // remove top and return old top's item
+    T top() const;       // return top's item
+    bool empty() const;  // check boolean for top is NULL
 
     friend std::ostream& operator<<(std::ostream& outs, const Stack<T>& s) {
-        return print_list(s._top, outs);
+        return my_node::print_list(s._top, outs);  // return output
     }
 
 private:
-    my_node::node<T>* _top;
+    my_node::node<T>* _top;  // pointer to front
 };
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Destructor. Call delete_all to deallocate all nodes. delete_all will only
+ *  delete when not empty.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  _top: assigns to NULL when all nodes deleted successfully
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 Stack<T>::~Stack() {
     // delete_all deallocates all nodes when not empty
-    delete_all(_top);
+    my_node::delete_all(_top);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Copy constructor. Initialize top to NULL and calls copy_list to make deep
+ *  copy of list.
+ *
+ * PRE-CONDITIONS:
+ *  Stack<T>& other: source to copy from
+ *
+ * POST-CONDITIONS:
+ *  _top: assigns to first new node from source 'other'
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 Stack<T>::Stack(const Stack<T>& other) {
     // initialize, else copy_list fails
-    init_head(_top);
+    my_node::init_head(_top);
 
-    // call copy_list using 'other' as base to 'this' _top
-    copy_list(other._top, _top);
+    // make deep copy
+    my_node::copy_list(other._top, _top);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assignment operator. Calls copy_list to make deep copy of list.
+ *
+ * PRE-CONDITIONS:
+ *  Stack<T> &rhs: source to copy from
+ *
+ * POST-CONDITIONS:
+ *  _top : assigns to first new node from source 'other'
+ *
+ * RETURN:
+ *  self
+ ******************************************************************************/
 template <typename T>
 Stack<T>& Stack<T>::operator=(const Stack<T>& rhs) {
     // copy_list when not same
     if(this != &rhs) {
-        copy_list(rhs._top, _top);
+        my_node::copy_list(rhs._top, _top);
     }
 
     return *this;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Add new node with item at front.
+ *
+ * PRE-CONDITIONS:
+ *  T item: tempalted item for new node's item
+ *
+ * POST-CONDITIONS:
+ *  _top : assigns to new node
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Stack<T>::push(T item) {
     // insert @ top
-    _top = insert_head(_top, item);
+    _top = my_node::insert_head(_top, item);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assert not empty. When not empty, delete front node and update top.
+ *
+ * PRE-CONDITIONS:
+ *  not empty
+ *
+ * POST-CONDITIONS:
+ *  _top: assigns to next node, assigns to NULL when list becomes empty
+ *        after deletion
+ *
+ * RETURN:
+ *  T item from deleted top
+ ******************************************************************************/
 template <typename T>
 T Stack<T>::pop() {
     // assert not empty list
     assert(!empty());
 
-    return delete_head(_top);
+    return my_node::delete_head(_top);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assert not empty. When not empty, return front's item.
+ *
+ * PRE-CONDITIONS:
+ *  not empty
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T item from front
+ ******************************************************************************/
 template <typename T>
 T Stack<T>::top() const {
     // assert not empty list
@@ -75,6 +164,19 @@ T Stack<T>::top() const {
     return _top->_item;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check for empty list.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Boolean condition
+ ******************************************************************************/
 template <typename T>
 bool Stack<T>::empty() const {
     return my_node::empty(_top);

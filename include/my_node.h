@@ -6,7 +6,7 @@
  * DESCRIPTION : This header defines a templated node and templated functions
  *      that will process the nodes. These functions are the base to build
  *      higher level linked lists.
- *****************************************************************************/
+ ******************************************************************************/
 #ifndef MY_NODE_H
 #define MY_NODE_H
 
@@ -16,14 +16,14 @@ namespace my_node {
 
 template <typename T>
 struct node {
-    T _item;
-    node<T> *_next;
-    node(const T &item = T(), node<T> *next = NULL)
+    T _item;                                         // templated item
+    node<T> *_next;                                  // pointer to next node
+    node(const T &item = T(), node<T> *next = NULL)  // constructor
         : _item(item), _next(next) {}
-    friend std::ostream &operator<<(std::ostream &outs,
-                                    const node<T> &print_me) {
+    friend std::ostream &operator<<(std::ostream &outs,         // oustream
+                                    const node<T> &print_me) {  // print node
         outs << "[" << print_me._item << "]->";
-        return outs;
+        return outs;  // return out stream with node's item
     }
 };
 
@@ -66,14 +66,17 @@ node<T> *init_head(node<T> *&head) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Deletes all nodes linked to the head node.
+ *  Deallocates all nodes linked to the head node.
  *
  * PRE-CONDITIONS:
  *  node<T> *&head: templated node
  *
  * POST-CONDITIONS:
- *  node<T> *&head: assigns to NULL when deletion success
- *****************************************************************************/
+ *  node<T> *&head: assigns to NULL when all nodes deleted successfully
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void delete_all(node<T> *&head) {
     node<T> *pop = NULL;
@@ -98,7 +101,7 @@ void delete_all(node<T> *&head) {
  *
  * RETURN:
  *  Boolean condition.
- *****************************************************************************/
+ ******************************************************************************/
 template <typename T>
 bool empty(const node<T> *head) {
     return head == NULL;
@@ -117,7 +120,7 @@ bool empty(const node<T> *head) {
  *
  * RETURN:
  *  Poitner to last new node.
- *****************************************************************************/
+ ******************************************************************************/
 template <typename T>
 node<T> *copy_list(const node<T> *head, node<T> *&cpy) {
     // delete all nodes when copy is not empty
@@ -158,7 +161,7 @@ node<T> *copy_list(const node<T> *head, node<T> *&cpy) {
  *
  * RETURN:
  *  Pointer to new node.
- *****************************************************************************/
+ ******************************************************************************/
 template <typename T>
 node<T> *insert_head(node<T> *&head, T item) {
     // assign head to new node with T and next pointer as old head
@@ -182,7 +185,7 @@ node<T> *insert_head(node<T> *&head, T item) {
  *
  * RETURN:
  *  Pointer to new node.
- *****************************************************************************/
+ ******************************************************************************/
 template <typename T>
 node<T> *insert_after(node<T> *&head, node<T> *after, const T &item) {
     node<T> *insert = new node<T>(item);
@@ -209,7 +212,7 @@ node<T> *insert_after(node<T> *&head, node<T> *after, const T &item) {
  *
  * RETURN:
  *  Deleted node's item
- *****************************************************************************/
+ ******************************************************************************/
 template <typename T>
 T delete_head(node<T> *&head) {
     // assign pop to head, copy head's item, increment head
@@ -235,7 +238,7 @@ T delete_head(node<T> *&head) {
  *
  * RETURN:
  *  ostream object for chaining
- *****************************************************************************/
+ ******************************************************************************/
 template <typename T>
 std::ostream &print_list(const node<T> *head, std::ostream &outs) {
     // print node's item until empty

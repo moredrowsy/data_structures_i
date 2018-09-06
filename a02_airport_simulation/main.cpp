@@ -6,16 +6,20 @@
  * DESCRIPTION   : This application will simulate an airport. The simulation
  *      will take paramters of landing time, takeoff time, landing probability,
  *      takeoff probability, fuel limit before plane crashes and simulation's
- *      total time.
+ *      total time. Main program will call simulate_aiport for multiple runs
+ *      and with different parameters.
  ******************************************************************************/
 #include <iomanip>
 #include <iostream>
 #include "../include/my_airport.h"
 #include "../include/my_queue.h"
 
+// main airport simulation program
 void simulate_airport(unsigned int landing_time, double landing_probability,
                       unsigned int takeoff_time, double takeoff_probability,
                       unsigned int fuel_limit, unsigned int total_time);
+
+// print parameters with header format
 void print_param(unsigned int landing_time, double landing_probability,
                  unsigned int takeoff_time, double takeoff_probability,
                  unsigned int fuel_limit, unsigned int total_time);
@@ -24,6 +28,8 @@ int main() {
     unsigned int landing_time, takeoff_time, fuel_limit, total_time;
     double takeoff_probability, landing_probability;
     std::string header;
+
+    // start simulation with default values
 
     // init parameters
     landing_time = 5;
@@ -54,6 +60,8 @@ int main() {
     }
     std::cout << std::endl << std::endl;
 
+    // start simulation with 10k seconds duration
+
     // init parameters
     landing_time = 5;
     takeoff_time = 15;
@@ -82,6 +90,8 @@ int main() {
         std::cout << std::endl << std::endl;
     }
     std::cout << std::endl << std::endl;
+
+    // start simulation with 100k seconds duration
 
     // init parameters
     landing_time = 5;
@@ -119,13 +129,13 @@ void simulate_airport(unsigned int landing_time, double landing_probability,
                       unsigned int fuel_limit, unsigned int total_time) {
     using namespace my_airport;
 
-    my_queue::Queue<unsigned int> landing_queue,  // list of times
-        takeoff_queue;                            // list of times
-    BoolSource arrival(landing_probability),      // probability landing
-        takeoff(takeoff_probability);             // probability takeoff
-    Airport airport(landing_time, takeoff_time);  // washing machine
-    Averager landing_avg,                         // average wait times
-        takeoff_avg;                              // average wait times
+    my_queue::Queue<unsigned int> landing_queue,  // queue of landing times
+        takeoff_queue;                            // queue of take times
+    BoolSource arrival(landing_probability),      // probability to land
+        takeoff(takeoff_probability);             // probability to takeoff
+    Airport airport(landing_time, takeoff_time);  // airport simulator
+    Averager landing_avg,                         // average landing wait times
+        takeoff_avg;                              // average takeoff wait times
     unsigned int current_time,                    // current time for simulation
         crashes = 0,                              // number of planes crashed
         total_landings_in_queue = 0,              // total queue count
@@ -152,7 +162,7 @@ void simulate_airport(unsigned int landing_time, double landing_probability,
         }
 
         // when airport has clearance and queue's not empty, call land_plane or
-        // depart_plane
+        // depart_plane but prioritize landing
         if(airport.has_clearance()) {
             if(!landing_queue.empty()) {
                 airport.land_plane();
@@ -163,10 +173,11 @@ void simulate_airport(unsigned int landing_time, double landing_probability,
             }
         }
 
-        // sync Airport's timer
+        // sync Airport's timer for one second
         airport.one_second();
     }
 
+    // print various simulation variables
     std::cout << std::right;
     std::cout << std::setw(6) << landing_avg.count() << " " << std::setw(8)
               << takeoff_avg.count() << " " << std::setw(7) << crashes << " ";
