@@ -1,0 +1,7 @@
+**/*.pyc
+**/__pycache__
+**/*.o
+**/*.out
+**/*.pro
+**/*todo
+**/*.vscode
