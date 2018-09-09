@@ -8,9 +8,16 @@
 
 namespace test_my_queue {
 
+// test class Queue and its basic member functions
 void test_queue_basic();
+
+// test deep copy for copy constructor and assignment operator
 void test_queue_copy_and_assignment_op();
+
+// test deep copy with 1mil items each; process over 5 mil items
 void test_queue_copy_and_assign_op_with_1mil_items();
+
+// call all test functions
 void test_all();
 
 void test_queue_basic() {

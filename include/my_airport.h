@@ -4,7 +4,7 @@
  * CLASS       : CS008
  * HEADER      : MY_AIRPORT
  * DESCRIPTION : This header defines three classes: Averager, BoolSource, and
- *      Airport. All three classes work in conjunection to simulate an airport.
+ *      Airport. All three classes work in conjunction to simulate an airport.
  *      Averager will count and calculate unsigned seconds for time.
  *      BoolSource will return boolean for a given probability.
  *      Airport will keep track of landing and takeoff.

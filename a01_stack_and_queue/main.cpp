@@ -32,6 +32,9 @@ int main(int argc, char *argv[]) {
  *
  * POST-CONDITIONS:
  *  Queue output showing the correct values
+ *
+ * RETURN:
+ *  none
  ******************************************************************************/
 void test_queue() {
     // testing Queue
@@ -65,6 +68,9 @@ void test_queue() {
  *
  * POST-CONDITIONS:
  *  Stack output showing the correct values
+ *
+ * RETURN:
+ *  none
  ******************************************************************************/
 void test_stack() {
     // testing Stack

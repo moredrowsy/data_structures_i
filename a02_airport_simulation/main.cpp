@@ -6,8 +6,9 @@
  * DESCRIPTION   : This application will simulate an airport. The simulation
  *      will take paramters of landing time, takeoff time, landing probability,
  *      takeoff probability, fuel limit before plane crashes and simulation's
- *      total time. Main program will call simulate_aiport for multiple runs
- *      and with different parameters.
+ *      total time. Main program will call simulate_airport for multiple runs
+ *      and with different parameters. Assumptions are: unlimited source of
+ *      planes incoming and outgoing.
  ******************************************************************************/
 #include <iomanip>
 #include <iostream>
@@ -25,12 +26,11 @@ void print_param(unsigned int landing_time, double landing_probability,
                  unsigned int fuel_limit, unsigned int total_time);
 
 int main() {
-    unsigned int landing_time, takeoff_time, fuel_limit, total_time;
-    double takeoff_probability, landing_probability;
+    unsigned int landing_time = 0, takeoff_time = 0, fuel_limit, total_time = 0;
+    double takeoff_probability = 0, landing_probability = 0;
     std::string header;
 
     // start simulation with default values
-
     // init parameters
     landing_time = 5;
     takeoff_time = 15;
@@ -61,7 +61,6 @@ int main() {
     std::cout << std::endl << std::endl;
 
     // start simulation with 10k seconds duration
-
     // init parameters
     landing_time = 5;
     takeoff_time = 15;
@@ -92,7 +91,6 @@ int main() {
     std::cout << std::endl << std::endl;
 
     // start simulation with 100k seconds duration
-
     // init parameters
     landing_time = 5;
     takeoff_time = 15;
@@ -124,6 +122,26 @@ int main() {
     return 0;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  This function implements the logic of the Airport, Averager, BoolSource,
+ *  and Queue class to simulate the landing and takeoff wait times in an
+ *  airport.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned int landing_time : time it takes for plane to land
+ *  double landing_probability: probability of plane arriving to land
+ *  unsigned int takeoff_time : time it takes for plane to takeoff
+ *  double takeoff_probability: probability of plane departing to takeoff
+ *  unsigned int fuel_limit   : time limit before plane crashes in landing queue
+ *  unsigned int total_time   : total simulation time
+ *
+ * POST-CONDITIONS:
+ *  Output for simulation results
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void simulate_airport(unsigned int landing_time, double landing_probability,
                       unsigned int takeoff_time, double takeoff_probability,
                       unsigned int fuel_limit, unsigned int total_time) {
@@ -210,6 +228,25 @@ void simulate_airport(unsigned int landing_time, double landing_probability,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  This function prints the header with initial parameters for the simulation
+ *  output.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned int landing_time : time it takes for plane to land
+ *  double landing_probability: probability of plane arriving to land
+ *  unsigned int takeoff_time : time it takes for plane to takeoff
+ *  double takeoff_probability: probability of plane departing to takeoff
+ *  unsigned int fuel_limit   : time limit before plane crashes in landing queue
+ *  unsigned int total_time   : total simulation time
+ *
+ * POST-CONDITIONS:
+ *  Output for parameters header
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void print_param(unsigned int landing_time, double landing_probability,
                  unsigned int takeoff_time, double takeoff_probability,
                  unsigned int fuel_limit, unsigned int total_time) {

@@ -7,9 +7,16 @@
 
 namespace test_my_airport {
 
+// test class Averager and its basic member functions
 void test_averager_basic();
+
+// test class BoolSource and its basic member functions
 void test_bool_source_basic();
+
+// test class Airport and its basic member functions
 void test_airport_basic();
+
+// call all test functions
 void test_all();
 
 void test_averager_basic() {

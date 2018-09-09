@@ -8,9 +8,16 @@
 
 namespace test_my_stack {
 
+// test class Queue and its basic member functions
 void test_stack_basic();
+
+// test deep copy for copy constructor and assignment operator
 void test_stack_copy_and_assignment_op();
+
+// test deep copy with 1mil items each; process over 5 mil items
 void tests_stack_copy_and_assign_op_with_1mil_items();
+
+// call all test functions
 void test_all();
 
 void test_stack_basic() {

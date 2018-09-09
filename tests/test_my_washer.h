@@ -1,5 +1,5 @@
-#ifndef TEST_MY_WAHSER_H
-#define TEST_MY_WAHSER_H
+#ifndef TEST_MY_WASHER_H
+#define TEST_MY_WASHER_H
 
 #include <cassert>
 #include <iostream>
@@ -137,4 +137,4 @@ void test_all() {
 
 }  // namespace test_my_washer
 
-#endif  // TEST_MY_WAHSER_H
+#endif  // TEST_MY_WASHER_H

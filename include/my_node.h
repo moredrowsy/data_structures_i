@@ -119,12 +119,12 @@ bool empty(const node<T> *head) {
  *  node<T> *&cpy : old values deleted and to new copy of list
  *
  * RETURN:
- *  Poitner to last new node.
+ *  Pointer to last new node.
  ******************************************************************************/
 template <typename T>
 node<T> *copy_list(const node<T> *head, node<T> *&cpy) {
-    // delete all nodes when copy is not empty
-    if(!empty(cpy)) {
+    // delete all nodes when target cpy is not empty
+    if(cpy != NULL) {
         delete_all(cpy);
     }
 
@@ -180,7 +180,7 @@ node<T> *insert_head(node<T> *&head, T item) {
  *  T item        : templated item to copy into new node's item
  *
  * POST-CONDITIONS:
- *  New node is added at head when head or taill is NULL; else new node is
+ *  New node is added at head when head or tail is NULL; else new node is
  *  inserted behind after.
  *
  * RETURN:
@@ -230,7 +230,7 @@ T delete_head(node<T> *&head) {
  *  Extract all nodes' item in specified format.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: empty or non-empt node
+ *  node<T> *&head: empty or non-empty node
  *  ostream &outs : out stream object
  *
  * POST-CONDITIONS:

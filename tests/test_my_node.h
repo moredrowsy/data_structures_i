@@ -7,13 +7,28 @@
 
 namespace test_my_node {
 
+// test that pointer is assigned to NULL
 void test_init_head();
+
+// test that delete all assigns first pointer to NULL when deallocated success
 void test_delete_all();
+
+// test for correct boolean
 void test_empty();
+
+// test for deep copy of list
 void test_copy_list();
+
+// test that node is inserted at head
 void test_insert_head();
+
+// test that node is inserted behind
 void testing_insert_after();
+
+// test that first node is deallocated
 void testing_delete_head();
+
+// call all test functions
 void test_all();
 
 void test_init_head() {

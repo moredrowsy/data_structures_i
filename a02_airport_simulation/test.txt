@@ -1,0 +1,73 @@
+Simulation parameters with default values
+-----------------------------------------
+Landing time          : 5
+Takeoff time          : 15
+Landing probability   : 0.1
+Takeoff probability   : 0.08
+Fuel limit time       : 20
+Total simulation time : 1440
+
+Simulation runs
+-- ------ -------- ------- ----------- ----------- ---------------- ----------------
+ # Landed Departed Crashes Avg Landing Avg Takeoff In Landing Queue In Takeoff Queue 
+-- ------ -------- ------- ----------- ----------- ---------------- ----------------
+ 1    134       51       1       8.060     340.275                0               68 
+
+ 2    149       46       0       7.960     472.000                0               71 
+
+ 3    138       50       4       8.319     380.140                1               51 
+
+ 4    135       51       3       7.400     459.314                0               67 
+
+ 5    156       44       3       8.782     461.409                0               70 
+
+
+
+Simulation parameters with total time = 10k seconds
+---------------------------------------------------
+Landing time          : 5
+Takeoff time          : 15
+Landing probability   : 0.100
+Takeoff probability   : 0.080
+Fuel limit time       : 20
+Total simulation time : 10000
+
+Simulation runs
+-- ------ -------- ------- ----------- ----------- ---------------- ----------------
+ # Landed Departed Crashes Avg Landing Avg Takeoff In Landing Queue In Takeoff Queue 
+-- ------ -------- ------- ----------- ----------- ---------------- ----------------
+ 1    999      333      21       8.574    3012.781                0              425 
+
+ 2   1003      332      24       8.460    3130.289                1              475 
+
+ 3    950      350      12       8.496    2966.046                0              426 
+
+ 4    960      346      13       8.531    2951.691                0              481 
+
+ 5   1020      326      19       8.486    2881.187                3              461 
+
+
+
+Simulation parameters with total time = 100k seconds
+----------------------------------------------------
+Landing time          : 5
+Takeoff time          : 15
+Landing probability   : 0.100
+Takeoff probability   : 0.080
+Fuel limit time       : 20
+Total simulation time : 100000
+
+Simulation runs
+-- ------ -------- ------- ----------- ----------- ---------------- ----------------
+ # Landed Departed Crashes Avg Landing Avg Takeoff In Landing Queue In Takeoff Queue 
+-- ------ -------- ------- ----------- ----------- ---------------- ----------------
+ 1   9701     3433     134       8.610   28390.226                2             4441 
+
+ 2   9859     3380     144       8.559   28472.817                1             4689 
+
+ 3   9727     3424     174       8.598   29378.734                1             4678 
+
+ 4   9832     3389     133       8.499   29009.049                0             4769 
+
+ 5   9662     3446     171       8.486   28263.192                1             4591 
+
