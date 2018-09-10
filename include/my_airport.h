@@ -12,29 +12,34 @@
 #ifndef MY_AIRPORT_H
 #define MY_AIRPORT_H
 
-#include <cstdlib>
+#include <cstdlib>  // provides std::size_t
 
 namespace my_airport {
 
 class Averager {
 public:
+    // CONSTRUCTORS
     Averager() : _count(0), _sum(0) {}
 
+    // ACCESSORS
     double average() const;     // calculates and return average
     std::size_t count() const;  // return count
 
+    // MUTATORS
     void clear();                    // clear all values
     void next_number(double value);  // input number into averager
 
-    // private:
+private:
     std::size_t _count;  // count of all numbers
     double _sum;         // sum of all numbers
 };
 
 class BoolSource {
 public:
+    // CONSTRUCTORS
     BoolSource(double probability = 0.5);
 
+    // ACCESSORS
     bool query() const;  // return boolean
 
 private:
@@ -43,21 +48,24 @@ private:
 
 class Airport {
 public:
+    // CONSTRUCTORS
     Airport(unsigned int landing = 5, unsigned int takeoff = 15)
         : _landing_time(landing),
           _takeoff_time(takeoff),
           _landing_countdown(0),
           _takeoff_countdown(0) {}
 
+    // ACCESSORS
     bool has_clearance() const;  // return boolean for air clearance
     bool is_departing() const;   // return boolean when plane is departing
     bool is_landing() const;     // return boolean when plane is landing
 
+    // MUTATORS
     void depart_plane();  // set countdown to takeoff time
     void land_plane();    // set countdown to landing time
     void one_second();    // start countdown by one second
 
-    // private:
+private:
     unsigned int _landing_time;       // time to land in seconds
     unsigned int _takeoff_time;       // time to takeoff in seconds
     unsigned int _landing_countdown;  // countdown to landing

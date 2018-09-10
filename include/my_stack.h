@@ -17,17 +17,23 @@ namespace my_stack {
 template <typename T>
 class Stack {
 public:
+    // CONSTRUCTORS
     Stack() : _top(NULL) {}
 
+    // BIG THREE
     ~Stack();
     Stack(const Stack<T>& other);              // make deep copy
     Stack<T>& operator=(const Stack<T>& rhs);  // make deep copy
 
-    void push(T item);   // add item at top
-    T pop();             // remove top and return old top's item
+    // ACCESSORS
     T top() const;       // return top's item
     bool empty() const;  // check boolean for top is NULL
 
+    // MUTATORS
+    void push(T item);  // add item at top
+    T pop();            // remove top and return old top's item
+
+    // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const Stack<T>& s) {
         return my_node::print_list(s._top, outs);  // return output
     }
@@ -104,6 +110,45 @@ Stack<T>& Stack<T>::operator=(const Stack<T>& rhs) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Assert not empty. When not empty, return front's item.
+ *
+ * PRE-CONDITIONS:
+ *  not empty
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T item from front
+ ******************************************************************************/
+template <typename T>
+T Stack<T>::top() const {
+    // assert not empty list
+    assert(!empty());
+
+    return _top->_item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check for empty list.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Boolean condition
+ ******************************************************************************/
+template <typename T>
+bool Stack<T>::empty() const {
+    return my_node::empty(_top);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Add new node with item at front.
  *
  * PRE-CONDITIONS:
@@ -141,45 +186,6 @@ T Stack<T>::pop() {
     assert(!empty());
 
     return my_node::delete_head(_top);
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Assert not empty. When not empty, return front's item.
- *
- * PRE-CONDITIONS:
- *  not empty
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  T item from front
- ******************************************************************************/
-template <typename T>
-T Stack<T>::top() const {
-    // assert not empty list
-    assert(!empty());
-
-    return _top->_item;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Check for empty list.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  Boolean condition
- ******************************************************************************/
-template <typename T>
-bool Stack<T>::empty() const {
-    return my_node::empty(_top);
 }
 
 }  // namespace my_stack

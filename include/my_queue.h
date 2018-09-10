@@ -17,17 +17,23 @@ namespace my_queue {
 template <typename T>
 class Queue {
 public:
+    // CONSTRUCTORS
     Queue() : _head(NULL), _tail(NULL) {}
 
+    // BIG THREE
     ~Queue();
     Queue(const Queue<T> &other);              // make deep copy
     Queue<T> &operator=(const Queue<T> &rhs);  // make deep copy
 
-    void push(T item);   // add item behind tail
-    T pop();             // remove head and return old head's item
+    // ACCESSORS
     T front() const;     // return head's item
     bool empty() const;  // check boolean for head is NULL
 
+    // MUTATORS
+    void push(T item);  // add item behind tail
+    T pop();            // remove head and return old head's item
+
+    // FRIENDS
     friend std::ostream &operator<<(std::ostream &outs, const Queue<T> &q) {
         return my_node::print_list(q._head, outs);  // return output
     }
@@ -107,6 +113,45 @@ Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Assert not empty. When not empty, return front's item.
+ *
+ * PRE-CONDITIONS:
+ *  not empty
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T item from front
+ ******************************************************************************/
+template <typename T>
+T Queue<T>::front() const {
+    // assert not empty list
+    assert(!empty());
+
+    return _head->_item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check for empty list.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Boolean condition
+ ******************************************************************************/
+template <typename T>
+bool Queue<T>::empty() const {
+    return my_node::empty(_head);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Add new node with item at front when empty or at back when not.
  *
  * PRE-CONDITIONS:
@@ -157,45 +202,6 @@ T Queue<T>::pop() {
     }
 
     return item;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Assert not empty. When not empty, return front's item.
- *
- * PRE-CONDITIONS:
- *  not empty
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  T item from front
- ******************************************************************************/
-template <typename T>
-T Queue<T>::front() const {
-    // assert not empty list
-    assert(!empty());
-
-    return _head->_item;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Check for empty list.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  Boolean condition
- ******************************************************************************/
-template <typename T>
-bool Queue<T>::empty() const {
-    return my_node::empty(_head);
 }
 
 }  // namespace my_queue

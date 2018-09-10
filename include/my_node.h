@@ -16,10 +16,17 @@ namespace my_node {
 
 template <typename T>
 struct node {
-    T _item;                                         // templated item
-    node<T> *_next;                                  // pointer to next node
-    node(const T &item = T(), node<T> *next = NULL)  // constructor
+    // CONSTRUCTORS
+    node(const T &item = T(), node<T> *next = NULL)
         : _item(item), _next(next) {}
+
+    // ACCESSORS
+    node<T> *_next;  // pointer to next node
+
+    // VARIABLES
+    T _item;  // templated item
+
+    // FRIENDS
     friend std::ostream &operator<<(std::ostream &outs,         // oustream
                                     const node<T> &print_me) {  // print node
         outs << "[" << print_me._item << "]->";
@@ -27,7 +34,7 @@ struct node {
     }
 };
 
-// initializes head to NULL
+// assigns pointer to NULL
 template <typename T>
 node<T> *init_head(node<T> *&head);
 
