@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    my_node::node<T>* _top;  // pointer to front
+    my_node::Node<T>* _top;  // pointer to front
 };
 
 /*******************************************************************************

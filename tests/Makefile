@@ -52,13 +52,13 @@ my_airport.o: ${SRC}/my_airport.cpp ${INCLUDE}/my_airport.h\
 tests: tests.o my_washer.o my_airport.o
 	$(CC) tests.o my_washer.o my_airport.o -o tests.out
 
-tests.o: tests_all.cpp\
+tests.o: test_all.cpp\
 	test_my_node.h\
 	test_my_queue.h\
 	test_my_stack.h\
 	test_my_washer\
 	test_my_airport.h
-	$(CC) $(CXXFLAGS) -c tests_all.cpp -o tests.o
+	$(CC) $(CXXFLAGS) -c test_all.cpp -o tests.o
 
 clean:
 	rm -f *.o *.out

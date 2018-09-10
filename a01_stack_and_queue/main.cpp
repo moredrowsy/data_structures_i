@@ -7,10 +7,9 @@
  *      Three queues and stacks are created by default constructor, copy
  *      constructor and copied via assignment operator.
  ******************************************************************************/
-#include <iostream>
-#include "../include/my_node.h"
-#include "../include/my_queue.h"
-#include "../include/my_stack.h"
+#include <iostream>               // output stream
+#include "../include/my_queue.h"  // Queue class
+#include "../include/my_stack.h"  // Stack class
 
 // test the queue class via the big three (copy, assignment, and destructor)
 void test_queue();

@@ -9,8 +9,8 @@
 #ifndef MY_QUEUE_H
 #define MY_QUEUE_H
 
-#include <cassert>
-#include "../include/my_node.h"
+#include <cassert>               // provides assert
+#include "../include/my_node.h"  // Node class
 
 namespace my_queue {
 
@@ -39,8 +39,8 @@ public:
     }
 
 private:
-    my_node::node<T> *_head;  // pointer to front
-    my_node::node<T> *_tail;  // pointer to back
+    my_node::Node<T> *_head;  // pointer to front
+    my_node::Node<T> *_tail;  // pointer to back
 };
 
 /*******************************************************************************

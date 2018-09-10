@@ -15,20 +15,20 @@
 namespace my_node {
 
 template <typename T>
-struct node {
-    // CONSTRUCTORS
-    node(const T &item = T(), node<T> *next = NULL)
-        : _item(item), _next(next) {}
-
-    // ACCESSORS
-    node<T> *_next;  // pointer to next node
-
+struct Node {
     // VARIABLES
     T _item;  // templated item
 
+    // CONSTRUCTORS
+    Node(const T &item = T(), Node<T> *next = NULL)
+        : _item(item), _next(next) {}
+
+    // ACCESSORS
+    Node<T> *_next;  // pointer to next node
+
     // FRIENDS
     friend std::ostream &operator<<(std::ostream &outs,         // oustream
-                                    const node<T> &print_me) {  // print node
+                                    const Node<T> &print_me) {  // print node
         outs << "[" << print_me._item << "]->";
         return outs;  // return out stream with node's item
     }
@@ -36,38 +36,38 @@ struct node {
 
 // assigns pointer to NULL
 template <typename T>
-node<T> *init_head(node<T> *&head);
+Node<T> *init_head(Node<T> *&head);
 
 // deletes all the nodes in the list
 template <typename T>
-void delete_all(node<T> *&head);
+void delete_all(Node<T> *&head);
 
 // true if head is NULL, false otherwise.
 template <typename T>
-bool empty(const node<T> *head);
+bool empty(const Node<T> *head);
 
 // makes a copy of the list, returns a pointer to the last node:
 template <typename T>
-node<T> *copy_list(const node<T> *head, node<T> *&cpy);
+Node<T> *copy_list(const Node<T> *head, Node<T> *&cpy);
 
 // insert at the beginning of the list:
 template <typename T>
-node<T> *insert_head(node<T> *&head, T item);
+Node<T> *insert_head(Node<T> *&head, T item);
 
 // insert_after: if after is NULL, inserts at head
 template <typename T>
-node<T> *insert_after(node<T> *&head, node<T> *after, const T &item);
+Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item);
 
 // delete the node at the head of the list, return the item:
 template <typename T>
-T delete_head(node<T> *&head);
+T delete_head(Node<T> *&head);
 
 // print the list and return outs
 template <typename T>
-std::ostream &print_list(const node<T> *head, std::ostream &outs = std::cout);
+std::ostream &print_list(const Node<T> *head, std::ostream &outs = std::cout);
 
 template <typename T>
-node<T> *init_head(node<T> *&head) {
+Node<T> *init_head(Node<T> *&head) {
     return head = NULL;
 }
 
@@ -76,17 +76,17 @@ node<T> *init_head(node<T> *&head) {
  *  Deallocates all nodes linked to the head node.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: templated node
+ *  Node<T> *&head: templated node
  *
  * POST-CONDITIONS:
- *  node<T> *&head: assigns to NULL when all nodes deleted successfully
+ *  Node<T> *&head: assigns to NULL when all nodes deleted successfully
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-void delete_all(node<T> *&head) {
-    node<T> *pop = NULL;
+void delete_all(Node<T> *&head) {
+    Node<T> *pop = NULL;
 
     // delete head until empty
     while(head != NULL) {
@@ -101,16 +101,16 @@ void delete_all(node<T> *&head) {
  *  Simply checks for NULL.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: templated node
+ *  Node<T> *&head: templated node
  *
  * POST-CONDITIONS:
- *  node<T> *&head: assigns to NULL
+ *  Node<T> *&head: assigns to NULL
  *
  * RETURN:
  *  Boolean condition.
  ******************************************************************************/
 template <typename T>
-bool empty(const node<T> *head) {
+bool empty(const Node<T> *head) {
     return head == NULL;
 }
 
@@ -119,33 +119,33 @@ bool empty(const node<T> *head) {
  *  Deletes all nodes linked to cpy and linked to a new copy of list.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: source node to copy from
- *  node<T> *&cpy : target node to copy to
+ *  Node<T> *&head: source node to copy from
+ *  Node<T> *&cpy : target node to copy to
  *
  * POST-CONDITIONS:
- *  node<T> *&cpy : old values deleted and to new copy of list
+ *  Node<T> *&cpy : old values deleted and to new copy of list
  *
  * RETURN:
  *  Pointer to last new node.
  ******************************************************************************/
 template <typename T>
-node<T> *copy_list(const node<T> *head, node<T> *&cpy) {
+Node<T> *copy_list(const Node<T> *head, Node<T> *&cpy) {
     // delete all nodes when target cpy is not empty
     if(cpy != NULL) {
         delete_all(cpy);
     }
 
     // initialize walker for cpy
-    node<T> *copy_walker = NULL;
+    Node<T> *copy_walker = NULL;
 
     // copy the rest of the nodes
     while(head != NULL) {
         // copy & assign first node to cpy, then copy the rest via walker
         if(cpy == NULL) {
-            copy_walker = cpy = new node<T>(head->_item);
+            copy_walker = cpy = new Node<T>(head->_item);
             head = head->_next;
         } else {
-            copy_walker->_next = new node<T>(head->_item);
+            copy_walker->_next = new Node<T>(head->_item);
             copy_walker = copy_walker->_next;
             head = head->_next;
         }
@@ -160,7 +160,7 @@ node<T> *copy_list(const node<T> *head, node<T> *&cpy) {
  *  Then, assigned to head and return.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: target node to insert
+ *  Node<T> *&head: target node to insert
  *  T item        : templated item to copy into new node's item
  *
  * POST-CONDITIONS:
@@ -170,9 +170,9 @@ node<T> *copy_list(const node<T> *head, node<T> *&cpy) {
  *  Pointer to new node.
  ******************************************************************************/
 template <typename T>
-node<T> *insert_head(node<T> *&head, T item) {
+Node<T> *insert_head(Node<T> *&head, T item) {
     // assign head to new node with T and next pointer as old head
-    return head = new node<T>(item, head);
+    return head = new Node<T>(item, head);
 }
 
 /*******************************************************************************
@@ -182,8 +182,8 @@ node<T> *insert_head(node<T> *&head, T item) {
  *  behind after.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: target node to insert when head or after is NULL
- *  node<T> *after: target node to insert when after is not NULL
+ *  Node<T> *&head: target node to insert when head or after is NULL
+ *  Node<T> *after: target node to insert when after is not NULL
  *  T item        : templated item to copy into new node's item
  *
  * POST-CONDITIONS:
@@ -194,8 +194,8 @@ node<T> *insert_head(node<T> *&head, T item) {
  *  Pointer to new node.
  ******************************************************************************/
 template <typename T>
-node<T> *insert_after(node<T> *&head, node<T> *after, const T &item) {
-    node<T> *insert = new node<T>(item);
+Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item) {
+    Node<T> *insert = new Node<T>(item);
 
     // when pointers are NULL, insert at head, else insert behind 'after'
     if(head == NULL || after == NULL) {
@@ -212,18 +212,18 @@ node<T> *insert_after(node<T> *&head, node<T> *after, const T &item) {
  *  Head is stored in pop and assigned to next node. Then pop is deleted.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: target node delete
+ *  Node<T> *&head: target node delete
  *
  * POST-CONDITIONS:
- *  node<T> *&head: head assigns to next node
+ *  Node<T> *&head: head assigns to next node
  *
  * RETURN:
  *  Deleted node's item
  ******************************************************************************/
 template <typename T>
-T delete_head(node<T> *&head) {
+T delete_head(Node<T> *&head) {
     // assign pop to head, copy head's item, increment head
-    node<T> *pop = head;
+    Node<T> *pop = head;
     T item = head->_item;
     head = head->_next;
 
@@ -237,7 +237,7 @@ T delete_head(node<T> *&head) {
  *  Extract all nodes' item in specified format.
  *
  * PRE-CONDITIONS:
- *  node<T> *&head: empty or non-empty node
+ *  Node<T> *&head: empty or non-empty node
  *  ostream &outs : out stream object
  *
  * POST-CONDITIONS:
@@ -247,7 +247,7 @@ T delete_head(node<T> *&head) {
  *  ostream object for chaining
  ******************************************************************************/
 template <typename T>
-std::ostream &print_list(const node<T> *head, std::ostream &outs) {
+std::ostream &print_list(const Node<T> *head, std::ostream &outs) {
     // print node's item until empty
     while(head != NULL) {
         outs << *head;
