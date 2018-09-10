@@ -10,20 +10,18 @@
 #ifndef MY_NODE_H
 #define MY_NODE_H
 
-#include <iostream>
+#include <iostream>  // output stream
 
 namespace my_node {
 
 template <typename T>
 struct Node {
-    // VARIABLES
-    T _item;  // templated item
-
     // CONSTRUCTORS
     Node(const T &item = T(), Node<T> *next = NULL)
         : _item(item), _next(next) {}
 
-    // ACCESSORS
+    // VARIABLES
+    T _item;         // templated item
     Node<T> *_next;  // pointer to next node
 
     // FRIENDS
