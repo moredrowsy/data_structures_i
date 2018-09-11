@@ -16,7 +16,7 @@ void init_table(int _table[][MAX_COLUMNS]) {
 }
 
 void mark_success(int _table[][MAX_COLUMNS], int state) {
-    // assign [row as state][column 0] to 1 as success
+    // assign [row as state][column 0] to 1 as success_state
     _table[state][0] = 1;
 }
 
@@ -25,13 +25,13 @@ void mark_fail(int _table[][MAX_COLUMNS], int state) {
     _table[state][0] = 0;
 }
 
-bool is_success(int _table[][MAX_COLUMNS], int state) {
+bool is_success_state(int _table[][MAX_COLUMNS], int state) {
     return _table[state][0];
 }
 
 void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
                 int state) {
-    for(int col = from; col < to; ++col) {
+    for(int col = from; col <= to; ++col) {
         _table[row][col] = state;
     }
 }
@@ -39,7 +39,7 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
 void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
                 int state) {
     for(int i = 0; columns[i] != '\0'; ++i) {
-        _table[row][static_cast<int>(columns[i])] = state;
+        _table[row][columns[i]] = state;
     }
 }
 
@@ -48,13 +48,13 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
 }
 
 void print_table(int _table[][MAX_COLUMNS]) {
-    int cols_per_row = 12, count = 1, value_len;
+    int cols_per_row = 12, count = 0, value_len;
 
     while(count < MAX_COLUMNS) {
         // print header
         std::cout << " S ";
         for(int col = count; col < count + cols_per_row; ++col) {
-            if(col < MAX_COLUMNS) {
+            if(col < MAX_COLUMNS && (col < 32 || col > 126)) {
                 value_len = std::to_string(col).length();
                 if(value_len == 1) {
                     std::cout << "|  " << col << "  ";
@@ -63,6 +63,8 @@ void print_table(int _table[][MAX_COLUMNS]) {
                 } else if(value_len == 3) {
                     std::cout << "| " << col << " ";
                 }
+            } else if(col < MAX_COLUMNS && col > 31 && col < 127) {
+                std::cout << "|  " << static_cast<char>(col) << "  ";
             }
         }
         std::cout << "|" << std::endl;
@@ -101,25 +103,101 @@ void print_table(int _table[][MAX_COLUMNS]) {
 
 // _posstarts from indexing from 1, not 0?
 void show_string(char s[], int _pos) {
-    // assert pos is not negative
-    assert(_pos > 0);
+    // assert positive position
+    assert(_pos > -1);
 
     // print the string and carat as pointing to the position in string
     int index = 0;
     std::cout << s << std::endl;
     for(index = 0; s[index] != '\0'; ++index) {
-        if(index == _pos - 1) {
+        if(index == _pos) {
             std::cout << '^';
         } else {
             std::cout << ' ';
         }
     }
+
+    // print carat behind string when pos is pointing at NUL
+    if(s[_pos] == '\0') {
+        std::cout << '^';
+    }
     std::cout << std::endl;
 
     // assert that pos is less than index
-    if(_pos > index) {
-        assert(_pos < index);
+    assert(_pos <= index);
+}
+
+bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
+               int state, std::string &token) {
+    bool debug = false;
+
+    bool peek_success = false;  // success state at peeking at next state
+    char peek_char = '\0';      // peek at next character
+    int original_pos = _pos,    // store original position
+        peek_state = -1;        // peek at next state
+    std::string new_token;      // token for last full success
+
+    // loop until end of string and when state is not -1
+    while(input[_pos] != '\0' && _table[state][(input[_pos])] != -1) {
+        if(debug) {
+            std::cout << "-----" << std::endl;
+            std::cout << "original state = " << state
+                      << ", current pos = " << _pos << ", current char = '"
+                      << input[_pos] << "'" << std::endl;
+        }
+
+        // get new state
+        state = _table[state][input[_pos]];
+
+        // get peek character, then get peek state, and then get peek success
+        peek_char = input[_pos + 1];
+        peek_state = _table[state][peek_char];
+        peek_success = _table[peek_state][0];
+
+        if(debug) {
+            std::cout << "new state = " << state << ", peek char = ";
+            if(peek_char == '\0') {
+                std::cout << "'NUL'";
+            } else {
+                std::cout << "'" << peek_char << "'";
+            }
+            std::cout << ", peak state = " << peek_state;
+
+            std::cout << ", peek success = " << peek_success << std::endl;
+        }
+
+        // udpate new token when peeking at next success is fail or when NUL
+        if(!peek_success || peek_char == '\0') {
+            new_token = "";
+
+            for(int i = original_pos; i < _pos + 1; ++i) {
+                new_token += input[i];
+            }
+
+            if(debug) {
+                std::cout << "new token = " << new_token << std::endl;
+            }
+        }
+
+        // if next character is NUL
+        // then assign peek success to 'peek success and true'
+        // to indicate 'end success = true' or 'end fail = false'
+        if(peek_char == '\0') {
+            peek_success = peek_success && true;
+        }
+
+        ++_pos;
     }
+
+    // if new_token is empty, return original position via reference
+    // else, return new token and pos stays updated via reference
+    if(new_token.empty()) {
+        _pos = original_pos;
+    } else {
+        token = new_token;
+    }
+
+    return peek_success;
 }
 
 }  // namespace state_machine

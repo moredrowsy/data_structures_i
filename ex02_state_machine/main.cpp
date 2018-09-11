@@ -1,19 +1,42 @@
 #include <iostream>
 #include "../include/state_machine.h"
 
+using namespace state_machine;
+
 int main() {
-    int table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
+    int table[MAX_ROWS][MAX_COLUMNS];
 
     // init table with -1
-    state_machine::init_table(table);
+    init_table(table);
 
-    // mark success/fail states in column 0
-    state_machine::mark_fail(table, 0);
-    state_machine::mark_success(table, 1);
-    state_machine::mark_fail(table, 2);
-    state_machine::mark_success(table, 3);
+    // doubles:
+    mark_fail(table, 0);     // Mark states 0 and 2 as fail states
+    mark_success(table, 1);  // Mark states 1 and 3 as success states
+    mark_fail(table, 2);
+    mark_success(table, 3);
 
-    state_machine::print_table(table);
+    mark_cells(0, table, DIGITS, 1);    // state [0] --- DIGITS ---> [1]
+    mark_cells(0, table, '.', '.', 2);  // state [0] --- '.' ------> [2]
+    mark_cells(1, table, DIGITS, 1);    // state [1] --- DIGITS ---> [1]
+    mark_cells(1, table, '.', '.', 2);  // state [1] --- '.' ------> [2]
+    mark_cells(2, table, DIGITS, 3);    // state [2] --- DIGITS ---> [3]
+    mark_cells(3, table, DIGITS, 3);    // state [3] --- DIGITS ---> [3]
+
+    print_table(table);
+
+    bool success = false;
+    char c[] = "3.14";
+    std::string token;
+    int pos = 0;
+
+    show_string(c, pos);
+
+    success = get_token(table, c, pos, STATE_DOUBLE, token);
+    std::cout << "next pos: " << pos << std::endl;
+    std::cout << "token returned: " << token << std::endl;
+    std::cout << "success state: " << success << std::endl;
+
+    show_string(c, pos);
 
     return 0;
 }
