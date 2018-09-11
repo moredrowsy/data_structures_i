@@ -1,6 +1,6 @@
-#include "../include/my_airport.h"
-#include <cassert>
-#include <cstdlib>
+#include "../include/my_airport.h"  // my_airport declarations
+#include <cassert>                  // provides assert
+#include <cstdlib>                  // provides std::size_t
 
 namespace my_airport {
 
