@@ -1,6 +1,6 @@
 CC 				= g++
 DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Wall
+EXTRA_CCFLAGS   = -Wall -Werror=return-type
 CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
 INCLUDE			= ../include

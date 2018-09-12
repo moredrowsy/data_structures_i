@@ -215,7 +215,7 @@ void test_get_token() {
     pos = 0;
     success_state = get_token(table, string06, pos, state, token);
 
-    assert(success_state == false);
+    assert(success_state == true);
     assert(token == ".3");
     assert(pos == 2);
 
@@ -231,7 +231,7 @@ void test_get_token() {
     char string08[] = "0.3.";
     pos = 0;
     success_state = get_token(table, string08, pos, state, token);
-    assert(success_state == false);
+    assert(success_state == true);
     assert(token == "0.3");
     assert(pos == 3);
 
@@ -239,7 +239,7 @@ void test_get_token() {
     char string09[] = "3.";
     pos = 0;
     success_state = get_token(table, string09, pos, state, token);
-    assert(success_state == false);
+    assert(success_state == true);
     assert(token == "3");
     assert(pos == 1);
 
@@ -255,7 +255,7 @@ void test_get_token() {
     char string11[] = "3.14.";
     pos = 0;
     success_state = get_token(table, string11, pos, state, token);
-    assert(success_state == false);
+    assert(success_state == true);
     assert(token == "3.14");
     assert(pos == 4);
 
@@ -263,7 +263,7 @@ void test_get_token() {
     char string12[] = "3.14..14";
     pos = 0;
     success_state = get_token(table, string12, pos, state, token);
-    assert(success_state == false);
+    assert(success_state == true);
     assert(token == "3.14");
     assert(pos == 4);
 
@@ -271,7 +271,7 @@ void test_get_token() {
     char string13[] = "0.31.14..14";
     pos = 0;
     success_state = get_token(table, string13, pos, state, token);
-    assert(success_state == false);
+    assert(success_state == true);
     assert(token == "0.31");
     assert(pos == 4);
 

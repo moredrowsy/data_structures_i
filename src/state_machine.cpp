@@ -54,11 +54,12 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
 }
 
 void print_table(const int _table[][MAX_COLUMNS]) {
-    int cols_per_row = 12, count = 0, value_len;
+    int cols_per_row = 11, count = 1, value_len;
 
     while(count < MAX_COLUMNS) {
         // print header
         std::cout << " S ";
+        std::cout << "|  " << 0 << "  ";
         for(int col = count; col < count + cols_per_row; ++col) {
             if(col < MAX_COLUMNS && (col < 32 || col > 126)) {
                 value_len = std::to_string(col).length();
@@ -76,7 +77,7 @@ void print_table(const int _table[][MAX_COLUMNS]) {
         std::cout << "|" << std::endl;
 
         // print bar
-        std::cout << "---";
+        std::cout << "--- -----";
         for(int col = count; col < count + cols_per_row; ++col) {
             if(col < MAX_COLUMNS) {
                 std::cout << " -----";
@@ -86,7 +87,19 @@ void print_table(const int _table[][MAX_COLUMNS]) {
 
         // print values in array
         for(int row = 0; row < MAX_ROWS; ++row) {
+            // print row number
             std::cout << std::setw(2) << std::right << row << " ";
+
+            // print column 0
+            value_len = std::to_string(_table[row][0]).length();
+            if(value_len == 1) {
+                std::cout << "|  " << _table[row][0] << "  ";
+            } else if(value_len == 2) {
+                std::cout << "|  " << _table[row][0] << " ";
+            } else if(value_len == 3) {
+                std::cout << "| " << _table[row][0] << " ";
+            }
+
             for(int col = count; col < count + cols_per_row; ++col) {
                 if(col < MAX_COLUMNS) {
                     value_len = std::to_string(_table[row][col]).length();
@@ -175,30 +188,29 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
             } else {
                 std::cout << "'" << peek_char << "'";
             }
+            std::cout << ", success = " << is_success(_table, state);
             std::cout << ", peek state = " << peek_state;
 
             std::cout << ", peek success = " << peek_success << std::endl;
         }
 
         // udpate new token when peeking at next success is fail or when NUL
-        if(is_success(_table, state) && (!peek_success || peek_char == '\0')) {
+        if(is_success(_table, state) &&
+           (peek_char == '\0' || peek_state == -1 || !peek_success)) {
             new_token = "";
             last_successful_pos = _pos;
-
-            for(int i = original_pos; i < last_successful_pos + 1; ++i) {
-                new_token += input[i];
-            }
-
-            if(debug) {
-                std::cout << "new token = " << new_token << std::endl;
-            }
-
-            if(peek_char == '\0') {
-                peek_success = true;
-            }
+            success = true;
         }
 
         ++_pos;
+    }
+
+    for(int i = original_pos; i < last_successful_pos + 1; ++i) {
+        new_token += input[i];
+    }
+
+    if(debug) {
+        std::cout << "new token = " << new_token << std::endl;
     }
 
     // if new_token is empty, return original position via reference
@@ -210,9 +222,7 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         _pos = last_successful_pos + 1;
     }
 
-    // return is a combination of is_success and peak_success to give correct
-    // last success state; is important when reaching '\0' or NUL character
-    return is_success(_table, state) && peek_success;
+    return success;
 }
 
 }  // namespace state_machine

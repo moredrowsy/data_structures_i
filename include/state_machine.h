@@ -2,9 +2,9 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : STATE_MACHINES
+ * HEADER      : STATE_MACHINE
  * DESCRIPTION : This header declares lower level functions to handle the state
- *      machine's adjacency table: initializes the table, mark succcess/fail
+ *      machine's adjacency table: initializes the table, mark success/fail
  *      to the table, and mark table's cells to given state.
  ******************************************************************************/
 #ifndef STATE_MACHINE_H
@@ -12,13 +12,17 @@
 
 #include <string>
 
-// GLOBAL CONSTANTS
-const int MAX_COLUMNS = 256, MAX_ROWS = 4;
-const char DIGITS[] = "0123456789";
-const int STATE_DOUBLE = 0;
-
 namespace state_machine {
 
+// GLOBAL CONSTANTS
+const int MAX_COLUMNS = 256, MAX_ROWS = 30;
+const char DIGITS[] = "0123456789";
+const char SPACE[] = " ";
+const char ALPHA[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const int STATE_UNKNOWN = -1;  // unknown state
+const int STATE_DOUBLE = 0;    // use rows 0 - 9
+const int STATE_SPACE = 10;    // use rows 10 - 19
+const int STATE_ALPHA = 20;    // use rows 20 - 29
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);
 

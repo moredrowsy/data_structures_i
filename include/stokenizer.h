@@ -2,10 +2,10 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : TOKEN
+ * HEADER      : STOKENIZER
  * DESCRIPTION : This header declares class STokenizer. This STokenizer will
  *      receive an input/buffer string (via constructor or set_string) and
- *      returns a valid token (via the extraction operator) from its starting
+ *      returns a valid token (via the insertion operator) from its starting
  *      position by its internal state machine, which follows the rules set in
  *      the adjacency matrix.
  ******************************************************************************/
@@ -16,16 +16,15 @@
 #include "state_machine.h"
 #include "token.h"
 
-// GLOBAL CONSTANTS
-const int MAX_BUFFER = 999;
-
 namespace STokenizer {
+
+const int MAX_BUFFER = 999;
 
 class STokenizer {
 public:
     // CONSTRUCTORS
     STokenizer();
-    STokenizer(char str[]);
+    STokenizer(char str[]);  // cstring param assertion < MAX_BUFFER
 
     // BIG THREE
 
@@ -44,15 +43,15 @@ public:
 private:
     // create table for all the tokens we will recognize
     //                      (e.g. doubles, words, etc.)
-    void make_table(int _table[][MAX_COLUMNS]);
+    void make_table(int _table[][state_machine::MAX_COLUMNS]);
 
     // extract the longest string that match
     //     one of the acceptable token types
     bool get_token(int start_state, std::string& token);
-    //---------------------------------
+
     char _buffer[MAX_BUFFER];  // input string
     int _pos;                  // current position in the string
-    static int _table[MAX_ROWS][MAX_COLUMNS];
+    static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
 };
 
 }  // namespace STokenizer
