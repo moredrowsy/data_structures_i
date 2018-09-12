@@ -25,7 +25,7 @@ int main() {
     print_table(table);
 
     bool success = false;
-    char c[] = "3.14";
+    char c[] = ".3.";
     std::string token;
     int pos = 0;
 

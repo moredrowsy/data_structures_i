@@ -27,7 +27,7 @@ void mark_success(int _table[][MAX_COLUMNS], int state);
 void mark_fail(int _table[][MAX_COLUMNS], int state);
 
 // true if state is a success state
-bool is_success(int _table[][MAX_COLUMNS], int state);
+bool is_success(const int _table[][MAX_COLUMNS], int state);
 
 // mark a range of cells in the array.
 void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
@@ -41,12 +41,12 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
 void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state);
 
 // this can realistically be used on a small table
-void print_table(int _table[][MAX_COLUMNS]);
+void print_table(const int _table[][MAX_COLUMNS]);
 
 // show string s and mark this position on the string:
 // hello world   pos: 7
 //      ^
-void show_string(char s[], int _pos);
+void show_string(const char s[], int _pos);
 
 // get a token from string, return boolean on success
 // on return true, by reference, gives next pos and good token

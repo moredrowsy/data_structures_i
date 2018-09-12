@@ -6,6 +6,14 @@ CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 INCLUDE			= ../include
 SRC				= ../src
 
+tests: tests.o my_washer.o my_airport.o state_machine.o
+	$(CC) tests.o my_washer.o my_airport.o state_machine.o -o tests.out
+
+tests.o: test_all.cpp\
+	${SRC}/*.cpp\
+	${INCLUDE}/*.h
+	$(CC) $(CXXFLAGS) -c test_all.cpp -o tests.o
+
 test_my_node: test_my_node.o
 	$(CC) test_my_node.o -o test_my_node.out
 
@@ -49,16 +57,15 @@ my_airport.o: ${SRC}/my_airport.cpp ${INCLUDE}/my_airport.h\
 	${INCLUDE}/my_queue.h
 	$(CC) $(CXXFLAGS) -c ${SRC}/my_airport.cpp
 
-tests: tests.o my_washer.o my_airport.o
-	$(CC) tests.o my_washer.o my_airport.o -o tests.out
+test_state_machine: test_state_machine.o state_machine.o
+	$(CC) test_state_machine.o state_machine.o -o test_state_machine.out
 
-tests.o: test_all.cpp\
-	test_my_node.h\
-	test_my_queue.h\
-	test_my_stack.h\
-	test_my_washer\
-	test_my_airport.h
-	$(CC) $(CXXFLAGS) -c test_all.cpp -o tests.o
+test_state_machine.o: test_state_machine.cpp test_state_machine.h
+	$(CC) $(CXXFLAGS) -c test_state_machine.cpp
+
+state_machine.o: ${SRC}/state_machine.cpp ${INCLUDE}/state_machine.h\
+	${INCLUDE}/my_queue.h
+	$(CC) $(CXXFLAGS) -c ${SRC}/state_machine.cpp
 
 clean:
 	rm -f *.o *.out

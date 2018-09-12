@@ -16,16 +16,22 @@ void init_table(int _table[][MAX_COLUMNS]) {
 }
 
 void mark_success(int _table[][MAX_COLUMNS], int state) {
-    // assign [row as state][column 0] to 1 as success_state
+    // assert state is not greater or equal to MAX ROWS
+    assert(state < MAX_ROWS);
+
+    // assign [row as state][column 0] to 1 as success state
     _table[state][0] = 1;
 }
 
 void mark_fail(int _table[][MAX_COLUMNS], int state) {
+    // assert state is not greater or equal to MAX ROWS
+    assert(state < MAX_ROWS);
+
     // assign [row as state][column 0] to 0 as fail
     _table[state][0] = 0;
 }
 
-bool is_success_state(int _table[][MAX_COLUMNS], int state) {
+bool is_success(const int _table[][MAX_COLUMNS], int state) {
     return _table[state][0];
 }
 
@@ -47,7 +53,7 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
     _table[row][column] = state;
 }
 
-void print_table(int _table[][MAX_COLUMNS]) {
+void print_table(const int _table[][MAX_COLUMNS]) {
     int cols_per_row = 12, count = 0, value_len;
 
     while(count < MAX_COLUMNS) {
@@ -102,7 +108,7 @@ void print_table(int _table[][MAX_COLUMNS]) {
 }
 
 // _posstarts from indexing from 1, not 0?
-void show_string(char s[], int _pos) {
+void show_string(const char s[], int _pos) {
     // assert positive position
     assert(_pos > -1);
 
@@ -131,11 +137,19 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
                int state, std::string &token) {
     bool debug = false;
 
-    bool peek_success = false;  // success state at peeking at next state
-    char peek_char = '\0';      // peek at next character
-    int original_pos = _pos,    // store original position
-        peek_state = -1;        // peek at next state
-    std::string new_token;      // token for last full success
+    bool peek_success = false,     // success state at peeking at next state
+        success = false;           // success state
+    char peek_char = '\0';         // peek at next character
+    int last_successful_pos = -1,  // last successful position
+        original_pos = _pos,       // store original position
+        peek_state = -1;           // peek at next state
+    std::string new_token;         // token for last full success
+    if(debug) {
+        std::cout << std::endl
+                  << "----" << std::endl
+                  << "string is = " << input << std::endl
+                  << "----" << std::endl;
+    }
 
     // loop until end of string and when state is not -1
     while(input[_pos] != '\0' && _table[state][(input[_pos])] != -1) {
@@ -161,29 +175,27 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
             } else {
                 std::cout << "'" << peek_char << "'";
             }
-            std::cout << ", peak state = " << peek_state;
+            std::cout << ", peek state = " << peek_state;
 
             std::cout << ", peek success = " << peek_success << std::endl;
         }
 
         // udpate new token when peeking at next success is fail or when NUL
-        if(!peek_success || peek_char == '\0') {
+        if(is_success(_table, state) && (!peek_success || peek_char == '\0')) {
             new_token = "";
+            last_successful_pos = _pos;
 
-            for(int i = original_pos; i < _pos + 1; ++i) {
+            for(int i = original_pos; i < last_successful_pos + 1; ++i) {
                 new_token += input[i];
             }
 
             if(debug) {
                 std::cout << "new token = " << new_token << std::endl;
             }
-        }
 
-        // if next character is NUL
-        // then assign peek success to 'peek success and true'
-        // to indicate 'end success = true' or 'end fail = false'
-        if(peek_char == '\0') {
-            peek_success = peek_success && true;
+            if(peek_char == '\0') {
+                peek_success = true;
+            }
         }
 
         ++_pos;
@@ -195,9 +207,12 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         _pos = original_pos;
     } else {
         token = new_token;
+        _pos = last_successful_pos + 1;
     }
 
-    return peek_success;
+    // return is a combination of is_success and peak_success to give correct
+    // last success state; is important when reaching '\0' or NUL character
+    return is_success(_table, state) && peek_success;
 }
 
 }  // namespace state_machine
