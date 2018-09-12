@@ -7,7 +7,6 @@
  ******************************************************************************/
 #include <iostream>
 #include "../include/stokenizer.h"
-#include "../include/token.h"
 
 void extract_tokens(char s[]);
 
@@ -19,9 +18,12 @@ int main() {
 }
 
 void extract_tokens(char s[]) {
-    // STokenizer::STokenizer stk(s);
-    Token::Token t;
+    STokenizer::STokenizer stk(s);
+    Token::Token t("something", 0);
+    std::cout << t;
+    std::cout << std::endl;
 
-    // stk >> t;
-    // std::cout << t;
+    stk >> t;
+    std::cout << t;
+    std::cout << std::endl;
 }

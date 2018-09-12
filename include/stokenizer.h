@@ -3,7 +3,7 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : TOKEN
- * DESCRIPTION : This header defines class STokenizer. This STokenizer will
+ * DESCRIPTION : This header declares class STokenizer. This STokenizer will
  *      receive an input/buffer string (via constructor or set_string) and
  *      returns a valid token (via the extraction operator) from its starting
  *      position by its internal state machine, which follows the rules set in

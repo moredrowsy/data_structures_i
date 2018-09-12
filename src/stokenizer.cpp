@@ -2,10 +2,13 @@
 
 namespace STokenizer {
 
+// STATIC VARIABLES
+int STokenizer::_table[MAX_ROWS][MAX_COLUMNS];
+
 STokenizer::STokenizer() {
     _buffer[0] = '\0';
     _pos = 0;
-    // make_table(_table);
+    make_table(_table);
 }
 
 STokenizer::STokenizer(char str[]) {
@@ -18,7 +21,7 @@ STokenizer::STokenizer(char str[]) {
     _buffer[index] = '\0';
 
     _pos = 0;
-    // make_table(_table);
+    make_table(_table);
 }
 
 bool STokenizer::done() const { return _buffer[_pos] == '\0'; }

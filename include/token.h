@@ -3,7 +3,7 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : TOKEN
- * DESCRIPTION : This header defines class Token. Token is a class where
+ * DESCRIPTION : This header declares class Token. Token is a class where
  *      it represents a token as a string and stores a type associated with it.
  *      It facilitates the STokenizer class for interaction and reporting the
  *      type of tokens.

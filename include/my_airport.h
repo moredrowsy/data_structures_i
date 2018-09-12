@@ -3,7 +3,7 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : MY_AIRPORT
- * DESCRIPTION : This header defines three classes: Averager, BoolSource, and
+ * DESCRIPTION : This header declares three classes: Averager, BoolSource, and
  *      Airport. All three classes work in conjunction to simulate an airport.
  *      Averager will count and calculate unsigned seconds for time.
  *      BoolSource will return boolean for a given probability.

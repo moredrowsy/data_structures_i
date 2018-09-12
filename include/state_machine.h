@@ -3,7 +3,9 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : STATE_MACHINES
- * DESCRIPTION :
+ * DESCRIPTION : This header declares lower level functions to handle the state
+ *      machine's adjacency table: initializes the table, mark succcess/fail
+ *      to the table, and mark table's cells to given state.
  ******************************************************************************/
 #ifndef STATE_MACHINE_H
 #define STATE_MACHINE_H
