@@ -10,12 +10,12 @@
 
 #include <string>
 
-namespace state_machine {
-
 // GLOBAL CONSTANTS
 const int MAX_COLUMNS = 256, MAX_ROWS = 4;
 const char DIGITS[] = "0123456789";
 const int STATE_DOUBLE = 0;
+
+namespace state_machine {
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);
