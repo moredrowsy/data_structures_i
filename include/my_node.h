@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : MY_NODE
+ * HEADER      : my_node
  * DESCRIPTION : This header defines a templated node and templated functions
  *      that will process the nodes. These functions are the base to build
  *      higher level linked lists.

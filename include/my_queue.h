@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : MY_QUEUE
+ * HEADER      : my_queue
  * DESCRIPTION : This header defines a templated Queue and its associated
  *      functions. The Queue will pop items at front and push from back.
  ******************************************************************************/

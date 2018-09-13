@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : MY_AIRPORT
+ * HEADER      : my_airport
  * DESCRIPTION : This header declares three classes: Averager, BoolSource, and
  *      Airport. All three classes work in conjunction to simulate an airport.
  *      Averager will count and calculate unsigned seconds for time.

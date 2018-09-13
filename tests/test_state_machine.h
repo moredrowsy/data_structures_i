@@ -22,8 +22,14 @@ void test_is_success();
 // test a range of cells in row is marked with state
 void test_mark_cells();
 
-// test boolean, token, and pos is correctly returned
-void test_get_token();
+// test boolean, token, and pos is correctly returned for DOUBLE
+void test_get_token_double();
+
+// test boolean, token, and pos is correctly returned for SPACE
+void test_get_token_space();
+
+// test boolean, token, and pos is correctly returned for ALPHABET
+void test_get_token_alpha();
 
 // call all test functions
 void test_all();
@@ -146,24 +152,34 @@ void test_mark_cells() {
     std::cout << "passed." << std::endl;
 }
 
-void test_get_token() {
+void test_get_token_double() {
     using namespace state_machine;
 
-    std::cout << "test_get_token: ";
+    std::cout << "test_get_token_double: ";
 
-    int table[MAX_ROWS][MAX_COLUMNS];
+    int _table[MAX_ROWS][MAX_COLUMNS];
 
-    // init table for STATE_DOUBLE
-    mark_fail(table, 0);     // Mark states 0 and 2 as fail states
-    mark_success(table, 1);  // Mark states 1 and 3 as success states
-    mark_fail(table, 2);
-    mark_success(table, 3);
-    mark_cells(0, table, DIGITS, 1);    // state [0] --- DIGITS ---> [1]
-    mark_cells(0, table, '.', '.', 2);  // state [0] --- '.' ------> [2]
-    mark_cells(1, table, DIGITS, 1);    // state [1] --- DIGITS ---> [1]
-    mark_cells(1, table, '.', '.', 2);  // state [1] --- '.' ------> [2]
-    mark_cells(2, table, DIGITS, 3);    // state [2] --- DIGITS ---> [3]
-    mark_cells(3, table, DIGITS, 3);    // state [3] --- DIGITS ---> [3]
+    // initialize table with -1
+    init_table(_table);
+
+    // STATE_DOUBLE
+    mark_fail(_table, STATE_DOUBLE + 0);     // fail states: 0 and 2
+    mark_success(_table, STATE_DOUBLE + 1);  // success states: 1 and 3
+    mark_fail(_table, STATE_DOUBLE + 2);
+    mark_success(_table, STATE_DOUBLE + 3);
+    // MARK CELLS
+    // state [0] --- DIGITS ---> [1]
+    // state [0] --- '.' ------> [2]
+    // state [1] --- DIGITS ---> [1]
+    // state [1] --- '.' ------> [2]
+    // state [2] --- DIGITS ---> [3]
+    // state [3] --- DIGITS ---> [3]
+    mark_cells(STATE_DOUBLE + 0, _table, DIGITS, STATE_DOUBLE + 1);
+    mark_cells(STATE_DOUBLE + 0, _table, '.', '.', STATE_DOUBLE + 2);
+    mark_cells(STATE_DOUBLE + 1, _table, DIGITS, STATE_DOUBLE + 1);
+    mark_cells(STATE_DOUBLE + 1, _table, '.', '.', STATE_DOUBLE + 2);
+    mark_cells(STATE_DOUBLE + 2, _table, DIGITS, STATE_DOUBLE + 3);
+    mark_cells(STATE_DOUBLE + 3, _table, DIGITS, STATE_DOUBLE + 3);
 
     // test variables
     bool success_state = false;
@@ -173,7 +189,8 @@ void test_get_token() {
     // test string01
     char string01[] = "";
     pos = 0;
-    success_state = get_token(table, string01, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string01, pos, state, token);
     assert(success_state == false);
     assert(token == "");
     assert(pos == 0);
@@ -181,7 +198,8 @@ void test_get_token() {
     // test string02
     char string02[] = ".";
     pos = 0;
-    success_state = get_token(table, string02, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string02, pos, state, token);
     assert(success_state == false);
     assert(token == "");
     assert(pos == 0);
@@ -189,7 +207,8 @@ void test_get_token() {
     // test string03
     char string03[] = "A";
     pos = 0;
-    success_state = get_token(table, string03, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string03, pos, state, token);
     assert(success_state == false);
     assert(token == "");
     assert(pos == 0);
@@ -197,7 +216,8 @@ void test_get_token() {
     // test string04
     char string04[] = "3";
     pos = 0;
-    success_state = get_token(table, string04, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string04, pos, state, token);
     assert(success_state == true);
     assert(token == "3");
     assert(pos == 1);
@@ -205,7 +225,8 @@ void test_get_token() {
     // test string05
     char string05[] = ".3";
     pos = 0;
-    success_state = get_token(table, string05, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string05, pos, state, token);
     assert(success_state == true);
     assert(token == ".3");
     assert(pos == 2);
@@ -213,7 +234,8 @@ void test_get_token() {
     // test string06
     char string06[] = ".3.";
     pos = 0;
-    success_state = get_token(table, string06, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string06, pos, state, token);
 
     assert(success_state == true);
     assert(token == ".3");
@@ -222,7 +244,8 @@ void test_get_token() {
     // test string07
     char string07[] = "0.3";
     pos = 0;
-    success_state = get_token(table, string07, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string07, pos, state, token);
     assert(success_state == true);
     assert(token == "0.3");
     assert(pos == 3);
@@ -230,7 +253,8 @@ void test_get_token() {
     // test string08
     char string08[] = "0.3.";
     pos = 0;
-    success_state = get_token(table, string08, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string08, pos, state, token);
     assert(success_state == true);
     assert(token == "0.3");
     assert(pos == 3);
@@ -238,7 +262,8 @@ void test_get_token() {
     // test string09
     char string09[] = "3.";
     pos = 0;
-    success_state = get_token(table, string09, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string09, pos, state, token);
     assert(success_state == true);
     assert(token == "3");
     assert(pos == 1);
@@ -246,7 +271,8 @@ void test_get_token() {
     // test string10
     char string10[] = "3.14";
     pos = 0;
-    success_state = get_token(table, string10, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string10, pos, state, token);
     assert(success_state == true);
     assert(token == "3.14");
     assert(pos == 4);
@@ -254,7 +280,8 @@ void test_get_token() {
     // test string11
     char string11[] = "3.14.";
     pos = 0;
-    success_state = get_token(table, string11, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string11, pos, state, token);
     assert(success_state == true);
     assert(token == "3.14");
     assert(pos == 4);
@@ -262,7 +289,8 @@ void test_get_token() {
     // test string12
     char string12[] = "3.14..14";
     pos = 0;
-    success_state = get_token(table, string12, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string12, pos, state, token);
     assert(success_state == true);
     assert(token == "3.14");
     assert(pos == 4);
@@ -270,10 +298,272 @@ void test_get_token() {
     // test string11
     char string13[] = "0.31.14..14";
     pos = 0;
-    success_state = get_token(table, string13, pos, state, token);
+    token = "";
+    success_state = get_token(_table, string13, pos, state, token);
     assert(success_state == true);
     assert(token == "0.31");
     assert(pos == 4);
+
+    std::cout << "passed." << std::endl;
+}
+
+void test_get_token_space() {
+    using namespace state_machine;
+
+    std::cout << "test_get_token_space: ";
+
+    int _table[MAX_ROWS][MAX_COLUMNS];
+
+    // initialize table with -1
+    init_table(_table);
+
+    // STATE_SPACE
+    mark_fail(_table, STATE_SPACE + 0);     // fail states: 10
+    mark_success(_table, STATE_SPACE + 1);  // success states: 11
+    // MARK CELLS
+    // state [10] --- SPACE ---> [11]
+    // state [11] --- SPACE ---> [11]
+    mark_cells(STATE_SPACE + 0, _table, SPACE, STATE_SPACE + 1);
+    mark_cells(STATE_SPACE + 1, _table, SPACE, STATE_SPACE + 1);
+
+    // test variables
+    bool success_state = false;
+    std::string token;
+    int pos = 0, state = STATE_SPACE;
+
+    // test string01
+    char string01[] = "";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string01, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string02
+    char string02[] = ".";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string02, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string03
+    char string03[] = "A";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string03, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string04
+    char string04[] = "3";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string04, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string05
+    char string05[] = " ";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string05, pos, state, token);
+    assert(success_state == true);
+    assert(token == " ");
+    assert(pos == 1);
+
+    // test string06
+    char string06[] = "     ";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string06, pos, state, token);
+    assert(success_state == true);
+    assert(token == "     ");
+    assert(pos == 5);
+
+    // test string07
+    char string07[] = "     .";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string07, pos, state, token);
+    assert(success_state == true);
+    assert(token == "     ");
+    assert(pos == 5);
+
+    // test string08
+    char string08[] = "     1";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string08, pos, state, token);
+    assert(success_state == true);
+    assert(token == "     ");
+    assert(pos == 5);
+
+    // test string09
+    char string09[] = "     A";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string09, pos, state, token);
+    assert(success_state == true);
+    assert(token == "     ");
+    assert(pos == 5);
+
+    // test string10
+    char string10[] = "     z";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string10, pos, state, token);
+    assert(success_state == true);
+    assert(token == "     ");
+    assert(pos == 5);
+
+    // test string11
+    char string11[] = ".    z";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string11, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string12
+    char string12[] = " .014 A";
+    pos = 5;
+    token = "";
+    success_state = get_token(_table, string12, pos, state, token);
+    assert(success_state == true);
+    assert(token == " ");
+    assert(pos == 6);
+
+    std::cout << "passed." << std::endl;
+}
+
+void test_get_token_alpha() {
+    using namespace state_machine;
+
+    std::cout << "test_get_token_alpha: ";
+
+    int _table[MAX_ROWS][MAX_COLUMNS];
+
+    // initialize table with -1
+    init_table(_table);
+
+    // STATE_ALPHA
+    mark_fail(_table, STATE_ALPHA + 0);     // fail states: 20
+    mark_success(_table, STATE_ALPHA + 1);  // success states: 21
+    // MARK CELLS
+    // state [20] --- ALPHA ---> [21]
+    // state [21] --- ALPHA ---> [21]
+    mark_cells(STATE_ALPHA + 0, _table, ALPHA, STATE_ALPHA + 1);
+    mark_cells(STATE_ALPHA + 1, _table, ALPHA, STATE_ALPHA + 1);
+
+    // test variables
+    bool success_state = false;
+    std::string token;
+    int pos = 0, state = STATE_ALPHA;
+
+    // test string01
+    char string01[] = "";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string01, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string02
+    char string02[] = ".";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string02, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string03
+    char string03[] = "A";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string03, pos, state, token);
+    assert(success_state == true);
+    assert(token == "A");
+    assert(pos == 1);
+
+    // test string04
+    char string04[] = "3";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string04, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string05
+    char string05[] = " ";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string05, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string06
+    char string06[] = " .014 A";
+    pos = 6;
+    token = "";
+    success_state = get_token(_table, string06, pos, state, token);
+    assert(success_state == true);
+    assert(token == "A");
+    assert(pos == 7);
+
+    // test string07
+    char string07[] = ".A";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string07, pos, state, token);
+    assert(success_state == false);
+    assert(token == "");
+    assert(pos == 0);
+
+    // test string08
+    char string08[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string08, pos, state, token);
+    assert(success_state == true);
+    assert(token == "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    assert(pos == 26);
+
+    // test string09
+    char string09[] = "abcdefghijklmnopqrstuvwxyz";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string09, pos, state, token);
+    assert(success_state == true);
+    assert(token == "abcdefghijklmnopqrstuvwxyz");
+    assert(pos == 26);
+
+    // test string10
+    char string10[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string10, pos, state, token);
+    assert(success_state == true);
+    assert(token == "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+    assert(pos == 52);
+
+    // test string11
+    char string11[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz";
+    pos = 0;
+    token = "";
+    success_state = get_token(_table, string11, pos, state, token);
+    assert(success_state == true);
+    assert(token == "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    assert(pos == 26);
 
     std::cout << "passed." << std::endl;
 }
@@ -284,7 +574,9 @@ void test_all() {
     test_mark_fail();
     test_is_success();
     test_mark_cells();
-    test_get_token();
+    test_get_token_double();
+    test_get_token_space();
+    test_get_token_alpha();
 }
 
 }  // namespace test_state_machine

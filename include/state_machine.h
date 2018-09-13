@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : STATE_MACHINE
+ * HEADER      : state_machine
  * DESCRIPTION : This header declares lower level functions to handle the state
  *      machine's adjacency table: initializes the table, mark success/fail
  *      to the table, and mark table's cells to given state.

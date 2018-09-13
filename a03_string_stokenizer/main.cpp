@@ -43,8 +43,10 @@ int main() {
  *  none
  ******************************************************************************/
 void extract_tokens(char s[]) {
-    STokenizer::STokenizer stk(s);
-    Token::Token t;
+    using namespace stokenizer;
+
+    STokenizer stk(s);
+    Token t;
 
     std::cout << std::setw(10) << std::right << "TYPE"
               << " " << std::left << "TOKEN" << std::endl

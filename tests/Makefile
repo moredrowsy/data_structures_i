@@ -67,5 +67,15 @@ state_machine.o: ${SRC}/state_machine.cpp ${INCLUDE}/state_machine.h\
 	${INCLUDE}/my_queue.h
 	$(CC) $(CXXFLAGS) -c ${SRC}/state_machine.cpp
 
+test_stokenizer: test_stokenizer.o state_machine.o stokenizer.o
+	$(CC) test_stokenizer.o state_machine.o stokenizer.o -o test_stokenizer.out
+
+test_stokenizer.o: test_stokenizer.cpp test_stokenizer.h
+	$(CC) $(CXXFLAGS) -c test_stokenizer.cpp
+
+stokenizer.o: ${SRC}/stokenizer.cpp ${INCLUDE}/stokenizer.h\
+	${INCLUDE}/my_queue.h
+	$(CC) $(CXXFLAGS) -c ${SRC}/stokenizer.cpp
+
 clean:
 	rm -f *.o *.out

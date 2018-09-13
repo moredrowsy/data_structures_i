@@ -1,10 +1,43 @@
 #include "../include/stokenizer.h"
 #include <cassert>
 
-namespace STokenizer {
+namespace stokenizer {
 
 // STATIC VARIABLES
 int STokenizer::_table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
+
+int Token::type() const { return _type; }
+
+std::string Token::type_string() const {
+    std::string type_string;
+
+    switch(_type) {
+        case state_machine::STATE_UNKNOWN:
+            type_string = "UNKNOWN";
+            break;
+        case state_machine::STATE_DOUBLE:
+            type_string = "DOUBLE";
+            break;
+        case state_machine::STATE_SPACE:
+            type_string = "SPACE";
+            break;
+        case state_machine::STATE_ALPHA:
+            type_string = "ALPHA";
+            break;
+        default:
+            type_string = "ERROR";
+    }
+
+    return type_string;
+}
+
+std::string Token::token_str() const { return _token; }
+
+std::ostream& operator<<(std::ostream& outs, const Token& t) {
+    outs << "|" + t.token_str() + "|";
+
+    return outs;
+}
 
 STokenizer::STokenizer() {
     _buffer[0] = '\0';
@@ -51,7 +84,6 @@ void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     mark_success(_table, STATE_DOUBLE + 1);  // success states: 1 and 3
     mark_fail(_table, STATE_DOUBLE + 2);
     mark_success(_table, STATE_DOUBLE + 3);
-
     // MARK CELLS
     // state [0] --- DIGITS ---> [1]
     // state [0] --- '.' ------> [2]
@@ -69,7 +101,6 @@ void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     // STATE_SPACE
     mark_fail(_table, STATE_SPACE + 0);     // fail states: 10
     mark_success(_table, STATE_SPACE + 1);  // success states: 11
-
     // MARK CELLS
     // state [10] --- SPACE ---> [11]
     // state [11] --- SPACE ---> [11]
@@ -79,7 +110,6 @@ void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     // STATE_ALPHA
     mark_fail(_table, STATE_ALPHA + 0);     // fail states: 20
     mark_success(_table, STATE_ALPHA + 1);  // success states: 21
-
     // MARK CELLS
     // state [20] --- ALPHA ---> [21]
     // state [21] --- ALPHA ---> [21]
@@ -91,22 +121,22 @@ bool STokenizer::get_token(int start_state, std::string& token) {
     return state_machine::get_token(_table, _buffer, _pos, start_state, token);
 }
 
-STokenizer& operator>>(STokenizer& s, Token::Token& t) {
+STokenizer& operator>>(STokenizer& s, Token& t) {
     std::string token;
 
     // process tokens one state at a time until unknown token
     if(s.get_token(state_machine::STATE_DOUBLE, token)) {
-        t = Token::Token(token, state_machine::STATE_DOUBLE);
+        t = Token(token, state_machine::STATE_DOUBLE);
     } else if(s.get_token(state_machine::STATE_SPACE, token)) {
-        t = Token::Token(token, state_machine::STATE_SPACE);
+        t = Token(token, state_machine::STATE_SPACE);
     } else if(s.get_token(state_machine::STATE_ALPHA, token)) {
-        t = Token::Token(token, state_machine::STATE_ALPHA);
+        t = Token(token, state_machine::STATE_ALPHA);
     } else {
-        t = Token::Token(std::string(1, s._buffer[s._pos]));  // create unknown
+        t = Token(std::string(1, s._buffer[s._pos]));  // create unknown
         ++s._pos;  // when unknown token, go to next position
     }
 
     return s;
 }
 
-}  // namespace STokenizer
+}  // namespace stokenizer

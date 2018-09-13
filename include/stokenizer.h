@@ -2,23 +2,42 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : STOKENIZER
- * DESCRIPTION : This header declares class STokenizer. This STokenizer will
- *      receive an input/buffer string (via constructor or set_string) and
- *      returns a valid token (via the insertion operator) from its starting
- *      position by its internal state machine, which follows the rules set in
- *      the adjacency matrix.
+ * HEADER      : stokenizer
+ * DESCRIPTION : This header declares class Token and STokenizer. Token
+ *      represents a string and a type associated with that string. It
+ *      facilitates the STokenizer for interaction and reporting the type of
+ *      tokens. The STokenizer will receive an input/buffer string (via
+ *      constructor or set_string) and returns a valid token (via the insertion
+ *      operator) from its starting position by its internal state machine,
+ *      which follows the rules set in the adjacency matrix.
  ******************************************************************************/
 #ifndef STOKENIZER_H
 #define STOKENIZER_H
 
 #include <iostream>
 #include "state_machine.h"
-#include "token.h"
 
-namespace STokenizer {
+namespace stokenizer {
 
 const int MAX_BUFFER = 999;
+
+class Token {
+public:
+    // CONSTRUCTORS
+    Token(std::string str = "", int type = -1) : _token(str), _type(type) {}
+
+    // ACCESSORS
+    int type() const;                 // return type of token in integer
+    std::string type_string() const;  // return type of token in string
+    std::string token_str() const;    // return string of token
+
+    // FRIENDS
+    friend std::ostream& operator<<(std::ostream& outs, const Token& t);
+
+private:
+    std::string _token;  // token string
+    int _type;           // type of token
+};
 
 class STokenizer {
 public:
@@ -38,7 +57,7 @@ public:
 
     // FRIENDS
     // extract one token (very similar to the way cin >> works)
-    friend STokenizer& operator>>(STokenizer& s, Token::Token& t);
+    friend STokenizer& operator>>(STokenizer& s, Token& t);
 
 private:
     // create table for all the tokens we will recognize
@@ -54,6 +73,6 @@ private:
     static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
 };
 
-}  // namespace STokenizer
+}  // namespace stokenizer
 
 #endif  // STOKENIZER_H

@@ -71,7 +71,7 @@ void print_table(const int _table[][MAX_COLUMNS]) {
                     std::cout << "| " << col << " ";
                 }
             } else if(col < MAX_COLUMNS && col > 31 && col < 127) {
-                std::cout << "|  " << static_cast<char>(col) << "  ";
+                std::cout << "| '" << static_cast<char>(col) << "' ";
             }
         }
         std::cout << "|" << std::endl;
@@ -151,17 +151,22 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
     bool debug = false;
 
     bool peek_success = false,     // success state at peeking at next state
-        success = false;           // success state
+        success_state = false;     // success state
     char peek_char = '\0';         // peek at next character
     int last_successful_pos = -1,  // last successful position
         original_pos = _pos,       // store original position
         peek_state = -1;           // peek at next state
     std::string new_token;         // token for last full success
     if(debug) {
+        print_table(_table);
         std::cout << std::endl
                   << "----" << std::endl
                   << "string is = " << input << std::endl
                   << "----" << std::endl;
+        std::cout << "original state = " << state << ", current pos = " << _pos
+                  << ", current char = '" << input[_pos] << "'"
+                  << ", is success = " << is_success(_table, state)
+                  << std::endl;
     }
 
     // loop until end of string and when state is not -1
@@ -199,12 +204,17 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
            (peek_char == '\0' || peek_state == -1 || !peek_success)) {
             new_token = "";
             last_successful_pos = _pos;
-            success = true;
+            success_state = true;
+
+            if(debug) {
+                std::cout << "new token creation" << std::endl;
+            }
         }
 
         ++_pos;
     }
 
+    // create new token when last successful pos (default = -1) is >=0
     for(int i = original_pos; i < last_successful_pos + 1; ++i) {
         new_token += input[i];
     }
@@ -222,7 +232,7 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         _pos = last_successful_pos + 1;
     }
 
-    return success;
+    return success_state;
 }
 
 }  // namespace state_machine

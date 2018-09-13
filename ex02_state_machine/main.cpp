@@ -29,25 +29,39 @@ int main() {
     mark_cells(10, _table, SPACE, 11);  // state [10] --- SPACE ---> [11]
     mark_cells(11, _table, SPACE, 11);  // state [11] --- SPACE ---> [11]
 
-    // print_table(_table);
+    print_table(_table);
 
     bool success = false;
     char c[] = "0.314 1.248.";
     std::string token;
     int pos = 0;
 
+    std::cout << "Input string is with starting position:" << std::endl;
     show_string(c, pos);
+    std::cout << std::endl;
 
+    std::cout << "First call:" << std::endl;
+    std::cout << "current pos = " << pos;
     if(get_token(_table, c, pos, STATE_DOUBLE, token)) {
-        std::cout << "next pos: " << pos << std::endl;
-        std::cout << "token returned: |" << token << "|" << std::endl;
+        std::cout << ", token returned = |" << token << "| ";
+        std::cout << ", next pos = " << pos << std::endl;
     }
 
+    std::cout << "\nSecond call:" << std::endl;
+    std::cout << "current pos = " << pos;
     if(get_token(_table, c, pos, STATE_SPACE, token)) {
-        std::cout << "next pos: " << pos << std::endl;
-        std::cout << "token returned: |" << token << "|" << std::endl;
+        std::cout << ", token returned = |" << token << "| ";
+        std::cout << ", next pos = " << pos << std::endl;
     }
 
+    std::cout << "\nThird call:" << std::endl;
+    std::cout << "current pos = " << pos;
+    if(get_token(_table, c, pos, STATE_DOUBLE, token)) {
+        std::cout << ", token returned = |" << token << "| ";
+        std::cout << ", next pos = " << pos << std::endl;
+    }
+
+    std::cout << "\nInput string with ending position: " << std::endl;
     show_string(c, pos);
 
     return 0;

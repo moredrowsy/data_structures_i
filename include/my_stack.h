@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : MY_STACK
+ * HEADER      : my_stack
  * DESCRIPTION : This header defines a templated Stack and its associated
  *      functions. The Stack will pop and push at the front.
  ******************************************************************************/
