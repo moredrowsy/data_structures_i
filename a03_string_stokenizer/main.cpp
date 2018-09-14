@@ -35,7 +35,8 @@ int main() {
 
     std::cout << std::endl << std::endl;
     char s3[] =
-        "Fractions are: 1,000 1/3 is same as 1000.00 1/3 or another 1.0/10.0?";
+        "Fractions are: 1,000 1/3 is same as 1000.00 1/3 or 1.0/10.0 but not "
+        "10,000,00?";
     std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
               << "|" << s3 << "|" << std::endl
               << std::endl;
@@ -72,8 +73,7 @@ void extract_tokens(char s[]) {
               << std::string(10, '-') << " " << std::string(10, '-')
               << std::endl;
 
-    while(stk.more()) {
-        stk >> t;
+    while(stk >> t) {
         std::cout << std::setw(10) << std::right << t.type_string() << " "
                   << std::left << t << std::endl;
     }

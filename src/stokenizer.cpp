@@ -6,8 +6,36 @@ namespace stokenizer {
 // STATIC VARIABLES
 int STokenizer::_table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns an integer corresponding to the string type, such as the
+ *  state_machine's state constants.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  int of string type (or state constants in state_machine)
+ ******************************************************************************/
 int Token::type() const { return _type; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns a readable string corresponding to the string type, such as the
+ *  state_machine's state constants, for human interpretation.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  string type for human readable interpretation
+ ******************************************************************************/
 std::string Token::type_string() const {
     std::string type_string;
 
@@ -37,20 +65,75 @@ std::string Token::type_string() const {
     return type_string;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the string value, such as the input buffer string from STokenizer.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  string
+ ******************************************************************************/
 std::string Token::token_str() const { return _token; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Inserts a formatted Token's string value to the outstream.
+ *
+ * PRE-CONDITIONS:
+ *  ostream& outs : out stream
+ *  const Token& t: Token object with string value
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  ostream by reference
+ ******************************************************************************/
 std::ostream& operator<<(std::ostream& outs, const Token& t) {
     outs << "|" + t.token_str() + "|";
 
     return outs;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Default constructor initializes _buffer and _pos  to 0 and calls make_table
+ *  to initialize all values in table to -1.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  initialized member variables
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 STokenizer::STokenizer() {
     _buffer[0] = '\0';
     _pos = 0;
     make_table(_table);  // initialize table with adjacency rules
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Default constructor initializes _buffer to cstring and _pos and calls
+ *  make_table to initialize all values in table to -1.
+ *
+ * PRE-CONDITIONS:
+ *  char str[]: cstring for input buffer
+ *
+ * POST-CONDITIONS:
+ *  initialized member variables
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 STokenizer::STokenizer(char str[]) {
     // copy string into buffer
     int index = 0;
@@ -65,10 +148,66 @@ STokenizer::STokenizer(char str[]) {
     make_table(_table);  // initialize table with adjacency rules
 }
 
-bool STokenizer::done() const { return _buffer[_pos] == '\0'; }
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if there no tokens left in buffer cstring from current _pos.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
+bool STokenizer::done() const { return _buffer[_pos - 1] == '\0'; }
 
-bool STokenizer::more() const { return _buffer[_pos] != '\0'; }
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if there more tokens left in buffer cstring from current _pos.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
+bool STokenizer::more() const { return _buffer[_pos - 1] != '\0'; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Explicit operator bool() overloading, such as in the case of using
+ *  extraction operators. Ex: while(stkonizer >> token) statements.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
+STokenizer::operator bool() const { return more() ? true : false; }
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assign cstring param to buffer and reset _pos to 0.
+ *
+ * PRE-CONDITIONS:
+ *  char str[]: cstring
+ *
+ * POST-CONDITIONS:
+ *  char _buffer[]: assigned to str[]
+ *  int _pos      : assigned to 0
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void STokenizer::set_string(char str[]) {
     // copy string into buffer
     int index = 0;
@@ -77,53 +216,61 @@ void STokenizer::set_string(char str[]) {
         ++index;
     }
     _buffer[index] = '\0';
+
+    _pos = 0;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize all values in table to -1.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][state_machine::MAX_COLUMNS]: integer array
+ *
+ * POST-CONDITIONS:
+ *  all cells in table initialized to -1
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     using namespace state_machine;
 
     // initialize table with -1
     init_table(_table);
 
-    // STATE_FRACTION
-    mark_fail(_table, STATE_FRACTION + 0);  // fail states: 0,1,2,3
-    mark_fail(_table, STATE_FRACTION + 1);
-    mark_fail(_table, STATE_FRACTION + 2);
-    mark_fail(_table, STATE_FRACTION + 3);
-    mark_success(_table, STATE_FRACTION + 4);  // success states: 4
-
-    // MARK CELLS
-    // state [0] --- DIGIT ---> [1]
-    // state [1] --- DIGIT ---> [1]
-    // state [1] ---- '/' ----> [2]
-    // state [1] --- SPACE ---> [3]
-    // state [2] --- DIGIT ---> [4]
-    // state [3] --- DIGIT ---> [1]
-    // state [4] --- DIGIT ---> [4]
-    mark_cells(STATE_FRACTION + 0, _table, DIGIT, STATE_FRACTION + 1);
-    mark_cells(STATE_FRACTION + 1, _table, DIGIT, STATE_FRACTION + 1);
-    mark_cells(STATE_FRACTION + 1, _table, '/', '/', STATE_FRACTION + 2);
-    mark_cells(STATE_FRACTION + 1, _table, SPACE, STATE_FRACTION + 3);
-    mark_cells(STATE_FRACTION + 2, _table, DIGIT, STATE_FRACTION + 4);
-    mark_cells(STATE_FRACTION + 3, _table, DIGIT, STATE_FRACTION + 1);
-    mark_cells(STATE_FRACTION + 4, _table, DIGIT, STATE_FRACTION + 4);
+    // mark table for STATE_FRACTION
+    mark_table_fraction(_table, STATE_FRACTION);
 
     // mark table for STATE_DOUBLE
     mark_table_double(_table, STATE_DOUBLE);
 
-    // mark table for STATE_FRACTION
-    mark_table_fraction(_table, STATE_FRACTION);
-
     // mark table for STATE_SPACE
-    mark_table_space(_table, STATE_SPACE);
+    mark_table_generic(_table, STATE_SPACE, SPACE);
 
     // mark table for STATE_ALPHA
-    mark_table_alpha(_table, STATE_ALPHA);
+    mark_table_generic(_table, STATE_ALPHA, ALPHA);
 
     // mark table for STATE_PUNCT
-    mark_table_punct(_table, STATE_PUNCT);
+    mark_table_generic(_table, STATE_PUNCT, PUNCT);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Calls get_token version from state_machine with params and return success
+ *  state of get_token.
+ *
+ * PRE-CONDITIONS:
+ *  int start_state: 0 to MAX_ROWS - 1
+ *  string& token  : token string via reference
+ *
+ * POST-CONDITIONS:
+ *  int _pos    : old pos if fail, else new pos after token changed, refernce
+ *  string token: string unchanged if fail, else change to valid token
+ *
+ * RETURN:
+ *  boolean when state_machine's get_token success/fail
+ ******************************************************************************/
 bool STokenizer::get_token(int start_state, std::string& token) {
     return state_machine::get_token(_table, _buffer, _pos, start_state, token);
 }
@@ -143,8 +290,12 @@ STokenizer& operator>>(STokenizer& s, Token& t) {
     } else if(s.get_token(state_machine::STATE_PUNCT, token)) {
         t = Token(token, state_machine::STATE_PUNCT);
     } else {
-        t = Token(std::string(1, s._buffer[s._pos]));  // create unknown
-        ++s._pos;  // when unknown token, go to next position
+        if(s._buffer[s._pos] == '\0')
+            t = Token();
+        else
+            t = Token(std::string(1, s._buffer[s._pos]));
+
+        ++s._pos;  // when fail to get token, go to next position
     }
 
     return s;

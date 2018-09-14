@@ -1,11 +1,23 @@
 #include "../include/state_machine.h"  // state_machine declarations
 #include <cassert>                     // provides assert
-#include <cmath>                       // round numbers
 #include <iomanip>                     // stream formatting
 #include <iostream>                    // output stream
 
 namespace state_machine {
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize the entire table with -1.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: an integer array
+ *
+ * POST-CONDITIONS:
+ *  All cells' value are -1.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void init_table(int _table[][MAX_COLUMNS]) {
     // fill array with -1
     for(int row = 0; row < MAX_ROWS; ++row) {
@@ -15,6 +27,20 @@ void init_table(int _table[][MAX_COLUMNS]) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the cell in row 'state' at column 0 with 1 (as true)
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Target cell's value is 1
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_success(int _table[][MAX_COLUMNS], int state) {
     // assert state is not greater or equal to MAX ROWS
     assert(state < MAX_ROWS);
@@ -23,6 +49,20 @@ void mark_success(int _table[][MAX_COLUMNS], int state) {
     _table[state][0] = 1;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the cell in row 'state' at column 0 with 0 (as false)
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Target cell's value is 0
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_fail(int _table[][MAX_COLUMNS], int state) {
     // assert state is not greater or equal to MAX ROWS
     assert(state < MAX_ROWS);
@@ -31,10 +71,41 @@ void mark_fail(int _table[][MAX_COLUMNS], int state) {
     _table[state][0] = 0;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return a boolean value of cell in row 'state' and column 0.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 bool is_success(const int _table[][MAX_COLUMNS], int state) {
     return _table[state][0];
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cell in a row with column range with value of 'state'.
+ *
+ * PRE-CONDITIONS:
+ *  int row                  : 0 to MAX_ROWS - 1
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int from                 : 0 to MAX_COLUMNS - 1
+ *  int to                   : 0 to MAX_COLUMNS - 1
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
                 int state) {
     for(int col = from; col <= to; ++col) {
@@ -42,6 +113,22 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cell in a row with char array with value of 'state'.
+ *
+ * PRE-CONDITIONS:
+ *  int row                  : 0 to MAX_ROWS - 1
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  const char columns[]     : 0 to MAX_COLUMNS - 1
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
                 int state) {
     for(int i = 0; columns[i] != '\0'; ++i) {
@@ -49,22 +136,92 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cell in a row and column with value of 'state'.
+ *
+ * PRE-CONDITIONS:
+ *  int row                  : 0 to MAX_ROWS - 1
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int column               : 0 to MAX_COLUMNS - 1
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cell is marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
     _table[row][column] = state;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells with fail/success states and the adjacency values
+ *  for a generic two states rules for given values in char array.
+ *
+ * ILLUSTRATION:
+ *  MARK SUCCESS/FAILURE
+ *  state [+0] ---> fail
+ *  state [+1] ---> success
+ *
+ *  MARK CELLS
+ *  state [+0] --- VALUES --> [+1]
+ *  state [+1] --- VALUES --> [+1] ---> loop at state +1 for VALUES
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int start_state          : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void mark_table_generic(int _table[][MAX_COLUMNS], int start_state,
+                        const char columns[]) {
+    // MARK SUCCESS/FAILURE
+    // state [+0] ---> fail
+    // state [+1] ---> success
+    mark_fail(_table, start_state + 0);
+    mark_success(_table, start_state + 1);
+
+    // MARK CELLS
+    // state [+0] --- VALUES --> [+1]
+    // state [+1] --- VALUES --> [+1]
+    mark_cells(start_state + 0, _table, columns, start_state + 1);
+    mark_cells(start_state + 1, _table, columns, start_state + 1);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells with fail/success states and the adjacency values
+ *  for searching for DOUBLE token: formatted and unformatted numbers.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int start_state          : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
     // MARK SUCCESS/FAILURE
-    // state[+0] ---> fail
-    // state[+1] ---> success
-    // state[+2] ---> success
-    // state[+3] ---> success
-    // state[+4] ---> fail
-    // state[+5] ---> fail
-    // state[+6] ---> fail
-    // state[+7] ---> success
-    // state[+8] ---> fail
-    // state[+9] ---> success
+    // state [+0] ---> fail
+    // state [+1] ---> success
+    // state [+2] ---> success
+    // state [+3] ---> success
+    // state [+4] ---> fail
+    // state [+5] ---> fail
+    // state [+6] ---> fail
+    // state [+7] ---> success
+    // state [+8] ---> fail
+    // state [+9] ---> success
     mark_fail(_table, STATE_DOUBLE + 0);
     mark_success(_table, STATE_DOUBLE + 1);
     mark_success(_table, STATE_DOUBLE + 2);
@@ -115,26 +272,41 @@ void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
     mark_cells(STATE_DOUBLE + 9, _table, DIGIT, STATE_DOUBLE + 9);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells with fail/success states and the adjacency values
+ *  for searching for FRACTION token.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int start_state          : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_table_fraction(int _table[][MAX_COLUMNS], int start_state) {
     // MARK SUCCESS/FAILURE
-    // state[+0] ---> fail
-    // state[+1] ---> fail
-    // state[+2] ---> fail
-    // state[+3] ---> fail
-    // state[+4] ---> fail
-    // state[+5] ---> fail
-    // state[+6] ---> fail
-    // state[+7] ---> fail
-    // state[+8] ---> fail
-    // state[+9] ---> fail
-    // state[+10] --> fail
-    // state[+11] --> fail
-    // state[+12] --> fail
-    // state[+13] --> fail
-    // state[+14] --> fail
-    // state[+15] --> success
-    // state[+16] --> fail
-    // state[+17] --> success
+    // state [+0] ---> fail
+    // state [+1] ---> fail
+    // state [+2] ---> fail
+    // state [+3] ---> fail
+    // state [+4] ---> fail
+    // state [+5] ---> fail
+    // state [+6] ---> fail
+    // state [+7] ---> fail
+    // state [+8] ---> fail
+    // state [+9] ---> fail
+    // state [+10] --> fail
+    // state [+11] --> fail
+    // state [+12] --> fail
+    // state [+13] --> fail
+    // state [+14] --> fail
+    // state [+15] --> success
+    // state [+16] --> fail
+    // state [+17] --> success
     mark_fail(_table, STATE_FRACTION + 0);
     mark_fail(_table, STATE_FRACTION + 1);
     mark_fail(_table, STATE_FRACTION + 2);
@@ -234,42 +406,19 @@ void mark_table_fraction(int _table[][MAX_COLUMNS], int start_state) {
     mark_cells(STATE_FRACTION + 17, _table, DIGIT, STATE_FRACTION + 17);
 }
 
-void mark_table_space(int _table[][MAX_COLUMNS], int start_state) {
-    // MARK SUCCESS/FAILURE
-    mark_fail(_table, start_state + 0);     // fail states: +0
-    mark_success(_table, start_state + 1);  // success states: +1
-
-    // MARK CELLS
-    // state [+0] --- SPACE ---> [+1]
-    // state [+1] --- SPACE ---> [+1]
-    mark_cells(start_state + 0, _table, SPACE, start_state + 1);
-    mark_cells(start_state + 1, _table, SPACE, start_state + 1);
-}
-
-void mark_table_alpha(int _table[][MAX_COLUMNS], int start_state) {
-    // MARK SUCCESS/FAILURE
-    mark_fail(_table, start_state + 0);     // fail states: +0
-    mark_success(_table, start_state + 1);  // success states: +1
-
-    // MARK CELLS
-    // state [+0] --- ALPHA ---> [+1]
-    // state [+1] --- ALPHA ---> [+1]
-    mark_cells(start_state + 0, _table, ALPHA, start_state + 1);
-    mark_cells(start_state + 1, _table, ALPHA, start_state + 1);
-}
-
-void mark_table_punct(int _table[][MAX_COLUMNS], int start_state) {
-    // MARK SUCCESS/FAILURE
-    mark_fail(_table, start_state + 0);     // fail states: +0
-    mark_success(_table, start_state + 1);  // success states: +1
-
-    // MARK CELLS
-    // state [+0] --- PUNCT ---> [+1]
-    // state [+1] --- PUNCT ---> [+1]
-    mark_cells(start_state + 0, _table, PUNCT, start_state + 1);
-    mark_cells(start_state + 1, _table, PUNCT, start_state + 1);
-}
-
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Prints the table to console.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLUMNS]: integer array
+ *
+ * POST-CONDITIONS:
+ *  Output of table values.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void print_table(const int _table[][MAX_COLUMNS]) {
     int cols_per_row = 11, count = 1, value_len;
 
@@ -337,20 +486,36 @@ void print_table(const int _table[][MAX_COLUMNS]) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Prints the given cstring with the caret character pointing to the position
+ *  of the string.
+ *
+ * PRE-CONDITIONS:
+ *  const char s[]: cstring
+ *  int _pos      : position (0 to len - 1)
+ *
+ * POST-CONDITIONS:
+ *  Output of table values.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 // _posstarts from indexing from 1, not 0?
 void show_string(const char s[], int _pos) {
     // assert positive position
     assert(_pos > -1);
 
     // print the string and carat as pointing to the position in string
-    int index = 0;
     std::cout << s << std::endl;
-    for(index = 0; s[index] != '\0'; ++index) {
+    int index = 0;
+    while(s[index] != '\0') {
         if(index == _pos) {
             std::cout << '^';
         } else {
             std::cout << ' ';
         }
+        ++index;
     }
 
     // print carat behind string when pos is pointing at NUL
@@ -363,48 +528,100 @@ void show_string(const char s[], int _pos) {
     assert(_pos <= index);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Gets a valid token from input string, starting position of string, and
+ *  the state to start looking for in the adjacency table. If valid
+ *  token is found, it returns success boolean with position after the valid
+ *  token. If get token fails to find a valid token, returns fail boolean and
+ *  original position.
+ *
+ * PSEUDO CODE:
+ *  While loop until char is non-ascii, until end of cstring, until state -1.
+ *  -> Peek at next char, next state, and next success.
+ *  -> If current state is success and next char is '\0', or next state is -1
+ *     or next peek success fails, then set success = true and set success pos
+ *     to current pos.
+ *  -> Increase pos by 1
+ *  When while loop is done or exits
+ *  -> If success state is true, produce string token from original pos to
+ *     successful pos. and update position to after token.
+ *  -> Else, return original position.
+ *  Return success boolean.
+ *
+ * ILLUSTRATION:
+ *  String with pos = 0 with S = success state, F = fail state. Ignore pipe!
+ *      |888,888,88|
+ *       FFSFFFSFFFF
+ *
+ *  @ Partial success/fail, recorded success pos at 2:
+ *      |888,888,88|
+ *         ^^ -> 8 is @ success state, ',' is @ fail state
+ *         SF -> success & !fail = success -> record pos
+ *
+ *  @ Partial success/fail, recorded success pos at 6:
+ *      |888,888,88|
+ *             ^^ -> 8 is @ success state, ',' is @ fail state
+ *             SF -> success & !fail = success -> record pos
+ *
+ *  @ Full fail, record is not activated.
+ *      |888,888,88|
+ *                ^^ -> 8 is @ fail state, '\0' is @ fail state
+ *                FF -> fail & !fail = fail -> not recorded
+ *
+ *  @ Record string from original pos to success pos 6:
+ *      |888,888,88|
+ *       ^-----^ -> gives |888,888| and next pos at 7
+ *
+ * PRE-CONDITIONS:
+ *  const int _table[][MAX_COLUMNS]: integer array
+ *  const char input[]             : input string to process
+ *  int &_pos                      : position of string by reference
+ *  int state                      : starting state (row) in adjacency table
+ *  string &token                  : valid token if found
+ *
+ * POST-CONDITIONS:
+ *  Success/fail process
+ *
+ * RETURN:
+ *  Boolean
+ ******************************************************************************/
 bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
                int state, std::string &token) {
-    bool peek_success = false,     // success state at peeking at next state
-        success = false;           // success state
-    char peek_char = '\0';         // peek at next character
-    int last_successful_pos = -1,  // last successful position
-        original_pos = _pos,       // store original position
-        peek_state = -1;           // peek at next state
-    std::string new_token;         // token for last full success
+    bool peek_success = false,  // success state at peeking at next state
+        success = false;        // success state
+    char peek_char = '\0';      // peek at next character
+    int success_pos = -1,       // last successful position
+        original_pos = _pos,    // store original position
+        peek_state = -1;        // peek at next state
 
     // loop until end of string and when state is not -1
     while(input[_pos] > -1 && input[_pos] != '\0' &&
-          _table[state][(input[_pos])] != -1) {
-        // get new state
-        state = _table[state][input[_pos]];
+          _table[state][input[_pos]] != -1) {
+        state = _table[state][input[_pos]];  // get new state
 
-        // get peek character, then get peek state, and then get peek success
-        peek_char = input[_pos + 1];
-        peek_state = _table[state][peek_char];
-        peek_success = _table[peek_state][0];
+        peek_char = input[_pos + 1];            // peek next char
+        peek_state = _table[state][peek_char];  // peek next state
+        peek_success = _table[peek_state][0];   // peek next success state
 
         // udpate new token when peeking at next success is fail or when NUL
         if(is_success(_table, state) &&
            (peek_char == '\0' || peek_state == -1 || !peek_success)) {
-            new_token.clear();
-            last_successful_pos = _pos;
+            success_pos = _pos;
             success = true;
         }
 
         ++_pos;
     }
 
-    // create new token when last successful pos (default = -1) is >=0
-    for(int i = original_pos; i < last_successful_pos + 1; ++i) {
-        new_token += input[i];
-    }
-
-    // if success, return new token and new position after last successful pos
-    // else, return original position via reference
     if(success) {
-        token = new_token;
-        _pos = last_successful_pos + 1;
+        // clear and create new token when success pos (default = -1)
+        token.clear();
+        for(int i = original_pos; i < success_pos + 1; ++i) {
+            token += input[i];
+        }
+
+        _pos = success_pos + 1;  // return position after token
     } else {
         _pos = original_pos;
     }

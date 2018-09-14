@@ -52,20 +52,35 @@ void test_stokenizer() {
     using namespace stokenizer;
 
     std::cout << "test_stokenizer: ";
-
-    char s1[] = "3.14 Is.";
-    int test_states[4] = {
-        state_machine::STATE_DOUBLE, state_machine::STATE_SPACE,
-        state_machine::STATE_ALPHA, state_machine::STATE_UNKNOWN};
-    std::string test_types[4] = {"DOUBLE", "SPACE", "ALPHA", "UNKNOWN"},
-                test_strings[4] = {"3.14", " ", "Is", "."};
-    STokenizer stk(s1);
+    STokenizer stk;
     Token t;
-    for(int i = 0; i < 4; ++i) {
-        stk >> t;
-        assert(t.type() == test_states[i]);
-        assert(t.type_string() == test_types[i]);
-        assert(t.token_str() == test_strings[i]);
+
+    // test empty string
+    char s0[] = "";
+    stk.set_string(s0);
+    stk >> t;
+    assert(t.type_string() == "UNKNOWN");
+    assert(t.token_str().empty() == true);
+
+    // test string 1
+    char s1[] = "Account balance: $100,000.00, $100000.00, or just $100000?";
+    std::string test_types_s1[] = {"ALPHA", "SPACE", "ALPHA",  "PUNCT",
+                                   "SPACE", "PUNCT", "DOUBLE", "PUNCT",
+                                   "SPACE", "PUNCT", "DOUBLE", "PUNCT",
+                                   "SPACE", "ALPHA", "SPACE",  "ALPHA",
+                                   "SPACE", "PUNCT", "DOUBLE", "PUNCT"},
+                test_strings_s1[] = {"Account", " ",  "balance",    ":",
+                                     " ",       "$",  "100,000.00", ",",
+                                     " ",       "$",  "100000.00",  ",",
+                                     " ",       "or", " ",          "just",
+                                     " ",       "$",  "100000",     "?"};
+
+    stk.set_string(s1);
+    int i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s1[i]);
+        assert(t.token_str() == test_strings_s1[i]);
+        ++i;
     }
 
     std::cout << "passed." << std::endl;

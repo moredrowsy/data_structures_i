@@ -21,7 +21,7 @@
 
 namespace stokenizer {
 
-const int MAX_BUFFER = 999;
+const int MAX_BUFFER = 1000;
 
 class Token {
 public:
@@ -48,8 +48,9 @@ public:
     STokenizer(char str[]);  // cstring param assertion < MAX_BUFFER
 
     // ACCESSORS
-    bool done() const;  // true: there are no more tokens
-    bool more() const;  // true: there are more tokens
+    bool done() const;               // true: there are no more tokens
+    bool more() const;               // true: there are more tokens
+    explicit operator bool() const;  // provides explicit boolean conversion
 
     // MUTATORS
     // set a new string as the input string

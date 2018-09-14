@@ -52,20 +52,15 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
 // mark this row and column
 void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state);
 
+// mark table for generic states
+void mark_table_generic(int _table[][MAX_COLUMNS], int start_state,
+                        const char columns[]);
+
 // mark table for STATE_DOUBLE
 void mark_table_double(int _table[][MAX_COLUMNS], int start_state);
 
 // mark table for STATE_FRACTION
 void mark_table_fraction(int _table[][MAX_COLUMNS], int start_state);
-
-// mark table for STATE_SPACE
-void mark_table_space(int _table[][MAX_COLUMNS], int start_state);
-
-// mark table for STATE_ALPHA
-void mark_table_alpha(int _table[][MAX_COLUMNS], int start_state);
-
-// mark table for STATE_PUNCT
-void mark_table_punct(int _table[][MAX_COLUMNS], int start_state);
 
 // this can realistically be used on a small table
 void print_table(const int _table[][MAX_COLUMNS]);
