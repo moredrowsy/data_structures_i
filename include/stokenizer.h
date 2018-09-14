@@ -9,7 +9,9 @@
  *      tokens. The STokenizer will receive an input/buffer string (via
  *      constructor or set_string) and returns a valid token (via the insertion
  *      operator) from its starting position by its internal state machine,
- *      which follows the rules set in the adjacency matrix.
+ *      which follows the rules set in the adjacency matrix. STokenizer also
+ *      maintains position current position of the input string when extracting
+ *      token.
  ******************************************************************************/
 #ifndef STOKENIZER_H
 #define STOKENIZER_H
@@ -44,8 +46,6 @@ public:
     // CONSTRUCTORS
     STokenizer();
     STokenizer(char str[]);  // cstring param assertion < MAX_BUFFER
-
-    // BIG THREE
 
     // ACCESSORS
     bool done() const;  // true: there are no more tokens

@@ -6,8 +6,8 @@ CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 INCLUDE			= ../include
 SRC				= ../src
 
-tests: tests.o my_washer.o my_airport.o state_machine.o
-	$(CC) tests.o my_washer.o my_airport.o state_machine.o -o tests.out
+tests: tests.o my_washer.o my_airport.o state_machine.o stokenizer.o
+	$(CC) tests.o my_washer.o my_airport.o state_machine.o stokenizer.o -o tests.out
 
 tests.o: test_all.cpp\
 	${SRC}/*.cpp\

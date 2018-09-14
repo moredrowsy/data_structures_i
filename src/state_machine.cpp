@@ -53,6 +53,223 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
     _table[row][column] = state;
 }
 
+void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
+    // MARK SUCCESS/FAILURE
+    // state[+0] ---> fail
+    // state[+1] ---> success
+    // state[+2] ---> success
+    // state[+3] ---> success
+    // state[+4] ---> fail
+    // state[+5] ---> fail
+    // state[+6] ---> fail
+    // state[+7] ---> success
+    // state[+8] ---> fail
+    // state[+9] ---> success
+    mark_fail(_table, STATE_DOUBLE + 0);
+    mark_success(_table, STATE_DOUBLE + 1);
+    mark_success(_table, STATE_DOUBLE + 2);
+    mark_success(_table, STATE_DOUBLE + 3);
+    mark_fail(_table, STATE_DOUBLE + 4);
+    mark_fail(_table, STATE_DOUBLE + 5);
+    mark_fail(_table, STATE_DOUBLE + 6);
+    mark_success(_table, STATE_DOUBLE + 7);
+    mark_fail(_table, STATE_DOUBLE + 8);
+    mark_success(_table, STATE_DOUBLE + 9);
+
+    // MARK CELLS
+    // state [+0] --- DIGIT ---> [+1]
+    // state [+0] --- '.' -----> [+8]
+    // state [+1] --- DIGIT ---> [+2]
+    // state [+1] --- ',' -----> [+4]
+    // state [+1] --- '.' -----> [+8]
+    // state [+2] --- DIGIT ---> [+3]
+    // state [+2] --- ',' -----> [+4]
+    // state [+2] --- '.' -----> [+8]
+    // state [+3] --- DIGIT ---> [+3]
+    // state [+3] --- ',' -----> [+4]
+    // state [+3] --- '.' -----> [+8]
+    // state [+4] --- DIGIT ---> [+5]
+    // state [+5] --- DIGIT ---> [+6]
+    // state [+6] --- DIGIT ---> [+7]
+    // state [+7] --- ',' -----> [+4]
+    // state [+7] --- '.' -----> [+8]
+    // state [+8] --- DIGIT ---> [+9]
+    // state [+9] --- DIGIT ---> [+9]
+    mark_cells(STATE_DOUBLE + 0, _table, DIGIT, STATE_DOUBLE + 1);
+    mark_cells(STATE_DOUBLE + 0, _table, '.', '.', STATE_DOUBLE + 8);
+    mark_cells(STATE_DOUBLE + 1, _table, DIGIT, STATE_DOUBLE + 2);
+    mark_cells(STATE_DOUBLE + 1, _table, ',', ',', STATE_DOUBLE + 4);
+    mark_cells(STATE_DOUBLE + 1, _table, '.', '.', STATE_DOUBLE + 8);
+    mark_cells(STATE_DOUBLE + 2, _table, DIGIT, STATE_DOUBLE + 3);
+    mark_cells(STATE_DOUBLE + 2, _table, ',', ',', STATE_DOUBLE + 4);
+    mark_cells(STATE_DOUBLE + 2, _table, '.', '.', STATE_DOUBLE + 8);
+    mark_cells(STATE_DOUBLE + 3, _table, DIGIT, STATE_DOUBLE + 3);
+    mark_cells(STATE_DOUBLE + 3, _table, ',', ',', STATE_DOUBLE + 4);
+    mark_cells(STATE_DOUBLE + 3, _table, '.', '.', STATE_DOUBLE + 8);
+    mark_cells(STATE_DOUBLE + 4, _table, DIGIT, STATE_DOUBLE + 5);
+    mark_cells(STATE_DOUBLE + 5, _table, DIGIT, STATE_DOUBLE + 6);
+    mark_cells(STATE_DOUBLE + 6, _table, DIGIT, STATE_DOUBLE + 7);
+    mark_cells(STATE_DOUBLE + 7, _table, ',', ',', STATE_DOUBLE + 4);
+    mark_cells(STATE_DOUBLE + 7, _table, '.', '.', STATE_DOUBLE + 8);
+    mark_cells(STATE_DOUBLE + 8, _table, DIGIT, STATE_DOUBLE + 9);
+    mark_cells(STATE_DOUBLE + 9, _table, DIGIT, STATE_DOUBLE + 9);
+}
+
+void mark_table_fraction(int _table[][MAX_COLUMNS], int start_state) {
+    // MARK SUCCESS/FAILURE
+    // state[+0] ---> fail
+    // state[+1] ---> fail
+    // state[+2] ---> fail
+    // state[+3] ---> fail
+    // state[+4] ---> fail
+    // state[+5] ---> fail
+    // state[+6] ---> fail
+    // state[+7] ---> fail
+    // state[+8] ---> fail
+    // state[+9] ---> fail
+    // state[+10] --> fail
+    // state[+11] --> fail
+    // state[+12] --> fail
+    // state[+13] --> fail
+    // state[+14] --> fail
+    // state[+15] --> success
+    // state[+16] --> fail
+    // state[+17] --> success
+    mark_fail(_table, STATE_FRACTION + 0);
+    mark_fail(_table, STATE_FRACTION + 1);
+    mark_fail(_table, STATE_FRACTION + 2);
+    mark_fail(_table, STATE_FRACTION + 3);
+    mark_fail(_table, STATE_FRACTION + 4);
+    mark_fail(_table, STATE_FRACTION + 5);
+    mark_fail(_table, STATE_FRACTION + 6);
+    mark_fail(_table, STATE_FRACTION + 7);
+    mark_fail(_table, STATE_FRACTION + 8);
+    mark_fail(_table, STATE_FRACTION + 9);
+    mark_fail(_table, STATE_FRACTION + 10);
+    mark_fail(_table, STATE_FRACTION + 11);
+    mark_fail(_table, STATE_FRACTION + 12);
+    mark_fail(_table, STATE_FRACTION + 13);
+    mark_fail(_table, STATE_FRACTION + 14);
+    mark_success(_table, STATE_FRACTION + 15);
+    mark_fail(_table, STATE_FRACTION + 16);
+    mark_success(_table, STATE_FRACTION + 17);
+
+    // MARK CELLS
+    // state [+0] --- DIGIT ---> [+1]
+    // state [+0] --- '.' -----> [+8]
+    // state [+1] --- DIGIT ---> [+2]
+    // state [+1] --- ',' -----> [+4]
+    // state [+1] --- '.' -----> [+8]
+    // state [+1] --- ' ' -----> [+10]
+    // state [+1] --- '/' -----> [+12]
+    // state [+2] --- DIGIT ---> [+2]
+    // state [+2] --- ',' -----> [+4]
+    // state [+2] --- '.' -----> [+8]
+    // state [+2] --- ' ' -----> [+10]
+    // state [+2] --- '/' -----> [+12]
+    // state [+3] --- DIGIT ---> [+3]
+    // state [+3] --- ',' -----> [+4]
+    // state [+3] --- '.' -----> [+8]
+    // state [+3] --- ' ' -----> [+10]
+    // state [+3] --- '/' -----> [+12]
+    // state [+4] --- DIGIT ---> [+5]
+    // state [+5] --- DIGIT ---> [+6]
+    // state [+6] --- DIGIT ---> [+7]
+    // state [+7] --- ',' -----> [+4]
+    // state [+7] --- '.' -----> [+8]
+    // state [+7] --- ' ' -----> [+10]
+    // state [+8] --- DIGIT ---> [+9]
+    // state [+9] --- DIGIT ---> [+9]
+    // state [+9] --- '/' ----> [+12]
+    // state [+10] --- DIGIT --> [+11]
+    // state [+11] --- DIGIT --> [+11]
+    // state [+11] --- '/' ----> [+12]
+    // state [+11] --- '.' ----> [+13]
+    // state [+12] --- DIGIT --> [+15]
+    // state [+13] --- DIGIT --> [+14]
+    // state [+14] --- '/' ----> [+12]
+    // state [+14] --- DIGIT --> [+14]
+    // state [+15] --- DIGIT --> [+15]
+    // state [+15] --- '.' ----> [+16]
+    // state [+16] --- DIGIT --> [+17]
+    // state [+17] --- DIGIT --> [+17]
+    mark_cells(STATE_FRACTION + 0, _table, DIGIT, STATE_FRACTION + 1);
+    mark_cells(STATE_FRACTION + 0, _table, '.', '.', STATE_FRACTION + 8);
+    mark_cells(STATE_FRACTION + 1, _table, DIGIT, STATE_FRACTION + 2);
+    mark_cells(STATE_FRACTION + 1, _table, ',', ',', STATE_FRACTION + 4);
+    mark_cells(STATE_FRACTION + 1, _table, '.', '.', STATE_FRACTION + 8);
+    mark_cells(STATE_FRACTION + 1, _table, ' ', ' ', STATE_FRACTION + 10);
+    mark_cells(STATE_FRACTION + 1, _table, '/', '/', STATE_FRACTION + 12);
+    mark_cells(STATE_FRACTION + 2, _table, DIGIT, STATE_FRACTION + 3);
+    mark_cells(STATE_FRACTION + 2, _table, ',', ',', STATE_FRACTION + 4);
+    mark_cells(STATE_FRACTION + 2, _table, '.', '.', STATE_FRACTION + 8);
+    mark_cells(STATE_FRACTION + 2, _table, ' ', ' ', STATE_FRACTION + 10);
+    mark_cells(STATE_FRACTION + 2, _table, '/', '/', STATE_FRACTION + 12);
+    mark_cells(STATE_FRACTION + 3, _table, DIGIT, STATE_FRACTION + 3);
+    mark_cells(STATE_FRACTION + 3, _table, ',', ',', STATE_FRACTION + 4);
+    mark_cells(STATE_FRACTION + 3, _table, '.', '.', STATE_FRACTION + 8);
+    mark_cells(STATE_FRACTION + 3, _table, ' ', ' ', STATE_FRACTION + 10);
+    mark_cells(STATE_FRACTION + 3, _table, '/', '/', STATE_FRACTION + 12);
+    mark_cells(STATE_FRACTION + 4, _table, DIGIT, STATE_FRACTION + 5);
+    mark_cells(STATE_FRACTION + 5, _table, DIGIT, STATE_FRACTION + 6);
+    mark_cells(STATE_FRACTION + 6, _table, DIGIT, STATE_FRACTION + 7);
+    mark_cells(STATE_FRACTION + 7, _table, ',', ',', STATE_FRACTION + 4);
+    mark_cells(STATE_FRACTION + 7, _table, '.', '.', STATE_FRACTION + 8);
+    mark_cells(STATE_FRACTION + 7, _table, ' ', ' ', STATE_FRACTION + 10);
+    mark_cells(STATE_FRACTION + 8, _table, DIGIT, STATE_FRACTION + 9);
+    mark_cells(STATE_FRACTION + 9, _table, DIGIT, STATE_FRACTION + 9);
+    mark_cells(STATE_FRACTION + 9, _table, ' ', ' ', STATE_FRACTION + 10);
+    mark_cells(STATE_FRACTION + 9, _table, '/', '/', STATE_FRACTION + 12);
+    mark_cells(STATE_FRACTION + 10, _table, DIGIT, STATE_FRACTION + 11);
+    mark_cells(STATE_FRACTION + 11, _table, DIGIT, STATE_FRACTION + 11);
+    mark_cells(STATE_FRACTION + 11, _table, '/', '/', STATE_FRACTION + 12);
+    mark_cells(STATE_FRACTION + 11, _table, '.', '.', STATE_FRACTION + 13);
+    mark_cells(STATE_FRACTION + 12, _table, DIGIT, STATE_FRACTION + 15);
+    mark_cells(STATE_FRACTION + 13, _table, DIGIT, STATE_FRACTION + 14);
+    mark_cells(STATE_FRACTION + 14, _table, '/', '/', STATE_FRACTION + 12);
+    mark_cells(STATE_FRACTION + 14, _table, DIGIT, STATE_FRACTION + 14);
+    mark_cells(STATE_FRACTION + 15, _table, DIGIT, STATE_FRACTION + 15);
+    mark_cells(STATE_FRACTION + 15, _table, '.', '.', STATE_FRACTION + 16);
+    mark_cells(STATE_FRACTION + 16, _table, DIGIT, STATE_FRACTION + 17);
+    mark_cells(STATE_FRACTION + 17, _table, DIGIT, STATE_FRACTION + 17);
+}
+
+void mark_table_space(int _table[][MAX_COLUMNS], int start_state) {
+    // MARK SUCCESS/FAILURE
+    mark_fail(_table, start_state + 0);     // fail states: +0
+    mark_success(_table, start_state + 1);  // success states: +1
+
+    // MARK CELLS
+    // state [+0] --- SPACE ---> [+1]
+    // state [+1] --- SPACE ---> [+1]
+    mark_cells(start_state + 0, _table, SPACE, start_state + 1);
+    mark_cells(start_state + 1, _table, SPACE, start_state + 1);
+}
+
+void mark_table_alpha(int _table[][MAX_COLUMNS], int start_state) {
+    // MARK SUCCESS/FAILURE
+    mark_fail(_table, start_state + 0);     // fail states: +0
+    mark_success(_table, start_state + 1);  // success states: +1
+
+    // MARK CELLS
+    // state [+0] --- ALPHA ---> [+1]
+    // state [+1] --- ALPHA ---> [+1]
+    mark_cells(start_state + 0, _table, ALPHA, start_state + 1);
+    mark_cells(start_state + 1, _table, ALPHA, start_state + 1);
+}
+
+void mark_table_punct(int _table[][MAX_COLUMNS], int start_state) {
+    // MARK SUCCESS/FAILURE
+    mark_fail(_table, start_state + 0);     // fail states: +0
+    mark_success(_table, start_state + 1);  // success states: +1
+
+    // MARK CELLS
+    // state [+0] --- PUNCT ---> [+1]
+    // state [+1] --- PUNCT ---> [+1]
+    mark_cells(start_state + 0, _table, PUNCT, start_state + 1);
+    mark_cells(start_state + 1, _table, PUNCT, start_state + 1);
+}
+
 void print_table(const int _table[][MAX_COLUMNS]) {
     int cols_per_row = 11, count = 1, value_len;
 
@@ -148,36 +365,17 @@ void show_string(const char s[], int _pos) {
 
 bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
                int state, std::string &token) {
-    bool debug = false;
-
     bool peek_success = false,     // success state at peeking at next state
-        success_state = false;     // success state
+        success = false;           // success state
     char peek_char = '\0';         // peek at next character
     int last_successful_pos = -1,  // last successful position
         original_pos = _pos,       // store original position
         peek_state = -1;           // peek at next state
     std::string new_token;         // token for last full success
-    if(debug) {
-        print_table(_table);
-        std::cout << std::endl
-                  << "----" << std::endl
-                  << "string is = " << input << std::endl
-                  << "----" << std::endl;
-        std::cout << "original state = " << state << ", current pos = " << _pos
-                  << ", current char = '" << input[_pos] << "'"
-                  << ", is success = " << is_success(_table, state)
-                  << std::endl;
-    }
 
     // loop until end of string and when state is not -1
-    while(input[_pos] != '\0' && _table[state][(input[_pos])] != -1) {
-        if(debug) {
-            std::cout << "-----" << std::endl;
-            std::cout << "original state = " << state
-                      << ", current pos = " << _pos << ", current char = '"
-                      << input[_pos] << "'" << std::endl;
-        }
-
+    while(input[_pos] > -1 && input[_pos] != '\0' &&
+          _table[state][(input[_pos])] != -1) {
         // get new state
         state = _table[state][input[_pos]];
 
@@ -186,29 +384,12 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         peek_state = _table[state][peek_char];
         peek_success = _table[peek_state][0];
 
-        if(debug) {
-            std::cout << "new state = " << state << ", peek char = ";
-            if(peek_char == '\0') {
-                std::cout << "'NUL'";
-            } else {
-                std::cout << "'" << peek_char << "'";
-            }
-            std::cout << ", success = " << is_success(_table, state);
-            std::cout << ", peek state = " << peek_state;
-
-            std::cout << ", peek success = " << peek_success << std::endl;
-        }
-
         // udpate new token when peeking at next success is fail or when NUL
         if(is_success(_table, state) &&
            (peek_char == '\0' || peek_state == -1 || !peek_success)) {
-            new_token = "";
+            new_token.clear();
             last_successful_pos = _pos;
-            success_state = true;
-
-            if(debug) {
-                std::cout << "new token creation" << std::endl;
-            }
+            success = true;
         }
 
         ++_pos;
@@ -219,20 +400,16 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         new_token += input[i];
     }
 
-    if(debug) {
-        std::cout << "new token = " << new_token << std::endl;
-    }
-
-    // if new_token is empty, return original position via reference
-    // else, return new token and pos stays updated via reference
-    if(new_token.empty()) {
-        _pos = original_pos;
-    } else {
+    // if success, return new token and new position after last successful pos
+    // else, return original position via reference
+    if(success) {
         token = new_token;
         _pos = last_successful_pos + 1;
+    } else {
+        _pos = original_pos;
     }
 
-    return success_state;
+    return success;
 }
 
 }  // namespace state_machine

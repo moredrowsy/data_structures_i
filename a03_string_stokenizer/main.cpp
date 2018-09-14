@@ -18,9 +18,28 @@
 void extract_tokens(char s[]);
 
 int main() {
-    char s1[] = "it was the night of october 17th. pi was still 3.14.";
-
+    char s1[] =
+        "@user says \"It was October 17th. and pi was still 3.14 and so lost a "
+        "£4 bet!\"";
+    std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
+              << "|" << s1 << "|" << std::endl
+              << std::endl;
     extract_tokens(s1);
+
+    std::cout << std::endl << std::endl;
+    char s2[] = "100000.03 is the same as 100,000.03 or 1,000.03 == 1000.03!";
+    std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
+              << "|" << s2 << "|" << std::endl
+              << std::endl;
+    extract_tokens(s2);
+
+    std::cout << std::endl << std::endl;
+    char s3[] =
+        "Fractions are: 1,000 1/3 is same as 1000.00 1/3 or another 1.0/10.0?";
+    std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
+              << "|" << s3 << "|" << std::endl
+              << std::endl;
+    extract_tokens(s3);
 
     return 0;
 }

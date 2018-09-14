@@ -1,20 +1,25 @@
+Buffer string is (excluding pipe symbol):
+|@user says "It was October 17th. and pi was still 3.14 and so lost a Â£4 bet!"|
+
       TYPE TOKEN
 ---------- ----------
-     ALPHA |it|
+     PUNCT |@|
+     ALPHA |user|
+     SPACE | |
+     ALPHA |says|
+     SPACE | |
+     PUNCT |"|
+     ALPHA |It|
      SPACE | |
      ALPHA |was|
      SPACE | |
-     ALPHA |the|
-     SPACE | |
-     ALPHA |night|
-     SPACE | |
-     ALPHA |of|
-     SPACE | |
-     ALPHA |october|
+     ALPHA |October|
      SPACE | |
     DOUBLE |17|
      ALPHA |th|
-   UNKNOWN |.|
+     PUNCT |.|
+     SPACE | |
+     ALPHA |and|
      SPACE | |
      ALPHA |pi|
      SPACE | |
@@ -23,4 +28,73 @@
      ALPHA |still|
      SPACE | |
     DOUBLE |3.14|
-   UNKNOWN |.|
+     SPACE | |
+     ALPHA |and|
+     SPACE | |
+     ALPHA |so|
+     SPACE | |
+     ALPHA |lost|
+     SPACE | |
+     ALPHA |a|
+     SPACE | |
+   UNKNOWN |Â|
+   UNKNOWN |£|
+    DOUBLE |4|
+     SPACE | |
+     ALPHA |bet|
+     PUNCT |!"|
+
+
+Buffer string is (excluding pipe symbol):
+|100000.03 is the same as 100,000.03 or 1,000.03 == 1000.03!|
+
+      TYPE TOKEN
+---------- ----------
+    DOUBLE |100000.03|
+     SPACE | |
+     ALPHA |is|
+     SPACE | |
+     ALPHA |the|
+     SPACE | |
+     ALPHA |same|
+     SPACE | |
+     ALPHA |as|
+     SPACE | |
+    DOUBLE |100,000.03|
+     SPACE | |
+     ALPHA |or|
+     SPACE | |
+    DOUBLE |1,000.03|
+     SPACE | |
+     PUNCT |==|
+     SPACE | |
+    DOUBLE |1000.03|
+     PUNCT |!|
+
+
+Buffer string is (excluding pipe symbol):
+|Fractions are: 1,000 1/3 is same as 1000.00 1/3 or another 1.0/10.0?|
+
+      TYPE TOKEN
+---------- ----------
+     ALPHA |Fractions|
+     SPACE | |
+     ALPHA |are|
+     PUNCT |:|
+     SPACE | |
+  FRACTION |1,000 1/3|
+     SPACE | |
+     ALPHA |is|
+     SPACE | |
+     ALPHA |same|
+     SPACE | |
+     ALPHA |as|
+     SPACE | |
+  FRACTION |1000.00 1/3|
+     SPACE | |
+     ALPHA |or|
+     SPACE | |
+     ALPHA |another|
+     SPACE | |
+  FRACTION |1.0/10.0|
+     PUNCT |?|

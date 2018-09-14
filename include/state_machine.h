@@ -10,19 +10,25 @@
 #ifndef STATE_MACHINE_H
 #define STATE_MACHINE_H
 
-#include <string>
+#include <string>  // provides string
 
 namespace state_machine {
 
 // GLOBAL CONSTANTS
-const int MAX_COLUMNS = 256, MAX_ROWS = 30;
-const char DIGITS[] = "0123456789";
-const char SPACE[] = " ";
+const int MAX_COLUMNS = 256, MAX_ROWS = 60;
+const char DIGIT[] = "0123456789";
+const char SPACE[] = " \n\r\t\v";
 const char ALPHA[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const char PUNCT[] = "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+// WARNING: MAKE SURE EACH STATE DO NOT OVERLAP IN ROWS!!!
 const int STATE_UNKNOWN = -1;  // unknown state
-const int STATE_DOUBLE = 0;    // use rows 0 - 9
-const int STATE_SPACE = 10;    // use rows 10 - 19
-const int STATE_ALPHA = 20;    // use rows 20 - 29
+const int STATE_FRACTION = 0;  // allocate 20 rows
+const int STATE_DOUBLE = 20;   // allocate 10 rows
+const int STATE_SPACE = 30;    // allocate 10 rows
+const int STATE_ALPHA = 40;    // allocate 10 rows
+const int STATE_PUNCT = 50;    // allocate 10 rows
+
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);
 
@@ -45,6 +51,21 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
 
 // mark this row and column
 void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state);
+
+// mark table for STATE_DOUBLE
+void mark_table_double(int _table[][MAX_COLUMNS], int start_state);
+
+// mark table for STATE_FRACTION
+void mark_table_fraction(int _table[][MAX_COLUMNS], int start_state);
+
+// mark table for STATE_SPACE
+void mark_table_space(int _table[][MAX_COLUMNS], int start_state);
+
+// mark table for STATE_ALPHA
+void mark_table_alpha(int _table[][MAX_COLUMNS], int start_state);
+
+// mark table for STATE_PUNCT
+void mark_table_punct(int _table[][MAX_COLUMNS], int start_state);
 
 // this can realistically be used on a small table
 void print_table(const int _table[][MAX_COLUMNS]);

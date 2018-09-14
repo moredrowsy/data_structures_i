@@ -5,6 +5,7 @@
 #include "test_my_stack.h"
 #include "test_my_washer.h"
 #include "test_state_machine.h"
+#include "test_stokenizer.h"
 
 int main() {
     test_my_node::test_all();
@@ -18,6 +19,8 @@ int main() {
     test_my_airport::test_all();
     std::cout << std::endl;
     test_state_machine::test_all();
+    std::cout << std::endl;
+    test_stokenizer::test_all();
 
     return 0;
 }
