@@ -1,22 +1,25 @@
-CC 				= g++
+CXX 			= g++
 DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Wall -Werror=return-type
+EXTRA_CCFLAGS   = -Werror=return-type #-Wall
 CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
-INCLUDE		= ../include
-SRC			= ../src
+INC				= ../include
+SRC				= ../src
+OBJ				= main.o state_machine.o
 
-main: main.o state_machine.o
-	$(CC) main.o state_machine.o -o main.out
+main.out: $(OBJ)
+	$(CXX) -o $@ $^
 
 main.o: main.cpp
-	$(CC) $(CXXFLAGS) -c main.cpp
+	$(CXX) $(CXXFLAGS) -c $<
 
 state_machine.o: ${SRC}/state_machine.cpp\
-	${INCLUDE}/state_machine.h\
-	${INCLUDE}/my_queue.h\
-	${INCLUDE}/my_node.h
-	$(CC) $(CXXFLAGS) -c ${SRC}/state_machine.cpp
+	${INC}/state_machine.h\
+	${INC}/my_queue.h\
+	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+.PHONY: clean
 
 clean:
 	rm -f *.o *.out

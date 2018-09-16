@@ -1,81 +1,109 @@
-CC 				= g++
+CXX 			= g++
 DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Wall -Werror=return-type
+EXTRA_CCFLAGS   = -Werror=return-type -Wall
 CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
-INCLUDE			= ../include
+INC				= ../include
 SRC				= ../src
+OBJ				= test_all.o my_washer.o my_airport.o state_machine.o\
+				  stokenizer.o
 
-tests: tests.o my_washer.o my_airport.o state_machine.o stokenizer.o
-	$(CC) tests.o my_washer.o my_airport.o state_machine.o stokenizer.o -o tests.out
+# tests for al files
+tests.out: $(OBJ)
+	$(CXX) -o $@ $^
 
-tests.o: test_all.cpp\
-	${SRC}/*.cpp\
-	${INCLUDE}/*.h
-	$(CC) $(CXXFLAGS) -c test_all.cpp -o tests.o
+tests_all.o: test_all.cpp\
+	${INC}/*.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_my_node: test_my_node.o
-	$(CC) test_my_node.o -o test_my_node.out
+# test for my_node
+test_my_node.out: test_my_node.o
+	$(CXX) -o $@ $^
 
-test_my_node.o: test_my_node.cpp test_my_node.h\
-	${INCLUDE}/my_node.h
-	$(CC) $(CXXFLAGS) -c test_my_node.cpp -o test_my_node.o
+test_my_node.o: test_my_node.cpp\
+	test_my_node.h\
+	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_my_queue: test_my_queue.o
-	$(CC) test_my_queue.o -o test_my_queue.out
+# test for my_queue
+test_my_queue.out: test_my_queue.o
+	$(CXX) -o $@ $^
 
-test_my_queue.o: test_my_queue.cpp test_my_queue.h\
-	${INCLUDE}/my_node.h\
-	${INCLUDE}/my_queue.h
-	$(CC) $(CXXFLAGS) -c test_my_queue.cpp -o test_my_queue.o
+test_my_queue.o: test_my_queue.cpp\
+	test_my_queue.h\
+	${INC}/my_queue.h\
+	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_my_stack: test_my_stack.o
-	$(CC) test_my_stack.o -o test_my_stack.out
+# test for my_stack
+test_my_stack.out: test_my_stack.o
+	$(CXX) -o $@ $^
 
-test_my_stack.o: test_my_stack.cpp test_my_stack.h\
-	${INCLUDE}/my_node.h\
-	${INCLUDE}/my_stack.h
-	$(CC) $(CXXFLAGS) -c test_my_stack.cpp -o test_my_stack.o
+test_my_stack.o: test_my_stack.cpp\
+	test_my_stack.h\
+	${INC}/my_stack.h\
+	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_my_washer: test_my_washer.o my_washer.o
-	$(CC) test_my_washer.o my_washer.o -o test_my_washer.out
+# test for my_washer
+test_my_washer.out: test_my_washer.o\
+	my_washer.o
+	$(CXX) -o $@ $^
 
-test_my_washer.o: test_my_washer.cpp test_my_washer.h
-	$(CC) $(CXXFLAGS) -c test_my_washer.cpp
+test_my_washer.o: test_my_washer.cpp\
+	test_my_washer.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-my_washer.o: ${SRC}/my_washer.cpp ${INCLUDE}/my_washer.h\
-	${INCLUDE}/my_queue.h
-	$(CC) $(CXXFLAGS) -c ${SRC}/my_washer.cpp
+my_washer.o: ${SRC}/my_washer.cpp\
+	${INC}/my_washer.h\
+	${INC}/my_queue.h\
+	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_my_airport: test_my_airport.o my_airport.o
-	$(CC) test_my_airport.o my_airport.o -o test_my_airport.out
+# test for my_airport
+test_my_airport.out: test_my_airport.o\
+	my_airport.o
+	$(CXX) -o $@ $^
 
-test_my_airport.o: test_my_airport.cpp test_my_airport.h
-	$(CC) $(CXXFLAGS) -c test_my_airport.cpp
+test_my_airport.o: test_my_airport.cpp\
+	test_my_airport.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-my_airport.o: ${SRC}/my_airport.cpp ${INCLUDE}/my_airport.h\
-	${INCLUDE}/my_queue.h
-	$(CC) $(CXXFLAGS) -c ${SRC}/my_airport.cpp
+my_airport.o: ${SRC}/my_airport.cpp\
+	${INC}/my_airport.h\
+	${INC}/my_queue.h\
+	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_state_machine: test_state_machine.o state_machine.o
-	$(CC) test_state_machine.o state_machine.o -o test_state_machine.out
+# test for state_machine
+test_state_machine.out: test_state_machine.o\
+	state_machine.o
+	$(CXX) -o $@ $^
 
-test_state_machine.o: test_state_machine.cpp test_state_machine.h
-	$(CC) $(CXXFLAGS) -c test_state_machine.cpp
+test_state_machine.o: test_state_machine.cpp\
+	test_state_machine.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-state_machine.o: ${SRC}/state_machine.cpp ${INCLUDE}/state_machine.h\
-	${INCLUDE}/my_queue.h
-	$(CC) $(CXXFLAGS) -c ${SRC}/state_machine.cpp
+state_machine.o: ${SRC}/state_machine.cpp\
+	${INC}/state_machine.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-test_stokenizer: test_stokenizer.o state_machine.o stokenizer.o
-	$(CC) test_stokenizer.o state_machine.o stokenizer.o -o test_stokenizer.out
+# test for stokenizer
+test_stokenizer.out: test_stokenizer.o\
+	state_machine.o\
+	stokenizer.o
+	$(CXX) -o $@ $^
 
-test_stokenizer.o: test_stokenizer.cpp test_stokenizer.h
-	$(CC) $(CXXFLAGS) -c test_stokenizer.cpp
+test_stokenizer.o: test_stokenizer.cpp\
+	test_stokenizer.h
+	$(CXX) $(CXXFLAGS) -c $<
 
-stokenizer.o: ${SRC}/stokenizer.cpp ${INCLUDE}/stokenizer.h\
-	${INCLUDE}/my_queue.h
-	$(CC) $(CXXFLAGS) -c ${SRC}/stokenizer.cpp
+stokenizer.o: ${SRC}/stokenizer.cpp\
+	${INC}/stokenizer.h\
+	${INC}/state_machine.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+.PHONY: clean
 
 clean:
 	rm -f *.o *.out

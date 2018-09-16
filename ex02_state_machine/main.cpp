@@ -9,9 +9,6 @@ int main() {
     // initialize table with -1
     init_table(_table);
 
-    // mark table for STATE_FRACTION
-    mark_table_fraction(_table, STATE_FRACTION);
-
     // mark table for STATE_DOUBLE
     mark_table_double(_table, STATE_DOUBLE);
 

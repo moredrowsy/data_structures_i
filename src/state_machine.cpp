@@ -1,7 +1,4 @@
 #include "../include/state_machine.h"  // state_machine declarations
-#include <cassert>                     // provides assert
-#include <iomanip>                     // stream formatting
-#include <iostream>                    // output stream
 
 namespace state_machine {
 
@@ -274,140 +271,6 @@ void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Mark the table's cells with fail/success states and the adjacency values
- *  for searching for FRACTION token.
- *
- * PRE-CONDITIONS:
- *  int _table[][MAX_COLUMNS]: integer array
- *  int start_state          : 0 to MAX_ROWS - 1
- *
- * POST-CONDITIONS:
- *  Cells are marked with state
- *
- * RETURN:
- *  none
- ******************************************************************************/
-void mark_table_fraction(int _table[][MAX_COLUMNS], int start_state) {
-    // MARK SUCCESS/FAILURE
-    // state [+0] ---> fail
-    // state [+1] ---> fail
-    // state [+2] ---> fail
-    // state [+3] ---> fail
-    // state [+4] ---> fail
-    // state [+5] ---> fail
-    // state [+6] ---> fail
-    // state [+7] ---> fail
-    // state [+8] ---> fail
-    // state [+9] ---> fail
-    // state [+10] --> fail
-    // state [+11] --> fail
-    // state [+12] --> fail
-    // state [+13] --> fail
-    // state [+14] --> fail
-    // state [+15] --> success
-    // state [+16] --> fail
-    // state [+17] --> success
-    mark_fail(_table, STATE_FRACTION + 0);
-    mark_fail(_table, STATE_FRACTION + 1);
-    mark_fail(_table, STATE_FRACTION + 2);
-    mark_fail(_table, STATE_FRACTION + 3);
-    mark_fail(_table, STATE_FRACTION + 4);
-    mark_fail(_table, STATE_FRACTION + 5);
-    mark_fail(_table, STATE_FRACTION + 6);
-    mark_fail(_table, STATE_FRACTION + 7);
-    mark_fail(_table, STATE_FRACTION + 8);
-    mark_fail(_table, STATE_FRACTION + 9);
-    mark_fail(_table, STATE_FRACTION + 10);
-    mark_fail(_table, STATE_FRACTION + 11);
-    mark_fail(_table, STATE_FRACTION + 12);
-    mark_fail(_table, STATE_FRACTION + 13);
-    mark_fail(_table, STATE_FRACTION + 14);
-    mark_success(_table, STATE_FRACTION + 15);
-    mark_fail(_table, STATE_FRACTION + 16);
-    mark_success(_table, STATE_FRACTION + 17);
-
-    // MARK CELLS
-    // state [+0] --- DIGIT ---> [+1]
-    // state [+0] --- '.' -----> [+8]
-    // state [+1] --- DIGIT ---> [+2]
-    // state [+1] --- ',' -----> [+4]
-    // state [+1] --- '.' -----> [+8]
-    // state [+1] --- ' ' -----> [+10]
-    // state [+1] --- '/' -----> [+12]
-    // state [+2] --- DIGIT ---> [+2]
-    // state [+2] --- ',' -----> [+4]
-    // state [+2] --- '.' -----> [+8]
-    // state [+2] --- ' ' -----> [+10]
-    // state [+2] --- '/' -----> [+12]
-    // state [+3] --- DIGIT ---> [+3]
-    // state [+3] --- ',' -----> [+4]
-    // state [+3] --- '.' -----> [+8]
-    // state [+3] --- ' ' -----> [+10]
-    // state [+3] --- '/' -----> [+12]
-    // state [+4] --- DIGIT ---> [+5]
-    // state [+5] --- DIGIT ---> [+6]
-    // state [+6] --- DIGIT ---> [+7]
-    // state [+7] --- ',' -----> [+4]
-    // state [+7] --- '.' -----> [+8]
-    // state [+7] --- ' ' -----> [+10]
-    // state [+8] --- DIGIT ---> [+9]
-    // state [+9] --- DIGIT ---> [+9]
-    // state [+9] --- '/' ----> [+12]
-    // state [+10] --- DIGIT --> [+11]
-    // state [+11] --- DIGIT --> [+11]
-    // state [+11] --- '/' ----> [+12]
-    // state [+11] --- '.' ----> [+13]
-    // state [+12] --- DIGIT --> [+15]
-    // state [+13] --- DIGIT --> [+14]
-    // state [+14] --- '/' ----> [+12]
-    // state [+14] --- DIGIT --> [+14]
-    // state [+15] --- DIGIT --> [+15]
-    // state [+15] --- '.' ----> [+16]
-    // state [+16] --- DIGIT --> [+17]
-    // state [+17] --- DIGIT --> [+17]
-    mark_cells(STATE_FRACTION + 0, _table, DIGIT, STATE_FRACTION + 1);
-    mark_cells(STATE_FRACTION + 0, _table, '.', '.', STATE_FRACTION + 8);
-    mark_cells(STATE_FRACTION + 1, _table, DIGIT, STATE_FRACTION + 2);
-    mark_cells(STATE_FRACTION + 1, _table, ',', ',', STATE_FRACTION + 4);
-    mark_cells(STATE_FRACTION + 1, _table, '.', '.', STATE_FRACTION + 8);
-    mark_cells(STATE_FRACTION + 1, _table, ' ', ' ', STATE_FRACTION + 10);
-    mark_cells(STATE_FRACTION + 1, _table, '/', '/', STATE_FRACTION + 12);
-    mark_cells(STATE_FRACTION + 2, _table, DIGIT, STATE_FRACTION + 3);
-    mark_cells(STATE_FRACTION + 2, _table, ',', ',', STATE_FRACTION + 4);
-    mark_cells(STATE_FRACTION + 2, _table, '.', '.', STATE_FRACTION + 8);
-    mark_cells(STATE_FRACTION + 2, _table, ' ', ' ', STATE_FRACTION + 10);
-    mark_cells(STATE_FRACTION + 2, _table, '/', '/', STATE_FRACTION + 12);
-    mark_cells(STATE_FRACTION + 3, _table, DIGIT, STATE_FRACTION + 3);
-    mark_cells(STATE_FRACTION + 3, _table, ',', ',', STATE_FRACTION + 4);
-    mark_cells(STATE_FRACTION + 3, _table, '.', '.', STATE_FRACTION + 8);
-    mark_cells(STATE_FRACTION + 3, _table, ' ', ' ', STATE_FRACTION + 10);
-    mark_cells(STATE_FRACTION + 3, _table, '/', '/', STATE_FRACTION + 12);
-    mark_cells(STATE_FRACTION + 4, _table, DIGIT, STATE_FRACTION + 5);
-    mark_cells(STATE_FRACTION + 5, _table, DIGIT, STATE_FRACTION + 6);
-    mark_cells(STATE_FRACTION + 6, _table, DIGIT, STATE_FRACTION + 7);
-    mark_cells(STATE_FRACTION + 7, _table, ',', ',', STATE_FRACTION + 4);
-    mark_cells(STATE_FRACTION + 7, _table, '.', '.', STATE_FRACTION + 8);
-    mark_cells(STATE_FRACTION + 7, _table, ' ', ' ', STATE_FRACTION + 10);
-    mark_cells(STATE_FRACTION + 8, _table, DIGIT, STATE_FRACTION + 9);
-    mark_cells(STATE_FRACTION + 9, _table, DIGIT, STATE_FRACTION + 9);
-    mark_cells(STATE_FRACTION + 9, _table, ' ', ' ', STATE_FRACTION + 10);
-    mark_cells(STATE_FRACTION + 9, _table, '/', '/', STATE_FRACTION + 12);
-    mark_cells(STATE_FRACTION + 10, _table, DIGIT, STATE_FRACTION + 11);
-    mark_cells(STATE_FRACTION + 11, _table, DIGIT, STATE_FRACTION + 11);
-    mark_cells(STATE_FRACTION + 11, _table, '/', '/', STATE_FRACTION + 12);
-    mark_cells(STATE_FRACTION + 11, _table, '.', '.', STATE_FRACTION + 13);
-    mark_cells(STATE_FRACTION + 12, _table, DIGIT, STATE_FRACTION + 15);
-    mark_cells(STATE_FRACTION + 13, _table, DIGIT, STATE_FRACTION + 14);
-    mark_cells(STATE_FRACTION + 14, _table, '/', '/', STATE_FRACTION + 12);
-    mark_cells(STATE_FRACTION + 14, _table, DIGIT, STATE_FRACTION + 14);
-    mark_cells(STATE_FRACTION + 15, _table, DIGIT, STATE_FRACTION + 15);
-    mark_cells(STATE_FRACTION + 15, _table, '.', '.', STATE_FRACTION + 16);
-    mark_cells(STATE_FRACTION + 16, _table, DIGIT, STATE_FRACTION + 17);
-    mark_cells(STATE_FRACTION + 17, _table, DIGIT, STATE_FRACTION + 17);
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Prints the table to console.
  *
  * PRE-CONDITIONS:
@@ -584,7 +447,7 @@ void show_string(const char s[], int _pos) {
  *  Success/fail process
  *
  * RETURN:
- *  Boolean
+ *  boolean
  ******************************************************************************/
 bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
                int state, std::string &token) {
@@ -595,11 +458,10 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         original_pos = _pos,    // store original position
         peek_state = -1;        // peek at next state
 
-    // loop until end of string and when state is not -1
-    while(input[_pos] > -1 && input[_pos] != '\0' &&
-          _table[state][input[_pos]] != -1) {
-        state = _table[state][input[_pos]];  // get new state
-
+    // loop until state and char (ascii) is not -1 and until end of string
+    while(input[_pos] > -1 && _table[state][input[_pos]] != -1 &&
+          input[_pos] != '\0') {
+        state = _table[state][input[_pos]];     // current state for char
         peek_char = input[_pos + 1];            // peek next char
         peek_state = _table[state][peek_char];  // peek next state
         peek_success = _table[peek_state][0];   // peek next success state

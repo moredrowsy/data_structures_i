@@ -12,7 +12,8 @@
 #ifndef MY_AIRPORT_H
 #define MY_AIRPORT_H
 
-#include <cstdlib>  // provides std::size_t
+#include <cassert>  // assertions
+#include <cstdlib>  // provides std::size_t and random generator
 
 namespace my_airport {
 

@@ -9,7 +9,7 @@
 #ifndef MY_STACK_H
 #define MY_STACK_H
 
-#include <cassert>               // provides asssert
+#include <cassert>               // assertions
 #include "../include/my_node.h"  // Node class
 
 namespace my_stack {

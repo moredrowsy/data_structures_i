@@ -1,17 +1,22 @@
-CC 				= g++
+CXX 			= g++
 DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Wall -Werror=return-type
+EXTRA_CCFLAGS   = -Werror=return-type -Wall
 CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
-INCLUDE		= ../include
+INC				= ../include
+SRC				= ../src
+OBJ				= main.o
 
-main: main.o
-	$(CC) main.o -o main.out
+main.out: $(OBJ)
+	$(CXX) -o $@ $^
 
-main.o: main.cpp ${INCLUDE}/my_node.h\
-	${INCLUDE}/my_queue.h\
-	${INCLUDE}/my_stack.h
-	$(CC) $(CXXFLAGS) -c main.cpp
+main.o: main.cpp\
+	${INC}/my_node.h\
+	${INC}/my_queue.h\
+	${INC}/my_stack.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+.PHONY: clean
 
 clean:
 	rm -f *.o *.out

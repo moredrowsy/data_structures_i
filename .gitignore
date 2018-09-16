@@ -1,8 +1,10 @@
-**/*.pyc
-**/__pycache__
+**/*.gch
 **/*.o
 **/*.out
 **/*.pro
+**/*.pyc
+**/__pycache__
 **/*todo
 **/*.vscode
 /class_files
+/obj

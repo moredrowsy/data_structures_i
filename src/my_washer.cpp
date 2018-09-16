@@ -1,6 +1,4 @@
 #include "../include/my_washer.h"
-#include <cassert>
-#include <cstdlib>
 
 namespace my_washer {
 

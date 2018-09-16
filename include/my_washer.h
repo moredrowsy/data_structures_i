@@ -1,3 +1,5 @@
+#include <cassert>  // assertions
+#include <cstdlib>  // random generator
 #include "../include/my_queue.h"
 
 namespace my_washer {

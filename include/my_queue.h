@@ -9,7 +9,7 @@
 #ifndef MY_QUEUE_H
 #define MY_QUEUE_H
 
-#include <cassert>               // provides assert
+#include <cassert>               // assertions
 #include "../include/my_node.h"  // Node class
 
 namespace my_queue {
