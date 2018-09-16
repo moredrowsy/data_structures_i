@@ -16,7 +16,9 @@
 #ifndef STOKENIZER_H
 #define STOKENIZER_H
 
-#include <iostream>
+#include <cassert>   // assertions
+#include <cstring>   // strlen
+#include <iostream>  // stream objects
 #include "state_machine.h"
 
 namespace stokenizer {
@@ -50,7 +52,7 @@ public:
     // ACCESSORS
     bool done() const;               // true: there are no more tokens
     bool more() const;               // true: there are more tokens
-    explicit operator bool() const;  // provides explicit boolean conversion
+    explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
     // set a new string as the input string

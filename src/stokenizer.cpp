@@ -1,5 +1,4 @@
 #include "../include/stokenizer.h"  // stokenizer declarations
-#include <cassert>                  // provides assert
 
 namespace stokenizer {
 
@@ -42,9 +41,6 @@ std::string Token::type_string() const {
     switch(_type) {
         case state_machine::STATE_UNKNOWN:
             type_string = "UNKNOWN";
-            break;
-        case state_machine::STATE_FRACTION:
-            type_string = "FRACTION";
             break;
         case state_machine::STATE_DOUBLE:
             type_string = "DOUBLE";
@@ -95,9 +91,7 @@ std::string Token::token_str() const { return _token; }
  *  ostream by reference
  ******************************************************************************/
 std::ostream& operator<<(std::ostream& outs, const Token& t) {
-    outs << "|" + t.token_str() + "|";
-
-    return outs;
+    return outs << "|" + t.token_str() + "|";
 }
 
 /*******************************************************************************
@@ -161,7 +155,7 @@ STokenizer::STokenizer(char str[]) {
  * RETURN:
  *  boolean
  ******************************************************************************/
-bool STokenizer::done() const { return _buffer[_pos - 1] == '\0'; }
+bool STokenizer::done() const { return _pos > strlen(_buffer); }
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -176,12 +170,12 @@ bool STokenizer::done() const { return _buffer[_pos - 1] == '\0'; }
  * RETURN:
  *  boolean
  ******************************************************************************/
-bool STokenizer::more() const { return _buffer[_pos - 1] != '\0'; }
+bool STokenizer::more() const { return _pos <= strlen(_buffer); }
 
 /*******************************************************************************
  * DESCRIPTION:
  *  Explicit operator bool() overloading, such as in the case of using
- *  extraction operators. Ex: while(stkonizer >> token) statements.
+ *  extraction operators. Ex: while(stokenizer >> token) statements.
  *
  * PRE-CONDITIONS:
  *  none
@@ -192,7 +186,7 @@ bool STokenizer::more() const { return _buffer[_pos - 1] != '\0'; }
  * RETURN:
  *  boolean
  ******************************************************************************/
-STokenizer::operator bool() const { return more() ? true : false; }
+STokenizer::operator bool() const { return more(); }
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -212,6 +206,7 @@ void STokenizer::set_string(char str[]) {
     // copy string into buffer
     int index = 0;
     while(str[index] != '\0') {
+        assert(index < MAX_BUFFER - 1);  // assert index < MAX_BUFFER-1 in loop
         _buffer[index] = str[index];
         ++index;
     }
@@ -238,9 +233,6 @@ void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
 
     // initialize table with -1
     init_table(_table);
-
-    // mark table for STATE_FRACTION
-    mark_table_fraction(_table, STATE_FRACTION);
 
     // mark table for STATE_DOUBLE
     mark_table_double(_table, STATE_DOUBLE);
@@ -279,14 +271,12 @@ STokenizer& operator>>(STokenizer& s, Token& t) {
     std::string token;
 
     // process tokens one state at a time until unknown token
-    if(s.get_token(state_machine::STATE_FRACTION, token)) {
-        t = Token(token, state_machine::STATE_FRACTION);
-    } else if(s.get_token(state_machine::STATE_DOUBLE, token)) {
+    if(s.get_token(state_machine::STATE_DOUBLE, token)) {
         t = Token(token, state_machine::STATE_DOUBLE);
-    } else if(s.get_token(state_machine::STATE_SPACE, token)) {
-        t = Token(token, state_machine::STATE_SPACE);
     } else if(s.get_token(state_machine::STATE_ALPHA, token)) {
         t = Token(token, state_machine::STATE_ALPHA);
+    } else if(s.get_token(state_machine::STATE_SPACE, token)) {
+        t = Token(token, state_machine::STATE_SPACE);
     } else if(s.get_token(state_machine::STATE_PUNCT, token)) {
         t = Token(token, state_machine::STATE_PUNCT);
     } else {
