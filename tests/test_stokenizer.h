@@ -220,6 +220,20 @@ void test_stokenizer() {
         ++i;
     }
 
+    // test incorrectly formatted numbers
+    char s13[] = "1,000,0 10,000,000,0!";
+    std::string test_types_s13[] = {"DOUBLE", "PUNCT", "DOUBLE", "SPACE",
+                                    "DOUBLE", "PUNCT", "DOUBLE", "PUNCT"},
+                test_strings_s13[] = {"1,000",      ",", "0", " ",
+                                      "10,000,000", ",", "0", "!"};
+
+    stk.set_string(s13);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s13[i]);
+        ++i;
+    }
+
     std::cout << "passed." << std::endl;
 }
 
