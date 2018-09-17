@@ -62,37 +62,149 @@ void test_stokenizer() {
     assert(t.type_string() == "UNKNOWN");
     assert(t.token_str().empty() == true);
 
-    // test string 0
-    char s0[] = "1A? ";
-    std::string test_types_s0[] = {"DOUBLE", "ALPHA", "PUNCT", "SPACE"},
-                test_strings_s0[] = {"1", "A", "?", " "};
+    // test string 01
+    char s01[] = " ";
+    std::string test_types_s01[] = {"SPACE"}, test_strings_s01[] = {" "};
 
-    stk.set_string(s0);
+    stk.set_string(s01);
     i = 0;
     while(stk >> t) {
-        assert(t.type_string() == test_types_s0[i]);
-        assert(t.token_str() == test_strings_s0[i]);
+        assert(t.type_string() == test_types_s01[i]);
+        assert(t.token_str() == test_strings_s01[i]);
         ++i;
     }
 
-    // test string 1
-    char s1[] = "Account balance: $100,000.00, $100000.00, or just $100000?";
-    std::string test_types_s1[] = {"ALPHA", "SPACE", "ALPHA",  "PUNCT",
-                                   "SPACE", "PUNCT", "DOUBLE", "PUNCT",
-                                   "SPACE", "PUNCT", "DOUBLE", "PUNCT",
-                                   "SPACE", "ALPHA", "SPACE",  "ALPHA",
-                                   "SPACE", "PUNCT", "DOUBLE", "PUNCT"},
-                test_strings_s1[] = {"Account", " ",  "balance",    ":",
-                                     " ",       "$",  "100,000.00", ",",
-                                     " ",       "$",  "100000.00",  ",",
-                                     " ",       "or", " ",          "just",
-                                     " ",       "$",  "100000",     "?"};
+    // test string 02
+    char s02[] = "A";
+    std::string test_types_s02[] = {"ALPHA"}, test_strings_s02[] = {"A"};
 
-    stk.set_string(s1);
+    stk.set_string(s02);
     i = 0;
     while(stk >> t) {
-        assert(t.type_string() == test_types_s1[i]);
-        assert(t.token_str() == test_strings_s1[i]);
+        assert(t.type_string() == test_types_s02[i]);
+        assert(t.token_str() == test_strings_s02[i]);
+        ++i;
+    }
+
+    // test string 03
+    char s03[] = "1";
+    std::string test_types_s03[] = {"DOUBLE"}, test_strings_s03[] = {"1"};
+
+    stk.set_string(s03);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s03[i]);
+        assert(t.token_str() == test_strings_s03[i]);
+        ++i;
+    }
+
+    // test string 04
+    char s04[] = ".1";
+    std::string test_types_s04[] = {"DOUBLE"}, test_strings_s04[] = {".1"};
+
+    stk.set_string(s04);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s04[i]);
+        assert(t.token_str() == test_strings_s04[i]);
+        ++i;
+    }
+
+    // test string 05
+    char s05[] = "0.1";
+    std::string test_types_s05[] = {"DOUBLE"}, test_strings_s05[] = {"0.1"};
+
+    stk.set_string(s05);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s05[i]);
+        assert(t.token_str() == test_strings_s05[i]);
+        ++i;
+    }
+
+    // test string 06
+    char s06[] = "1.";
+    std::string test_types_s06[] = {"DOUBLE", "PUNCT"},
+                test_strings_s06[] = {"1", "."};
+
+    stk.set_string(s06);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s06[i]);
+        assert(t.token_str() == test_strings_s06[i]);
+        ++i;
+    }
+
+    // test string 07
+    char s07[] = "1.0";
+    std::string test_types_s07[] = {"DOUBLE"}, test_strings_s07[] = {"1.0"};
+
+    stk.set_string(s07);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s07[i]);
+        assert(t.token_str() == test_strings_s07[i]);
+        ++i;
+    }
+
+    // test string 08
+    char s08[] = "  ";
+    std::string test_types_s08[] = {"SPACE"}, test_strings_s08[] = {"  "};
+
+    stk.set_string(s08);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s08[i]);
+        assert(t.token_str() == test_strings_s08[i]);
+        ++i;
+    }
+
+    // test string 09
+    char s09[] = "1,000!";
+    std::string test_types_s09[] = {"DOUBLE", "PUNCT"},
+                test_strings_s09[] = {"1,000", "!"};
+
+    stk.set_string(s09);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s09[i]);
+        assert(t.token_str() == test_strings_s09[i]);
+        ++i;
+    }
+
+    // test string 10
+    char s10[] = "Account balance: $100,000.00, $100000.00, or just $100000?";
+    std::string test_types_s10[] = {"ALPHA", "SPACE", "ALPHA",  "PUNCT",
+                                    "SPACE", "PUNCT", "DOUBLE", "PUNCT",
+                                    "SPACE", "PUNCT", "DOUBLE", "PUNCT",
+                                    "SPACE", "ALPHA", "SPACE",  "ALPHA",
+                                    "SPACE", "PUNCT", "DOUBLE", "PUNCT"},
+                test_strings_s10[] = {"Account", " ",  "balance",    ":",
+                                      " ",       "$",  "100,000.00", ",",
+                                      " ",       "$",  "100000.00",  ",",
+                                      " ",       "or", " ",          "just",
+                                      " ",       "$",  "100000",     "?"};
+
+    stk.set_string(s10);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s10[i]);
+        assert(t.token_str() == test_strings_s10[i]);
+        ++i;
+    }
+
+    // test string 11
+    char s11[] = "First line\nSecond line!";
+    std::string test_types_s11[] = {"ALPHA", "SPACE", "ALPHA", "SPACE",
+                                    "ALPHA", "SPACE", "ALPHA", "PUNCT"},
+                test_strings_s11[] = {"First",  " ", "line", "\n",
+                                      "Second", " ", "line", "!"};
+
+    stk.set_string(s11);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s11[i]);
+        assert(t.token_str() == test_strings_s11[i]);
         ++i;
     }
 

@@ -18,23 +18,32 @@
 void extract_tokens(char s[]);
 
 int main() {
+    const int TEST_SIZE = 9;
+    char *test_str[TEST_SIZE] = {"",   " ",   "!",   "A",     "1",
+                                 ".1", "0.1", "1.0", "1,000!"};
+
+    for(int i = 0; i < TEST_SIZE; ++i) {
+        std::cout << std::string(80, '=') << std::endl;
+        std::cout << "Starting extraction..." << std::endl << std::endl;
+        std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
+                  << "|" << test_str[i] << "|" << std::endl
+                  << std::endl;
+        extract_tokens(test_str[i]);
+        std::cout << std::endl << "Extraction done." << std::endl;
+        std::cout << std::string(80, '=') << std::endl;
+        std::cout << std::endl << std::endl;
+    }
+
     char s1[] =
-        "@user says \"It was October 17th. and pi was still 3.14 and so lost "
-        "$4,000.\"";
+        "It was October 17th. and pi was still 3.14 and so lost $4,000!";
+    std::cout << std::string(80, '=') << std::endl;
+    std::cout << "Starting extraction..." << std::endl << std::endl;
     std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
               << "|" << s1 << "|" << std::endl
               << std::endl;
     extract_tokens(s1);
-
-    std::cout << std::endl << std::endl;
-
-    char s2[] =
-        "Formatted numbers: 1,000, 10,000, 100,000 and incorrectly formatted "
-        "100,000,0.";
-    std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
-              << "|" << s2 << "|" << std::endl
-              << std::endl;
-    extract_tokens(s2);
+    std::cout << std::endl << "Extraction done." << std::endl;
+    std::cout << std::string(80, '=') << std::endl;
 
     return 0;
 }
