@@ -399,43 +399,6 @@ void show_string(const char s[], int _pos) {
  *  token. If get token fails to find a valid token, returns fail boolean and
  *  original position.
  *
- * PSEUDO CODE:
- *  While loop until char is non-ascii, until end of cstring, until state -1.
- *  -> Peek at next char, next state, and next success.
- *  -> If current state is success and next char is '\0', or next state is -1
- *     or next peek success fails, then set success = true and set success pos
- *     to current pos.
- *  -> Increase pos by 1
- *  When while loop is done or exits
- *  -> If success state is true, produce string token from original pos to
- *     successful pos. and update position to after token.
- *  -> Else, return original position.
- *  Return success boolean.
- *
- * ILLUSTRATION:
- *  String with pos = 0 with S = success state, F = fail state. Ignore pipe!
- *      |888,888,88|
- *       FFSFFFSFFFF
- *
- *  @ Partial success/fail, recorded success pos at 2:
- *      |888,888,88|
- *         ^^ -> 8 is @ success state, ',' is @ fail state
- *         SF -> success & !fail = success -> record pos
- *
- *  @ Partial success/fail, recorded success pos at 6:
- *      |888,888,88|
- *             ^^ -> 8 is @ success state, ',' is @ fail state
- *             SF -> success & !fail = success -> record pos
- *
- *  @ Full fail, record is not activated.
- *      |888,888,88|
- *                ^^ -> 8 is @ fail state, '\0' is @ fail state
- *                FF -> fail & !fail = fail -> not recorded
- *
- *  @ Record string from original pos to success pos 6:
- *      |888,888,88|
- *       ^-----^ -> gives |888,888| and next pos at 7
- *
  * PRE-CONDITIONS:
  *  const int _table[][MAX_COLUMNS]: integer array
  *  const char input[]             : input string to process
@@ -444,31 +407,24 @@ void show_string(const char s[], int _pos) {
  *  string &token                  : valid token if found
  *
  * POST-CONDITIONS:
- *  Success/fail process
+ *  Success/fail token extraction
  *
  * RETURN:
  *  boolean
  ******************************************************************************/
 bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
                int state, std::string &token) {
-    bool peek_success = false,  // success state at peeking at next state
-        success = false;        // success state
-    char peek_char = '\0';      // peek at next character
-    int success_pos = -1,       // last successful position
-        original_pos = _pos,    // store original position
-        peek_state = -1;        // peek at next state
+    bool success = false;     // get_token's success
+    int success_pos = -1,     // last successful position
+        original_pos = _pos;  // original position
 
     // loop until state and char (ascii) is not -1 and until end of string
     while(input[_pos] > -1 && _table[state][input[_pos]] != -1 &&
           input[_pos] != '\0') {
-        state = _table[state][input[_pos]];     // current state for char
-        peek_char = input[_pos + 1];            // peek next char
-        peek_state = _table[state][peek_char];  // peek next state
-        peek_success = _table[peek_state][0];   // peek next success state
+        state = _table[state][input[_pos]];  // current state for char
 
-        // udpate new token when peeking at next success is fail or when NUL
-        if(is_success(_table, state) &&
-           (peek_char == '\0' || peek_state == -1 || !peek_success)) {
+        // log success and success pos
+        if(is_success(_table, state)) {
             success_pos = _pos;
             success = true;
         }
@@ -483,7 +439,7 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
             token += input[i];
         }
 
-        _pos = success_pos + 1;  // return position after token
+        _pos = success_pos + 1;  // return next position
     } else {
         _pos = original_pos;
     }
