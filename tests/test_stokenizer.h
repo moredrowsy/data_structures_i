@@ -54,13 +54,26 @@ void test_stokenizer() {
     std::cout << "test_stokenizer: ";
     STokenizer stk;
     Token t;
+    int i;
 
     // test empty string
-    char s0[] = "";
-    stk.set_string(s0);
+    stk.set_string("");
     stk >> t;
     assert(t.type_string() == "UNKNOWN");
     assert(t.token_str().empty() == true);
+
+    // test string 0
+    char s0[] = "1A? ";
+    std::string test_types_s0[] = {"DOUBLE", "ALPHA", "PUNCT", "SPACE"},
+                test_strings_s0[] = {"1", "A", "?", " "};
+
+    stk.set_string(s0);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s0[i]);
+        assert(t.token_str() == test_strings_s0[i]);
+        ++i;
+    }
 
     // test string 1
     char s1[] = "Account balance: $100,000.00, $100000.00, or just $100000?";
@@ -76,7 +89,7 @@ void test_stokenizer() {
                                      " ",       "$",  "100000",     "?"};
 
     stk.set_string(s1);
-    int i = 0;
+    i = 0;
     while(stk >> t) {
         assert(t.type_string() == test_types_s1[i]);
         assert(t.token_str() == test_strings_s1[i]);

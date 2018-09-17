@@ -26,6 +26,16 @@ int main() {
               << std::endl;
     extract_tokens(s1);
 
+    std::cout << std::endl << std::endl;
+
+    char s2[] =
+        "Formatted numbers: 1,000, 10,000, 100,000 and incorrectly formatted "
+        "100,000,0.";
+    std::cout << "Buffer string is (excluding pipe symbol):" << std::endl
+              << "|" << s2 << "|" << std::endl
+              << std::endl;
+    extract_tokens(s2);
+
     return 0;
 }
 

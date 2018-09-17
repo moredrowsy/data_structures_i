@@ -38,3 +38,33 @@ Buffer string is (excluding pipe symbol):
      PUNCT |$|
     DOUBLE |4,000|
      PUNCT |."|
+
+
+Buffer string is (excluding pipe symbol):
+|Formatted numbers: 1,000, 10,000, 100,000 and incorrectly formatted 100,000,0.|
+
+      TYPE TOKEN
+---------- ----------
+     ALPHA |Formatted|
+     SPACE | |
+     ALPHA |numbers|
+     PUNCT |:|
+     SPACE | |
+    DOUBLE |1,000|
+     PUNCT |,|
+     SPACE | |
+    DOUBLE |10,000|
+     PUNCT |,|
+     SPACE | |
+    DOUBLE |100,000|
+     SPACE | |
+     ALPHA |and|
+     SPACE | |
+     ALPHA |incorrectly|
+     SPACE | |
+     ALPHA |formatted|
+     SPACE | |
+    DOUBLE |100,000|
+     PUNCT |,|
+    DOUBLE |0|
+     PUNCT |.|
