@@ -18,9 +18,10 @@
 void extract_tokens(char s[]);
 
 int main() {
-    const int TEST_SIZE = 9;
-    char *test_str[TEST_SIZE] = {"",   " ",   "!",   "A",     "1",
-                                 ".1", "0.1", "1.0", "1,000!"};
+    const int TEST_SIZE = 10;
+    char *test_str[TEST_SIZE] = {
+        "",   " ",   "!",   "A",      "1",
+        ".1", "0.1", "1.0", "1,000!", "Non-ascii: £ and ±!"};
 
     for(int i = 0; i < TEST_SIZE; ++i) {
         std::cout << std::string(80, '=') << std::endl;

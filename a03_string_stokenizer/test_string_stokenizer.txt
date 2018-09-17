@@ -128,6 +128,32 @@ Extraction done.
 Starting extraction...
 
 Buffer string is (excluding pipe symbol):
+|Non-ascii: Â£ and Â±!|
+
+      TYPE TOKEN
+---------- ----------
+     ALPHA |Non|
+     PUNCT |-|
+     ALPHA |ascii|
+     PUNCT |:|
+     SPACE | |
+   UNKNOWN |Â|
+   UNKNOWN |£|
+     SPACE | |
+     ALPHA |and|
+     SPACE | |
+   UNKNOWN |Â|
+   UNKNOWN |±|
+     PUNCT |!|
+
+Extraction done.
+================================================================================
+
+
+================================================================================
+Starting extraction...
+
+Buffer string is (excluding pipe symbol):
 |It was October 17th. and pi was still 3.14 and so lost $4,000!|
 
       TYPE TOKEN

@@ -208,6 +208,18 @@ void test_stokenizer() {
         ++i;
     }
 
+    // test unknown or non-ascii characters so that it doesn't crash
+    char s12[] = "£©±";
+    std::string test_types_s12[] = {"UNKNOWN", "UNKNOWN", "UNKNOWN",
+                                    "UNKNOWN", "UNKNOWN", "UNKNOWN"};
+
+    stk.set_string(s12);
+    i = 0;
+    while(stk >> t) {
+        assert(t.type_string() == test_types_s12[i]);
+        ++i;
+    }
+
     std::cout << "passed." << std::endl;
 }
 
