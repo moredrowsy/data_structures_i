@@ -23,6 +23,7 @@
 
 namespace stokenizer {
 
+// GLOBAL CONSTANT
 const int MAX_BUFFER = 500;
 
 class Token {
