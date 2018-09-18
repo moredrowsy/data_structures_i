@@ -56,11 +56,19 @@ void test_stokenizer() {
     Token t;
     int i;
 
+    // test default constructor
+    assert(t.type_string() == "UNKNOWN");
+    assert(t.token_str().empty() == true);
+    assert(stk.done() == true);
+    assert(stk.more() == false);
+
     // test empty string
     stk.set_string("");
     stk >> t;
     assert(t.type_string() == "UNKNOWN");
     assert(t.token_str().empty() == true);
+    assert(stk.done() == true);
+    assert(stk.more() == false);
 
     // test string 01
     char s01[] = " ";

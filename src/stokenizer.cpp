@@ -155,7 +155,9 @@ STokenizer::STokenizer(char str[]) {
  * RETURN:
  *  boolean
  ******************************************************************************/
-bool STokenizer::done() const { return _pos > strlen(_buffer); }
+bool STokenizer::done() const {
+    return strlen(_buffer) > 0 ? _pos > strlen(_buffer) : true;
+}
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -170,7 +172,9 @@ bool STokenizer::done() const { return _pos > strlen(_buffer); }
  * RETURN:
  *  boolean
  ******************************************************************************/
-bool STokenizer::more() const { return _pos <= strlen(_buffer); }
+bool STokenizer::more() const {
+    return strlen(_buffer) > 0 ? _pos <= strlen(_buffer) : false;
+}
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -287,6 +291,8 @@ STokenizer& operator>>(STokenizer& s, Token& t) {
 
         ++s._pos;  // when fail to get token, go to next position
     }
+
+    // std::cout << "stk extract called" << std::endl;
 
     return s;
 }
