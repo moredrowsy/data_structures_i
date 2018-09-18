@@ -23,7 +23,7 @@
 
 namespace stokenizer {
 
-const int MAX_BUFFER = 1000;
+const int MAX_BUFFER = 500;
 
 class Token {
 public:

@@ -16,13 +16,11 @@ public:
     // CONSTRUCTORS
     FTokenizer(char* fname);
 
-    // DESTRUCTOR
-    ~FTokenizer();
-
     // ACCESSORS
-    bool more() const;      // returns the current value of _more
-    int pos() const;        // returns the value of _pos
-    int block_pos() const;  // returns the value of _blockPos
+    bool more() const;               // returns the current value of _more
+    int pos() const;                 // returns the value of _pos
+    int block_pos() const;           // returns the value of _blockPos
+    explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
     stokenizer::Token next_token();
@@ -30,7 +28,7 @@ public:
     // FRIENDS
     friend FTokenizer& operator>>(FTokenizer& f, stokenizer::Token& t);
 
-private:
+    // private:
     bool get_new_block();         // gets the new block from the file
     std::ifstream _f;             // file being tokenized
     stokenizer::STokenizer _stk;  // STokenizer obj to tokenize current block
