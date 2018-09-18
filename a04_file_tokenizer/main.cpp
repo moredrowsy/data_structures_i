@@ -20,8 +20,8 @@ void extract_file() {
     while(ftk >> t) {
         if(t.type_string() == "ALPHA") {
             ++token_count;
-            std::cout << std::setw(10) << token_count << std::setw(3)
-                      << std::left << ":" << std::setw(25) << std::left
+            std::cout << std::setw(10) << std::left << token_count
+                      << std::setw(3) << ":" << std::setw(25) << std::left
                       << t.token_str() << t.type_string() << std::endl;
         }
     }
