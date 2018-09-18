@@ -10,7 +10,7 @@ FTokenizer::FTokenizer(char* fname) {
 
     _pos = 0;
     _blockPos = 0;
-    _more = true;
+    _more = false;
 }
 
 bool FTokenizer::more() const { return _more; }
@@ -24,14 +24,11 @@ FTokenizer::operator bool() const { return more(); }
 stokenizer::Token FTokenizer::next_token() {
     stokenizer::Token t;
 
+    // if stk has tokens, extract tokens, else get new block and extract tokens
     if(_stk.more()) {
         _stk >> t;
-    } else {
-        if(get_new_block()) {
-            _stk >> t;
-        } else {
-            _more = false;
-        }
+    } else if(_more = get_new_block()) {  // _more is updated by get_new_block
+        _stk >> t;
     }
 
     // update blockPos
