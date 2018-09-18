@@ -10,9 +10,9 @@
  *      Token object. Extraction on the Token object will output the string
  *      type and string token.
  ******************************************************************************/
-#include <iomanip>
-#include <iostream>
-#include "../include/stokenizer.h"
+#include <iomanip>                  // io stream foratting
+#include <iostream>                 // io stream objects
+#include "../include/stokenizer.h"  // state_machine, Token, STokenizer class
 
 // continuously extract tokens from char array
 void extract_tokens(char s[]);
