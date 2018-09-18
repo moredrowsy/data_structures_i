@@ -57,7 +57,7 @@ bool FTokenizer::get_new_block() {
         _stk.set_string(block);
 
         // pos variables not used in class but for info purposes
-        _pos = _f.tellg();
+        _pos += _f.gcount();
         _blockPos = 0;
     }
 

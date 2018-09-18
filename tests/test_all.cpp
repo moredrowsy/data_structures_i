@@ -1,4 +1,5 @@
 #include <iostream>
+#include "test_ftokenizer.h"
 #include "test_my_airport.h"
 #include "test_my_node.h"
 #include "test_my_queue.h"
@@ -21,6 +22,8 @@ int main() {
     test_state_machine::test_all();
     std::cout << std::endl;
     test_stokenizer::test_all();
+    std::cout << std::endl;
+    test_ftokenizer::test_all();
 
     return 0;
 }

@@ -14,7 +14,7 @@ void test_token();
 void test_stokenizer();
 
 // call all test functions
-void test_token();
+void test_all();
 
 void test_token() {
     using namespace stokenizer;

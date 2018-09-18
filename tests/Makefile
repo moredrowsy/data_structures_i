@@ -6,7 +6,7 @@ CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 INC				= ../include
 SRC				= ../src
 OBJ				= test_all.o my_washer.o my_airport.o state_machine.o\
-				  stokenizer.o
+				  stokenizer.o ftokenizer.o
 
 # tests for al files
 tests.out: $(OBJ)
@@ -99,8 +99,25 @@ test_stokenizer.o: test_stokenizer.cpp\
 	$(CXX) $(CXXFLAGS) -c $<
 
 stokenizer.o: ${SRC}/stokenizer.cpp\
+	${INC}/state_machine.h\
+	${INC}/stokenizer.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test for ftokenizer
+test_ftokenizer.out: test_ftokenizer.o\
+	state_machine.o\
+	stokenizer.o\
+    ftokenizer.o
+	$(CXX) -o $@ $^
+
+test_ftokenizer.o: test_ftokenizer.cpp\
+	test_ftokenizer.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+ftokenizer.o: ${SRC}/ftokenizer.cpp\
+	${INC}/state_machine.h\
 	${INC}/stokenizer.h\
-	${INC}/state_machine.h
+    ${INC}/ftokenizer.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
