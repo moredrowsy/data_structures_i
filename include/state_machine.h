@@ -55,11 +55,11 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
 void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state);
 
 // mark table for generic states
-void mark_table_generic(int _table[][MAX_COLUMNS], int start_state,
+void mark_table_generic(int _table[][MAX_COLUMNS], int state,
                         const char columns[]);
 
 // mark table for STATE_DOUBLE
-void mark_table_double(int _table[][MAX_COLUMNS], int start_state);
+void mark_table_double(int _table[][MAX_COLUMNS], int state);
 
 // this can realistically be used on a small table
 void print_table(const int _table[][MAX_COLUMNS]);

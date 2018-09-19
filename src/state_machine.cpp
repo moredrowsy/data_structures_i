@@ -169,7 +169,7 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
  *
  * PRE-CONDITIONS:
  *  int _table[][MAX_COLUMNS]: integer array
- *  int start_state          : 0 to MAX_ROWS - 1
+ *  int state          : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -177,19 +177,19 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
  * RETURN:
  *  none
  ******************************************************************************/
-void mark_table_generic(int _table[][MAX_COLUMNS], int start_state,
+void mark_table_generic(int _table[][MAX_COLUMNS], int state,
                         const char columns[]) {
     // MARK SUCCESS/FAILURE
     // state [+0] ---> fail
     // state [+1] ---> success
-    mark_fail(_table, start_state + 0);
-    mark_success(_table, start_state + 1);
+    mark_fail(_table, state + 0);
+    mark_success(_table, state + 1);
 
     // MARK CELLS
     // state [+0] --- VALUES --> [+1]
     // state [+1] --- VALUES --> [+1]
-    mark_cells(start_state + 0, _table, columns, start_state + 1);
-    mark_cells(start_state + 1, _table, columns, start_state + 1);
+    mark_cells(state + 0, _table, columns, state + 1);
+    mark_cells(state + 1, _table, columns, state + 1);
 }
 
 /*******************************************************************************
@@ -199,7 +199,7 @@ void mark_table_generic(int _table[][MAX_COLUMNS], int start_state,
  *
  * PRE-CONDITIONS:
  *  int _table[][MAX_COLUMNS]: integer array
- *  int start_state          : 0 to MAX_ROWS - 1
+ *  int state          : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -207,7 +207,7 @@ void mark_table_generic(int _table[][MAX_COLUMNS], int start_state,
  * RETURN:
  *  none
  ******************************************************************************/
-void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
+void mark_table_double(int _table[][MAX_COLUMNS], int state) {
     // MARK SUCCESS/FAILURE
     // state [+0] ---> fail
     // state [+1] ---> success
@@ -219,16 +219,16 @@ void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
     // state [+7] ---> success
     // state [+8] ---> fail
     // state [+9] ---> success
-    mark_fail(_table, STATE_DOUBLE + 0);
-    mark_success(_table, STATE_DOUBLE + 1);
-    mark_success(_table, STATE_DOUBLE + 2);
-    mark_success(_table, STATE_DOUBLE + 3);
-    mark_fail(_table, STATE_DOUBLE + 4);
-    mark_fail(_table, STATE_DOUBLE + 5);
-    mark_fail(_table, STATE_DOUBLE + 6);
-    mark_success(_table, STATE_DOUBLE + 7);
-    mark_fail(_table, STATE_DOUBLE + 8);
-    mark_success(_table, STATE_DOUBLE + 9);
+    mark_fail(_table, state + 0);
+    mark_success(_table, state + 1);
+    mark_success(_table, state + 2);
+    mark_success(_table, state + 3);
+    mark_fail(_table, state + 4);
+    mark_fail(_table, state + 5);
+    mark_fail(_table, state + 6);
+    mark_success(_table, state + 7);
+    mark_fail(_table, state + 8);
+    mark_success(_table, state + 9);
 
     // MARK CELLS
     // state [+0] --- DIGIT ---> [+1]
@@ -249,24 +249,24 @@ void mark_table_double(int _table[][MAX_COLUMNS], int start_state) {
     // state [+7] --- '.' -----> [+8]
     // state [+8] --- DIGIT ---> [+9]
     // state [+9] --- DIGIT ---> [+9]
-    mark_cells(STATE_DOUBLE + 0, _table, DIGIT, STATE_DOUBLE + 1);
-    mark_cells(STATE_DOUBLE + 0, _table, '.', '.', STATE_DOUBLE + 8);
-    mark_cells(STATE_DOUBLE + 1, _table, DIGIT, STATE_DOUBLE + 2);
-    mark_cells(STATE_DOUBLE + 1, _table, ',', ',', STATE_DOUBLE + 4);
-    mark_cells(STATE_DOUBLE + 1, _table, '.', '.', STATE_DOUBLE + 8);
-    mark_cells(STATE_DOUBLE + 2, _table, DIGIT, STATE_DOUBLE + 3);
-    mark_cells(STATE_DOUBLE + 2, _table, ',', ',', STATE_DOUBLE + 4);
-    mark_cells(STATE_DOUBLE + 2, _table, '.', '.', STATE_DOUBLE + 8);
-    mark_cells(STATE_DOUBLE + 3, _table, DIGIT, STATE_DOUBLE + 3);
-    mark_cells(STATE_DOUBLE + 3, _table, ',', ',', STATE_DOUBLE + 4);
-    mark_cells(STATE_DOUBLE + 3, _table, '.', '.', STATE_DOUBLE + 8);
-    mark_cells(STATE_DOUBLE + 4, _table, DIGIT, STATE_DOUBLE + 5);
-    mark_cells(STATE_DOUBLE + 5, _table, DIGIT, STATE_DOUBLE + 6);
-    mark_cells(STATE_DOUBLE + 6, _table, DIGIT, STATE_DOUBLE + 7);
-    mark_cells(STATE_DOUBLE + 7, _table, ',', ',', STATE_DOUBLE + 4);
-    mark_cells(STATE_DOUBLE + 7, _table, '.', '.', STATE_DOUBLE + 8);
-    mark_cells(STATE_DOUBLE + 8, _table, DIGIT, STATE_DOUBLE + 9);
-    mark_cells(STATE_DOUBLE + 9, _table, DIGIT, STATE_DOUBLE + 9);
+    mark_cells(state + 0, _table, DIGIT, state + 1);
+    mark_cells(state + 0, _table, '.', '.', state + 8);
+    mark_cells(state + 1, _table, DIGIT, state + 2);
+    mark_cells(state + 1, _table, ',', ',', state + 4);
+    mark_cells(state + 1, _table, '.', '.', state + 8);
+    mark_cells(state + 2, _table, DIGIT, state + 3);
+    mark_cells(state + 2, _table, ',', ',', state + 4);
+    mark_cells(state + 2, _table, '.', '.', state + 8);
+    mark_cells(state + 3, _table, DIGIT, state + 3);
+    mark_cells(state + 3, _table, ',', ',', state + 4);
+    mark_cells(state + 3, _table, '.', '.', state + 8);
+    mark_cells(state + 4, _table, DIGIT, state + 5);
+    mark_cells(state + 5, _table, DIGIT, state + 6);
+    mark_cells(state + 6, _table, DIGIT, state + 7);
+    mark_cells(state + 7, _table, ',', ',', state + 4);
+    mark_cells(state + 7, _table, '.', '.', state + 8);
+    mark_cells(state + 8, _table, DIGIT, state + 9);
+    mark_cells(state + 9, _table, DIGIT, state + 9);
 }
 
 /*******************************************************************************
