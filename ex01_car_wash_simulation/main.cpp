@@ -1,8 +1,10 @@
 /*******************************************************************************
- * AUTHOR    : Thuan Tang
- * ID        : 00991588
- * CLASS     : CS008
- * EXAMPLE 01: Car Wash Simulation
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * EXERCISE 01 : Car Wash
+ * DESCRIPTION : This application simulates a car wash wait times using Queue,
+ *      Average, BoolSource, and Washer.
  ******************************************************************************/
 #include <iostream>
 #include "../include/my_washer.h"

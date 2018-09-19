@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * EXERCISE 02 : State Machine
+ * DESCRIPTION : This application tests the state machine functions to generate
+ *      an adjacency table rules for the get_token to extract a token from a
+ *      a string with a given starting state and position in the string.
+ ******************************************************************************/
 #include <iostream>
 #include "../include/state_machine.h"
 

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * EXERCISE 03 : Recursive Fractals
+ * DESCRIPTION : This application runs a recursive fractal with output
+ *      statements to show every level of recursion stages.
+ ******************************************************************************/
 #include <cassert>   // assesrtions
 #include <cstdlib>   // random generator
 #include <iomanip>   // stream formatting
@@ -29,16 +37,20 @@ void random_fractal(double left_height, double right_height, double width,
     assert(epsilon > 0);
 
     if(width <= epsilon) {
-        std::cout << std::setw(10 * level) << std::right << level << "     ";
+        std::cout << std::setw(10 * level) << std::right << "B" << level
+                  << "     ";
         display(right_height);
     } else {
         mid_height = (left_height + right_height) / 2;
         mid_height += random_real(-width, width);
-        std::cout << std::setw(10 * level) << std::right << level << std::endl;
+        std::cout << std::setw(10 * level) << std::right << "F" << level
+                  << std::endl;
         random_fractal(left_height, mid_height, width / 2, epsilon, level + 1);
-        std::cout << std::setw(10 * level) << std::right << level << std::endl;
+        std::cout << std::setw(10 * level) << std::right << "S" << level
+                  << std::endl;
         random_fractal(mid_height, right_height, width / 2, epsilon, level + 1);
-        std::cout << std::setw(10 * level) << std::right << level << std::endl;
+        std::cout << std::setw(10 * level) << std::right << "L" << level
+                  << std::endl;
     }
 }
 
