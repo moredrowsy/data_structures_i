@@ -1,6 +1,6 @@
 CXX 			= g++
 DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Werror=return-type #-Wall
+EXTRA_CCFLAGS   = -Werror=return-type -Wall
 CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
 INC				= ../include

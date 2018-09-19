@@ -109,7 +109,7 @@ stokenizer::Token FTokenizer::next_token() {
     // if stk has tokens, extract tokens; else get new block and extract tokens
     if(_stk.more()) {
         _stk >> t;
-    } else if(_more = get_new_block()) {  // _more is updated by get_new_block
+    } else if((_more = get_new_block())) {  // _more assigned by get_new_block
         _stk >> t;
     }
 
@@ -158,15 +158,14 @@ bool FTokenizer::get_new_block() {
     _f.read(block, MAX_BLOCK - 1);
     block[_f.gcount()] = '\0';
 
-    /// add block to stk when gcount has valid char extracted in block
-    if(_f.gcount() > 0) {
+    // add block to stk when gcount has valid char extracted in block
+    if(_f.gcount()) {
         _stk.set_string(block);
-
         _pos += _f.gcount();  // update position in file
         _block_pos = 0;       // reset block position
     }
 
-    return _f.gcount() > 0 ? true : false;
+    return _f.gcount();
 }
 
 }  // namespace ftokenizer

@@ -7,11 +7,11 @@
  *      a composition of the ifstream and STokenizer, which in turn is a
  *      composition of the state machine and Token class. The mechanism of the
  *      FTokenizer class: Extraction operator calls next_token(), which checks
- *      if STokenizer has tokens to extract. If not, next_token() calls
- *      get_new_block(), which if success inserts a block string to STokenizer
- *      to extract tokens. If fail, it will set more() to false. Continuously
- *      calling the extraction operator will repeat the mechanism above until
- *      get_new_block() returns fail to more() and thus signal end of file.
+ *      if STokenizer has tokens to extract and extract. If not, next_token()
+ *      calls get_new_block(), which if success inserts a block string to
+ *      STokenizer to extract tokens. If fail, it will set more() to false.
+ *      Continuously calling the extraction operator will repeat the mechanism
+ *      above until get_new_block() returns fail to more() and thus signal EOF.
  *
  * NOTE: FTokenizer must be constructed with a valid cstring file name.
  ******************************************************************************/
