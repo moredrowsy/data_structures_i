@@ -17,7 +17,7 @@ void test_queue();
 // test the stack class via the big three (copy, assignment, and destructor)
 void test_stack();
 
-int main(int argc, char *argv[]) {
+int main() {
     test_queue();
     std::cout << std::endl;
     test_stack();

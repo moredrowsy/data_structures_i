@@ -1,11 +1,11 @@
-CXX 			= g++
-DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Werror=return-type #-Wall
-CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
+CXX 			:= g++
+DEBUG_LEVEL     := -g
+EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
+CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
-INC				= ../include
-SRC				= ../src
-OBJ				= main.o state_machine.o
+INC				:= ../include
+SRC				:= ../src
+OBJ				:= main.o state_machine.o
 
 main.out: $(OBJ)
 	$(CXX) -o $@ $^

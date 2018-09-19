@@ -1,11 +1,11 @@
-CXX 			= g++
-DEBUG_LEVEL     = -g
-EXTRA_CCFLAGS   = -Werror=return-type -Wall
-CXXFLAGS        = $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
+CXX 			:= g++
+DEBUG_LEVEL     := -g
+EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
+CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
-INC				= ../include
-SRC				= ../src
-OBJ				= test_all.o my_washer.o my_airport.o state_machine.o\
+INC				:= ../include
+SRC				:= ../src
+OBJ				:= test_all.o my_washer.o my_airport.o state_machine.o\
 				  stokenizer.o ftokenizer.o
 
 # tests for al files
