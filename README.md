@@ -8,3 +8,4 @@ Projects for data structures using C++
 * Assignment 04 - Extraction of tokens from file input stream
 * Exercise 01 - Car wash simulation using Queue
 * Exercise 02 - State machine to extract tokens via adjacency table
+* Exercise 03 - Recursive fractals
