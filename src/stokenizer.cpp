@@ -110,7 +110,6 @@ std::ostream& operator<<(std::ostream& outs, const Token& t) {
  ******************************************************************************/
 STokenizer::STokenizer() {
     _buffer[0] = '\0';
-    _buffer_size = 0;
     _pos = 0;
     make_table(_table);  // initialize table with adjacency rules
 }
@@ -139,7 +138,6 @@ STokenizer::STokenizer(char str[]) {
     }
     _buffer[index] = '\0';  // NUL terminate cstring
 
-    _buffer_size = index;  // store cstring size
     _pos = 0;
     make_table(_table);  // initialize table with adjacency rules
 }
@@ -147,6 +145,9 @@ STokenizer::STokenizer(char str[]) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Checks if there no tokens left in buffer cstring from current _pos.
+ *  Condition check: a) if length is zero and terminate, then true
+ *                   b) if length is greater than zero, next pos is past last
+ *                      pos is NUL, then true
  *
  * PRE-CONDITIONS:
  *  none
@@ -158,7 +159,7 @@ STokenizer::STokenizer(char str[]) {
  *  boolean
  ******************************************************************************/
 bool STokenizer::done() const {
-    return _buffer_size > 0 ? _pos > _buffer_size : true;
+    return _buffer[0] == '\0' ? true : _buffer[_pos - 1] == '\0';
 }
 
 /*******************************************************************************
@@ -175,7 +176,7 @@ bool STokenizer::done() const {
  *  boolean
  ******************************************************************************/
 bool STokenizer::more() const {
-    return _buffer_size > 0 ? _pos <= _buffer_size : false;
+    return _buffer[0] == '\0' ? false : _buffer[_pos - 1] != '\0';
 }
 
 /*******************************************************************************
@@ -217,9 +218,7 @@ void STokenizer::set_string(char str[]) {
         ++index;
     }
     _buffer[index] = '\0';  // NUL terminate cstring
-
-    _buffer_size = index;  // store cstring size
-    _pos = 0;              // reset cstring pos
+    _pos = 0;               // reset cstring pos
 }
 
 /*******************************************************************************
