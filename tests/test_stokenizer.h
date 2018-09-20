@@ -70,6 +70,18 @@ void test_stokenizer() {
     assert(stk.done() == true);
     assert(stk.more() == false);
 
+    // test on more insertion calls on empty string
+    stk >> t;
+    assert(t.type_string() == "UNKNOWN");
+    assert(t.token_str().empty() == true);
+    assert(stk.done() == true);
+    assert(stk.more() == false);
+    stk >> t;
+    assert(t.type_string() == "UNKNOWN");
+    assert(t.token_str().empty() == true);
+    assert(stk.done() == true);
+    assert(stk.more() == false);
+
     // test string 01
     char s01[] = " ";
     std::string test_types_s01[] = {"SPACE"}, test_strings_s01[] = {" "};

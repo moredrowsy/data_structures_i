@@ -110,38 +110,40 @@ std::ostream& operator<<(std::ostream& outs, const Token& t) {
  ******************************************************************************/
 STokenizer::STokenizer() {
     _buffer[0] = '\0';
+    _buffer_size = 0;
     _pos = 0;
     make_table(_table);  // initialize table with adjacency rules
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Default constructor initializes _buffer to cstring and _pos and calls
+ *  Default constructor initializes calls set_string to copy cstring into
+ *  _buffer, set _buffer_size to cstring len, reset _pos to 0 and calls
  *  make_table to initialize all values in table to -1.
  *
  * PRE-CONDITIONS:
  *  char str[]: cstring for input buffer
  *
  * POST-CONDITIONS:
- *  initialized member variables
+ *  initialized member variables via set_string() and make_table()
  *
  * RETURN:
  *  none
  ******************************************************************************/
 STokenizer::STokenizer(char str[]) {
-    set_string(str);     // copy cstring into buffer and reset pos to 0
+    set_string(str);     // copy cstring to buffer
     make_table(_table);  // initialize table with adjacency rules
 }
 
 /*******************************************************************************
  * DESCRIPTION:
  *  Checks if there no tokens left in buffer cstring from current _pos.
- *  Condition check: a) if length is zero and terminate, then true
- *                   b) if length is greater than zero, next pos is past last
- *                      pos is NUL, then true
+ *  Condition: a) if cstring's len is 0, then true.
+ *             b) if cstring's len > 0, evaluate prev pos is NUL terminate
+ *                to ensure done() only returns true once past NUL position.
  *
  * PRE-CONDITIONS:
- *  none
+ *  char _buffer[MAX_BUFFER]: cstring
  *
  * POST-CONDITIONS:
  *  none
@@ -150,12 +152,15 @@ STokenizer::STokenizer(char str[]) {
  *  boolean
  ******************************************************************************/
 bool STokenizer::done() const {
-    return _buffer[0] == '\0' ? true : _buffer[_pos - 1] == '\0';
+    return _buffer_size > 0 ? _pos > _buffer_size : true;
 }
 
 /*******************************************************************************
  * DESCRIPTION:
  *  Checks if there more tokens left in buffer cstring from current _pos.
+ *  Condition: a) if cstring's len is 0, then false.
+ *             b) if cstring's len > 0, evaluate prev pos is not NUL terminate
+ *                to ensure more() only returns false once past NUL position.
  *
  * PRE-CONDITIONS:
  *  none
@@ -167,7 +172,7 @@ bool STokenizer::done() const {
  *  boolean
  ******************************************************************************/
 bool STokenizer::more() const {
-    return _buffer[0] == '\0' ? false : _buffer[_pos - 1] != '\0';
+    return _buffer_size > 0 ? _pos <= _buffer_size : false;
 }
 
 /*******************************************************************************
@@ -195,6 +200,7 @@ STokenizer::operator bool() const { return more(); }
  *
  * POST-CONDITIONS:
  *  char _buffer[]: assigned to str[]
+ *  _buffer_size  : assigned to cstring size
  *  int _pos      : assigned to 0
  *
  * RETURN:
@@ -208,7 +214,9 @@ void STokenizer::set_string(char str[]) {
         _buffer[index] = str[index];
         ++index;
     }
+
     _buffer[index] = '\0';  // NUL terminate cstring
+    _buffer_size = index;   // set buffer size
     _pos = 0;               // reset cstring pos
 }
 
@@ -267,8 +275,10 @@ bool STokenizer::get_token(int start_state, std::string& token) {
 STokenizer& operator>>(STokenizer& s, Token& t) {
     std::string token;
 
-    // process tokens one state at a time until unknown token
-    if(s.get_token(state_machine::STATE_DOUBLE, token)) {
+    // process tokens one state at a time
+    if(s._pos > s._buffer_size) {  // bound check if call w/o more() or done()
+        t = Token();
+    } else if(s.get_token(state_machine::STATE_DOUBLE, token)) {
         t = Token(token, state_machine::STATE_DOUBLE);
     } else if(s.get_token(state_machine::STATE_ALPHA, token)) {
         t = Token(token, state_machine::STATE_ALPHA);
@@ -277,15 +287,13 @@ STokenizer& operator>>(STokenizer& s, Token& t) {
     } else if(s.get_token(state_machine::STATE_PUNCT, token)) {
         t = Token(token, state_machine::STATE_PUNCT);
     } else {
-        if(s._buffer[s._pos] == '\0')
+        if(s._pos == s._buffer_size)  // create empty token on NUL char
             t = Token();
-        else
+        else  // create token for UNKNOWN char
             t = Token(std::string(1, s._buffer[s._pos]));
 
         ++s._pos;  // when fail to get token, go to next position
     }
-
-    // std::cout << "stk extract called" << std::endl;
 
     return s;
 }
