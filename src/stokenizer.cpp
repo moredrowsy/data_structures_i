@@ -129,16 +129,7 @@ STokenizer::STokenizer() {
  *  none
  ******************************************************************************/
 STokenizer::STokenizer(char str[]) {
-    // copy string into buffer
-    int index = 0;
-    while(str[index] != '\0') {
-        assert(index < MAX_BUFFER - 1);  // assert index < MAX_BUFFER-1 in loop
-        _buffer[index] = str[index];
-        ++index;
-    }
-    _buffer[index] = '\0';  // NUL terminate cstring
-
-    _pos = 0;
+    set_string(str);     // copy cstring into buffer and reset pos to 0
     make_table(_table);  // initialize table with adjacency rules
 }
 
