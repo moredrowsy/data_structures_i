@@ -110,6 +110,7 @@ std::ostream& operator<<(std::ostream& outs, const Token& t) {
  ******************************************************************************/
 STokenizer::STokenizer() {
     _buffer[0] = '\0';
+    _buffer_size = 0;
     _pos = 0;
     make_table(_table);  // initialize table with adjacency rules
 }
@@ -136,8 +137,9 @@ STokenizer::STokenizer(char str[]) {
         _buffer[index] = str[index];
         ++index;
     }
-    _buffer[index] = '\0';
+    _buffer[index] = '\0';  // NUL terminate cstring
 
+    _buffer_size = index;  // store cstring size
     _pos = 0;
     make_table(_table);  // initialize table with adjacency rules
 }
@@ -156,7 +158,7 @@ STokenizer::STokenizer(char str[]) {
  *  boolean
  ******************************************************************************/
 bool STokenizer::done() const {
-    return strlen(_buffer) > 0 ? _pos > strlen(_buffer) : true;
+    return _buffer_size > 0 ? _pos > _buffer_size : true;
 }
 
 /*******************************************************************************
@@ -173,7 +175,7 @@ bool STokenizer::done() const {
  *  boolean
  ******************************************************************************/
 bool STokenizer::more() const {
-    return strlen(_buffer) > 0 ? _pos <= strlen(_buffer) : false;
+    return _buffer_size > 0 ? _pos <= _buffer_size : false;
 }
 
 /*******************************************************************************
@@ -214,9 +216,10 @@ void STokenizer::set_string(char str[]) {
         _buffer[index] = str[index];
         ++index;
     }
-    _buffer[index] = '\0';
+    _buffer[index] = '\0';  // NUL terminate cstring
 
-    _pos = 0;
+    _buffer_size = index;  // store cstring size
+    _pos = 0;              // reset cstring pos
 }
 
 /*******************************************************************************

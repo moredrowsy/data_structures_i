@@ -17,7 +17,6 @@
 #define STOKENIZER_H
 
 #include <cassert>   // assertions
-#include <cstring>   // strlen
 #include <iostream>  // stream objects
 #include "state_machine.h"
 
@@ -73,6 +72,7 @@ private:
     bool get_token(int start_state, std::string& token);
 
     char _buffer[MAX_BUFFER];  // input string
+    int _buffer_size;          // size of string
     int _pos;                  // current position in the string
     static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
 };
