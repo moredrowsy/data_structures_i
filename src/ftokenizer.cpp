@@ -87,15 +87,13 @@ FTokenizer::operator bool() const { return more(); }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Calls to extraction of token from STokenizer. If STokenizer's more() signal
- *  end of token extraction, then calls for reading next block in file stream
- *  via get_new_block(). If getting new block succeeds, then set cstring block
- *  to STokenizer and perform token extraction. If getting new block fails,
- *  then set _more to false to signal end of file.
+ *  Performs token extraction via _stk >> t. If _stk has no tokens to extract
+ *  from current buffer string, then call get_new_block to get a new block of
+ *  string from file and set it to _stk to extract more tokens.
  *
  * PRE-CONDITIONS:
- *  STokenizer stk : provides tokens extraction from cstring block
- *  get_new_block(): provides block of cstring
+ *  STokenizer _stk : provides tokens extraction from cstring
+ *  get_new_block(): get new block and set new block cstring to _stk
  *
  * POST-CONDITIONS:
  *  _more: true when get_new_block() succeeds; else false b/c of EOF.
@@ -104,15 +102,13 @@ FTokenizer::operator bool() const { return more(); }
  *  Token
  ******************************************************************************/
 stokenizer::Token FTokenizer::next_token() {
-    stokenizer::Token t;
-
-    // if stk has tokens, extract tokens; else get new block and extract tokens
-    if(_stk.more()) {
-        _stk >> t;
-    } else if((_more = get_new_block())) {  // _more assigned by get_new_block
-        _stk >> t;
+    // if _stk has no tokens to extract, get new block to set block to _stk
+    if(_stk.done()) {
+        _more = get_new_block();
     }
 
+    stokenizer::Token t;
+    _stk >> t;
     _block_pos += t.token_str().size();  // update block pos
 
     return t;
