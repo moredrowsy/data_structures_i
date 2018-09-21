@@ -17,7 +17,7 @@ namespace my_node {
 template <typename T>
 struct Node {
     // CONSTRUCTORS
-    Node(const T &item = T(), Node<T> *next = NULL)
+    Node(const T &item = T(), Node<T> *next = nullptr)
         : _item(item), _next(next) {}
 
     // VARIABLES
@@ -32,7 +32,7 @@ struct Node {
     }
 };
 
-// assigns pointer to NULL
+// assigns pointer to nullptr
 template <typename T>
 Node<T> *init_head(Node<T> *&head);
 
@@ -40,7 +40,7 @@ Node<T> *init_head(Node<T> *&head);
 template <typename T>
 void delete_all(Node<T> *&head);
 
-// true if head is NULL, false otherwise.
+// true if head is nullptr, false otherwise.
 template <typename T>
 bool empty(const Node<T> *head);
 
@@ -52,7 +52,7 @@ Node<T> *copy_list(const Node<T> *head, Node<T> *&cpy);
 template <typename T>
 Node<T> *insert_head(Node<T> *&head, T item);
 
-// insert_after: if after is NULL, inserts at head
+// insert_after: if after is nullptr, inserts at head
 template <typename T>
 Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item);
 
@@ -66,7 +66,7 @@ std::ostream &print_list(const Node<T> *head, std::ostream &outs = std::cout);
 
 template <typename T>
 Node<T> *init_head(Node<T> *&head) {
-    return head = NULL;
+    return head = nullptr;
 }
 
 /*******************************************************************************
@@ -77,17 +77,17 @@ Node<T> *init_head(Node<T> *&head) {
  *  Node<T> *&head: templated node
  *
  * POST-CONDITIONS:
- *  Node<T> *&head: assigns to NULL when all nodes deleted successfully
+ *  Node<T> *&head: assigns to nullptr when all nodes deleted successfully
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
 void delete_all(Node<T> *&head) {
-    Node<T> *pop = NULL;
+    Node<T> *pop = nullptr;
 
     // delete head until empty
-    while(head != NULL) {
+    while(head != nullptr) {
         pop = head;
         head = head->_next;
         delete pop;
@@ -96,20 +96,20 @@ void delete_all(Node<T> *&head) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Simply checks for NULL.
+ *  Simply checks for nullptr.
  *
  * PRE-CONDITIONS:
  *  Node<T> *&head: templated node
  *
  * POST-CONDITIONS:
- *  Node<T> *&head: assigns to NULL
+ *  Node<T> *&head: assigns to nullptr
  *
  * RETURN:
  *  Boolean condition.
  ******************************************************************************/
 template <typename T>
 bool empty(const Node<T> *head) {
-    return head == NULL;
+    return head == nullptr;
 }
 
 /*******************************************************************************
@@ -129,17 +129,17 @@ bool empty(const Node<T> *head) {
 template <typename T>
 Node<T> *copy_list(const Node<T> *head, Node<T> *&cpy) {
     // delete all nodes when target cpy is not empty
-    if(cpy != NULL) {
+    if(cpy != nullptr) {
         delete_all(cpy);
     }
 
     // initialize walker for cpy
-    Node<T> *copy_walker = NULL;
+    Node<T> *copy_walker = nullptr;
 
     // copy the rest of the nodes
-    while(head != NULL) {
+    while(head != nullptr) {
         // copy & assign first node to cpy, then copy the rest via walker
-        if(cpy == NULL) {
+        if(cpy == nullptr) {
             copy_walker = cpy = new Node<T>(head->_item);
             head = head->_next;
         } else {
@@ -175,17 +175,17 @@ Node<T> *insert_head(Node<T> *&head, T item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  New node is created with param of item to T, and next pointer NULL. When
- *  head or after is NULL, insert at head or when after is not NULL, insert
- *  behind after.
+ *  New node is created with param of item to T, and next pointer nullptr. When
+ *  head or after is nullptr, insert at head or when after is not nullptr,
+ *  insert behind after.
  *
  * PRE-CONDITIONS:
- *  Node<T> *&head: target node to insert when head or after is NULL
- *  Node<T> *after: target node to insert when after is not NULL
+ *  Node<T> *&head: target node to insert when head or after is nullptr
+ *  Node<T> *after: target node to insert when after is not nullptr
  *  T item        : templated item to copy into new node's item
  *
  * POST-CONDITIONS:
- *  New node is added at head when head or tail is NULL; else new node is
+ *  New node is added at head when head or tail is nullptr; else new node is
  *  inserted behind after.
  *
  * RETURN:
@@ -195,8 +195,8 @@ template <typename T>
 Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item) {
     Node<T> *insert = new Node<T>(item);
 
-    // when pointers are NULL, insert at head, else insert behind 'after'
-    if(head == NULL || after == NULL) {
+    // when pointers are nullptr, insert at head, else insert behind 'after'
+    if(head == nullptr || after == nullptr) {
         head = insert;
     } else {
         after->_next = insert;
@@ -247,7 +247,7 @@ T delete_head(Node<T> *&head) {
 template <typename T>
 std::ostream &print_list(const Node<T> *head, std::ostream &outs) {
     // print node's item until empty
-    while(head != NULL) {
+    while(head != nullptr) {
         outs << *head;
         head = head->_next;
     }

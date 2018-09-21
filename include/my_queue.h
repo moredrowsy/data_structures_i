@@ -18,7 +18,7 @@ template <typename T>
 class Queue {
 public:
     // CONSTRUCTORS
-    Queue() : _head(NULL), _tail(NULL) {}
+    Queue() : _head(nullptr), _tail(nullptr) {}
 
     // BIG THREE
     ~Queue();
@@ -27,7 +27,7 @@ public:
 
     // ACCESSORS
     T front() const;     // return head's item
-    bool empty() const;  // check boolean for head is NULL
+    bool empty() const;  // check boolean for head is nullptr
 
     // MUTATORS
     void push(T item);  // add item behind tail
@@ -52,7 +52,7 @@ private:
  *  none
  *
  * POST-CONDITIONS:
- *  _head: assigns to NULL when all nodes deleted successfully
+ *  _head: assigns to nullptr when all nodes deleted successfully
  *
  * RETURN:
  *  none
@@ -65,8 +65,8 @@ Queue<T>::~Queue() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Copy constructor. Initialize head to NULL and calls copy_list to make deep
- *  copy of list.
+ *  Copy constructor. Initialize head to nullptr and calls copy_list to make
+ *  deep copy of list.
  *
  * PRE-CONDITIONS:
  *  Queue<T> &other: source to copy from
@@ -184,7 +184,7 @@ void Queue<T>::push(T item) {
  *
  * POST-CONDITIONS:
  *  _head: assigns to next node
- *  _top : assigns to NULL when list becomes empty after deletion
+ *  _top : assigns to nullptr when list becomes empty after deletion
  *
  * RETURN:
  *  T item from deleted head
@@ -196,9 +196,9 @@ T Queue<T>::pop() {
 
     T item = my_node::delete_head(_head);
 
-    // assign tail to NULL when list becomes empty after delete_head
+    // assign tail to nullptr when list becomes empty after delete_head
     if(empty()) {
-        _tail = NULL;
+        _tail = nullptr;
     }
 
     return item;

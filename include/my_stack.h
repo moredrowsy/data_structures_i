@@ -18,7 +18,7 @@ template <typename T>
 class Stack {
 public:
     // CONSTRUCTORS
-    Stack() : _top(NULL) {}
+    Stack() : _top(nullptr) {}
 
     // BIG THREE
     ~Stack();
@@ -27,7 +27,7 @@ public:
 
     // ACCESSORS
     T top() const;       // return top's item
-    bool empty() const;  // check boolean for top is NULL
+    bool empty() const;  // check boolean for top is nullptr
 
     // MUTATORS
     void push(T item);  // add item at top
@@ -51,7 +51,7 @@ private:
  *  none
  *
  * POST-CONDITIONS:
- *  _top: assigns to NULL when all nodes deleted successfully
+ *  _top: assigns to nullptr when all nodes deleted successfully
  *
  * RETURN:
  *  none
@@ -64,8 +64,8 @@ Stack<T>::~Stack() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Copy constructor. Initialize top to NULL and calls copy_list to make deep
- *  copy of list.
+ *  Copy constructor. Initialize top to nullptr and calls copy_list to make
+ *  deep copy of list.
  *
  * PRE-CONDITIONS:
  *  Stack<T>& other: source to copy from
@@ -174,7 +174,7 @@ void Stack<T>::push(T item) {
  *  not empty
  *
  * POST-CONDITIONS:
- *  _top: assigns to next node, assigns to NULL when list becomes empty
+ *  _top: assigns to next node, assigns to nullptr when list becomes empty
  *        after deletion
  *
  * RETURN:
