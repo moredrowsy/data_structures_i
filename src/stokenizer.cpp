@@ -112,7 +112,7 @@ STokenizer::STokenizer() {
     _buffer[0] = '\0';
     _buffer_size = 0;
     _pos = 0;
-    make_table(_table);  // initialize table with adjacency rules
+    make_table(_table);
 }
 
 /*******************************************************************************
@@ -131,8 +131,8 @@ STokenizer::STokenizer() {
  *  none
  ******************************************************************************/
 STokenizer::STokenizer(char str[]) {
-    set_string(str);     // copy cstring to buffer
-    make_table(_table);  // initialize table with adjacency rules
+    set_string(str);
+    make_table(_table);
 }
 
 /*******************************************************************************
@@ -210,7 +210,7 @@ void STokenizer::set_string(char str[]) {
     // copy string into buffer
     int index = 0;
     while(str[index] != '\0') {
-        assert(index < MAX_BUFFER - 1);  // assert index < MAX_BUFFER-1 in loop
+        assert(index < MAX_BUFFER - 1);
         _buffer[index] = str[index];
         ++index;
     }
@@ -236,19 +236,12 @@ void STokenizer::set_string(char str[]) {
 void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     using namespace state_machine;
 
-    // initialize table with -1
-    init_table(_table);
+    init_table(_table);  // initialize table with -1
 
-    // mark table for STATE_DOUBLE
+    // mark table with adjacency values
     mark_table_double(_table, STATE_DOUBLE);
-
-    // mark table for STATE_SPACE
     mark_table_generic(_table, STATE_SPACE, SPACE);
-
-    // mark table for STATE_ALPHA
     mark_table_generic(_table, STATE_ALPHA, ALPHA);
-
-    // mark table for STATE_PUNCT
     mark_table_generic(_table, STATE_PUNCT, PUNCT);
 }
 
@@ -287,10 +280,11 @@ STokenizer& operator>>(STokenizer& s, Token& t) {
     } else if(s.get_token(state_machine::STATE_PUNCT, token)) {
         t = Token(token, state_machine::STATE_PUNCT);
     } else {
-        if(s._pos == s._buffer_size)  // create empty token on NUL char
+        if(s._pos == s._buffer_size) {  // create empty token on NUL char
             t = Token();
-        else  // create token for UNKNOWN char
+        } else {  // create token for UNKNOWN char
             t = Token(std::string(1, s._buffer[s._pos]));
+        }
 
         ++s._pos;  // when fail to get token, go to next position
     }

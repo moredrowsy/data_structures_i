@@ -17,8 +17,9 @@ namespace ftokenizer {
  *  none
  ******************************************************************************/
 FTokenizer::FTokenizer(char* fname) {
-    _f.open(fname);  // open file stream with fname
-    assert(_f);      // assert file name is correct
+    _f.open(fname);
+    assert(_f);
+
     _pos = 0;
     _block_pos = 0;
     _more = false;
@@ -150,18 +151,18 @@ FTokenizer& operator>>(FTokenizer& f, stokenizer::Token& t) {
  ******************************************************************************/
 bool FTokenizer::get_new_block() {
     // get block from file
-    char* block = new char[MAX_BLOCK];  // allocate char array block on heap
-    _f.read(block, MAX_BLOCK - 1);      // read block
-    block[_f.gcount()] = '\0';          // add NUL terminate
+    char* block = new char[MAX_BLOCK];
+    _f.read(block, MAX_BLOCK - 1);
+    block[_f.gcount()] = '\0';
 
     // add block to stk when gcount has valid char extracted in block
     if(_f.gcount()) {
-        _stk.set_string(block);  // set cstring to stk
-        _pos += _f.gcount();     // update position in file
-        _block_pos = 0;          // reset block position
+        _stk.set_string(block);
+        _pos += _f.gcount();  // update position in file
+        _block_pos = 0;       // reset block position
     }
 
-    delete[] block;  // delete char array, stk already has copy of cstring
+    delete[] block;
 
     return _f.gcount();
 }

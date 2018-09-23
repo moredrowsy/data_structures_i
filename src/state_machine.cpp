@@ -16,7 +16,6 @@ namespace state_machine {
  *  none
  ******************************************************************************/
 void init_table(int _table[][MAX_COLUMNS]) {
-    // fill array with -1
     for(int row = 0; row < MAX_ROWS; ++row) {
         for(int col = 0; col < MAX_COLUMNS; ++col) {
             _table[row][col] = -1;
@@ -39,10 +38,8 @@ void init_table(int _table[][MAX_COLUMNS]) {
  *  none
  ******************************************************************************/
 void mark_success(int _table[][MAX_COLUMNS], int state) {
-    // assert state is not greater or equal to MAX ROWS
     assert(state < MAX_ROWS);
 
-    // assign [row as state][column 0] to 1 as success state
     _table[state][0] = 1;
 }
 
@@ -61,10 +58,8 @@ void mark_success(int _table[][MAX_COLUMNS], int state) {
  *  none
  ******************************************************************************/
 void mark_fail(int _table[][MAX_COLUMNS], int state) {
-    // assert state is not greater or equal to MAX ROWS
     assert(state < MAX_ROWS);
 
-    // assign [row as state][column 0] to 0 as fail
     _table[state][0] = 0;
 }
 
@@ -366,11 +361,11 @@ void print_table(const int _table[][MAX_COLUMNS]) {
  ******************************************************************************/
 // _posstarts from indexing from 1, not 0?
 void show_string(const char s[], int _pos) {
-    // assert positive position
     assert(_pos > -1);
 
-    // print the string and carat as pointing to the position in string
     std::cout << s << std::endl;
+
+    // print carat at pos when NOT pointint at NUL
     int index = 0;
     while(s[index] != '\0') {
         if(index == _pos) {
@@ -387,8 +382,7 @@ void show_string(const char s[], int _pos) {
     }
     std::cout << std::endl;
 
-    // assert that pos is less than index
-    assert(_pos <= index);
+    assert(_pos <= index);  // assert _pos doesn't go past NUL
 }
 
 /*******************************************************************************

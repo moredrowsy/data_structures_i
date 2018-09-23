@@ -59,8 +59,7 @@ private:
  ******************************************************************************/
 template <typename T>
 Queue<T>::~Queue() {
-    // delete_all deallocates all nodes when not empty
-    my_node::delete_all(_head);
+    my_node::delete_all(_head);  // deallocates all nodes when not empty
 }
 
 /*******************************************************************************
@@ -80,8 +79,7 @@ Queue<T>::~Queue() {
  ******************************************************************************/
 template <typename T>
 Queue<T>::Queue(const Queue<T> &other) {
-    // initialize, else copy_list fails
-    my_node::init_head(_head);
+    my_node::init_head(_head);  // initialize, else copy_list fails
 
     // make deep copy and update tail to last new node
     _tail = my_node::copy_list(other._head, _head);
@@ -126,7 +124,6 @@ Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
  ******************************************************************************/
 template <typename T>
 T Queue<T>::front() const {
-    // assert not empty list
     assert(!empty());
 
     return _head->_item;
@@ -191,7 +188,6 @@ void Queue<T>::push(T item) {
  ******************************************************************************/
 template <typename T>
 T Queue<T>::pop() {
-    // assert not empty list
     assert(!empty());
 
     T item = my_node::delete_head(_head);

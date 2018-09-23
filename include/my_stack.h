@@ -58,8 +58,7 @@ private:
  ******************************************************************************/
 template <typename T>
 Stack<T>::~Stack() {
-    // delete_all deallocates all nodes when not empty
-    my_node::delete_all(_top);
+    my_node::delete_all(_top);  // deallocates all nodes when not empty
 }
 
 /*******************************************************************************
@@ -78,11 +77,8 @@ Stack<T>::~Stack() {
  ******************************************************************************/
 template <typename T>
 Stack<T>::Stack(const Stack<T>& other) {
-    // initialize, else copy_list fails
-    my_node::init_head(_top);
-
-    // make deep copy
-    my_node::copy_list(other._top, _top);
+    my_node::init_head(_top);              // initialize, else copy_list fails
+    my_node::copy_list(other._top, _top);  // make deep copy
 }
 
 /*******************************************************************************
@@ -123,7 +119,6 @@ Stack<T>& Stack<T>::operator=(const Stack<T>& rhs) {
  ******************************************************************************/
 template <typename T>
 T Stack<T>::top() const {
-    // assert not empty list
     assert(!empty());
 
     return _top->_item;
@@ -162,8 +157,7 @@ bool Stack<T>::empty() const {
  ******************************************************************************/
 template <typename T>
 void Stack<T>::push(T item) {
-    // insert @ top
-    _top = my_node::insert_head(_top, item);
+    _top = my_node::insert_head(_top, item);  // insert @ top
 }
 
 /*******************************************************************************
@@ -182,7 +176,6 @@ void Stack<T>::push(T item) {
  ******************************************************************************/
 template <typename T>
 T Stack<T>::pop() {
-    // assert not empty list
     assert(!empty());
 
     return my_node::delete_head(_top);

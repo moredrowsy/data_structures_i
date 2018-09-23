@@ -55,8 +55,7 @@ public:
     explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
-    // set a new string as the input string
-    void set_string(char str[]);
+    void set_string(char str[]);  // set a new string as the input string
 
     // FRIENDS
     // extract one token (very similar to the way cin >> works)
