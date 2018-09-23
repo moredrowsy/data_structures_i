@@ -1,7 +1,7 @@
 #include "../include/my_node.h"
 #include "../lib/catch.hpp"
 
-TEST_CASE("my custom node", "[my_node]") {
+TEST_CASE("my custom Node", "[my_node]") {
     using namespace my_node;
 
     // dynamically allocate memory
