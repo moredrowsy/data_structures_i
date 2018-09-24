@@ -103,13 +103,15 @@ FTokenizer::operator bool() const { return more(); }
  *  Token
  ******************************************************************************/
 stokenizer::Token FTokenizer::next_token() {
-    // if _stk has no tokens to extract, get new block to set block to _stk
-    if(_stk.done()) {
-        _more = get_new_block();
-    }
-
     stokenizer::Token t;
     _stk >> t;
+
+    // get new block if stk token extraction fails and try stk extraction again
+    if(!_stk) {
+        _more = get_new_block();
+        _stk >> t;
+    }
+
     _block_pos += t.token_str().size();  // update block pos
 
     return t;
