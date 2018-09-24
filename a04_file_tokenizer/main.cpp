@@ -55,4 +55,6 @@ void extract_file(char fname[]) {
                       << t.token_str() << t.type_string() << std::endl;
         }
     }
+    std::cout << "Tokens Found: " << token_count << std::endl;
+    std::cout << "==========" << std::endl;
 }
