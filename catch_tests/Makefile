@@ -7,7 +7,7 @@ INC             := ../include
 SRC             := ../src
 CATCH           := ../lib
 OBJ             := ${CATCH}/tests_main.o\
-                   test_my_node.o test_my_stack.o
+                   test_my_node.o test_my_queue.o test_my_stack.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -23,6 +23,15 @@ test_my_node.out: ${CATCH}/tests_main.o test_my_node.o
 
 test_my_node.o: test_my_node.cpp\
 	${INC}/my_node.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test for my_queue
+test_my_queue.out: ${CATCH}/tests_main.o test_my_queue.o
+	$(CXX) -o $@ $^
+
+test_my_queue.o: test_my_queue.cpp\
+	${INC}/my_node.h\
+	${INC}/my_queue.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 # test for my_stack

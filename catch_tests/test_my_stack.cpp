@@ -9,51 +9,49 @@ TEST_CASE("my custom Stack", "[my_stack]") {
     Stack<int> stack;
     REQUIRE(stack.empty() == true);
 
-    // get list's output via std::string stream
-    std::string output;
-    std::stringstream ss;
-
-    // REQUIRE output is "|||"
-    ss << stack;
-    output = ss.str();
-    REQUIRE(output == "|||");
-
     // push 0 to 2
     for(int i = 0; i < 3; ++i) {
         stack.push(i);
     }
+    REQUIRE(stack.empty() == false);
 
-    // test correct output
-    ss.str("");
-    ss << stack;
-    output = ss.str();
-    REQUIRE(output == "[2]->[1]->[0]->|||");
+    SECTION("stack correctly output values") {
+        // get list's output via std::string stream
+        std::string output;
+        std::stringstream ss;
 
-    // test front and pop returns the correct values
-    for(int i = 2; i >= 0; --i) {
-        REQUIRE(stack.top() == i);
-        REQUIRE(stack.pop() == i);
+        // test correct output
+        ss.str("");
+        ss << stack;
+        output = ss.str();
+        REQUIRE(output == "[2]->[1]->[0]->|||");
+
+        // test front and pop returns the correct values
+        for(int i = 2; i >= 0; --i) {
+            REQUIRE(stack.top() == i);
+            REQUIRE(stack.pop() == i);
+        }
+
+        // test empty
+        REQUIRE(stack.empty() == true);
+
+        // test output is "|||"
+        ss.str("");
+        ss << stack;
+        output = ss.str();
+        REQUIRE(output == "|||");
+
+        // re-push 0 to 2
+        for(int i = 0; i < 3; ++i) {
+            stack.push(i);
+        }
+
+        // test correct output
+        ss.str("");
+        ss << stack;
+        output = ss.str();
+        REQUIRE(output == "[2]->[1]->[0]->|||");
     }
-
-    // test empty
-    REQUIRE(stack.empty() == true);
-
-    // test output is "|||"
-    ss.str("");
-    ss << stack;
-    output = ss.str();
-    REQUIRE(output == "|||");
-
-    // re-push 0 to 2
-    for(int i = 0; i < 3; ++i) {
-        stack.push(i);
-    }
-
-    // test correct output
-    ss.str("");
-    ss << stack;
-    output = ss.str();
-    REQUIRE(output == "[2]->[1]->[0]->|||");
 
     SECTION("copy constructor of Stack") {
         REQUIRE(stack.empty() == false);  // non-empty default stack
