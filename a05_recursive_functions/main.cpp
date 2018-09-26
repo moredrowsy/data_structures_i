@@ -41,7 +41,7 @@ int main() {
 
     // recursion function 2
     std::cout << std::string(80, '=') << std::endl;
-    std::string prefix = "BOX";
+    std::string prefix = "BOX:";
     unsigned section_level = 3;
     std::cout << "Recursion 2: Prints out prefix + successive levels of "
                  "sections: "
@@ -72,7 +72,7 @@ int main() {
               << std::endl
               << std::string(80, '-') << std::endl;
     double total_boxes = r4_i_box("", 3);
-    std::cout << "total_boxes = " << total_boxes << std::endl;
+    std::cout << std::endl << "total_boxes = " << total_boxes << std::endl;
     std::cout << std::string(80, '=') << std::endl;
     std::cout << std::endl << std::endl;
 
@@ -86,6 +86,7 @@ int main() {
     double sumover = r5_sumover(reciprocal_level);
     std::cout << "sumover = " << sumover << std::endl;
     std::cout << std::string(80, '=') << std::endl;
+    std::cout << std::endl << std::endl;
 
     // recursion function 16
     std::cout << std::string(80, '=') << std::endl;
@@ -99,9 +100,7 @@ int main() {
 }
 
 void r1_levels(unsigned start_level, unsigned end_level) {
-    if(start_level > end_level) {  // base: start level is beyond end level
-        return;
-    }
+    if(start_level > end_level) return;  // base: start is beyond end level
 
     // print out first sentence
     std::cout << std::string(start_level, ' ')
@@ -118,7 +117,7 @@ void r1_levels(unsigned start_level, unsigned end_level) {
 }
 
 void r2_box(std::string prefix, unsigned level) {
-    if(level == 0) {                       // base: invalid level 0
+    if(level == 0) {                       // base: level 0
         std::cout << prefix << std::endl;  // print out final string
         return;
     }
@@ -133,62 +132,57 @@ void r2_box(std::string prefix, unsigned level) {
 }
 
 void r3_permutation(std::string first, std::string second) {
-    if(!first.size()) {                    // base: size of first string is 0
+    if(!first.size()) {                    // base: empty first string
         std::cout << second << std::endl;  // print out second word
         return;
     }
 
+    // loop through all pos of first string
     for(int i = first.size() - 1; i >= 0; --i) {
-        std::string f_temp = first, s_temp = second;  // create copies
-        f_temp.erase(i, 1);                // erase the ith char of first
-        s_temp.insert(0, 1, first.at(i));  // add ith char at front of second
-
-        r3_permutation(f_temp, s_temp);  // recurve to smaller first
+        // recurve with first string's char erased at i pos and with second
+        // inserted with erased char at front
+        r3_permutation(std::string(first).erase(i, 1),
+                       std::string(second).insert(0, 1, first[i]));
     }
 }
 
 unsigned r4_i_box(std::string prefix, unsigned level) {
-    if(level == 0) {  // base: invalid level 0
-        std::cout << "--> Empty!" << std::endl << std::endl;
-        return level;  // return count 0 on end of current recursion
-    }
     unsigned count = 0;
-    unsigned user_boxes;
 
-    std::cout << "\n\nHow many unnumbered boxes can you see? ";
-    std::cin >> user_boxes;
-    std::cout << std::endl;
+    std::cout << std::endl << "How many unnumbered boxes can you see? ";
+    std::cin >> level;
 
-    // print out correct box numbers
-    for(unsigned i = 1; i <= user_boxes; ++i) {
-        std::string s = prefix;  // new string from prev string
-        s += char('0' + i);      // append digit with ASCII shift
-        std::cout << "[" << s << "] ";
-    }
-    std::cout << std::endl << std::endl;
+    // base: level is 0 and return count 0
+    // else: start recursion and return x count
+    if(level) {
+        // display numbered boxes
+        std::cout << std::endl;
+        for(unsigned i = 1; i <= level; ++i) {
+            std::string s = prefix;  // new string from prev string
+            s += char('0' + i);      // append digit with ASCII shift
+            std::cout << "[" << s << "] ";
+        }
+        std::cout << std::endl;
 
-    // loop through section combinations
-    for(unsigned i = 1; i <= user_boxes; ++i) {
-        std::string s = prefix;  // new string from prev string
-        s += char('0' + i);      // append digit with ASCII shift
+        // loop through section combinations
+        for(unsigned i = 1; i <= level; ++i) {
+            std::string s = prefix;  // new string from prev string
+            s += char('0' + i);      // append digit with ASCII shift
 
-        std::cout << "Opening box [" << s << "] ";
+            std::cout << std::endl << "Opening box [" << s << "] " << std::endl;
 
-        if(level != 0) s += '.';  // append 'dot' if not last valid level
+            s += '.';  // append 'dot'
 
-        count++;
-
-        // recurve to lower level, higher count and update count of recursions
-        count += r4_i_box(s, user_boxes);
+            // recurve until user input 0 level and update count
+            ++count += r4_i_box(s, level);
+        }
     }
 
     return count;
 }
 
 double r5_sumover(unsigned level) {
-    if(level == 0) {  // base: level is zero
-        return 0;     // return 0 when level is zero
-    }
+    if(level == 0) return 0;  // base: level is zero
 
     return (1.0 / level) + r5_sumover(level - 1);  // return recurve sum
 }
@@ -212,9 +206,9 @@ int r16_guess(unsigned low, unsigned high) {
         std::cin >> is_yes;
 
         if(is_yes)
-            return r16_guess(low, midpoint - 1);
+            return r16_guess(low, midpoint - 1);  // recurve first half
         else
-            return r16_guess(midpoint + 1, high);
+            return r16_guess(midpoint + 1, high);  // recurve second half
     }
 
     // print out inconsistent answers error
