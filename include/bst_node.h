@@ -130,8 +130,8 @@ void tree_print(Tree_node<T>* root, int level, std::ostream& outs) {
     }
 
     tree_print(root->_right, level + 1, outs);  // recurve right
-    outs << std::string(10 * level, ' ') << *root << std::endl;  // print root
-    tree_print(root->_left, level + 1, outs);                    // recurve left
+    outs << std::string(10 * level, ' ') << *root << std::endl;
+    tree_print(root->_left, level + 1, outs);  // recurve left
 }
 
 template <typename T>
@@ -150,7 +150,17 @@ bool tree_erase(Tree_node<T>*& root, const T& target) {
     if(!root) return false;  // base: root is nullptr
 
     if(target == root->_item) {
-        tree_clear(root);
+        if(!root->_left) {
+            Tree_node<T>* pop = root;
+            root = root->_right;
+
+            delete pop;
+            pop = nullptr;
+        } else {
+            T max;
+            tree_remove_max(root->left, max);
+            root->_item = max;
+        }
         return true;
     }
 
@@ -158,6 +168,34 @@ bool tree_erase(Tree_node<T>*& root, const T& target) {
         return tree_erase(root->_left, target);  // recurve left node
     else
         return tree_erase(root->_right, target);  // recurve right node
+}
+
+template <typename T>
+void tree_remove_max(Tree_node<T>*& root, T& max_value) {
+    if(!root) return;  // base: root is nullptr
+
+    if(!root->_right) {
+        if(!root->_left) {
+            max_value = root->_item;
+
+            delete root;
+            root = nullptr;
+
+            return;
+        } else {
+            max_value = root->_item;
+
+            Tree_node<T>* pop = root;
+            root = root->_left;
+
+            delete pop;
+            pop = nullptr;
+
+            return;
+        }
+    }
+
+    tree_remove_max(root->_right, max_value);
 }
 
 template <typename T>
