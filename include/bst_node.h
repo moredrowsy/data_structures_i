@@ -54,7 +54,7 @@ Tree_node<T>* tree_search(Tree_node<T>* root, const T& target);
 template <typename T>  // search tree and return node plus boolean if found
 bool tree_search(Tree_node<T>* root, const T& target, Tree_node<T>*& found_ptr);
 
-template <typename T>  // print tree rotated 90 degree counterclockwise
+template <typename T>  // print tree rotated 90 degrees counterclockwise
 void tree_print(Tree_node<T>* root, int level = 0,
                 std::ostream& outs = std::cout);
 
@@ -80,6 +80,18 @@ void tree_add(Tree_node<T>*& dest, const Tree_node<T>* src);
 
 template <typename T>  // sorted array -> tree
 Tree_node<T>* tree_from_sorted_list(const T* a, int size);
+
+template <typename T>
+void tree_print_node(Tree_node<T>* root);
+
+template <typename T, typename F>
+void inorder(Tree_node<T>* root, F f);
+
+template <typename T, typename F>
+void preorder(Tree_node<T>* root, F f);
+
+template <typename T, typename F>
+void postorder(Tree_node<T>* root, F f);
 
 template <typename T>
 void tree_insert(Tree_node<T>*& root, const T& insert_me) {
@@ -125,12 +137,12 @@ bool tree_search(Tree_node<T>* root, const T& target,
 template <typename T>
 void tree_print(Tree_node<T>* root, int level, std::ostream& outs) {
     if(!root) {  // base: root is nullptr
-        outs << std::string(10 * level, ' ') << "|||" << std::endl;
+        outs << std::string(5 * level, ' ') << "|||" << std::endl;
         return;
     }
 
     tree_print(root->_right, level + 1, outs);  // recurve right
-    outs << std::string(10 * level, ' ') << *root << std::endl;
+    outs << std::string(5 * level, ' ') << *root << std::endl;
     tree_print(root->_left, level + 1, outs);  // recurve left
 }
 
@@ -158,7 +170,7 @@ bool tree_erase(Tree_node<T>*& root, const T& target) {
             pop = nullptr;
         } else {
             T max;
-            tree_remove_max(root->left, max);
+            tree_remove_max(root->_left, max);
             root->_item = max;
         }
         return true;
@@ -228,6 +240,38 @@ Tree_node<T>* tree_from_sorted_list(const T* a, int size) {
         return new Tree_node<T>(
             a[midpoint], tree_from_sorted_list(a, midpoint),
             tree_from_sorted_list(a + midpoint + 1, midpoint - 1));
+}
+
+template <typename T>
+void tree_print_node(Tree_node<T>* root) {
+    std::cout << *root << " ";
+}
+
+template <typename T, typename F>
+void inorder(Tree_node<T>* root, F f) {
+    if(root) {
+        inorder(root->_left, f);
+        f(root);
+        inorder(root->_right, f);
+    }
+}
+
+template <typename T, typename F>
+void preorder(Tree_node<T>* root, F f) {
+    if(root) {
+        f(root);
+        preorder(root->_left, f);
+        preorder(root->_right, f);
+    }
+}
+
+template <typename T, typename F>
+void postorder(Tree_node<T>* root, F f) {
+    if(root) {
+        postorder(root->_left, f);
+        postorder(root->_right, f);
+        f(root);
+    }
 }
 
 }  // namespace bst_node

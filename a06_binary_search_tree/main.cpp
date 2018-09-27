@@ -2,6 +2,8 @@
 #include "../include/bst_node.h"
 
 int main() {
+    using namespace bst_node;
+
     bst_node::Tree_node<int> *root1 = nullptr, *root2 = nullptr;
 
     // make BST
@@ -39,11 +41,27 @@ int main() {
     bst_node::tree_print(root1);
     std::cout << std::endl;
 
+    bst_node::tree_erase(root1, 60);
+
+    // print root1
+    std::cout << "root 1 with 60 removed" << std::endl
+              << std::string(80, '-') << std::endl;
+    bst_node::tree_print(root1);
+    std::cout << std::endl;
+
     // copy root2 with root1
     root2 = bst_node::tree_copy(root1);
 
     // print root2
     std::cout << "root 2 copy from root 1" << std::endl
+              << std::string(80, '-') << std::endl;
+    bst_node::tree_print(root2);
+    std::cout << std::endl;
+
+    bst_node::tree_erase(root2, 40);
+
+    // print root2
+    std::cout << "root 2 with 40 removed" << std::endl
               << std::string(80, '-') << std::endl;
     bst_node::tree_print(root2);
     std::cout << std::endl;
@@ -267,6 +285,24 @@ int main() {
         std::cout << "Found " << *find << " in root_f" << std::endl;
     else
         std::cout << "Couldn't find " << find_t << " in root_f" << std::endl;
+
+    // call inorder with function pointer
+    std::cout << std::endl
+              << "Calling inorder with function pointer" << std::endl;
+    bst_node::inorder(root_f, bst_node::tree_print_node<int>);
+    std::cout << std::endl;
+
+    // call preorder with function pointer
+    std::cout << std::endl
+              << "Calling preorder with function pointer" << std::endl;
+    bst_node::preorder(root_f, bst_node::tree_print_node<int>);
+    std::cout << std::endl;
+
+    // call postorder with function pointer
+    std::cout << std::endl
+              << "Calling postorder with function pointer" << std::endl;
+    bst_node::postorder(root_f, bst_node::tree_print_node<int>);
+    std::cout << std::endl;
 
     // deallocate all roots
     bst_node::tree_clear(root_a);
