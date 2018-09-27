@@ -1,4 +1,5 @@
 #include <iostream>
+#include "../include/bst.h"
 #include "../include/bst_node.h"
 
 int main() {
@@ -18,7 +19,7 @@ int main() {
 
     // print root1
     std::cout << "root 1" << std::endl << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root1);
+    bst_node::tree_print_debug(root1);
     std::cout << std::endl;
 
     // delete max value of root1
@@ -28,7 +29,7 @@ int main() {
     // print root1
     std::cout << "root 1 with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root1);
+    bst_node::tree_print_debug(root1);
     std::cout << std::endl;
 
     // delete max value of root1
@@ -38,7 +39,7 @@ int main() {
     // print root1
     std::cout << "root 1 with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root1);
+    bst_node::tree_print_debug(root1);
     std::cout << std::endl;
 
     bst_node::tree_erase(root1, 60);
@@ -46,7 +47,7 @@ int main() {
     // print root1
     std::cout << "root 1 with 60 removed" << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root1);
+    bst_node::tree_print_debug(root1);
     std::cout << std::endl;
 
     // copy root2 with root1
@@ -55,7 +56,7 @@ int main() {
     // print root2
     std::cout << "root 2 copy from root 1" << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root2);
+    bst_node::tree_print_debug(root2);
     std::cout << std::endl;
 
     bst_node::tree_erase(root2, 40);
@@ -63,7 +64,7 @@ int main() {
     // print root2
     std::cout << "root 2 with 40 removed" << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root2);
+    bst_node::tree_print_debug(root2);
     std::cout << std::endl;
 
     // deallocate all roots
@@ -84,7 +85,7 @@ int main() {
 
     // print root_a
     std::cout << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_a);
+    bst_node::tree_print_debug(root_a);
     std::cout << std::endl;
 
     // delete max value of root_a
@@ -94,7 +95,7 @@ int main() {
     // print root_a
     std::cout << "root_a with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_a);
+    bst_node::tree_print_debug(root_a);
     std::cout << std::endl;
 
     // create bst from array 'b' with even size
@@ -107,7 +108,7 @@ int main() {
 
     // print root_b
     std::cout << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_b);
+    bst_node::tree_print_debug(root_b);
     std::cout << std::endl;
 
     // delete max value of root_b
@@ -117,7 +118,7 @@ int main() {
     // print root_b
     std::cout << "root_b with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_b);
+    bst_node::tree_print_debug(root_b);
     std::cout << std::endl;
 
     // create bst from array 'c' with odd size
@@ -130,7 +131,7 @@ int main() {
 
     // print root_c
     std::cout << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_c);
+    bst_node::tree_print_debug(root_c);
     std::cout << std::endl;
 
     // delete max value of root_c
@@ -140,7 +141,7 @@ int main() {
     // print root_c
     std::cout << "root_c with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_c);
+    bst_node::tree_print_debug(root_c);
     std::cout << std::endl;
 
     // create bst from array 'd' with even size
@@ -153,7 +154,7 @@ int main() {
 
     // print root_d
     std::cout << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_d);
+    bst_node::tree_print_debug(root_d);
     std::cout << std::endl;
 
     // create bst from array 'e' with odd size
@@ -166,7 +167,7 @@ int main() {
 
     // print root_e
     std::cout << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_e);
+    bst_node::tree_print_debug(root_e);
     std::cout << std::endl;
 
     // delete max value of root_e
@@ -176,7 +177,7 @@ int main() {
     // print root_e
     std::cout << "root_e with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_e);
+    bst_node::tree_print_debug(root_e);
     std::cout << std::endl;
 
     // create bst from array 'f' with even size
@@ -189,7 +190,7 @@ int main() {
 
     // print root_f
     std::cout << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_f);
+    bst_node::tree_print_debug(root_f);
     std::cout << std::endl;
 
     // delete max value of root_f
@@ -199,7 +200,15 @@ int main() {
     // print root_f
     std::cout << "root_f with deleted max = " << max << std::endl
               << std::string(80, '-') << std::endl;
-    bst_node::tree_print(root_f);
+    bst_node::tree_print_debug(root_f);
+    std::cout << std::endl;
+
+    // add tree
+    bst_node::tree_add(root_e, root_f);
+
+    std::cout << "root_e = root_e + root_f" << max << std::endl
+              << std::string(80, '-') << std::endl;
+    bst_node::tree_print_debug(root_e);
     std::cout << std::endl;
 
     // tree_search
