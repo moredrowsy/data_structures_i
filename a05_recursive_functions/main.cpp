@@ -99,6 +99,20 @@ int main() {
     std::cout << std::string(80, '=') << std::endl;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Prints out current level, recurve, and prints out level again.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned start_level: starting recursion level (low)
+ *  unsigned end_level  : ending recursion level (high)
+ *
+ * POST-CONDITIONS:
+ *  unsigned start_level: increases towards end_level
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void r1_levels(unsigned start_level, unsigned end_level) {
     if(start_level > end_level) return;  // base: start is beyond end level
 
@@ -116,6 +130,20 @@ void r1_levels(unsigned start_level, unsigned end_level) {
               << std::endl;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Prints out prefix + recursive sections
+ *
+ * PRE-CONDITIONS:
+ *  string prefix : string to append
+ *  unsigned level: recursion level
+ *
+ * POST-CONDITIONS:
+ *  unsigned level: decreases toward zero
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void r2_box(std::string prefix, unsigned level) {
     if(level == 0) {                       // base: level 0
         std::cout << prefix << std::endl;  // print out final string
@@ -131,6 +159,20 @@ void r2_box(std::string prefix, unsigned level) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Prints permutation of first string followed by normal second string.
+ *
+ * PRE-CONDITIONS:
+ *  string first : string for permutation changes
+ *  string second: static string
+ *
+ * POST-CONDITIONS:
+ *  string first : permutation changes
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void r3_permutation(std::string first, std::string second) {
     if(!first.size()) {                    // base: empty first string
         std::cout << second << std::endl;  // print out second word
@@ -146,6 +188,21 @@ void r3_permutation(std::string first, std::string second) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Interactively ask user to enter a number and function recurve until number
+ *  is zero.
+ *
+ * PRE-CONDITIONS:
+ *  string first  : string to append
+ *  unsigned level: recursion level, default 0
+ *
+ * POST-CONDITIONS:
+ *  unsigned level: user input level to recurve
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 unsigned r4_i_box(std::string prefix, unsigned level) {
     unsigned count = 0;
 
@@ -181,12 +238,40 @@ unsigned r4_i_box(std::string prefix, unsigned level) {
     return count;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Sum of all reciprocal levels.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned level: recursion level
+ *
+ * POST-CONDITIONS:
+ *  unsigned level: decreases toward zero
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 double r5_sumover(unsigned level) {
     if(level == 0) return 0;  // base: level is zero
 
     return (1.0 / level) + r5_sumover(level - 1);  // return recurve sum
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Guess user's number by decreasing problem by half each recursion.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned low : start point
+ *  unsigned high: end point
+ *
+ * POST-CONDITIONS:
+ *  unsigned low : midpoint replacement
+ *  unsigned high: midpoint replacement
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 int r16_guess(unsigned low, unsigned high) {
     bool is_yes = false;
 
