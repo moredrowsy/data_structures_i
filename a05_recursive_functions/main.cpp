@@ -132,7 +132,11 @@ void r1_levels(unsigned start_level, unsigned end_level) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Prints out prefix + recursive sections
+ *  Prints out prefix + recursive sections.
+ *  Mechanism: create new string from prefix, add a digit char (shift ASCII),
+ *  add 'dot' if not last level = 1. Then, recurve using new appended string
+ *  as new parameter for prefix, and reduce level by 1.
+ *  Base: level is 0 and print out prefix string.
  *
  * PRE-CONDITIONS:
  *  string prefix : string to append
@@ -145,7 +149,7 @@ void r1_levels(unsigned start_level, unsigned end_level) {
  *  none
  ******************************************************************************/
 void r2_box(std::string prefix, unsigned level) {
-    if(level == 0) {                       // base: level 0
+    if(!level) {                           // base: level 0
         std::cout << prefix << std::endl;  // print out final string
         return;
     }
@@ -252,7 +256,7 @@ unsigned r4_i_box(std::string prefix, unsigned level) {
  *  none
  ******************************************************************************/
 double r5_sumover(unsigned level) {
-    if(level == 0) return 0;  // base: level is zero
+    if(!level) return 0;  // base: level is zero
 
     return (1.0 / level) + r5_sumover(level - 1);  // return recurve sum
 }
