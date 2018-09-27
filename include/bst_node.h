@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : bst_node
+ * DESCRIPTION : This header defines a templated binary search tree node and
+ *      templated functions that will process the nodes. These functions are
+ *      the base to build the binary search tree class BST.
+ ******************************************************************************/
 #ifndef BST_NODE_H
 #define BST_NODE_H
 
@@ -6,10 +15,10 @@
 namespace bst_node {
 
 template <typename T>
-struct tree_node {
+struct Tree_node {
     T _item;
-    tree_node<T>* _left;
-    tree_node<T>* _right;
+    Tree_node<T>* _left;
+    Tree_node<T>* _right;
     int _height;
     // int balance_factor() {
     //     // balance factor = height of the left subtree
@@ -26,56 +35,56 @@ struct tree_node {
     //     // set the _height member variable (call height();)
     // }
 
-    tree_node(T item = T(), tree_node* left = NULL, tree_node* right = NULL)
+    Tree_node(T item = T(), Tree_node* left = NULL, Tree_node* right = NULL)
         : _item(item), _left(left), _right(right), _height(-1) {
         // don't forget to set the _height.
     }
     friend std::ostream& operator<<(std::ostream& outs,
-                                    const tree_node<T>& t_node) {
+                                    const Tree_node<T>& t_node) {
         return outs << "|" << t_node._item << "|";
     }
 };
 
 template <typename T>  // add a node in the binary tree
-void tree_insert(tree_node<T>*& root, const T& insert_me);
+void tree_insert(Tree_node<T>*& root, const T& insert_me);
 
 template <typename T>  // search tree and return node if found
-tree_node<T>* tree_search(tree_node<T>* root, const T& target);
+Tree_node<T>* tree_search(Tree_node<T>* root, const T& target);
 
 template <typename T>  // search tree and return node plus boolean if found
-bool tree_search(tree_node<T>* root, const T& target, tree_node<T>*& found_ptr);
+bool tree_search(Tree_node<T>* root, const T& target, Tree_node<T>*& found_ptr);
 
 template <typename T>  // print tree rotated 90 degree counterclockwise
-void tree_print(tree_node<T>* root, int level = 0,
+void tree_print(Tree_node<T>* root, int level = 0,
                 std::ostream& outs = std::cout);
 
 template <typename T>  // prints details info about each node
-void tree_print_debug(tree_node<T>* root, int level = 0,
+void tree_print_debug(Tree_node<T>* root, int level = 0,
                       std::ostream& outs = std::cout);
 
 template <typename T>  // clear the tree
-void tree_clear(tree_node<T>*& root);
+void tree_clear(Tree_node<T>*& root);
 
 template <typename T>  // erase target from the tree
-bool tree_erase(tree_node<T>*& root, const T& target);
+bool tree_erase(Tree_node<T>*& root, const T& target);
 
 template <typename T>  // erase rightmost node from the tree
                        // store the item in max_value
-void tree_remove_max(tree_node<T>*& root, T& max_value);
+void tree_remove_max(Tree_node<T>*& root, T& max_value);
 
 template <typename T>  // return copy of tree pointed to by root
-tree_node<T>* tree_copy(tree_node<T>* root);
+Tree_node<T>* tree_copy(Tree_node<T>* root);
 
-template <typename T>  // Add tree src to dest
-void tree_add(tree_node<T>*& dest, const tree_node<T>* src);
+template <typename T>  // add tree src to dest
+void tree_add(Tree_node<T>*& dest, const Tree_node<T>* src);
 
 template <typename T>  // sorted array -> tree
-tree_node<T>* tree_from_sorted_list(const T* a, int size);
+Tree_node<T>* tree_from_sorted_list(const T* a, int size);
 
 template <typename T>
-void tree_insert(tree_node<T>*& root, const T& insert_me) {
-    if(!root) {  // add node to root if root is nullptr
-        root = new tree_node<T>(insert_me);
+void tree_insert(Tree_node<T>*& root, const T& insert_me) {
+    if(!root) {  // base: root is nullptr
+        root = new Tree_node<T>(insert_me);
         return;
     }
 
@@ -86,8 +95,8 @@ void tree_insert(tree_node<T>*& root, const T& insert_me) {
 }
 
 template <typename T>
-tree_node<T>* tree_search(tree_node<T>* root, const T& target) {
-    if(!root) return nullptr;  // return nullptr if not found
+Tree_node<T>* tree_search(Tree_node<T>* root, const T& target) {
+    if(!root) return nullptr;  // base: root is nullptr
 
     if(target == root->_item) return root;  // return current root if found
 
@@ -98,9 +107,9 @@ tree_node<T>* tree_search(tree_node<T>* root, const T& target) {
 }
 
 template <typename T>
-bool tree_search(tree_node<T>* root, const T& target,
-                 tree_node<T>*& found_ptr) {
-    if(!root) return false;  // return false if not found
+bool tree_search(Tree_node<T>* root, const T& target,
+                 Tree_node<T>*& found_ptr) {
+    if(!root) return false;  // base: root is nullptr
 
     if(target == root->_item) {  // return true/current root if found
         found_ptr = root;
@@ -114,8 +123,8 @@ bool tree_search(tree_node<T>* root, const T& target,
 }
 
 template <typename T>
-void tree_print(tree_node<T>* root, int level, std::ostream& outs) {
-    if(!root) {  // print three pipes if nullptr
+void tree_print(Tree_node<T>* root, int level, std::ostream& outs) {
+    if(!root) {  // base: root is nullptr
         outs << std::string(10 * level, ' ') << "|||" << std::endl;
         return;
     }
@@ -126,18 +135,19 @@ void tree_print(tree_node<T>* root, int level, std::ostream& outs) {
 }
 
 template <typename T>
-void tree_clear(tree_node<T>*& root) {
+void tree_clear(Tree_node<T>*& root) {
     if(root) {
         tree_clear(root->_left);   // recurve left node
         tree_clear(root->_right);  // recurve right node
 
-        delete root;  // delete current root
+        delete root;     // delete current root
+        root = nullptr;  // reset ptr to nullptr
     }
 }
 
 template <typename T>
-bool tree_erase(tree_node<T>*& root, const T& target) {
-    if(!root) return false;  // return false if not found
+bool tree_erase(Tree_node<T>*& root, const T& target) {
+    if(!root) return false;  // base: root is nullptr
 
     if(target == root->_item) {
         tree_clear(root);
@@ -148,6 +158,38 @@ bool tree_erase(tree_node<T>*& root, const T& target) {
         return tree_erase(root->_left, target);  // recurve left node
     else
         return tree_erase(root->_right, target);  // recurve right node
+}
+
+template <typename T>
+Tree_node<T>* tree_copy(Tree_node<T>* root) {
+    if(!root) return nullptr;  // base: root is nullptr
+
+    return new Tree_node<T>(root->_item, tree_copy(root->_left),
+                            tree_copy(root->_right));
+}
+
+template <typename T>
+void tree_add(Tree_node<T>*& dest, const Tree_node<T>* src) {
+    if(dest != src) {               // copy if dest is not src
+        if(dest) tree_clear(dest);  // clear dest if not empty
+        dest = tree_copy(src);      // copy src to dest
+    }
+}
+
+template <typename T>
+Tree_node<T>* tree_from_sorted_list(const T* a, int size) {
+    if(!size) return nullptr;  // base: size is 0
+
+    int midpoint = size / 2;
+
+    if(size & 1)  // when size is odd
+        return new Tree_node<T>(
+            a[midpoint], tree_from_sorted_list(a, midpoint),
+            tree_from_sorted_list(a + midpoint + 1, midpoint));
+    else  // when size is even
+        return new Tree_node<T>(
+            a[midpoint], tree_from_sorted_list(a, midpoint),
+            tree_from_sorted_list(a + midpoint + 1, midpoint - 1));
 }
 
 }  // namespace bst_node
