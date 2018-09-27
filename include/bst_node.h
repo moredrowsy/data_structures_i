@@ -10,6 +10,7 @@
 #ifndef BST_NODE_H
 #define BST_NODE_H
 
+#include <algorithm>
 #include <iostream>
 
 namespace bst_node {
@@ -20,25 +21,24 @@ struct Tree_node {
     Tree_node<T>* _left;
     Tree_node<T>* _right;
     int _height;
-    // int balance_factor() {
-    //     // balance factor = height of the left subtree
-    //     //                        - the height of the right subtree
-    //     // a NULL child has a height of -1
-    //     // a leaf has a height of 0
-    // }
 
-    // int height() {
-    //     // Height of a node is 1 + height of the "taller" child
-    //     // A leaf node has a height of zero: 1 + max(-1,-1)
-    // }
-    // int update_height() {
-    //     // set the _height member variable (call height();)
-    // }
+    int balance_factor() {
+        return (this->_left ? this->_left->_height : -1) -
+               (this->_right ? this->_right->_height : -1);
+    }
+
+    int height() {
+        if(!this->_left && !this->_right) return 1 + std::max(-1, -1);
+
+        return 1 + std::max(this->_left ? this->_left->_height : -1,
+                            this->_right ? this->_right->_height : -1);
+    }
+
+    int update_height() { return _height = height(); }
 
     Tree_node(T item = T(), Tree_node* left = NULL, Tree_node* right = NULL)
-        : _item(item), _left(left), _right(right), _height(-1) {
-        // don't forget to set the _height.
-    }
+        : _item(item), _left(left), _right(right), _height(1) {}
+
     friend std::ostream& operator<<(std::ostream& outs,
                                     const Tree_node<T>& t_node) {
         return outs << "|" << t_node._item << "|";
@@ -95,15 +95,14 @@ void postorder(Tree_node<T>* root, F f);
 
 template <typename T>
 void tree_insert(Tree_node<T>*& root, const T& insert_me) {
-    if(!root) {  // base: root is nullptr
+    if(!root)  // base: root is nullptr
         root = new Tree_node<T>(insert_me);
-        return;
-    }
-
-    if(insert_me < root->_item)
+    else if(insert_me < root->_item)
         tree_insert(root->_left, insert_me);  // recurve left node
     else
         tree_insert(root->_right, insert_me);  // recurve right node
+
+    root->update_height();
 }
 
 template <typename T>
@@ -146,6 +145,19 @@ void tree_print(Tree_node<T>* root, int level, std::ostream& outs) {
     tree_print(root->_left, level + 1, outs);  // recurve left
 }
 
+template <typename T>  // prints details info about each node
+void tree_print_debug(Tree_node<T>* root, int level, std::ostream& outs) {
+    if(!root) {  // base: root is nullptr
+        outs << std::string(5 * level, ' ') << "|||" << std::endl;
+        return;
+    }
+
+    tree_print_debug(root->_right, level + 1, outs);  // recurve right
+    outs << std::string(5 * level, ' ') << *root << " h" << root->_height
+         << std::endl;
+    tree_print_debug(root->_left, level + 1, outs);  // recurve left
+}
+
 template <typename T>
 void tree_clear(Tree_node<T>*& root) {
     if(root) {
@@ -180,6 +192,8 @@ bool tree_erase(Tree_node<T>*& root, const T& target) {
         return tree_erase(root->_left, target);  // recurve left node
     else
         return tree_erase(root->_right, target);  // recurve right node
+
+    root->update_height();
 }
 
 template <typename T>
@@ -207,22 +221,28 @@ void tree_remove_max(Tree_node<T>*& root, T& max_value) {
         }
     }
 
-    tree_remove_max(root->_right, max_value);
+    tree_remove_max(root->_right, max_value);  // recurve right
+    root->update_height();
 }
 
 template <typename T>
 Tree_node<T>* tree_copy(Tree_node<T>* root) {
     if(!root) return nullptr;  // base: root is nullptr
 
-    return new Tree_node<T>(root->_item, tree_copy(root->_left),
-                            tree_copy(root->_right));
+    Tree_node<T>* new_node = new Tree_node<T>(
+        root->_item, tree_copy(root->_left), tree_copy(root->_right));
+    new_node->update_height();
+
+    return new_node;
 }
 
 template <typename T>
 void tree_add(Tree_node<T>*& dest, const Tree_node<T>* src) {
-    if(dest != src) {               // copy if dest is not src
-        if(dest) tree_clear(dest);  // clear dest if not empty
-        dest = tree_copy(src);      // copy src to dest
+    if(src) {
+        tree_add(dest, src->_left);
+        tree_insert(dest, src->_item);
+        dest->update_height();
+        tree_add(dest, src->_right);
     }
 }
 
@@ -232,14 +252,21 @@ Tree_node<T>* tree_from_sorted_list(const T* a, int size) {
 
     int midpoint = size / 2;
 
-    if(size & 1)  // when size is odd
-        return new Tree_node<T>(
-            a[midpoint], tree_from_sorted_list(a, midpoint),
-            tree_from_sorted_list(a + midpoint + 1, midpoint));
-    else  // when size is even
-        return new Tree_node<T>(
+    if(size & 1) {  // when size is odd
+        Tree_node<T>* new_node =
+            new Tree_node<T>(a[midpoint], tree_from_sorted_list(a, midpoint),
+                             tree_from_sorted_list(a + midpoint + 1, midpoint));
+        new_node->update_height();
+
+        return new_node;
+    } else {  // when size is even
+        Tree_node<T>* new_node = new Tree_node<T>(
             a[midpoint], tree_from_sorted_list(a, midpoint),
             tree_from_sorted_list(a + midpoint + 1, midpoint - 1));
+        new_node->update_height();
+
+        return new_node;
+    }
 }
 
 template <typename T>
