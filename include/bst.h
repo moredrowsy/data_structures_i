@@ -5,7 +5,7 @@
  * HEADER      : my_queue
  * DESCRIPTION : This header defines a templated BST (binary search tree) and
  *      its associated functions. The BST can insert and erase a
- *bst_node::Tree_node at target.
+ *bst_node::TreeNode at target.
  ******************************************************************************/
 #ifndef BST_H
 #define BST_H
@@ -27,7 +27,7 @@ public:
     ~BST();
 
     // ACCESSORS
-    bool search(const T& target, bst_node::Tree_node<T>*& found_ptr) const;
+    bool search(const T& target, bst_node::TreeNode<T>*& found_ptr) const;
 
     // MUTATORS
     void insert(const T& insert_me);
@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    bst_node::Tree_node<T>* _root;
+    bst_node::TreeNode<T>* _root;
 };
 
 template <typename T>
@@ -71,7 +71,7 @@ BST<T>::~BST() {
 }
 
 template <typename T>
-bool BST<T>::search(const T& target, bst_node::Tree_node<T>*& found_ptr) const {
+bool BST<T>::search(const T& target, bst_node::TreeNode<T>*& found_ptr) const {
     return bst_node::tree_search(_root, target, found_ptr);
 }
 

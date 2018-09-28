@@ -4,7 +4,7 @@
 int main() {
     using namespace bst_node;
 
-    bst_node::Tree_node<int> *root1 = nullptr, *root2 = nullptr;
+    bst_node::TreeNode<int> *root1 = nullptr, *root2 = nullptr;
 
     // make BST
     bst_node::tree_insert(root1, 50);
@@ -70,9 +70,9 @@ int main() {
     bst_node::tree_clear(root1);
     bst_node::tree_clear(root2);
 
-    bst_node::Tree_node<int> *root_a = nullptr, *root_b = nullptr,
-                             *root_c = nullptr, *root_d = nullptr,
-                             *root_e = nullptr, *root_f = nullptr;
+    bst_node::TreeNode<int> *root_a = nullptr, *root_b = nullptr,
+                            *root_c = nullptr, *root_d = nullptr,
+                            *root_e = nullptr, *root_f = nullptr;
 
     // create bst from array 'a' with odd size
     const int size_a = 1;
@@ -211,7 +211,7 @@ int main() {
     std::cout << std::endl;
 
     // tree_search
-    bst_node::Tree_node<int> *find = nullptr;
+    bst_node::TreeNode<int> *find = nullptr;
     int find_t = 0;
 
     // find in e, size odd
