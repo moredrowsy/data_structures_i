@@ -1,6 +1,5 @@
 #include <iostream>
 #include "../include/bst.h"
-#include "../include/bst_node.h"
 
 int main() {
     using namespace bst_node;

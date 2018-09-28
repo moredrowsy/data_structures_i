@@ -201,24 +201,15 @@ void tree_remove_max(Tree_node<T>*& root, T& max_value) {
     if(!root) return;  // base: root is nullptr
 
     if(!root->_right) {
-        if(!root->_left) {
-            max_value = root->_item;
+        max_value = root->_item;
 
-            delete root;
-            root = nullptr;
+        Tree_node<T>* pop = root;
+        root = root->_left;
 
-            return;
-        } else {
-            max_value = root->_item;
+        delete pop;
+        pop = nullptr;
 
-            Tree_node<T>* pop = root;
-            root = root->_left;
-
-            delete pop;
-            pop = nullptr;
-
-            return;
-        }
+        return;
     }
 
     tree_remove_max(root->_right, max_value);  // recurve right
