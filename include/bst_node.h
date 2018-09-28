@@ -173,6 +173,7 @@ template <typename T>
 bool tree_erase(Tree_node<T>*& root, const T& target) {
     if(!root) return false;  // base: root is nullptr
 
+    // erase found target
     if(target == root->_item) {
         if(!root->_left) {
             Tree_node<T>* pop = root;
@@ -185,15 +186,24 @@ bool tree_erase(Tree_node<T>*& root, const T& target) {
             tree_remove_max(root->_left, max);
             root->_item = max;
         }
+
         return true;
     }
 
-    if(target < root->_item)
-        return tree_erase(root->_left, target);  // recurve left node
-    else
-        return tree_erase(root->_right, target);  // recurve right node
+    // recurve if target not found
+    bool is_erased = false;
 
-    root->update_height();
+    if(target < root->_item) {
+        is_erased = tree_erase(root->_left, target);  // recurve left node
+        root->update_height();
+
+        return is_erased;
+    } else {
+        is_erased = tree_erase(root->_right, target);  // recurve right node
+        root->update_height();
+
+        return is_erased;
+    }
 }
 
 template <typename T>
