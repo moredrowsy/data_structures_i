@@ -37,7 +37,9 @@ struct Tree_node {
     int update_height() { return _height = height(); }
 
     Tree_node(T item = T(), Tree_node* left = NULL, Tree_node* right = NULL)
-        : _item(item), _left(left), _right(right), _height(1) {}
+        : _item(item), _left(left), _right(right), _height(0) {
+        update_height();  // updates height when node is created recursively
+    }
 
     friend std::ostream& operator<<(std::ostream& outs,
                                     const Tree_node<T>& t_node) {
@@ -230,20 +232,16 @@ template <typename T>
 Tree_node<T>* tree_copy(Tree_node<T>* root) {
     if(!root) return nullptr;  // base: root is nullptr
 
-    Tree_node<T>* new_node = new Tree_node<T>(
-        root->_item, tree_copy(root->_left), tree_copy(root->_right));
-    new_node->update_height();
-
-    return new_node;
+    return new Tree_node<T>(root->_item, tree_copy(root->_left),
+                            tree_copy(root->_right));
 }
 
 template <typename T>
 void tree_add(Tree_node<T>*& dest, const Tree_node<T>* src) {
     if(src) {
-        tree_add(dest, src->_left);
+        tree_add(dest, src->_left);  // recurve left
         tree_insert(dest, src->_item);
-        dest->update_height();
-        tree_add(dest, src->_right);
+        tree_add(dest, src->_right);  // recurve right
     }
 }
 
@@ -253,21 +251,14 @@ Tree_node<T>* tree_from_sorted_list(const T* a, int size) {
 
     int midpoint = size / 2;
 
-    if(size & 1) {  // when size is odd
-        Tree_node<T>* new_node =
-            new Tree_node<T>(a[midpoint], tree_from_sorted_list(a, midpoint),
-                             tree_from_sorted_list(a + midpoint + 1, midpoint));
-        new_node->update_height();
-
-        return new_node;
-    } else {  // when size is even
-        Tree_node<T>* new_node = new Tree_node<T>(
+    if(size & 1)  // when size is odd
+        return new Tree_node<T>(
+            a[midpoint], tree_from_sorted_list(a, midpoint),
+            tree_from_sorted_list(a + midpoint + 1, midpoint));
+    else  // when size is even
+        return new Tree_node<T>(
             a[midpoint], tree_from_sorted_list(a, midpoint),
             tree_from_sorted_list(a + midpoint + 1, midpoint - 1));
-        new_node->update_height();
-
-        return new_node;
-    }
 }
 
 template <typename T>
