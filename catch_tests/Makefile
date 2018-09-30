@@ -7,7 +7,8 @@ INC             := ../include
 SRC             := ../src
 CATCH           := ../lib
 OBJ             := ${CATCH}/tests_main.o\
-                   test_my_node.o test_my_queue.o test_my_stack.o
+                   test_my_node.o test_my_queue.o test_my_stack.o\
+				   test_bst_node.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -17,7 +18,7 @@ tests_main.o: tests_main.cpp\
 	${CATCH}/catch.hpp
 	$(CXX) -o ${CATCH}/$@ -c $<
 
-# test for my_node
+# test my_node
 test_my_node.out: ${CATCH}/tests_main.o test_my_node.o
 	$(CXX) -o $@ $^
 
@@ -25,7 +26,7 @@ test_my_node.o: test_my_node.cpp\
 	${INC}/my_node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_queue
+# test my_queue
 test_my_queue.out: ${CATCH}/tests_main.o test_my_queue.o
 	$(CXX) -o $@ $^
 
@@ -34,13 +35,21 @@ test_my_queue.o: test_my_queue.cpp\
 	${INC}/my_queue.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_stack
+# test my_stack
 test_my_stack.out: ${CATCH}/tests_main.o test_my_stack.o
 	$(CXX) -o $@ $^
 
 test_my_stack.o: test_my_stack.cpp\
 	${INC}/my_node.h\
 	${INC}/my_stack.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test bst_node
+test_bst_node.out: ${CATCH}/tests_main.o test_bst_node.o
+	$(CXX) -o $@ $^
+
+test_bst_node.o: test_bst_node.cpp\
+	${INC}/bst_node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
