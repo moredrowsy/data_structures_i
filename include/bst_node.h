@@ -106,9 +106,8 @@ void tree_insert(TreeNode<T>*& root, const T& insert_me) {
 
 template <typename T>
 TreeNode<T>* tree_search(TreeNode<T>* root, const T& target) {
-    if(!root) return nullptr;  // base: root is nullptr
-
-    if(target == root->_item) return root;  // return current root if found
+    // base: nullptr or target, return root (root = nullptr if not found)
+    if(!root || target == root->_item) return root;
 
     if(target < root->_item)
         return tree_search(root->_left, target);  // recurve left node
@@ -118,11 +117,10 @@ TreeNode<T>* tree_search(TreeNode<T>* root, const T& target) {
 
 template <typename T>
 bool tree_search(TreeNode<T>* root, const T& target, TreeNode<T>*& found_ptr) {
-    if(!root) return false;  // base: root is nullptr
-
-    if(target == root->_item) {  // return true/current root if found
+    // base: nullptr or target, return bool, set found_ptr
+    if(!root || target == root->_item) {
         found_ptr = root;
-        return true;
+        return root ? true : false;
     }
 
     if(target < root->_item)
@@ -228,10 +226,10 @@ void tree_remove_max(TreeNode<T>*& root, T& max_value) {
 
 template <typename T>
 TreeNode<T>* tree_copy(TreeNode<T>* root) {
-    if(!root) return nullptr;  // base: root is nullptr
-
-    return new TreeNode<T>(root->_item, tree_copy(root->_left),
-                           tree_copy(root->_right));
+    // base: nullptr, return root; else return new node
+    return !root ? root
+                 : new TreeNode<T>(root->_item, tree_copy(root->_left),
+                                   tree_copy(root->_right));
 }
 
 template <typename T>
