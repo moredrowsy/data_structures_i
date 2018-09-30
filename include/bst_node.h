@@ -83,17 +83,14 @@ void tree_add(TreeNode<T>*& dest, const TreeNode<T>* src);
 template <typename T>  // sorted array -> tree
 TreeNode<T>* tree_from_sorted_list(const T* a, int size);
 
-template <typename T>  // print a single node (for function pointers)
-void tree_print_node(TreeNode<T>* root);
+template <typename T, typename F>
+void inorder(TreeNode<T>*& root, F f);
 
 template <typename T, typename F>
-void inorder(TreeNode<T>* root, F f);
+void preorder(TreeNode<T>*& root, F f);
 
 template <typename T, typename F>
-void preorder(TreeNode<T>* root, F f);
-
-template <typename T, typename F>
-void postorder(TreeNode<T>* root, F f);
+void postorder(TreeNode<T>*& root, F f);
 
 template <typename T>
 void tree_insert(TreeNode<T>*& root, const T& insert_me) {
@@ -129,9 +126,9 @@ bool tree_search(TreeNode<T>* root, const T& target, TreeNode<T>*& found_ptr) {
     }
 
     if(target < root->_item)
-        return tree_search(root->_left, target);  // recurve left node
+        return tree_search(root->_left, target, found_ptr);  // recurve left
     else
-        return tree_search(root->_right, target);  // recurve right node
+        return tree_search(root->_right, target, found_ptr);  // recurve right
 }
 
 template <typename T>
@@ -188,6 +185,8 @@ bool tree_erase(TreeNode<T>*& root, const T& target) {
             root->_item = max;
         }
 
+        if(root) root->update_height();  // update height if root is not nullptr
+
         return true;
     }
 
@@ -238,8 +237,8 @@ TreeNode<T>* tree_copy(TreeNode<T>* root) {
 template <typename T>
 void tree_add(TreeNode<T>*& dest, const TreeNode<T>* src) {
     if(src) {
-        tree_add(dest, src->_left);  // recurve left
         tree_insert(dest, src->_item);
+        tree_add(dest, src->_left);   // recurve left
         tree_add(dest, src->_right);  // recurve right
     }
 }
@@ -260,13 +259,8 @@ TreeNode<T>* tree_from_sorted_list(const T* a, int size) {
             tree_from_sorted_list(a + midpoint + 1, midpoint - 1));
 }
 
-template <typename T>
-void tree_print_node(TreeNode<T>* root) {
-    std::cout << *root << " ";
-}
-
 template <typename T, typename F>
-void inorder(TreeNode<T>* root, F f) {
+void inorder(TreeNode<T>*& root, F f) {
     if(root) {
         inorder(root->_left, f);
         f(root);
@@ -275,7 +269,7 @@ void inorder(TreeNode<T>* root, F f) {
 }
 
 template <typename T, typename F>
-void preorder(TreeNode<T>* root, F f) {
+void preorder(TreeNode<T>*& root, F f) {
     if(root) {
         f(root);
         preorder(root->_left, f);
@@ -284,7 +278,7 @@ void preorder(TreeNode<T>* root, F f) {
 }
 
 template <typename T, typename F>
-void postorder(TreeNode<T>* root, F f) {
+void postorder(TreeNode<T>*& root, F f) {
     if(root) {
         postorder(root->_left, f);
         postorder(root->_right, f);

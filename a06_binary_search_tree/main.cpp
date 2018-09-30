@@ -294,22 +294,22 @@ int main() {
     else
         std::cout << "Couldn't find " << find_t << " in root_f" << std::endl;
 
-    // call inorder with function pointer
+    // call inorder with direct lambda call
     std::cout << std::endl
-              << "Calling inorder with function pointer" << std::endl;
-    bst_node::inorder(root_f, bst_node::tree_print_node<int>);
+              << "Calling inorder with direct lambda call" << std::endl;
+    bst_node::inorder(root_f, [](auto &r) { std::cout << *r << " "; });
     std::cout << std::endl;
 
-    // call preorder with function pointer
+    // call preorder with indrect lambda call to tree_print_node
     std::cout << std::endl
-              << "Calling preorder with function pointer" << std::endl;
-    bst_node::preorder(root_f, bst_node::tree_print_node<int>);
+              << "Calling preorder with direct lambda call" << std::endl;
+    bst_node::preorder(root_f, [](auto &r) { std::cout << *r << " "; });
     std::cout << std::endl;
 
-    // call postorder with function pointer
+    // call postorder with indrect lambda call to tree_print_node
     std::cout << std::endl
-              << "Calling postorder with function pointer" << std::endl;
-    bst_node::postorder(root_f, bst_node::tree_print_node<int>);
+              << "Calling postorder with direct lambda call" << std::endl;
+    bst_node::postorder(root_f, [](auto &r) { std::cout << *r << " "; });
     std::cout << std::endl;
 
     // deallocate all roots
