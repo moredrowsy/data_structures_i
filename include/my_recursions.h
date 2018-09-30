@@ -24,7 +24,7 @@ void r2_box(std::string prefix, unsigned level);
 void r3_permutation(std::string first, std::string second);
 
 // ask user pick prefix within prefix
-unsigned r4_i_box(std::string prefix, unsigned level);
+unsigned r4_i_box(std::string prefix, unsigned level = 0);
 
 // prints ouf the sum of reciprocal of levels
 double r5_sumover(unsigned level);

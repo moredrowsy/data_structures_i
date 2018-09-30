@@ -5,7 +5,7 @@
  * ASSIGNMENT 05 : Recursive Functions
  * DESCRIPTION   : This program tests various recursive functions to illustrate
  *      their mechanism. Additionally, you can call specific tests via command
- *      line arguments in any order.
+ *      line arguments in any order by the test number.
  ******************************************************************************/
 #include <cstring>
 #include <iostream>
@@ -49,44 +49,118 @@ int main(int argc, char* argv[]) {
 void test_r1() {
     using namespace my_recursions;
 
+    unsigned start_level = -1, end_level = -1;
+
     std::cout << std::string(80, '=') << std::endl;
-    unsigned start_level = 1, end_level = 4;
     std::cout << "Recursion 1: Prints out levels before/after recursion:"
-              << std::endl
-              << "start_level = " << start_level
+              << std::endl;
+
+    std::cout << std::endl;
+
+    start_level = 0, end_level = 0;
+    std::cout << "start_level = " << start_level
               << ", end_level = " << end_level << std::endl
               << std::string(80, '-') << std::endl;
     r1_levels(start_level, end_level);
+
+    std::cout << std::endl;
+
+    start_level = 0, end_level = 1;
+    std::cout << "start_level = " << start_level
+              << ", end_level = " << end_level << std::endl
+              << std::string(80, '-') << std::endl;
+    r1_levels(start_level, end_level);
+
+    std::cout << std::endl;
+
+    start_level = 0, end_level = 4;
+    std::cout << "start_level = " << start_level
+              << ", end_level = " << end_level << std::endl
+              << std::string(80, '-') << std::endl;
+    r1_levels(start_level, end_level);
+
     std::cout << std::string(80, '=') << std::endl;
 }
 
 void test_r2() {
     using namespace my_recursions;
 
-    std::cout << std::string(80, '=') << std::endl;
     std::string prefix = "BOX:";
-    unsigned section_level = 3;
+    unsigned section_level = -1;
+
+    std::cout << std::string(80, '=') << std::endl;
     std::cout << "Recursion 2: Prints out prefix + successive levels of "
                  "sections: "
-              << std::endl
-              << "prefix = " << prefix << ", level = " << section_level
+              << std::endl;
+
+    std::cout << std::endl;
+
+    section_level = 1;
+    std::cout << "prefix = " << prefix << ", level = " << section_level
               << std::endl
               << std::string(80, '-') << std::endl;
     r2_box(prefix, section_level);
+
+    std::cout << std::endl;
+
+    section_level = 2;
+    std::cout << "prefix = " << prefix << ", level = " << section_level
+              << std::endl
+              << std::string(80, '-') << std::endl;
+    r2_box(prefix, section_level);
+
+    std::cout << std::endl;
+
+    section_level = 3;
+    std::cout << "prefix = " << prefix << ", level = " << section_level
+              << std::endl
+              << std::string(80, '-') << std::endl;
+    r2_box(prefix, section_level);
+
     std::cout << std::string(80, '=') << std::endl;
 }
 
 void test_r3() {
     using namespace my_recursions;
 
-    std::string first = "CAT", second = "MAN";
+    std::string first, second;
+
     std::cout << std::string(80, '=') << std::endl;
     std::cout << "Recursion 3: Prints out permutations of the first word:"
-              << std::endl
-              << "first word = " << first << ", second word = " << second
+              << std::endl;
+
+    std::cout << std::endl;
+
+    first = "C", second = "MAN";
+    std::cout << "first word = " << first << ", second word = " << second
               << std::endl
               << std::string(80, '-') << std::endl;
     r3_permutation(first, second);
+
+    std::cout << std::endl;
+
+    first = "CA", second = "MAN";
+    std::cout << "first word = " << first << ", second word = " << second
+              << std::endl
+              << std::string(80, '-') << std::endl;
+    r3_permutation(first, second);
+
+    std::cout << std::endl;
+
+    first = "CAT", second = "MAN";
+    std::cout << "first word = " << first << ", second word = " << second
+              << std::endl
+              << std::string(80, '-') << std::endl;
+    r3_permutation(first, second);
+
+    std::cout << std::endl;
+
+    first = "CATS", second = "MAN";
+    std::cout << "first word = " << first << ", second word = " << second
+              << std::endl
+              << std::string(80, '-') << std::endl;
+    r3_permutation(first, second);
+
     std::cout << std::string(80, '=') << std::endl;
 }
 
@@ -98,7 +172,7 @@ void test_r4() {
                  "open successive boxes."
               << std::endl
               << std::string(80, '-') << std::endl;
-    double total_boxes = r4_i_box("", 3);
+    double total_boxes = r4_i_box("");
     std::cout << std::endl << "total_boxes = " << total_boxes << std::endl;
     std::cout << std::string(80, '=') << std::endl;
 }
@@ -106,14 +180,61 @@ void test_r4() {
 void test_r5() {
     using namespace my_recursions;
 
+    double sumover = -1;
+    unsigned reciprocal_level = 0;
+
     std::cout << std::string(80, '=') << std::endl;
-    unsigned reciprocal_level = 3;
     std::cout << "Recursion 5: Returns the sum of reciprocals of levels"
-              << std::endl
-              << "reciprocal level = " << reciprocal_level << std::endl
+              << std::endl;
+
+    std::cout << std::endl;
+
+    reciprocal_level = 0;
+    std::cout << "reciprocal level = " << reciprocal_level << std::endl
               << std::string(80, '-') << std::endl;
-    double sumover = r5_sumover(reciprocal_level);
+    sumover = r5_sumover(reciprocal_level);
     std::cout << "sumover = " << sumover << std::endl;
+
+    std::cout << std::endl;
+
+    reciprocal_level = 1;
+    std::cout << "reciprocal level = " << reciprocal_level << std::endl
+              << std::string(80, '-') << std::endl;
+    sumover = r5_sumover(reciprocal_level);
+    std::cout << "sumover = " << sumover << std::endl;
+
+    std::cout << std::endl;
+
+    reciprocal_level = 2;
+    std::cout << "reciprocal level = " << reciprocal_level << std::endl
+              << std::string(80, '-') << std::endl;
+    sumover = r5_sumover(reciprocal_level);
+    std::cout << "sumover = " << sumover << std::endl;
+
+    std::cout << std::endl;
+
+    reciprocal_level = 3;
+    std::cout << "reciprocal level = " << reciprocal_level << std::endl
+              << std::string(80, '-') << std::endl;
+    sumover = r5_sumover(reciprocal_level);
+    std::cout << "sumover = " << sumover << std::endl;
+
+    std::cout << std::endl;
+
+    reciprocal_level = 4;
+    std::cout << "reciprocal level = " << reciprocal_level << std::endl
+              << std::string(80, '-') << std::endl;
+    sumover = r5_sumover(reciprocal_level);
+    std::cout << "sumover = " << sumover << std::endl;
+
+    std::cout << std::endl;
+
+    reciprocal_level = 5;
+    std::cout << "reciprocal level = " << reciprocal_level << std::endl
+              << std::string(80, '-') << std::endl;
+    sumover = r5_sumover(reciprocal_level);
+    std::cout << "sumover = " << sumover << std::endl;
+
     std::cout << std::string(80, '=') << std::endl;
 }
 
