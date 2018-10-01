@@ -11,8 +11,7 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^
 
 main.o: main.cpp\
-	${INC}/bst_node.h\
-	${INC}/bst.h
+	${INC}/bst_node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

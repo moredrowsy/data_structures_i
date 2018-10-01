@@ -147,6 +147,47 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             bool is_erased = false, is_found = false;
             TreeNode<int>* found = nullptr;
 
+            THEN("of 50 will return true and search will fail") {
+                REQUIRE(is_erased == false);
+                REQUIRE(root != nullptr);
+                REQUIRE(root->_item == 50);
+
+                // test erase
+                is_erased = tree_erase(root, 50);
+
+                tree_print(root);
+
+                REQUIRE(is_erased == true);
+                REQUIRE(root != nullptr);
+                REQUIRE(root->_item == 45);
+
+                // assert that 50 is not found
+                is_found = tree_search(root, 50, found);
+                REQUIRE(is_found == false);
+                REQUIRE(found == nullptr);
+
+                // assert bst has correct order and height
+                REQUIRE(root->_item == 45);
+                REQUIRE(root->_height == 3);
+                REQUIRE(root->_left->_item == 40);
+                REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->_left->_item == 30);
+                REQUIRE(root->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->_left == nullptr);
+                REQUIRE(root->_left->_left->_right == nullptr);
+                REQUIRE(root->_left->_right == nullptr);
+                REQUIRE(root->_right->_item == 70);
+                REQUIRE(root->_right->_height == 2);
+                REQUIRE(root->_right->_left->_item == 55);
+                REQUIRE(root->_right->_left->_height == 1);
+                REQUIRE(root->_right->_left->_left == nullptr);
+                REQUIRE(root->_right->_left->_right->_item == 60);
+                REQUIRE(root->_right->_left->_right->_height == 0);
+                REQUIRE(root->_right->_left->_right->_left == nullptr);
+                REQUIRE(root->_right->_left->_right->_right == nullptr);
+                REQUIRE(root->_right->_right == nullptr);
+            }
+
             THEN("of 70 will return true and search will fail") {
                 REQUIRE(is_erased == false);
                 REQUIRE(root->_right != nullptr);
