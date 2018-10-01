@@ -4,8 +4,7 @@
  * CLASS       : CS008
  * HEADER      : my_queue
  * DESCRIPTION : This header defines a templated BST (binary search tree) and
- *      its associated functions. The BST can insert and erase a
- *bst_node::TreeNode at target.
+ *      its associated functions (ie insert and erase) for the binary TreeNode.
  ******************************************************************************/
 #ifndef BST_H
 #define BST_H
@@ -31,15 +30,15 @@ public:
 
     // MUTATORS
     void insert(const T& insert_me);
-    void erase(const T& target);
+    bool erase(const T& target);
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BST<T>& tree) {
-        bst_node::tree_print(tree->_root);
+        bst_node::tree_print(tree._root);
         return outs;
     }
     friend BST<T>& operator+=(BST<T>& lhs, const BST<T>& rhs) {
-        bst_node::tree_add(lhs->_root, rhs->_root);
+        bst_node::tree_add(lhs._root, rhs._root);
         return lhs;
     }
 
@@ -54,15 +53,17 @@ BST<T>::BST(const T* sorted_list, int size) {
 
 template <typename T>
 BST<T>::BST(const BST<T>& copy_me) {
-    _root = bst_node::tree_copy(_root, copy_me);  // copy copy_me to _root
+    _root = bst_node::tree_copy(copy_me._root);  // copy copy_me to _root
 }
 
 template <typename T>
 BST<T>& BST<T>::operator=(const BST<T>& rhs) {
     if(this != &rhs) {
-        if(_root) bst_node::tree_clear(_root);    // deallocate old data
-        _root = bst_node::tree_copy(_root, rhs);  // copy rhs to _root
+        if(_root) bst_node::tree_clear(_root);   // deallocate old data
+        _root = bst_node::tree_copy(rhs._root);  // copy rhs to _root
     }
+
+    return *this;
 }
 
 template <typename T>
@@ -77,12 +78,12 @@ bool BST<T>::search(const T& target, bst_node::TreeNode<T>*& found_ptr) const {
 
 template <typename T>
 void BST<T>::insert(const T& insert_me) {
-    bst_node::tree_insert(_root, insert);
+    bst_node::tree_insert(_root, insert_me);
 }
 
 template <typename T>
-void BST<T>::erase(const T& target) {
-    bst_node::tree_erase(_root, target);
+bool BST<T>::erase(const T& target) {
+    return bst_node::tree_erase(_root, target);
 }
 
 }  // namespace bst
