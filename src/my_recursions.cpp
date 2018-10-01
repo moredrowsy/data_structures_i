@@ -19,7 +19,7 @@ namespace my_recursions {
 void r1_levels(unsigned start_level, unsigned end_level) {
     if(start_level > end_level) return;  // base: start is beyond end level
 
-    // print out first sentence
+    // print out first sentence before recurve
     std::cout << std::string(start_level, ' ')
               << "This was written by call number " << start_level << "."
               << std::endl;
@@ -27,7 +27,7 @@ void r1_levels(unsigned start_level, unsigned end_level) {
     // recurve to higher level
     r1_levels(start_level + 1, end_level);
 
-    // print out second sentence
+    // print out second sentence after recurve
     std::cout << std::string(start_level, ' ')
               << "This ALSO written by call number " << start_level << "."
               << std::endl;

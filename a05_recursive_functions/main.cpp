@@ -20,25 +20,25 @@ void test_r16();  // prints recursive guesses
 
 int main(int argc, char* argv[]) {
     // declare array of function pointers
-    const int FUNC_SIZE = 6;
-    const char* args[FUNC_SIZE] = {"1", "2", "3", "4", "5", "16"};
-    typedef void (*func_ptr)();
-    func_ptr func_arr[FUNC_SIZE] = {&test_r1, &test_r2, &test_r3,
-                                    &test_r4, &test_r5, &test_r16};
+    const int FN_SIZE = 6;
+    const char* args[FN_SIZE] = {"1", "2", "3", "4", "5", "16"};  // arguments
+    typedef void (*fn_ptr)();  // declare function pointer type
+    fn_ptr fn_arr[FN_SIZE] = {&test_r1, &test_r2, &test_r3,
+                              &test_r4, &test_r5, &test_r16};
 
     // call functions by arguments
     if(argc > 1) {
-        for(int i = 1; i < argc; ++i) {
-            for(int j = 0; j < FUNC_SIZE; ++j) {
-                if(!strcmp(argv[i], args[j])) {
-                    func_arr[j]();
+        for(int i = 1; i < argc; ++i) {  // skip argv[0]
+            for(int j = 0; j < FN_SIZE; ++j) {
+                if(!strcmp(argv[i], args[j])) {  // when argv == args is true
+                    fn_arr[j]();                 // call function pointer
                     std::cout << std::endl << std::endl;
                 }
             }
         }
     } else {  // call all functions in function array
-        for(int i = 1; i <= FUNC_SIZE; ++i) {
-            func_arr[i - 1]();
+        for(int i = 0; i < FN_SIZE; ++i) {
+            fn_arr[i]();
             std::cout << std::endl << std::endl;
         }
     }
