@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : my_queue
+ * HEADER      : my_recursions
  * DESCRIPTION : This header defines a templated BST (binary search tree) and
  *      its associated functions. The BST can insert and erase a
 bst_node::TreeNode at target.

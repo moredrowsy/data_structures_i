@@ -155,8 +155,6 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // test erase
                 is_erased = tree_erase(root, 50);
 
-                tree_print(root);
-
                 REQUIRE(is_erased == true);
                 REQUIRE(root != nullptr);
                 REQUIRE(root->_item == 45);

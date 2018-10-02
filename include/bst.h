@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : my_queue
+ * HEADER      : bst
  * DESCRIPTION : This header defines a templated BST (binary search tree) and
  *      its associated functions (ie insert and erase) for the binary TreeNode.
  ******************************************************************************/
@@ -18,7 +18,7 @@ class BST {
 public:
     // CONSTRUCTORS
     BST() : _root(nullptr){};
-    BST(const T* sorted_list, int size = 0);
+    BST(const T* sorted_list, int size = -1);
 
     // BIG THREE
     BST(const BST<T>& copy_me);
@@ -34,7 +34,7 @@ public:
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BST<T>& tree) {
-        bst_node::tree_print(tree._root);
+        bst_node::tree_print(tree._root, outs);
         return outs;
     }
     friend BST<T>& operator+=(BST<T>& lhs, const BST<T>& rhs) {
@@ -48,7 +48,7 @@ private:
 
 template <typename T>
 BST<T>::BST(const T* sorted_list, int size) {
-    _root = bst_node::tree_from_sorted_list(sorted_list, size);
+    if(size > 0) _root = bst_node::tree_from_sorted_list(sorted_list, size);
 }
 
 template <typename T>

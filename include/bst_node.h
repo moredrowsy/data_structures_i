@@ -57,12 +57,12 @@ template <typename T>  // search tree and return node plus boolean if found
 bool tree_search(TreeNode<T>* root, const T& target, TreeNode<T>*& found_ptr);
 
 template <typename T>  // print tree rotated 90 degrees counterclockwise
-void tree_print(TreeNode<T>* root, int level = 0,
-                std::ostream& outs = std::cout);
+void tree_print(TreeNode<T>* root, std::ostream& outs = std::cout,
+                int level = 0);
 
 template <typename T>  // prints details info about each node
-void tree_print_debug(TreeNode<T>* root, int level = 0,
-                      std::ostream& outs = std::cout);
+void tree_print_debug(TreeNode<T>* root, std::ostream& outs = std::cout,
+                      int level = 0);
 
 template <typename T>  // clear the tree
 void tree_clear(TreeNode<T>*& root);
@@ -130,28 +130,28 @@ bool tree_search(TreeNode<T>* root, const T& target, TreeNode<T>*& found_ptr) {
 }
 
 template <typename T>
-void tree_print(TreeNode<T>* root, int level, std::ostream& outs) {
+void tree_print(TreeNode<T>* root, std::ostream& outs, int level) {
     if(!root) {  // base: root is nullptr
         outs << std::string(5 * level, ' ') << "|||" << std::endl;
         return;
     }
 
-    tree_print(root->_right, level + 1, outs);  // recurve right
+    tree_print(root->_right, outs, level + 1);  // recurve right
     outs << std::string(5 * level, ' ') << *root << std::endl;
-    tree_print(root->_left, level + 1, outs);  // recurve left
+    tree_print(root->_left, outs, level + 1);  // recurve left
 }
 
 template <typename T>  // prints details info about each node
-void tree_print_debug(TreeNode<T>* root, int level, std::ostream& outs) {
+void tree_print_debug(TreeNode<T>* root, std::ostream& outs, int level) {
     if(!root) {  // base: root is nullptr
         outs << std::string(5 * level, ' ') << "|||" << std::endl;
         return;
     }
 
-    tree_print_debug(root->_right, level + 1, outs);  // recurve right
+    tree_print_debug(root->_right, outs, level + 1);  // recurve right
     outs << std::string(5 * level, ' ') << *root << " h" << root->_height
          << std::endl;
-    tree_print_debug(root->_left, level + 1, outs);  // recurve left
+    tree_print_debug(root->_left, outs, level + 1);  // recurve left
 }
 
 template <typename T>
