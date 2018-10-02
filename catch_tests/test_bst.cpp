@@ -358,6 +358,20 @@ SCENARIO("Binary Search Tree Class", "[bst]") {
                 }
             }
         }
+
+        WHEN("assignment of btree with empty btree2") {
+            BST<int> btree2;
+
+            // assignment
+            btree = btree2;
+
+            THEN("btree will become empty") {
+                // test empty btree
+                ss.str("");
+                ss << btree;
+                REQUIRE(ss.str() == "|||\n");
+            }
+        }
     }
 
     GIVEN("an array of 0 sorted item") {

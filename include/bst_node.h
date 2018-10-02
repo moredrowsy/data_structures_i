@@ -243,7 +243,7 @@ void tree_add(TreeNode<T>*& dest, const TreeNode<T>* src) {
 
 template <typename T>
 TreeNode<T>* tree_from_sorted_list(const T* a, int size) {
-    if(!size) return nullptr;  // base: size is 0
+    if(size < 1) return nullptr;  // base: size is 0
 
     int midpoint = size / 2;
 

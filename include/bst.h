@@ -18,7 +18,7 @@ class BST {
 public:
     // CONSTRUCTORS
     BST() : _root(nullptr){};
-    BST(const T* sorted_list, int size = -1);
+    BST(const T* sorted_list, int size = -1);  // with array of sorted items
 
     // BIG THREE
     BST(const BST<T>& copy_me);
@@ -29,8 +29,9 @@ public:
     bool search(const T& target, bst_node::TreeNode<T>*& found_ptr) const;
 
     // MUTATORS
-    void insert(const T& insert_me);
+    void clear();
     bool erase(const T& target);
+    void insert(const T& insert_me);
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BST<T>& tree) {
@@ -48,7 +49,7 @@ private:
 
 template <typename T>
 BST<T>::BST(const T* sorted_list, int size) {
-    if(size > 0) _root = bst_node::tree_from_sorted_list(sorted_list, size);
+    _root = bst_node::tree_from_sorted_list(sorted_list, size);
 }
 
 template <typename T>
@@ -77,13 +78,18 @@ bool BST<T>::search(const T& target, bst_node::TreeNode<T>*& found_ptr) const {
 }
 
 template <typename T>
-void BST<T>::insert(const T& insert_me) {
-    bst_node::tree_insert(_root, insert_me);
+void BST<T>::clear() {
+    bst_node::tree_clear(_root);  // deallocate old data
 }
 
 template <typename T>
 bool BST<T>::erase(const T& target) {
     return bst_node::tree_erase(_root, target);
+}
+
+template <typename T>
+void BST<T>::insert(const T& insert_me) {
+    bst_node::tree_insert(_root, insert_me);
 }
 
 }  // namespace bst
