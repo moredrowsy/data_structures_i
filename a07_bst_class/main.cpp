@@ -6,11 +6,12 @@
  * DESCRIPTION   : This program is an interactive test harness for the BST
  *      class, which will NOT guarantee a full or complete binary tree.
  ******************************************************************************/
-#include <cstdlib>  // rand()
-#include <ctime>    // time()
-#include <iostream>
-#include <vector>
-#include "../include/bst.h"
+#include <algorithm>         // random_shuffle
+#include <cstdlib>           // rand()
+#include <ctime>             // time()
+#include <iostream>          // io stream objects
+#include <vector>            // vector objects
+#include "../include/bst.h"  // BST class, unbalanced binary tree
 
 std::vector<int> gen_rand_vec();
 void random_bst_test();

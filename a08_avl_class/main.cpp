@@ -2,14 +2,16 @@
  * AUTHOR        : Thuan Tang
  * ID            : 00991588
  * CLASS         : CS008
- * ASSIGNMENT 07 : BST Class
+ * ASSIGNMENT 08 : AVL Class
  * DESCRIPTION   : This program is an interactive test harness for the AVL
  *      class, which will guarantee a full or complete binary tree.
  ******************************************************************************/
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include "../include/avl.h"
+#include <algorithm>         // random_shuffle
+#include <cstdlib>           // rand()
+#include <ctime>             // time()
+#include <iostream>          // io stream objects
+#include <vector>            // vector objects
+#include "../include/avl.h"  // AVL class, balanced binary tree
 
 std::vector<int> gen_rand_vec();
 void random_avl_test();
