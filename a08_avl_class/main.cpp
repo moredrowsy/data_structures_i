@@ -3,20 +3,19 @@
  * ID            : 00991588
  * CLASS         : CS008
  * ASSIGNMENT 07 : BST Class
- * DESCRIPTION   : This program is an interactive test harness for the BST
- *      class, which will NOT guarantee a full or complete binary tree.
+ * DESCRIPTION   : This program is an interactive test harness for the AVL
+ *      class, which will guarantee a full or complete binary tree.
  ******************************************************************************/
-#include <cstdlib>  // rand()
-#include <ctime>    // time()
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include "../include/bst.h"
+#include "../include/avl.h"
 
 std::vector<int> gen_rand_vec();
-void random_bst_test();
+void random_avl_test();
 
 int main() {
-    random_bst_test();
+    random_avl_test();
 
     return 0;
 }
@@ -33,12 +32,12 @@ std::vector<int> gen_rand_vec() {
     return rvector;
 }
 
-void random_bst_test() {
-    using namespace bst;
+void random_avl_test() {
+    using namespace avl;
 
-    BST<int> tree;
+    AVL<int> tree;
     bool is_erased = false, is_found = false, is_inserted = false;
-    bst_node::TreeNode<int> *found = nullptr;
+    bst_node::TreeNode<int>* found = nullptr;
     char c;
     int i = 0;
     std::vector<int> rvector = gen_rand_vec();

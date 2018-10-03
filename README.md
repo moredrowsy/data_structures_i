@@ -9,6 +9,7 @@ Projects for data structures using C++
 * Assignment 05 - Various recursive functions
 * Assignment 06 - Binary search tree node and functions
 * Assignment 07 - Binary search tree class
+* Assignment 08 - AVL class for balanced binary tree
 * Exercise 01 - Car wash simulation using Queue
 * Exercise 02 - State machine to extract tokens via adjacency table
 * Exercise 03 - Recursive fractals
