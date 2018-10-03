@@ -30,9 +30,9 @@ struct TreeNode {
 
     // ACCESSORS
     int balance_factor();
+    int height();
 
     // MUTATORS
-    int height();
     int update_height();
 
     // FRIENDS
@@ -78,11 +78,11 @@ void tree_add(TreeNode<T>*& dest, const TreeNode<T>* src, bool balance = false);
 template <typename T>  // sorted array -> tree
 TreeNode<T>* tree_from_sorted_list(const T* a, int size);
 
-template <typename T>  // root becomes child of right node
-TreeNode<T>* rotate_right(TreeNode<T>*& root);
-
 template <typename T>  // root becomes child of left node
 TreeNode<T>* rotate_left(TreeNode<T>*& root);
+
+template <typename T>  // root becomes child of right node
+TreeNode<T>* rotate_right(TreeNode<T>*& root);
 
 template <typename T>  // decide which rotate is needed based on balance factor
 TreeNode<T>* rotate(TreeNode<T>*& root);
@@ -485,47 +485,9 @@ template <typename T>
 TreeNode<T>* tree_from_sorted_list(const T* a, int size) {
     if(size < 1) return nullptr;  // base: size is 0 or negative
 
-    int midpoint = size / 2;
-
-    if(size & 1)  // when size is odd
-        return new TreeNode<T>(
-            a[midpoint], tree_from_sorted_list(a, midpoint),
-            tree_from_sorted_list(a + midpoint + 1, midpoint));
-    else  // when size is even
-        return new TreeNode<T>(
-            a[midpoint], tree_from_sorted_list(a, midpoint),
-            tree_from_sorted_list(a + midpoint + 1, midpoint - 1));
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Rotate the root to the right, by making the root the child of the left
- *  node.
- *  Mechanism: Store top root and left root. Point root to the left, point
- *             top's left to left's right and point left's right to top.
- *
- * PRE-CONDITIONS:
- *  TreeNode<T>*& root: root by reference
- *
- * POST-CONDITIONS:
- *  original top root shifted to right
- *
- * RETURN:
- *  TreeNode<T>*: new top root
- ******************************************************************************/
-template <typename T>
-TreeNode<T>* rotate_right(TreeNode<T>*& root) {
-    TreeNode<T>*top = root, *left = root->_left;
-
-    root = left;
-    top->_left = left->_right;
-    left->_right = top;
-
-    top->update_height();
-    left->update_height();
-    root->update_height();
-
-    return root;
+    return new TreeNode<T>(
+        a[size / 2], tree_from_sorted_list(a, size / 2),
+        tree_from_sorted_list(a + (size / 2) + 1, (size - 1) / 2));
 }
 
 /*******************************************************************************
@@ -554,7 +516,36 @@ TreeNode<T>* rotate_left(TreeNode<T>*& root) {
 
     top->update_height();
     right->update_height();
-    root->update_height();
+
+    return root;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Rotate the root to the right, by making the root the child of the left
+ *  node.
+ *  Mechanism: Store top root and left root. Point root to the left, point
+ *             top's left to left's right and point left's right to top.
+ *
+ * PRE-CONDITIONS:
+ *  TreeNode<T>*& root: root by reference
+ *
+ * POST-CONDITIONS:
+ *  original top root shifted to right
+ *
+ * RETURN:
+ *  TreeNode<T>*: new top root
+ ******************************************************************************/
+template <typename T>
+TreeNode<T>* rotate_right(TreeNode<T>*& root) {
+    TreeNode<T>*top = root, *left = root->_left;
+
+    root = left;
+    top->_left = left->_right;
+    left->_right = top;
+
+    top->update_height();
+    left->update_height();
 
     return root;
 }
@@ -576,21 +567,15 @@ TreeNode<T>* rotate_left(TreeNode<T>*& root) {
 template <typename T>
 TreeNode<T>* rotate(TreeNode<T>*& root) {
     if(root->balance_factor() == -2) {
-        if(root->_left->balance_factor() == -1)
-            root = rotate_right(root);
-        else {
+        if(root->_left->balance_factor() == 1)
             root->_left = rotate_left(root->_left);
-            root = rotate_right(root);
-        }
+        root = rotate_right(root);
     }
 
     if(root->balance_factor() == 2) {
-        if(root->_right->balance_factor() == 1)
-            root = rotate_left(root);
-        else {
+        if(root->_right->balance_factor() == -1)
             root->_right = rotate_right(root->_right);
-            root = rotate_left(root);
-        }
+        root = rotate_left(root);
     }
 
     return root;
