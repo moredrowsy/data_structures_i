@@ -41,19 +41,17 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
     REQUIRE(descending_items.size());
     REQUIRE(random_items.size());
 
-    GIVEN("insertion: with ascending items") {
+    GIVEN("insertion: w/ ascending items, root's balance is within limits") {
         // insert ascending items from vector to avl
         for(int i : ascending_items) {
             is_inserted = avl.insert(i);
             REQUIRE(is_inserted == true);
-        }
 
-        THEN("all nodes are within balance limits") {
             // access avl's root
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // performance balance limit assertions on all nodes recursively
+            // assert all nodes are within balance limits
             assert_balance_limit(root);
         }
 
@@ -66,19 +64,17 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
         }
     }
 
-    GIVEN("insertion: with descending items") {
+    GIVEN("insertion: w/ descending items, root's balance is within limits") {
         // insert descending items from vector to avl
         for(int i : descending_items) {
             is_inserted = avl.insert(i);
             REQUIRE(is_inserted == true);
-        }
 
-        THEN("all nodes are within balance limits") {
             // access avl's root
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // performance balance limit assertions on all nodes recursively
+            // assert all nodes are within balance limits
             assert_balance_limit(root);
         }
 
@@ -91,19 +87,17 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
         }
     }
 
-    GIVEN("insertion: with random items") {
+    GIVEN("insertion: w/ random items, root's balance is within limits") {
         // insert random items from vector to avl
         for(int i : random_items) {
             is_inserted = avl.insert(i);
             REQUIRE(is_inserted == true);
-        }
 
-        THEN("all nodes are within balance limits") {
             // access avl's root
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // performance balance limit assertions on all nodes recursively
+            // assert all nodes are within balance limits
             assert_balance_limit(root);
         }
 
@@ -119,7 +113,10 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
     // testing searching, clearing and erasing items in AVL
     GIVEN("avl inserted with ascending items") {
         // insert ascending items from vector to avl
-        for(int i : ascending_items) avl.insert(i);
+        for(int i : ascending_items) {
+            is_inserted = avl.insert(i);
+            REQUIRE(is_inserted == true);
+        }
 
         THEN("searching: with 'valid' ascending items are found") {
             // assert all previously inserted items are found in avl
@@ -158,24 +155,28 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             }
         }
 
-        THEN("erasing: all 'valid' items are moved and items are NOT found") {
+        WHEN(
+            "erasing: all 'valid' items are moved and all nodes at every "
+            "erasure is within balance limits") {
             // erase all items in avl
             for(int i : ascending_items) {
                 is_erased = avl.erase(i);
                 REQUIRE(is_erased == true);
+
+                // access avl's root
+                root = avl.root();
+
+                // assert all nodes are within balance limits
+                assert_balance_limit(root);
             }
 
-            // access avl's root
-            root = avl.root();
+            THEN("searching: items are NOT found") {
+                for(int i : ascending_items) {
+                    is_found = avl.search(i, found);
 
-            REQUIRE(root == nullptr);
-
-            // searching
-            for(int i : ascending_items) {
-                is_found = avl.search(i, found);
-
-                REQUIRE(is_found == false);
-                REQUIRE(found == nullptr);
+                    REQUIRE(is_found == false);
+                    REQUIRE(found == nullptr);
+                }
             }
         }
 
@@ -197,7 +198,7 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl_sorted_items.root();
             REQUIRE(root != nullptr);
 
-            // performance balance limit assertions on all nodes recursively
+            // assert all nodes are within balance limits
             assert_balance_limit(root);
         }
     }
@@ -206,7 +207,10 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
         "AVL's copy constructor and assignment op: avl is inserted with "
         "ascending items") {
         // insert ascending items from vector to avl
-        for(int i : ascending_items) avl.insert(i);
+        for(int i : ascending_items) {
+            is_inserted = avl.insert(i);
+            REQUIRE(is_inserted == true);
+        }
 
         WHEN("avl_copy(avl) and avl_assign = avl") {
             AVL<int> avl_copy(avl);
@@ -234,20 +238,23 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
                 root = avl_copy.root();
                 REQUIRE(root != nullptr);
 
-                // performance balance limit assertions on all nodes recursively
+                // assert all nodes are within balance limits
                 assert_balance_limit(root);
 
                 // access avl_assign's root
                 root = avl_assign.root();
                 REQUIRE(root != nullptr);
 
-                // performance balance limit assertions on all nodes recursively
+                // assert all nodes are within balance limits
                 assert_balance_limit(root);
             }
 
             THEN("avl_copy and avl_assign is unique via avl modifications") {
                 // add descending items to avl
-                for(int i : descending_items) avl.insert(i);
+                for(int i : descending_items) {
+                    is_inserted = avl.insert(i);
+                    REQUIRE(is_inserted == true);
+                }
 
                 // searching for items added to AVL are not in avl_copy
                 for(int i : descending_items) {
@@ -283,8 +290,116 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
         }
     }
 
-    GIVEN("addition compound op:") {
-        // TO DO
+    GIVEN("addition compound op: avl ascending items (with set 1)") {
+        // insert ascending items from vector to avl
+        for(int i : ascending_items) {
+            is_inserted = avl.insert(i);
+            REQUIRE(is_inserted == true);
+
+            // access avl's root
+            root = avl.root();
+            REQUIRE(root != nullptr);
+
+            // assert all nodes are within balance limits
+            assert_balance_limit(root);
+        }
+
+        THEN(
+            "adding avl_ascending (with set 2) to avl, avl_ascending's nodes "
+            "are all within balance limits") {
+            AVL<int> avl_ascending;
+            std::vector<int> ascending_items2;
+
+            // populate vector with ascending items
+            for(int i = 201; i <= 400; ++i) ascending_items2.push_back(i);
+
+            for(int i : ascending_items2) {
+                is_inserted = avl_ascending.insert(i);
+                REQUIRE(is_inserted == true);
+
+                // access avl's root
+                root = avl_ascending.root();
+                REQUIRE(root != nullptr);
+
+                // assert all nodes are within balance limits
+                assert_balance_limit(root);
+            }
+        }
+    }
+
+    GIVEN("addition compound op: avl descending items (with set 1)") {
+        // insert ascending items from vector to avl
+        for(int i : descending_items) {
+            is_inserted = avl.insert(i);
+            REQUIRE(is_inserted == true);
+
+            // access avl's root
+            root = avl.root();
+            REQUIRE(root != nullptr);
+
+            // assert all nodes are within balance limits
+            assert_balance_limit(root);
+        }
+
+        THEN(
+            "adding avl_descending (with set 2) to avl, avl_descending's nodes "
+            "are all within balance limits") {
+            AVL<int> avl_descending;
+            std::vector<int> descending_items2;
+
+            // populate vector with ascending items
+            for(int i = -201; i <= -400; --i) descending_items2.push_back(i);
+
+            for(int i : descending_items2) {
+                is_inserted = avl_descending.insert(i);
+                REQUIRE(is_inserted == true);
+
+                // access avl's root
+                root = avl_descending.root();
+                REQUIRE(root != nullptr);
+
+                // assert all nodes are within balance limits
+                assert_balance_limit(root);
+            }
+        }
+    }
+
+    GIVEN("addition compound op: avl random items (with set 1)") {
+        // insert random items (from ascending set) from vector to avl
+        for(int i : random_items) {
+            is_inserted = avl.insert(i);
+            REQUIRE(is_inserted == true);
+
+            // access avl's root
+            root = avl.root();
+            REQUIRE(root != nullptr);
+
+            // assert all nodes are within balance limits
+            assert_balance_limit(root);
+        }
+
+        THEN(
+            "adding avl_random (with set 2) to avl, avl_random's nodes "
+            "are all within balance limits") {
+            AVL<int> avl_random;
+            std::vector<int> random_items2;
+
+            // populate vector with descending items and do random_shuffle
+            for(int i = -1; i <= -200; --i) random_items2.push_back(i);
+            std::random_shuffle(random_items2.begin(), random_items2.end());
+
+            for(int i : random_items2) {
+                is_inserted = avl_random.insert(i);
+                REQUIRE(is_inserted == true);
+
+                // access avl's root
+                root = avl_random.root();
+                REQUIRE(root != nullptr);
+
+                // assert all nodes are within balance limits
+                assert_balance_limit(root);
+            }
+        }
     }
 }
 
@@ -295,7 +410,7 @@ void assert_balance_limit(const bst_node::TreeNode<T>* root) {
         int factor = 2;
 
         factor = root->balance_factor();
-        is_within_limit = (factor == -1 || factor == 0 || factor == 1);
+        is_within_limit = (factor >= -1 && factor <= 1);
         REQUIRE(is_within_limit);
 
         assert_balance_limit(root->_left);
