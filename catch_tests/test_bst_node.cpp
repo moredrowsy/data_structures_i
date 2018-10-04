@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
 #include "../include/bst_node.h"
 #include "../lib/catch.hpp"
 
@@ -6,8 +9,6 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
     GIVEN("a root with nodes inserted with items") {  // test insert nodes
         TreeNode<int>* root = nullptr;
-
-        REQUIRE(root == nullptr);
 
         // insert nodes
         tree_insert(root, 50);
@@ -23,24 +24,31 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
         // assert nodes are inserted in the correct bst order and height
         REQUIRE(root->_item == 50);
         REQUIRE(root->_height == 3);
+        REQUIRE(root->balance_factor() == 1);
         REQUIRE(root->_left->_item == 40);
         REQUIRE(root->_left->_height == 1);
+        REQUIRE(root->_left->balance_factor() == 0);
         REQUIRE(root->_left->_left->_item == 30);
         REQUIRE(root->_left->_left->_height == 0);
+        REQUIRE(root->_left->_left->balance_factor() == 0);
         REQUIRE(root->_left->_left->_left == nullptr);
         REQUIRE(root->_left->_left->_right == nullptr);
         REQUIRE(root->_left->_right->_item == 45);
         REQUIRE(root->_left->_right->_height == 0);
+        REQUIRE(root->_left->_right->balance_factor() == 0);
         REQUIRE(root->_left->_right->_left == nullptr);
         REQUIRE(root->_left->_right->_right == nullptr);
         REQUIRE(root->_right->_item == 70);
         REQUIRE(root->_right->_height == 2);
+        REQUIRE(root->_right->balance_factor() == -2);
         REQUIRE(root->_right->_left->_item == 55);
         REQUIRE(root->_right->_left->_height == 1);
+        REQUIRE(root->_right->_left->balance_factor() == 1);
         REQUIRE(root->_right->_right == nullptr);
         REQUIRE(root->_right->_left->_left == nullptr);
         REQUIRE(root->_right->_left->_right->_item == 60);
         REQUIRE(root->_right->_left->_right->_height == 0);
+        REQUIRE(root->_right->_left->_right->balance_factor() == 0);
         REQUIRE(root->_right->_left->_right->_left == nullptr);
         REQUIRE(root->_right->_left->_right->_right == nullptr);
 
@@ -167,20 +175,26 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // assert bst has correct order and height
                 REQUIRE(root->_item == 45);
                 REQUIRE(root->_height == 3);
+                REQUIRE(root->balance_factor() == 1);
                 REQUIRE(root->_left->_item == 40);
                 REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->balance_factor() == -1);
                 REQUIRE(root->_left->_left->_item == 30);
                 REQUIRE(root->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_left == nullptr);
                 REQUIRE(root->_left->_left->_right == nullptr);
                 REQUIRE(root->_left->_right == nullptr);
                 REQUIRE(root->_right->_item == 70);
                 REQUIRE(root->_right->_height == 2);
+                REQUIRE(root->_right->balance_factor() == -2);
                 REQUIRE(root->_right->_left->_item == 55);
                 REQUIRE(root->_right->_left->_height == 1);
+                REQUIRE(root->_right->_left->balance_factor() == 1);
                 REQUIRE(root->_right->_left->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_item == 60);
                 REQUIRE(root->_right->_left->_right->_height == 0);
+                REQUIRE(root->_right->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_right->_left->_right->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_right == nullptr);
@@ -206,20 +220,26 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // assert bst has correct order and height
                 REQUIRE(root->_item == 50);
                 REQUIRE(root->_height == 2);
+                REQUIRE(root->balance_factor() == 0);
                 REQUIRE(root->_left->_item == 40);
                 REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_item == 30);
                 REQUIRE(root->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_left == nullptr);
                 REQUIRE(root->_left->_left->_right == nullptr);
                 REQUIRE(root->_left->_right->_item == 45);
                 REQUIRE(root->_left->_right->_height == 0);
+                REQUIRE(root->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_item == 60);
                 REQUIRE(root->_right->_height == 1);
+                REQUIRE(root->_right->balance_factor() == -1);
                 REQUIRE(root->_right->_left->_item == 55);
                 REQUIRE(root->_right->_left->_height == 0);
+                REQUIRE(root->_right->_left->balance_factor() == 0);
                 REQUIRE(root->_right->_right == nullptr);
             }
 
@@ -243,21 +263,27 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // assert bst has correct order and height
                 REQUIRE(root->_item == 50);
                 REQUIRE(root->_height == 3);
+                REQUIRE(root->balance_factor() == 1);
                 REQUIRE(root->_left->_item == 30);
                 REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->balance_factor() == 1);
                 REQUIRE(root->_left->_left == nullptr);
                 REQUIRE(root->_left->_right->_item == 45);
                 REQUIRE(root->_left->_right->_height == 0);
+                REQUIRE(root->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_item == 70);
                 REQUIRE(root->_right->_height == 2);
+                REQUIRE(root->_right->balance_factor() == -2);
                 REQUIRE(root->_right->_left->_item == 55);
                 REQUIRE(root->_right->_left->_height == 1);
+                REQUIRE(root->_right->_left->balance_factor() == 1);
                 REQUIRE(root->_right->_right == nullptr);
                 REQUIRE(root->_right->_left->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_item == 60);
                 REQUIRE(root->_right->_left->_right->_height == 0);
+                REQUIRE(root->_right->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_right->_left->_right->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_right == nullptr);
             }
@@ -281,20 +307,26 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // assert bst has correct order
                 REQUIRE(root->_item == 50);
                 REQUIRE(root->_height == 2);
+                REQUIRE(root->balance_factor() == 0);
                 REQUIRE(root->_left->_item == 40);
                 REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_item == 30);
                 REQUIRE(root->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_left == nullptr);
                 REQUIRE(root->_left->_left->_right == nullptr);
                 REQUIRE(root->_left->_right->_item == 45);
                 REQUIRE(root->_left->_right->_height == 0);
+                REQUIRE(root->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_item == 70);
                 REQUIRE(root->_right->_height == 1);
+                REQUIRE(root->_right->balance_factor() == -1);
                 REQUIRE(root->_right->_left->_item == 55);
                 REQUIRE(root->_right->_left->_height == 0);
+                REQUIRE(root->_right->_left->balance_factor() == 0);
                 REQUIRE(root->_right->_right == nullptr);
                 REQUIRE(root->_right->_left->_left == nullptr);
                 REQUIRE(root->_right->_left->_right == nullptr);
@@ -339,20 +371,26 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // assert bst has correct order
                 REQUIRE(root->_item == 50);
                 REQUIRE(root->_height == 2);
+                REQUIRE(root->balance_factor() == 0);
                 REQUIRE(root->_left->_item == 40);
                 REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_item == 30);
                 REQUIRE(root->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_left == nullptr);
                 REQUIRE(root->_left->_left->_right == nullptr);
                 REQUIRE(root->_left->_right->_item == 45);
                 REQUIRE(root->_left->_right->_height == 0);
+                REQUIRE(root->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_item == 55);
                 REQUIRE(root->_right->_height == 1);
+                REQUIRE(root->_right->balance_factor() == 1);
                 REQUIRE(root->_right->_right->_item == 60);
                 REQUIRE(root->_right->_right->_height == 0);
+                REQUIRE(root->_right->_right->balance_factor() == 0);
                 REQUIRE(root->_right->_right->_left == nullptr);
                 REQUIRE(root->_right->_right->_right == nullptr);
 
@@ -365,18 +403,23 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                     // assert bst has correct order
                     REQUIRE(root->_item == 50);
                     REQUIRE(root->_height == 2);
+                    REQUIRE(root->balance_factor() == -1);
                     REQUIRE(root->_left->_item == 40);
                     REQUIRE(root->_left->_height == 1);
+                    REQUIRE(root->_left->balance_factor() == 0);
                     REQUIRE(root->_left->_left->_item == 30);
                     REQUIRE(root->_left->_left->_height == 0);
+                    REQUIRE(root->_left->_left->balance_factor() == 0);
                     REQUIRE(root->_left->_left->_left == nullptr);
                     REQUIRE(root->_left->_left->_right == nullptr);
                     REQUIRE(root->_left->_right->_item == 45);
                     REQUIRE(root->_left->_right->_height == 0);
+                    REQUIRE(root->_left->_right->balance_factor() == 0);
                     REQUIRE(root->_left->_right->_left == nullptr);
                     REQUIRE(root->_left->_right->_right == nullptr);
                     REQUIRE(root->_right->_item == 55);
                     REQUIRE(root->_right->_height == 0);
+                    REQUIRE(root->_right->balance_factor() == 0);
                     REQUIRE(root->_right->_right == nullptr);
                     REQUIRE(root->_right->_left == nullptr);
                 }
@@ -391,28 +434,35 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             REQUIRE(root_a != nullptr);
 
             // assert root_a has items of root
-            REQUIRE(root->_item == 50);
-            REQUIRE(root->_height == 3);
-            REQUIRE(root->_left->_item == 40);
-            REQUIRE(root->_left->_height == 1);
-            REQUIRE(root->_left->_left->_item == 30);
-            REQUIRE(root->_left->_left->_height == 0);
-            REQUIRE(root->_left->_left->_left == nullptr);
-            REQUIRE(root->_left->_left->_right == nullptr);
-            REQUIRE(root->_left->_right->_item == 45);
-            REQUIRE(root->_left->_right->_height == 0);
-            REQUIRE(root->_left->_right->_left == nullptr);
-            REQUIRE(root->_left->_right->_right == nullptr);
-            REQUIRE(root->_right->_item == 70);
-            REQUIRE(root->_right->_height == 2);
-            REQUIRE(root->_right->_left->_item == 55);
-            REQUIRE(root->_right->_left->_height == 1);
-            REQUIRE(root->_right->_right == nullptr);
-            REQUIRE(root->_right->_left->_left == nullptr);
-            REQUIRE(root->_right->_left->_right->_item == 60);
-            REQUIRE(root->_right->_left->_right->_height == 0);
-            REQUIRE(root->_right->_left->_right->_left == nullptr);
-            REQUIRE(root->_right->_left->_right->_right == nullptr);
+            REQUIRE(root_a->_item == 50);
+            REQUIRE(root_a->_height == 3);
+            REQUIRE(root_a->balance_factor() == 1);
+            REQUIRE(root_a->_left->_item == 40);
+            REQUIRE(root_a->_left->_height == 1);
+            REQUIRE(root_a->_left->balance_factor() == 0);
+            REQUIRE(root_a->_left->_left->_item == 30);
+            REQUIRE(root_a->_left->_left->_height == 0);
+            REQUIRE(root_a->_left->_left->balance_factor() == 0);
+            REQUIRE(root_a->_left->_left->_left == nullptr);
+            REQUIRE(root_a->_left->_left->_right == nullptr);
+            REQUIRE(root_a->_left->_right->_item == 45);
+            REQUIRE(root_a->_left->_right->_height == 0);
+            REQUIRE(root_a->_left->_right->balance_factor() == 0);
+            REQUIRE(root_a->_left->_right->_left == nullptr);
+            REQUIRE(root_a->_left->_right->_right == nullptr);
+            REQUIRE(root_a->_right->_item == 70);
+            REQUIRE(root_a->_right->_height == 2);
+            REQUIRE(root_a->_right->balance_factor() == -2);
+            REQUIRE(root_a->_right->_left->_item == 55);
+            REQUIRE(root_a->_right->_left->_height == 1);
+            REQUIRE(root_a->_right->_left->balance_factor() == 1);
+            REQUIRE(root_a->_right->_right == nullptr);
+            REQUIRE(root_a->_right->_left->_left == nullptr);
+            REQUIRE(root_a->_right->_left->_right->_item == 60);
+            REQUIRE(root_a->_right->_left->_right->_height == 0);
+            REQUIRE(root_a->_right->_left->_right->balance_factor() == 0);
+            REQUIRE(root_a->_right->_left->_right->_left == nullptr);
+            REQUIRE(root_a->_right->_left->_right->_right == nullptr);
 
             THEN("changing items in root_a will have no effect on root") {
                 // change items
@@ -452,16 +502,21 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             // assert root_a has correct items
             REQUIRE(root_a->_item == 1);
             REQUIRE(root_a->_height == 3);
+            REQUIRE(root_a->balance_factor() == 2);
             REQUIRE(root_a->_left->_item == -1);
             REQUIRE(root_a->_left->_height == 0);
+            REQUIRE(root_a->_left->balance_factor() == 0);
             REQUIRE(root_a->_left->_left == nullptr);
             REQUIRE(root_a->_left->_right == nullptr);
             REQUIRE(root_a->_right->_item == 100);
             REQUIRE(root_a->_right->_height == 2);
+            REQUIRE(root_a->_right->balance_factor() == -2);
             REQUIRE(root_a->_right->_left->_item == 35);
             REQUIRE(root_a->_right->_left->_height == 1);
+            REQUIRE(root_a->_right->_left->balance_factor() == 1);
             REQUIRE(root_a->_right->_left->_right->_item == 65);
             REQUIRE(root_a->_right->_left->_right->_height == 0);
+            REQUIRE(root_a->_right->_left->_right->balance_factor() == 0);
 
             // test add root_a to root
             tree_add(root, root_a);
@@ -469,35 +524,49 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             THEN("root will have root_a's items added") {
                 REQUIRE(root->_item == 50);
                 REQUIRE(root->_height == 4);
+                REQUIRE(root->balance_factor() == 0);
                 REQUIRE(root->_left->_item == 40);
                 REQUIRE(root->_left->_height == 3);
+                REQUIRE(root->_left->balance_factor() == -2);
                 REQUIRE(root->_left->_left->_item == 30);
                 REQUIRE(root->_left->_left->_height == 2);
+                REQUIRE(root->_left->_left->balance_factor() == -1);
                 REQUIRE(root->_left->_left->_left->_item == 1);
                 REQUIRE(root->_left->_left->_left->_height == 1);
+                REQUIRE(root->_left->_left->_left->balance_factor() == -1);
                 REQUIRE(root->_left->_left->_left->_left->_item == -1);
                 REQUIRE(root->_left->_left->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->_left->_left->balance_factor() ==
+                        0);
                 REQUIRE(root->_left->_left->_left->_right == nullptr);
                 REQUIRE(root->_left->_left->_right->_item == 35);
                 REQUIRE(root->_left->_left->_right->_height == 0);
+                REQUIRE(root->_left->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_left->_right->_right == nullptr);
                 REQUIRE(root->_left->_right->_item == 45);
                 REQUIRE(root->_left->_right->_height == 0);
+                REQUIRE(root->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_item == 70);
                 REQUIRE(root->_right->_height == 3);
+                REQUIRE(root->_right->balance_factor() == -2);
                 REQUIRE(root->_right->_left->_item == 55);
                 REQUIRE(root->_right->_left->_height == 2);
+                REQUIRE(root->_right->_left->balance_factor() == 2);
                 REQUIRE(root->_right->_right->_item == 100);
                 REQUIRE(root->_right->_right->_height == 0);
+                REQUIRE(root->_right->_right->balance_factor() == 0);
                 REQUIRE(root->_right->_left->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_item == 60);
                 REQUIRE(root->_right->_left->_right->_height == 1);
+                REQUIRE(root->_right->_left->_right->balance_factor() == 1);
                 REQUIRE(root->_right->_left->_right->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_right->_item == 65);
                 REQUIRE(root->_right->_left->_right->_right->_height == 0);
+                REQUIRE(root->_right->_left->_right->_right->balance_factor() ==
+                        0);
             }
 
             tree_clear(root_a);
@@ -515,24 +584,31 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 // root_a has same items in same order of root
                 REQUIRE(root->_item == 50);
                 REQUIRE(root->_height == 3);
+                REQUIRE(root->balance_factor() == 1);
                 REQUIRE(root->_left->_item == 40);
                 REQUIRE(root->_left->_height == 1);
+                REQUIRE(root->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_item == 30);
                 REQUIRE(root->_left->_left->_height == 0);
+                REQUIRE(root->_left->_left->balance_factor() == 0);
                 REQUIRE(root->_left->_left->_left == nullptr);
                 REQUIRE(root->_left->_left->_right == nullptr);
                 REQUIRE(root->_left->_right->_item == 45);
                 REQUIRE(root->_left->_right->_height == 0);
+                REQUIRE(root->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_left->_right->_left == nullptr);
                 REQUIRE(root->_left->_right->_right == nullptr);
                 REQUIRE(root->_right->_item == 70);
                 REQUIRE(root->_right->_height == 2);
+                REQUIRE(root->_right->balance_factor() == -2);
                 REQUIRE(root->_right->_left->_item == 55);
                 REQUIRE(root->_right->_left->_height == 1);
+                REQUIRE(root->_right->_left->balance_factor() == 1);
                 REQUIRE(root->_right->_right == nullptr);
                 REQUIRE(root->_right->_left->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_item == 60);
                 REQUIRE(root->_right->_left->_right->_height == 0);
+                REQUIRE(root->_right->_left->_right->balance_factor() == 0);
                 REQUIRE(root->_right->_left->_right->_left == nullptr);
                 REQUIRE(root->_right->_left->_right->_right == nullptr);
             }
@@ -565,6 +641,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             // assert that item is added
             REQUIRE(root->_item == 1);
             REQUIRE(root->_height == 0);
+            REQUIRE(root->balance_factor() == 0);
             REQUIRE(root->_left == nullptr);
             REQUIRE(root->_right == nullptr);
 
@@ -578,8 +655,10 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             // assert that items are added
             REQUIRE(root->_item == 2);
             REQUIRE(root->_height == 1);
+            REQUIRE(root->balance_factor() == -1);
             REQUIRE(root->_left->_item == 1);
             REQUIRE(root->_left->_height == 0);
+            REQUIRE(root->_left->balance_factor() == 0);
             REQUIRE(root->_right == nullptr);
             REQUIRE(root->_left->_left == nullptr);
             REQUIRE(root->_left->_right == nullptr);
@@ -594,10 +673,13 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             // assert that items are added
             REQUIRE(root->_item == 2);
             REQUIRE(root->_height == 1);
+            REQUIRE(root->balance_factor() == 0);
             REQUIRE(root->_left->_item == 1);
             REQUIRE(root->_left->_height == 0);
+            REQUIRE(root->_left->balance_factor() == 0);
             REQUIRE(root->_right->_item == 3);
             REQUIRE(root->_right->_height == 0);
+            REQUIRE(root->_right->balance_factor() == 0);
             REQUIRE(root->_left->_left == nullptr);
             REQUIRE(root->_left->_right == nullptr);
             REQUIRE(root->_right->_left == nullptr);
@@ -611,17 +693,441 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             // assert that items are added
             REQUIRE(root->_item == 3);
             REQUIRE(root->_height == 2);
+            REQUIRE(root->balance_factor() == -1);
             REQUIRE(root->_left->_item == 2);
             REQUIRE(root->_left->_height == 1);
+            REQUIRE(root->_left->balance_factor() == -1);
             REQUIRE(root->_right->_item == 4);
             REQUIRE(root->_right->_height == 0);
+            REQUIRE(root->_right->balance_factor() == 0);
             REQUIRE(root->_left->_left->_item == 1);
             REQUIRE(root->_left->_left->_height == 0);
+            REQUIRE(root->_left->_left->balance_factor() == 0);
             REQUIRE(root->_left->_left->_left == nullptr);
             REQUIRE(root->_left->_left->_right == nullptr);
             REQUIRE(root->_left->_right == nullptr);
             REQUIRE(root->_right->_left == nullptr);
             REQUIRE(root->_right->_right == nullptr);
+        }
+
+        tree_clear(root);
+    }
+
+    GIVEN("a root with unbalanced nodes, case 1: left, left") {
+        TreeNode<int>* left_left = nullptr;
+
+        // left_left  inserts
+        tree_insert(left_left, 60);
+        tree_insert(left_left, 70);
+        tree_insert(left_left, 40);
+        tree_insert(left_left, 50);
+        tree_insert(left_left, 20);
+        tree_insert(left_left, 30);
+        tree_insert(left_left, 10);
+
+        REQUIRE(left_left->_item == 60);
+        REQUIRE(left_left->_height == 3);
+        REQUIRE(left_left->balance_factor() == -2);
+        REQUIRE(left_left->_left->_item == 40);
+        REQUIRE(left_left->_left->_height == 2);
+        REQUIRE(left_left->_left->balance_factor() == -1);
+        REQUIRE(left_left->_left->_left->_item == 20);
+        REQUIRE(left_left->_left->_left->_height == 1);
+        REQUIRE(left_left->_left->_left->balance_factor() == 0);
+        REQUIRE(left_left->_left->_right->_item == 50);
+        REQUIRE(left_left->_left->_right->_height == 0);
+        REQUIRE(left_left->_left->_right->balance_factor() == 0);
+        REQUIRE(left_left->_left->_left->_left->_item == 10);
+        REQUIRE(left_left->_left->_left->_left->_height == 0);
+        REQUIRE(left_left->_left->_left->_left->balance_factor() == 0);
+        REQUIRE(left_left->_left->_left->_right->_item == 30);
+        REQUIRE(left_left->_left->_left->_right->_height == 0);
+        REQUIRE(left_left->_left->_left->_right->balance_factor() == 0);
+        REQUIRE(left_left->_right->_item == 70);
+        REQUIRE(left_left->_right->_height == 0);
+        REQUIRE(left_left->_right->balance_factor() == 0);
+
+        THEN("rotate right() will produce full/complete binary tree") {
+            left_left = rotate_right(left_left);
+            REQUIRE(left_left->_item == 40);
+            REQUIRE(left_left->_height == 2);
+            REQUIRE(left_left->balance_factor() == 0);
+            REQUIRE(left_left->_left->_item == 20);
+            REQUIRE(left_left->_left->_height == 1);
+            REQUIRE(left_left->_left->balance_factor() == 0);
+            REQUIRE(left_left->_left->_left->_item == 10);
+            REQUIRE(left_left->_left->_left->_height == 0);
+            REQUIRE(left_left->_left->_left->balance_factor() == 0);
+            REQUIRE(left_left->_left->_right->_item == 30);
+            REQUIRE(left_left->_left->_right->_height == 0);
+            REQUIRE(left_left->_left->_right->balance_factor() == 0);
+            REQUIRE(left_left->_right->_item == 60);
+            REQUIRE(left_left->_right->_height == 1);
+            REQUIRE(left_left->_right->balance_factor() == 0);
+            REQUIRE(left_left->_right->_left->_item == 50);
+            REQUIRE(left_left->_right->_left->_height == 0);
+            REQUIRE(left_left->_right->_left->balance_factor() == 0);
+            REQUIRE(left_left->_right->_right->_item == 70);
+            REQUIRE(left_left->_right->_right->_height == 0);
+            REQUIRE(left_left->_right->_right->balance_factor() == 0);
+        }
+
+        tree_clear(left_left);
+    }
+
+    GIVEN("a root with unbalanced nodes, case 2: right, right") {
+        TreeNode<int>* right_right = nullptr;
+
+        // right_right  inserts
+        tree_insert(right_right, 40);
+        tree_insert(right_right, 30);
+        tree_insert(right_right, 60);
+        tree_insert(right_right, 50);
+        tree_insert(right_right, 80);
+        tree_insert(right_right, 70);
+        tree_insert(right_right, 90);
+
+        REQUIRE(right_right->_item == 40);
+        REQUIRE(right_right->_height == 3);
+        REQUIRE(right_right->balance_factor() == 2);
+        REQUIRE(right_right->_left->_item == 30);
+        REQUIRE(right_right->_left->_height == 0);
+        REQUIRE(right_right->_left->balance_factor() == 0);
+        REQUIRE(right_right->_right->_item == 60);
+        REQUIRE(right_right->_right->_height == 2);
+        REQUIRE(right_right->_right->balance_factor() == 1);
+        REQUIRE(right_right->_right->_left->_item == 50);
+        REQUIRE(right_right->_right->_left->_height == 0);
+        REQUIRE(right_right->_right->_left->balance_factor() == 0);
+        REQUIRE(right_right->_right->_right->_item == 80);
+        REQUIRE(right_right->_right->_right->_height == 1);
+        REQUIRE(right_right->_right->_right->balance_factor() == 0);
+        REQUIRE(right_right->_right->_right->_left->_item == 70);
+        REQUIRE(right_right->_right->_right->_left->_height == 0);
+        REQUIRE(right_right->_right->_right->_left->balance_factor() == 0);
+        REQUIRE(right_right->_right->_right->_right->_item == 90);
+        REQUIRE(right_right->_right->_right->_right->_height == 0);
+        REQUIRE(right_right->_right->_right->_right->balance_factor() == 0);
+
+        THEN("rotate left() will produce full/complete binary tree") {
+            right_right = rotate_left(right_right);
+
+            REQUIRE(right_right->_item == 60);
+            REQUIRE(right_right->_height == 2);
+            REQUIRE(right_right->balance_factor() == 0);
+            REQUIRE(right_right->_left->_item == 40);
+            REQUIRE(right_right->_left->_height == 1);
+            REQUIRE(right_right->_left->balance_factor() == 0);
+            REQUIRE(right_right->_left->_left->_item == 30);
+            REQUIRE(right_right->_left->_left->_height == 0);
+            REQUIRE(right_right->_left->_left->balance_factor() == 0);
+            REQUIRE(right_right->_left->_right->_item == 50);
+            REQUIRE(right_right->_left->_right->_height == 0);
+            REQUIRE(right_right->_left->_right->balance_factor() == 0);
+            REQUIRE(right_right->_right->_item == 80);
+            REQUIRE(right_right->_right->_height == 1);
+            REQUIRE(right_right->_right->balance_factor() == 0);
+            REQUIRE(right_right->_right->_left->_item == 70);
+            REQUIRE(right_right->_right->_left->_height == 0);
+            REQUIRE(right_right->_right->_left->balance_factor() == 0);
+            REQUIRE(right_right->_right->_right->_item == 90);
+            REQUIRE(right_right->_right->_right->_height == 0);
+            REQUIRE(right_right->_right->_right->balance_factor() == 0);
+        }
+
+        tree_clear(right_right);
+    }
+
+    GIVEN("a root with unbalanced nodes, case 3: left, right") {
+        TreeNode<int>* left_right = nullptr;
+
+        // left_right inserts
+        tree_insert(left_right, 60);
+        tree_insert(left_right, 70);
+        tree_insert(left_right, 20);
+        tree_insert(left_right, 10);
+        tree_insert(left_right, 40);
+        tree_insert(left_right, 30);
+        tree_insert(left_right, 50);
+
+        REQUIRE(left_right->_item == 60);
+        REQUIRE(left_right->_height == 3);
+        REQUIRE(left_right->balance_factor() == -2);
+        REQUIRE(left_right->_left->_item == 20);
+        REQUIRE(left_right->_left->_height == 2);
+        REQUIRE(left_right->_left->balance_factor() == 1);
+        REQUIRE(left_right->_left->_left->_item == 10);
+        REQUIRE(left_right->_left->_left->_height == 0);
+        REQUIRE(left_right->_left->_left->balance_factor() == 0);
+        REQUIRE(left_right->_left->_right->_item == 40);
+        REQUIRE(left_right->_left->_right->_height == 1);
+        REQUIRE(left_right->_left->_right->balance_factor() == 0);
+        REQUIRE(left_right->_left->_right->_left->_item == 30);
+        REQUIRE(left_right->_left->_right->_left->_height == 0);
+        REQUIRE(left_right->_left->_right->_left->balance_factor() == 0);
+        REQUIRE(left_right->_left->_right->_right->_item == 50);
+        REQUIRE(left_right->_left->_right->_right->_height == 0);
+        REQUIRE(left_right->_left->_right->_right->balance_factor() == 0);
+        REQUIRE(left_right->_right->_item == 70);
+        REQUIRE(left_right->_right->_height == 0);
+        REQUIRE(left_right->_right->balance_factor() == 0);
+
+        THEN("rotate() will produce full/complete binary tree") {
+            left_right = rotate(left_right);
+
+            REQUIRE(left_right->_item == 40);
+            REQUIRE(left_right->_height == 2);
+            REQUIRE(left_right->balance_factor() == 0);
+            REQUIRE(left_right->_left->_item == 20);
+            REQUIRE(left_right->_left->_height == 1);
+            REQUIRE(left_right->_left->balance_factor() == 0);
+            REQUIRE(left_right->_left->_left->_item == 10);
+            REQUIRE(left_right->_left->_left->_height == 0);
+            REQUIRE(left_right->_left->_left->balance_factor() == 0);
+            REQUIRE(left_right->_left->_right->_item == 30);
+            REQUIRE(left_right->_left->_right->_height == 0);
+            REQUIRE(left_right->_left->_right->balance_factor() == 0);
+            REQUIRE(left_right->_right->_item == 60);
+            REQUIRE(left_right->_right->_height == 1);
+            REQUIRE(left_right->_right->balance_factor() == 0);
+            REQUIRE(left_right->_right->_left->_item == 50);
+            REQUIRE(left_right->_right->_left->_height == 0);
+            REQUIRE(left_right->_right->_left->balance_factor() == 0);
+            REQUIRE(left_right->_right->_right->_item == 70);
+            REQUIRE(left_right->_right->_right->_height == 0);
+            REQUIRE(left_right->_right->_right->balance_factor() == 0);
+        }
+
+        tree_clear(left_right);
+    }
+
+    GIVEN("a root with unbalanced nodes, case 3: right, left") {
+        TreeNode<int>* right_left = nullptr;
+
+        // right_left inserts
+        tree_insert(right_left, 40);
+        tree_insert(right_left, 30);
+        tree_insert(right_left, 80);
+        tree_insert(right_left, 60);
+        tree_insert(right_left, 50);
+        tree_insert(right_left, 70);
+        tree_insert(right_left, 90);
+
+        REQUIRE(right_left->_item == 40);
+        REQUIRE(right_left->_height == 3);
+        REQUIRE(right_left->balance_factor() == 2);
+        REQUIRE(right_left->_left->_item == 30);
+        REQUIRE(right_left->_left->_height == 0);
+        REQUIRE(right_left->_left->balance_factor() == 0);
+        REQUIRE(right_left->_right->_item == 80);
+        REQUIRE(right_left->_right->_height == 2);
+        REQUIRE(right_left->_right->balance_factor() == -1);
+        REQUIRE(right_left->_right->_left->_item == 60);
+        REQUIRE(right_left->_right->_left->_height == 1);
+        REQUIRE(right_left->_right->_left->balance_factor() == 0);
+        REQUIRE(right_left->_right->_left->_left->_item == 50);
+        REQUIRE(right_left->_right->_left->_left->_height == 0);
+        REQUIRE(right_left->_right->_left->_left->balance_factor() == 0);
+        REQUIRE(right_left->_right->_left->_right->_item == 70);
+        REQUIRE(right_left->_right->_left->_right->_height == 0);
+        REQUIRE(right_left->_right->_left->_right->balance_factor() == 0);
+        REQUIRE(right_left->_right->_right->_item == 90);
+        REQUIRE(right_left->_right->_right->_height == 0);
+        REQUIRE(right_left->_right->_right->balance_factor() == 0);
+
+        THEN("rotate() will produce full/complete binary tree") {
+            right_left = rotate(right_left);
+
+            REQUIRE(right_left->_item == 60);
+            REQUIRE(right_left->_height == 2);
+            REQUIRE(right_left->balance_factor() == 0);
+            REQUIRE(right_left->_left->_item == 40);
+            REQUIRE(right_left->_left->_height == 1);
+            REQUIRE(right_left->_left->balance_factor() == 0);
+            REQUIRE(right_left->_left->_left->_item == 30);
+            REQUIRE(right_left->_left->_left->_height == 0);
+            REQUIRE(right_left->_left->_left->balance_factor() == 0);
+            REQUIRE(right_left->_left->_right->_item == 50);
+            REQUIRE(right_left->_left->_right->_height == 0);
+            REQUIRE(right_left->_left->_right->balance_factor() == 0);
+            REQUIRE(right_left->_right->_item == 80);
+            REQUIRE(right_left->_right->_height == 1);
+            REQUIRE(right_left->_right->balance_factor() == 0);
+            REQUIRE(right_left->_right->_left->_item == 70);
+            REQUIRE(right_left->_right->_left->_height == 0);
+            REQUIRE(right_left->_right->_left->balance_factor() == 0);
+            REQUIRE(right_left->_right->_right->_item == 90);
+            REQUIRE(right_left->_right->_right->_height == 0);
+            REQUIRE(right_left->_right->_right->balance_factor() == 0);
+        }
+
+        tree_clear(right_left);
+    }
+
+    GIVEN("an empty node") {
+        bool is_within_limit = false;
+        int factor = 2;
+        TreeNode<int>* root = nullptr;
+
+        WHEN(
+            "inserting balanced nodes in ascending order, root's balance "
+            "factor will not exceed limit [-1,1]") {
+            const int items[] = {-9, -8, -7, -6, -5, -4, -3, -2, -1, 0,
+                                 1,  2,  3,  4,  5,  6,  7,  8,  9};
+
+            for(int i : items) {
+                tree_insert(root, i, true);
+                factor = root->balance_factor();
+                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
+                REQUIRE(is_within_limit);
+            }
+
+            THEN(
+                "erasing balanced nodes, root's balance factor will not exceed "
+                "limit") {
+                for(int i : items) {
+                    tree_erase(root, i, true);
+
+                    if(root) {
+                        factor = root->balance_factor();
+                        is_within_limit =
+                            (factor == -1 || factor == 0 || factor == 1);
+                        REQUIRE(is_within_limit);
+                    }
+                }
+            }
+        }
+
+        WHEN(
+            "inserting balanced nodes in descending order, root's balance "
+            "factor will not exceed limit [-1,1]") {
+            const int items[] = {9,  8,  7,  6,  5,  4,  3,  2,  1, 0,
+                                 -1, -2, -3, -4, -5, -6, -7, -8, -9};
+
+            for(int i : items) {
+                tree_insert(root, i, true);
+                factor = root->balance_factor();
+                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
+                REQUIRE(is_within_limit);
+            }
+
+            THEN(
+                "erasing balanced nodes, root's balance factor will not exceed "
+                "limit") {
+                for(int i : items) {
+                    tree_erase(root, i, true);
+
+                    if(root) {
+                        factor = root->balance_factor();
+                        is_within_limit =
+                            (factor == -1 || factor == 0 || factor == 1);
+                        REQUIRE(is_within_limit);
+                    }
+                }
+            }
+        }
+
+        WHEN(
+            "inserting balanced nodes in random order, root's balance "
+            "factor will not exceed limit [-1,1]") {
+            // fill vector with items from -99 to 99
+            std::vector<int> items;
+            for(int i = -99; i <= 99; ++i) {
+                items.push_back(i);
+            }
+
+            srand(time(nullptr));
+            std::random_shuffle(items.begin(), items.end());
+
+            for(int i : items) {
+                tree_insert(root, i, true);
+                factor = root->balance_factor();
+                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
+                REQUIRE(is_within_limit);
+            }
+
+            THEN(
+                "erasing balanced nodes, root's balance factor will not exceed "
+                "limit") {
+                for(int i : items) {
+                    tree_erase(root, i, true);
+
+                    if(root) {
+                        factor = root->balance_factor();
+                        is_within_limit =
+                            (factor == -1 || factor == 0 || factor == 1);
+                        REQUIRE(is_within_limit);
+                    }
+                }
+            }
+
+            THEN(
+                "copying root to root_a with balanced == true, root_a's "
+                "balance factor will not exceed limit [-1, 1]") {
+                TreeNode<int>* root_a = nullptr;
+
+                root_a = tree_copy(root, true);
+
+                REQUIRE(root_a != nullptr);
+
+                factor = root_a->balance_factor();
+                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
+                REQUIRE(is_within_limit);
+
+                tree_clear(root_a);
+            }
+
+            THEN(
+                "adding items in root_a to root, root's balance factor will "
+                "not exceed limit [-1, 1]") {
+                TreeNode<int>* root_a = nullptr;
+
+                // fill vector with items from -200 to -100
+                std::vector<int> items_lower_bound;
+                for(int i = -200; i <= -100; ++i) {
+                    items_lower_bound.push_back(i);
+                }
+
+                // fill vector with items from 100 to 200
+                std::vector<int> items_upper_bound;
+                for(int i = 100; i <= 200; ++i) {
+                    items_upper_bound.push_back(i);
+                }
+
+                // fill vector with items from lower bound and upper bound
+                std::vector<int> items_a;
+                for(int i : items_lower_bound) {
+                    items_a.push_back(i);
+                }
+                for(int i : items_upper_bound) {
+                    items_a.push_back(i);
+                }
+
+                srand(time(nullptr));
+                std::random_shuffle(items_a.begin(), items_a.end());
+
+                // insert items_a to root_a and assert root_a is within limits
+                for(int i : items_a) {
+                    tree_insert(root_a, i, true);
+
+                    if(root) {
+                        factor = root_a->balance_factor();
+                        is_within_limit =
+                            (factor == -1 || factor == 0 || factor == 1);
+                        REQUIRE(is_within_limit);
+                    }
+                }
+
+                // add root_a to root
+                tree_add(root, root_a, true);
+
+                // assert root is within limits after adding root_a
+                factor = root->balance_factor();
+                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
+                REQUIRE(is_within_limit);
+
+                tree_clear(root_a);
+            }
         }
 
         tree_clear(root);

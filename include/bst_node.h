@@ -23,7 +23,7 @@ struct TreeNode {
     int _height;
 
     // CONSTRUCTORS
-    TreeNode(T item = T(), TreeNode* left = NULL, TreeNode* right = NULL)
+    TreeNode(T item = T(), TreeNode* left = nullptr, TreeNode* right = nullptr)
         : _item(item), _left(left), _right(right), _height(0) {
         update_height();  // updates height when node is created recursively
     }
@@ -459,8 +459,8 @@ template <typename T>
 void tree_add(TreeNode<T>*& dest, const TreeNode<T>* src, bool balance) {
     if(src) {
         tree_insert(dest, src->_item, balance);
-        tree_add(dest, src->_left);   // recur left
-        tree_add(dest, src->_right);  // recur right
+        tree_add(dest, src->_left, balance);   // recur left
+        tree_add(dest, src->_right, balance);  // recur right
     }
 }
 
