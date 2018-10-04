@@ -29,8 +29,8 @@ struct TreeNode {
     }
 
     // ACCESSORS
-    int balance_factor();
-    int height();
+    int balance_factor() const;
+    int height() const;
 
     // MUTATORS
     int update_height();
@@ -110,7 +110,7 @@ void postorder(TreeNode<T>*& root, F f);
  *  int: balance factor of node
  ******************************************************************************/
 template <typename T>
-int TreeNode<T>::balance_factor() {
+int TreeNode<T>::balance_factor() const {
     return (this->_right ? this->_right->_height : -1) -
            (this->_left ? this->_left->_height : -1);
 }
@@ -129,7 +129,7 @@ int TreeNode<T>::balance_factor() {
  *  int: max height of children
  ******************************************************************************/
 template <typename T>
-int TreeNode<T>::height() {
+int TreeNode<T>::height() const {
     return 1 + std::max(this->_left ? this->_left->_height : -1,
                         this->_right ? this->_right->_height : -1);
 }

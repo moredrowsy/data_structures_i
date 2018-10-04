@@ -8,7 +8,7 @@ SRC             := ../src
 LIB             := ../lib
 OBJ             := ${LIB}/catch.o\
                    test_my_node.o test_my_queue.o test_my_stack.o\
-				   test_bst_node.o test_bst.o
+				   test_bst_node.o test_bst.o test_avl.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -59,6 +59,15 @@ test_bst.out: ${LIB}/catch.o test_bst.o
 test_bst.o: test_bst.cpp\
 	${INC}/bst_node.h\
     ${INC}/bst.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test avl
+test_avl.out: ${LIB}/catch.o test_avl.o
+	$(CXX) -o $@ $^
+
+test_avl.o: test_avl.cpp\
+	${INC}/bst_node.h\
+    ${INC}/avl.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
