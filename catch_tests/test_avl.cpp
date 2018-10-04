@@ -410,7 +410,7 @@ void assert_balance_limit(const bst_node::TreeNode<T>* root) {
         int factor = 2;
 
         factor = root->balance_factor();
-        is_within_limit = (factor >= -1 && factor <= 1);
+        is_within_limit = factor >= -1 && factor <= 1;
         REQUIRE(is_within_limit);
 
         assert_balance_limit(root->_left);

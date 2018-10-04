@@ -24,9 +24,7 @@ struct TreeNode {
 
     // CONSTRUCTORS
     TreeNode(T item = T(), TreeNode* left = nullptr, TreeNode* right = nullptr)
-        : _item(item), _left(left), _right(right), _height(0) {
-        update_height();  // updates height when node is created recursively
-    }
+        : _item(item), _left(left), _right(right), _height(update_height()) {}
 
     // ACCESSORS
     int balance_factor() const;
@@ -293,8 +291,8 @@ void tree_print_debug(TreeNode<T>* root, std::ostream& outs, int level) {
     }
 
     tree_print_debug(root->_right, outs, level + 1);  // recur right
-    outs << std::string(5 * level, ' ') << *root << " h" << root->_height
-         << ", b" << root->balance_factor() << std::endl;
+    outs << std::string(5 * level, ' ') << *root << " <h" << root->_height
+         << ", b" << root->balance_factor() << ">" << std::endl;
     tree_print_debug(root->_left, outs, level + 1);  // recur left
 }
 
