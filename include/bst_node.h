@@ -24,7 +24,7 @@ struct TreeNode {
 
     // CONSTRUCTORS
     TreeNode(T item = T(), TreeNode* left = nullptr, TreeNode* right = nullptr)
-        : _item(item), _left(left), _right(right), _height(update_height()) {}
+        : _item(item), _left(left), _right(right), _height(height()) {}
 
     // ACCESSORS
     int balance_factor() const;
@@ -88,11 +88,20 @@ TreeNode<T>* rotate(TreeNode<T>*& root);
 template <typename T, typename F>  // traversal of node with function pointer
 void inorder(TreeNode<T>*& root, F f);
 
+template <typename T, typename F>  // overloaded const traversal
+void inorder(const TreeNode<T>* root, F f);
+
 template <typename T, typename F>  // traversal of node with function pointer
 void preorder(TreeNode<T>*& root, F f);
 
+template <typename T, typename F>  // overloaded const traversal
+void preorder(const TreeNode<T>* root, F f);
+
 template <typename T, typename F>  // traversal of node with function pointer
 void postorder(TreeNode<T>*& root, F f);
+
+template <typename T, typename F>  // overloaded const traversal
+void postorder(const TreeNode<T>* root, F f);
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -604,6 +613,29 @@ void inorder(TreeNode<T>*& root, F f) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Const inorder traversal of node with function pointer to process root.
+ *
+ * PRE-CONDITIONS:
+ *  const TreeNode<T>* root: root by const value
+ *  F f                    : function pointer to process root
+ *
+ * POST-CONDITIONS:
+ *  Dependent on function pointer processing root
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T, typename F>
+void inorder(const TreeNode<T>* root, F f) {
+    if(root) {
+        inorder(root->_left, f);
+        f(root);
+        inorder(root->_right, f);
+    }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Preorder traversal of node with function pointer to process root.
  *
  * PRE-CONDITIONS:
@@ -627,7 +659,30 @@ void preorder(TreeNode<T>*& root, F f) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Postorder traversal of node with function pointer to process root.
+ *  Const preorder traversal of node with function pointer to process root.
+ *
+ * PRE-CONDITIONS:
+ *  const TreeNode<T>* root: root by const value
+ *  F f                   : function pointer to process root
+ *
+ * POST-CONDITIONS:
+ *  Dependent on function pointer processing root
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T, typename F>
+void preorder(const TreeNode<T>* root, F f) {
+    if(root) {
+        f(root);
+        preorder(root->_left, f);
+        preorder(root->_right, f);
+    }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mutator: postorder traversal of node with function pointer to process root.
  *
  * PRE-CONDITIONS:
  *  TreeNode<T>*& root: root by reference
@@ -641,6 +696,29 @@ void preorder(TreeNode<T>*& root, F f) {
  ******************************************************************************/
 template <typename T, typename F>
 void postorder(TreeNode<T>*& root, F f) {
+    if(root) {
+        postorder(root->_left, f);
+        postorder(root->_right, f);
+        f(root);
+    }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Const postorder traversal of node with function pointer to process root.
+ *
+ * PRE-CONDITIONS:
+ *  const TreeNode<T>* root: root by const value
+ *  F f                    : function pointer to process root
+ *
+ * POST-CONDITIONS:
+ *  Dependent on function pointer processing root
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T, typename F>
+void postorder(const TreeNode<T>* root, F f) {
     if(root) {
         postorder(root->_left, f);
         postorder(root->_right, f);

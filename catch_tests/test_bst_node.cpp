@@ -4,6 +4,13 @@
 #include "../include/bst_node.h"
 #include "../lib/catch.hpp"
 
+template <typename T>  // check node for within balance limit
+void assert_balance_limit(bst_node::TreeNode<T>* root);
+
+// check root is greater than left but less than right
+template <typename T>
+void check_node_order(bst_node::TreeNode<T>*& root);
+
 SCENARIO("Binary Search Tree Node", "[bst_node]") {
     using namespace bst_node;
 
@@ -965,8 +972,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
     }
 
     GIVEN("an empty node") {
-        bool is_within_limit = false;
-        int factor = 2;
+        bool is_erased = false, is_inserted = false;
         TreeNode<int>* root = nullptr;
 
         WHEN(
@@ -976,23 +982,27 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                                  1,  2,  3,  4,  5,  6,  7,  8,  9};
 
             for(int i : items) {
-                tree_insert(root, i, true);
-                factor = root->balance_factor();
-                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
-                REQUIRE(is_within_limit);
+                is_inserted = tree_insert(root, i, true);
+                REQUIRE(is_inserted == true);
+
+                // assert all nodes are in order and within balance limits
+                preorder(root, assert_balance_limit<int>);
+                preorder(root, check_node_order<int>);
             }
 
             THEN(
                 "erasing balanced nodes, root's balance factor will not exceed "
                 "limit") {
                 for(int i : items) {
-                    tree_erase(root, i, true);
+                    is_erased = tree_erase(root, i, true);
 
                     if(root) {
-                        factor = root->balance_factor();
-                        is_within_limit =
-                            (factor == -1 || factor == 0 || factor == 1);
-                        REQUIRE(is_within_limit);
+                        REQUIRE(is_erased == true);
+
+                        // assert all nodes are in order and within balance
+                        // limits
+                        preorder(root, assert_balance_limit<int>);
+                        preorder(root, check_node_order<int>);
                     }
                 }
             }
@@ -1005,23 +1015,27 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                                  -1, -2, -3, -4, -5, -6, -7, -8, -9};
 
             for(int i : items) {
-                tree_insert(root, i, true);
-                factor = root->balance_factor();
-                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
-                REQUIRE(is_within_limit);
+                is_inserted = tree_insert(root, i, true);
+                REQUIRE(is_inserted == true);
+
+                // assert all nodes are in order and within balance limits
+                preorder(root, assert_balance_limit<int>);
+                preorder(root, check_node_order<int>);
             }
 
             THEN(
                 "erasing balanced nodes, root's balance factor will not exceed "
                 "limit") {
                 for(int i : items) {
-                    tree_erase(root, i, true);
+                    is_erased = tree_erase(root, i, true);
 
                     if(root) {
-                        factor = root->balance_factor();
-                        is_within_limit =
-                            (factor == -1 || factor == 0 || factor == 1);
-                        REQUIRE(is_within_limit);
+                        REQUIRE(is_erased == true);
+
+                        // assert all nodes are in order and within balance
+                        // limits
+                        preorder(root, assert_balance_limit<int>);
+                        preorder(root, check_node_order<int>);
                     }
                 }
             }
@@ -1040,23 +1054,27 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
             std::random_shuffle(items.begin(), items.end());
 
             for(int i : items) {
-                tree_insert(root, i, true);
-                factor = root->balance_factor();
-                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
-                REQUIRE(is_within_limit);
+                is_inserted = tree_insert(root, i, true);
+                REQUIRE(is_inserted == true);
+
+                // assert all nodes are in order and within balance limits
+                preorder(root, assert_balance_limit<int>);
+                preorder(root, check_node_order<int>);
             }
 
             THEN(
                 "erasing balanced nodes, root's balance factor will not exceed "
                 "limit") {
                 for(int i : items) {
-                    tree_erase(root, i, true);
+                    is_erased = tree_erase(root, i, true);
 
                     if(root) {
-                        factor = root->balance_factor();
-                        is_within_limit =
-                            (factor == -1 || factor == 0 || factor == 1);
-                        REQUIRE(is_within_limit);
+                        REQUIRE(is_erased == true);
+
+                        // assert all nodes are in order and within balance
+                        // limits
+                        preorder(root, assert_balance_limit<int>);
+                        preorder(root, check_node_order<int>);
                     }
                 }
             }
@@ -1070,9 +1088,9 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                 REQUIRE(root_a != nullptr);
 
-                factor = root_a->balance_factor();
-                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
-                REQUIRE(is_within_limit);
+                // assert all nodes are in order and within balance limits
+                preorder(root_a, assert_balance_limit<int>);
+                preorder(root_a, check_node_order<int>);
 
                 tree_clear(root_a);
             }
@@ -1108,28 +1126,47 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                 // insert items_a to root_a and assert root_a is within limits
                 for(int i : items_a) {
-                    tree_insert(root_a, i, true);
+                    is_inserted = tree_insert(root_a, i, true);
+                    REQUIRE(is_inserted == true);
 
-                    if(root) {
-                        factor = root_a->balance_factor();
-                        is_within_limit =
-                            (factor == -1 || factor == 0 || factor == 1);
-                        REQUIRE(is_within_limit);
-                    }
+                    // assert all nodes are in order and within balance
+                    // limits
+                    preorder(root_a, assert_balance_limit<int>);
+                    preorder(root_a, check_node_order<int>);
                 }
 
                 // add root_a to root
                 tree_add(root, root_a, true);
 
-                // assert root is within limits after adding root_a
-                factor = root->balance_factor();
-                is_within_limit = (factor == -1 || factor == 0 || factor == 1);
-                REQUIRE(is_within_limit);
+                // assert all nodes are in order and within balance
+                // limits
+                preorder(root, assert_balance_limit<int>);
+                preorder(root, check_node_order<int>);
 
                 tree_clear(root_a);
             }
         }
 
         tree_clear(root);
+    }
+}
+
+template <typename T>
+void assert_balance_limit(bst_node::TreeNode<T>* root) {
+    if(root) {
+        bool is_within_limit = false;
+        int factor = 2;
+
+        factor = root->balance_factor();
+        is_within_limit = factor >= -1 && factor <= 1;
+        REQUIRE(is_within_limit);
+    }
+}
+
+template <typename T>
+void check_node_order(bst_node::TreeNode<T>*& root) {
+    if(root) {
+        if(root->_left) REQUIRE(root->_item > root->_left->_item);
+        if(root->_right) REQUIRE(root->_item < root->_right->_item);
     }
 }

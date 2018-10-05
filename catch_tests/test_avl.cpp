@@ -5,8 +5,12 @@
 #include "../include/avl.h"
 #include "../lib/catch.hpp"
 
-template <typename T>  // recursively check all nodes for balance limit
+template <typename T>  // check node for within balance limit
 void assert_balance_limit(const bst_node::TreeNode<T>* root);
+
+// check root is greater than left but less than right
+template <typename T>
+void check_node_order(const bst_node::TreeNode<T>*& root);
 
 SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
     using namespace avl;
@@ -51,8 +55,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
 
         THEN("unique items are tested with fail reinsertions") {
@@ -74,8 +79,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
 
         THEN("unique items are tested with fail reinsertions") {
@@ -97,8 +103,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
 
         THEN("unique items are tested with fail reinsertions") {
@@ -166,8 +173,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
                 // access avl's root
                 root = avl.root();
 
-                // assert all nodes are within balance limits
-                assert_balance_limit(root);
+                // assert all nodes are in order and within balance limits
+                bst_node::preorder(root, assert_balance_limit<int>);
+                bst_node::preorder(root, check_node_order<int>);
             }
 
             THEN("searching: items are NOT found") {
@@ -198,8 +206,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl_sorted_items.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
     }
 
@@ -238,15 +247,17 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
                 root = avl_copy.root();
                 REQUIRE(root != nullptr);
 
-                // assert all nodes are within balance limits
-                assert_balance_limit(root);
+                // assert all nodes are in order and within balance limits
+                bst_node::preorder(root, assert_balance_limit<int>);
+                bst_node::preorder(root, check_node_order<int>);
 
                 // access avl_assign's root
                 root = avl_assign.root();
                 REQUIRE(root != nullptr);
 
-                // assert all nodes are within balance limits
-                assert_balance_limit(root);
+                // assert all nodes are in order and within balance limits
+                bst_node::preorder(root, assert_balance_limit<int>);
+                bst_node::preorder(root, check_node_order<int>);
             }
 
             THEN("avl_copy and avl_assign is unique via avl modifications") {
@@ -300,8 +311,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
 
         THEN(
@@ -321,8 +333,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
                 root = avl_ascending.root();
                 REQUIRE(root != nullptr);
 
-                // assert all nodes are within balance limits
-                assert_balance_limit(root);
+                // assert all nodes are in order and within balance limits
+                bst_node::preorder(root, assert_balance_limit<int>);
+                bst_node::preorder(root, check_node_order<int>);
             }
         }
     }
@@ -337,8 +350,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
 
         THEN(
@@ -358,8 +372,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
                 root = avl_descending.root();
                 REQUIRE(root != nullptr);
 
-                // assert all nodes are within balance limits
-                assert_balance_limit(root);
+                // assert all nodes are in order and within balance limits
+                bst_node::preorder(root, assert_balance_limit<int>);
+                bst_node::preorder(root, check_node_order<int>);
             }
         }
     }
@@ -374,8 +389,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
             root = avl.root();
             REQUIRE(root != nullptr);
 
-            // assert all nodes are within balance limits
-            assert_balance_limit(root);
+            // assert all nodes are in order and within balance limits
+            bst_node::preorder(root, assert_balance_limit<int>);
+            bst_node::preorder(root, check_node_order<int>);
         }
 
         THEN(
@@ -396,8 +412,9 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
                 root = avl_random.root();
                 REQUIRE(root != nullptr);
 
-                // assert all nodes are within balance limits
-                assert_balance_limit(root);
+                // assert all nodes are in order and within balance limits
+                bst_node::preorder(root, assert_balance_limit<int>);
+                bst_node::preorder(root, check_node_order<int>);
             }
         }
     }
@@ -412,8 +429,13 @@ void assert_balance_limit(const bst_node::TreeNode<T>* root) {
         factor = root->balance_factor();
         is_within_limit = factor >= -1 && factor <= 1;
         REQUIRE(is_within_limit);
+    }
+}
 
-        assert_balance_limit(root->_left);
-        assert_balance_limit(root->_right);
+template <typename T>
+void check_node_order(const bst_node::TreeNode<T>*& root) {
+    if(root) {
+        if(root->_left) REQUIRE(root->_item > root->_left->_item);
+        if(root->_right) REQUIRE(root->_item < root->_right->_item);
     }
 }
