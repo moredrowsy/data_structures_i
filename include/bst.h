@@ -27,6 +27,7 @@ public:
     ~BST();
 
     // ACCESSORS
+    const bst_node::TreeNode<T>* root() const;
     bool search(const T& target, bst_node::TreeNode<T>*& found_ptr) const;
 
     // MUTATORS
@@ -126,6 +127,24 @@ BST<T>& BST<T>::operator=(const BST<T>& rhs) {
 template <typename T>
 BST<T>::~BST() {
     bst_node::tree_clear(_root);  // deallocate old data
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns access to copy BST's root.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  const bst_node::TreeNode<T>*: access to root
+ ******************************************************************************/
+template <typename T>
+const bst_node::TreeNode<T>* BST<T>::root() const {
+    return _root;
 }
 
 /*******************************************************************************

@@ -4,12 +4,10 @@
 #include "../include/bst_node.h"
 #include "../lib/catch.hpp"
 
-template <typename T>  // check node for within balance limit
-void assert_balance_limit(bst_node::TreeNode<T>* root);
-
-// check root is greater than left but less than right
+// check node for within balance limit and node is greater than left but less
+// than right
 template <typename T>
-void check_node_order(bst_node::TreeNode<T>*& root);
+void assert_b_limits_and_order(bst_node::TreeNode<T>* root);
 
 SCENARIO("Binary Search Tree Node", "[bst_node]") {
     using namespace bst_node;
@@ -986,8 +984,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 REQUIRE(is_inserted == true);
 
                 // assert all nodes are in order and within balance limits
-                preorder(root, assert_balance_limit<int>);
-                preorder(root, check_node_order<int>);
+                preorder(root, assert_b_limits_and_order<int>);
             }
 
             THEN(
@@ -1001,8 +998,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                         // assert all nodes are in order and within balance
                         // limits
-                        preorder(root, assert_balance_limit<int>);
-                        preorder(root, check_node_order<int>);
+                        preorder(root, assert_b_limits_and_order<int>);
                     }
                 }
             }
@@ -1019,8 +1015,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 REQUIRE(is_inserted == true);
 
                 // assert all nodes are in order and within balance limits
-                preorder(root, assert_balance_limit<int>);
-                preorder(root, check_node_order<int>);
+                preorder(root, assert_b_limits_and_order<int>);
             }
 
             THEN(
@@ -1034,8 +1029,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                         // assert all nodes are in order and within balance
                         // limits
-                        preorder(root, assert_balance_limit<int>);
-                        preorder(root, check_node_order<int>);
+                        preorder(root, assert_b_limits_and_order<int>);
                     }
                 }
             }
@@ -1058,8 +1052,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 REQUIRE(is_inserted == true);
 
                 // assert all nodes are in order and within balance limits
-                preorder(root, assert_balance_limit<int>);
-                preorder(root, check_node_order<int>);
+                preorder(root, assert_b_limits_and_order<int>);
             }
 
             THEN(
@@ -1073,8 +1066,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                         // assert all nodes are in order and within balance
                         // limits
-                        preorder(root, assert_balance_limit<int>);
-                        preorder(root, check_node_order<int>);
+                        preorder(root, assert_b_limits_and_order<int>);
                     }
                 }
             }
@@ -1089,8 +1081,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 REQUIRE(root_a != nullptr);
 
                 // assert all nodes are in order and within balance limits
-                preorder(root_a, assert_balance_limit<int>);
-                preorder(root_a, check_node_order<int>);
+                preorder(root_a, assert_b_limits_and_order<int>);
 
                 tree_clear(root_a);
             }
@@ -1131,8 +1122,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                     // assert all nodes are in order and within balance
                     // limits
-                    preorder(root_a, assert_balance_limit<int>);
-                    preorder(root_a, check_node_order<int>);
+                    preorder(root_a, assert_b_limits_and_order<int>);
                 }
 
                 // add root_a to root
@@ -1140,8 +1130,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 
                 // assert all nodes are in order and within balance
                 // limits
-                preorder(root, assert_balance_limit<int>);
-                preorder(root, check_node_order<int>);
+                preorder(root, assert_b_limits_and_order<int>);
 
                 tree_clear(root_a);
             }
@@ -1152,7 +1141,7 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
 }
 
 template <typename T>
-void assert_balance_limit(bst_node::TreeNode<T>* root) {
+void assert_b_limits_and_order(bst_node::TreeNode<T>* root) {
     if(root) {
         bool is_within_limit = false;
         int factor = 2;
@@ -1160,12 +1149,7 @@ void assert_balance_limit(bst_node::TreeNode<T>* root) {
         factor = root->balance_factor();
         is_within_limit = factor >= -1 && factor <= 1;
         REQUIRE(is_within_limit);
-    }
-}
 
-template <typename T>
-void check_node_order(bst_node::TreeNode<T>*& root) {
-    if(root) {
         if(root->_left) REQUIRE(root->_item > root->_left->_item);
         if(root->_right) REQUIRE(root->_item < root->_right->_item);
     }

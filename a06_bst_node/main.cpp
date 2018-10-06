@@ -2,7 +2,7 @@
  * AUTHOR        : Thuan Tang
  * ID            : 00991588
  * CLASS         : CS008
- * ASSIGNMENT 07 : BST Class
+ * ASSIGNMENT 06 : BST Node and Functions
  * DESCRIPTION   : This program is a test harness for binary TreeNode.
  ******************************************************************************/
 #include <iostream>          // io stream objects
@@ -337,7 +337,7 @@ int main() {
     tree_print_debug(left_left);
     std::cout << std::endl;
 
-    left_left = rotate(left_left);
+    left_left = rotate_right(left_left);
 
     // print left_left
     std::cout << "rotate_right() on left_left" << std::endl
@@ -360,7 +360,7 @@ int main() {
     tree_print_debug(right_right);
     std::cout << std::endl;
 
-    right_right = rotate(right_right);
+    right_right = rotate_left(right_right);
 
     // print right right
     std::cout << "rotate_left() on right right" << std::endl
