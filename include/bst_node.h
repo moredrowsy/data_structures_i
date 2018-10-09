@@ -10,8 +10,9 @@
 #ifndef BST_NODE_H
 #define BST_NODE_H
 
-#include <iostream>  // stream objects
-#include <string>    // string objects
+#include <algorithm>  // max()
+#include <iostream>   // stream objects
+#include <string>     // string objects
 
 namespace bst_node {
 
