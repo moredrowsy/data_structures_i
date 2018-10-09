@@ -16,9 +16,10 @@
 #ifndef STOKENIZER_H
 #define STOKENIZER_H
 
-#include <cassert>   // assertions
-#include <iostream>  // stream objects
-#include "state_machine.h"
+#include <cassert>          // assertions
+#include <iostream>         // stream objects
+#include <string>           // string objects
+#include "state_machine.h"  // state_machine functions
 
 namespace stokenizer {
 

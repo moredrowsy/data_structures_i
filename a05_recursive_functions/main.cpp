@@ -7,8 +7,9 @@
  *      their mechanism. Additionally, you can call specific tests via command
  *      line arguments in any order by the test number.
  ******************************************************************************/
-#include <cstring>
-#include <iostream>
+#include <cstring>   // strcmp
+#include <iostream>  // stream objects
+#include <string>    // string objects
 #include "../include/my_recursions.h"
 
 void test_r1();   // prints recursion levels

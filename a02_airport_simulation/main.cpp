@@ -12,6 +12,7 @@
  ******************************************************************************/
 #include <iomanip>                  // output formatting
 #include <iostream>                 // output stream
+#include <string>                   // string objects
 #include "../include/my_airport.h"  // Airport/Averager/BoolSource class
 #include "../include/my_queue.h"    // Queue class
 

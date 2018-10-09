@@ -12,6 +12,7 @@
  ******************************************************************************/
 #include <iomanip>                  // io stream foratting
 #include <iostream>                 // io stream objects
+#include <string>                   // string objects
 #include "../include/stokenizer.h"  // state_machine, Token, STokenizer class
 
 // continuously extract tokens from char array

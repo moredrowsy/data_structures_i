@@ -10,6 +10,7 @@
 #include <cstdlib>   // random generator
 #include <iomanip>   // stream formatting
 #include <iostream>  // io stream objects
+#include <string>    // string objects
 
 // recursive fractal
 void random_fractal(double left_height, double right_height, double width,

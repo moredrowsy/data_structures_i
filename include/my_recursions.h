@@ -10,7 +10,8 @@ bst_node::TreeNode at target.
 #ifndef MY_RECURSIONS_H
 #define MY_RECURSIONS_H
 
-#include <iostream>
+#include <iostream>  // stream objects
+#include <string>    // string objects
 
 namespace my_recursions {
 

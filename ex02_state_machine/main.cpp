@@ -7,8 +7,9 @@
  *      an adjacency table rules for the get_token to extract a token from a
  *      a string with a given starting state and position in the string.
  ******************************************************************************/
-#include <iostream>
-#include "../include/state_machine.h"
+#include <iostream>                    // stream objects
+#include <string>                      // string objects
+#include "../include/state_machine.h"  // state_machine functions
 
 using namespace state_machine;
 

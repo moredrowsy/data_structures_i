@@ -6,6 +6,7 @@
  * DESCRIPTION   : This program is a test harness for binary TreeNode.
  ******************************************************************************/
 #include <iostream>          // io stream objects
+#include <string>            // string objects
 #include "../include/bst.h"  // binary TreeNode struct and functions
 
 int main() {

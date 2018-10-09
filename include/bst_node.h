@@ -10,8 +10,8 @@
 #ifndef BST_NODE_H
 #define BST_NODE_H
 
-#include <algorithm>
-#include <iostream>
+#include <iostream>  // stream objects
+#include <string>    // string objects
 
 namespace bst_node {
 

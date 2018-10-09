@@ -10,6 +10,7 @@
 #include <cstdlib>           // rand()
 #include <ctime>             // time()
 #include <iostream>          // io stream objects
+#include <string>            // string objects
 #include <vector>            // vector objects
 #include "../include/bst.h"  // BST class, unbalanced binary tree
 

@@ -10,6 +10,7 @@
  *      mechanism.
  ******************************************************************************/
 #include <iostream>                 // io stream objects
+#include <string>                   // string objects
 #include "../include/ftokenizer.h"  // Token, FTokenizer class
 
 // continuously extract tokens from file
