@@ -33,7 +33,8 @@ public:
     bool empty() const;
     unsigned capacity() const;
     unsigned size() const;
-    const T* root() const;  // returns const ptr to array of items
+    const T* items() const;  // returns const ptr to array of items
+    bool validate(unsigned parent = 0) const;  // valide heap structure
 
     // MUTATORS
     void clear();         // remove all items
@@ -68,21 +69,18 @@ private:
     void heapDown();  // move root node down till heap structure
     void heapUp();    // move last node up till heap structure
     void swap_with_parent(unsigned i);  // swap parent/child node
-    void update_capacity();             // update capacity and make new array
+    void update();                      // update capacity and make new array
 };
 
 template <typename T>
-Heap<T>::Heap(const T* list, unsigned size) {
-    _capacity = 0;
-    _size = 0;
-    _items = nullptr;
-
+Heap<T>::Heap(const T* list, unsigned size)
+    : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < size; ++i) insert(list[i]);
 }
 
 template <typename T>
 Heap<T>::~Heap() {
-    if(_capacity > 0) delete[] _items;
+    if(_items) delete[] _items;
 }
 
 template <typename T>
@@ -131,8 +129,29 @@ unsigned Heap<T>::size() const {
 }
 
 template <typename T>
-const T* Heap<T>::root() const {
+const T* Heap<T>::items() const {
     return _items;
+}
+
+template <typename T>
+bool Heap<T>::validate(unsigned parent) const {
+    if(parent >= _size) return true;
+
+    bool is_valid = true;
+
+    is_valid &= validate(right_child_index(parent));  // recurve left
+
+    // find bitwise AND for all booleans
+    if(left_child_index(parent) < _size)
+        is_valid &=
+            _items[parent_index(parent)] >= _items[left_child_index(parent)];
+    if(right_child_index(parent) < _size)
+        is_valid &=
+            _items[parent_index(parent)] >= _items[right_child_index(parent)];
+
+    is_valid &= validate(right_child_index(parent));  // recurve right
+
+    return is_valid;
 }
 
 template <typename T>
@@ -142,14 +161,14 @@ void Heap<T>::clear() {
 
 template <typename T>
 bool Heap<T>::insert(T item) {
-    update_capacity();
-    ++_size;
+    update();
 
+    ++_size;
     _items[_size - 1] = item;
 
     heapUp();
 
-    return true;
+    return _items != nullptr ? true : false;
 }
 
 template <typename T>
@@ -206,7 +225,6 @@ unsigned Heap<T>::right_child_index(unsigned i) const {
 
 template <typename T>
 unsigned Heap<T>::big_child_index(unsigned i) const {
-    assert(i * 2 + 2 < _size);
     return _items[left_child_index(i)] < _items[right_child_index(i)]
                ? right_child_index(i)
                : left_child_index(i);
@@ -245,15 +263,19 @@ void Heap<T>::swap_with_parent(unsigned i) {
 }
 
 template <typename T>
-void Heap<T>::update_capacity() {
+void Heap<T>::update() {
     if(_size >= _capacity) {  // update capacity and create new array
         _capacity = _capacity > 0 ? _capacity * 2 : 1;
 
-        T* new_items = new T[_capacity];
-        for(unsigned i = 0; i < _size; ++i) new_items[i] = _items[i];
+        T* old_items = _items;
+        _items = nullptr;
+        _items = new T[_capacity];
 
-        delete[] _items;
-        _items = new_items;
+        if(_items) {
+            for(unsigned i = 0; i < _size; ++i) _items[i] = old_items[i];
+
+            delete[] old_items;
+        }
     }
 }
 

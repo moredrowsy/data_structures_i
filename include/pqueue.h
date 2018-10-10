@@ -23,7 +23,7 @@ struct Info {
 
     // CONSTRUCTORS
     Info() {}
-    Info(T i, int p = 0) : _item(i), _priority(p) {}
+    Info(const T& i, int p = 0) : _item(i), _priority(p) {}
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
@@ -38,6 +38,14 @@ struct Info {
     friend bool operator>(const Info<T>& lhs, const Info<T>& rhs) {
         return lhs._priority > rhs._priority;
     }
+
+    friend bool operator<=(const Info<T>& lhs, const Info<T>& rhs) {
+        return lhs._priority <= rhs._priority;
+    }
+
+    friend bool operator>=(const Info<T>& lhs, const Info<T>& rhs) {
+        return lhs._priority >= rhs._priority;
+    }
 };
 
 template <typename T>
@@ -45,15 +53,15 @@ class PQueue {
 public:
     // CONSTRUCTORS
     PQueue() {}
-    PQueue(const T& i, int p) : _heap(heap::Heap<Info<T> >(Info<T>(i, p))) {}
-    PQueue(const Info<T>& i) : _heap(heap::Heap<Info<T> >(i)) {}
+    PQueue(const T& i, int p) : _heap(Info<T>(i, p)) {}
+    PQueue(const Info<T>& info) : _heap(info) {}
     PQueue(const Info<T>* list, unsigned size);
 
     // ACCESSORS
     bool empty() const;
     int size() const;
     void print_tree() const;
-    const Info<T>* root() const;
+    bool validate() const;
 
     // MUTATORS
     bool insert(const Info<T>& info);
@@ -91,8 +99,8 @@ void PQueue<T>::print_tree() const {
 }
 
 template <typename T>
-const Info<T>* PQueue<T>::root() const {
-    return _heap.root();
+bool PQueue<T>::validate() const {
+    return _heap.validate();
 }
 
 template <typename T>
