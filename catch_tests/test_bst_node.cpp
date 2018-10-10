@@ -1,6 +1,7 @@
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
+#include <algorithm>  // std::shuffle
+#include <ctime>      // std::time
+#include <random>     // std::default_random_engine
+#include <vector>     // std::vector
 #include "../include/bst_node.h"
 #include "../lib/catch.hpp"
 
@@ -1044,8 +1045,8 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                 items.push_back(i);
             }
 
-            srand(time(nullptr));
-            std::random_shuffle(items.begin(), items.end());
+            std::shuffle(items.begin(), items.end(),
+                         std::default_random_engine(time(nullptr)));
 
             for(int i : items) {
                 is_inserted = tree_insert(root, i, true);
@@ -1112,8 +1113,8 @@ SCENARIO("Binary Search Tree Node", "[bst_node]") {
                     items_a.push_back(i);
                 }
 
-                srand(time(nullptr));
-                std::random_shuffle(items_a.begin(), items_a.end());
+                std::shuffle(items_a.begin(), items_a.end(),
+                             std::default_random_engine(time(nullptr)));
 
                 // insert items_a to root_a and assert root_a is within limits
                 for(int i : items_a) {

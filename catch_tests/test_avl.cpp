@@ -1,7 +1,7 @@
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
-#include <vector>
+#include <algorithm>  // std::shuffle
+#include <ctime>      // std::time
+#include <random>     // std::default_random_engine
+#include <vector>     // std::vector
 #include "../include/avl.h"
 #include "../lib/catch.hpp"
 
@@ -34,10 +34,10 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
     // populate vector with descending items
     for(int i = -1; i >= -200; --i) descending_items.push_back(i);
 
-    // populate random_items and perform STL random_shuffle
+    // populate random_items and perform STL shuffle
     random_items = ascending_items;
-    srand(time(nullptr));
-    std::random_shuffle(random_items.begin(), random_items.end());
+    std::shuffle(random_items.begin(), random_items.end(),
+                 std::default_random_engine(time(nullptr)));
 
     REQUIRE(ascending_items.size());
     REQUIRE(descending_items.size());
@@ -388,7 +388,8 @@ SCENARIO("Adelson-Velsky and Landis Class", "[avl]") {
 
             // populate vector with descending items and do random_shuffle
             for(int i = -1; i <= -200; --i) random_items2.push_back(i);
-            std::random_shuffle(random_items2.begin(), random_items2.end());
+            std::shuffle(random_items2.begin(), random_items2.end(),
+                         std::default_random_engine(time(nullptr)));
 
             for(int i : random_items2) {
                 is_inserted = avl_random.insert(i);
