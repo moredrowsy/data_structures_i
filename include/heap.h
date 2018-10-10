@@ -193,12 +193,12 @@ template <typename T>
 void Heap<T>::print_tree(unsigned root, unsigned level,
                          std::ostream& outs) const {
     if(root >= _size) {
-        outs << std::string(5 * level, ' ') << "|||" << std::endl;
+        outs << std::string(10 * level, ' ') << "|||" << std::endl;
         return;
     }
 
     print_tree(right_child_index(root), level + 1, outs);
-    outs << std::string(5 * level, ' ') << _items[root] << std::endl;
+    outs << std::string(10 * level, ' ') << _items[root] << std::endl;
     print_tree(left_child_index(root), level + 1, outs);
 }
 
