@@ -1,6 +1,9 @@
-#include <iostream>
-#include "../include/heap.h"
-#include "../lib/catch.hpp"
+#include <algorithm>          // std::sort()
+#include <array>              // std::array
+#include <cstdlib>            // rand(), srand()
+#include <ctime>              // time()
+#include "../include/heap.h"  // Heap Class
+#include "../lib/catch.hpp"   // catch2 test framework
 
 SCENARIO("Binary Heap Tree", "[heap]") {
     using namespace heap;
@@ -17,7 +20,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
             REQUIRE(heap.items() == nullptr);
         }
 
-        WHEN("inserted w/ ascending items") {
+        WHEN("insertion: w/ ascending items") {
             is_inserted = heap.insert(0);
             REQUIRE(is_inserted == true);
             REQUIRE(heap.empty() == false);
@@ -302,7 +305,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
             }
         }
 
-        WHEN("inserted w/ descending items") {
+        WHEN("insertion: w/ descending items") {
             is_inserted = heap.insert(7);
             REQUIRE(is_inserted == true);
             REQUIRE(heap.empty() == false);
@@ -397,7 +400,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
             REQUIRE(heap.items()[7] == 0);
         }
 
-        WHEN("inserted w/ ascending list") {
+        WHEN("insertion: w/ ascending list") {
             const int SIZE = 8;
             int list[SIZE] = {0, 1, 2, 3, 4, 5, 6, 7};
             Heap<int> heap_from_list(list, SIZE);
@@ -414,6 +417,44 @@ SCENARIO("Binary Heap Tree", "[heap]") {
             REQUIRE(heap_from_list.items()[5] == 1);
             REQUIRE(heap_from_list.items()[6] == 4);
             REQUIRE(heap_from_list.items()[7] == 0);
+        }
+
+        WHEN("insertion: w/ random items") {
+            bool is_inserted = false;
+            int item = 0;
+            const int SIZE = 100;
+            std::array<int, SIZE> random_items;
+            srand(time(nullptr));
+
+            // repeat ENTIRE inserts/pops of 100 random items for 100 iterations
+            for(int i = 0; i < 100; ++i) {
+                // populate random_items with random numbers
+                for(auto &a : random_items) a = rand() % 100;
+
+                // add random items to heap
+                for(unsigned i = 0; i < SIZE; ++i) {
+                    // two arguments insert
+                    is_inserted = heap.insert(random_items[i]);
+                    REQUIRE(is_inserted == true);
+                    REQUIRE(heap.empty() == false);
+                    REQUIRE(heap.size() == i + 1);
+                    REQUIRE(heap.validate() == true);
+                }
+
+                // sort random_items to prepare for pop assertions
+                std::sort(random_items.begin(), random_items.end());
+
+                // assert popping will return max item
+                for(unsigned i = SIZE; i > 0; --i) {
+                    item = heap.pop();
+                    REQUIRE(heap.size() == i - 1);
+                    REQUIRE(item == random_items[i - 1]);
+                    REQUIRE(heap.validate() == true);
+                }
+
+                heap.clear();
+                REQUIRE(heap.size() == 0);
+            }
         }
     }
 }

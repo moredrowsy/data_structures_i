@@ -1,10 +1,10 @@
-#include <algorithm>
-#include <array>
-#include <ctime>
-#include <random>
-#include <string>
-#include "../include/pqueue.h"
-#include "../lib/catch.hpp"
+#include <algorithm>            // std::shuffle()
+#include <array>                // std::array
+#include <ctime>                // time()
+#include <random>               // std::default_random_engine()
+#include <string>               // string objects
+#include "../include/pqueue.h"  // Info struct and PQueue class
+#include "../lib/catch.hpp"     // catch2 test framework
 
 SCENARIO("Priority Queue", "[pqueue]") {
     using namespace pqueue;
@@ -15,11 +15,14 @@ SCENARIO("Priority Queue", "[pqueue]") {
     PQueue<std::string> pqueue;
 
     // prepare list
-    const int SIZE = 11;
-    std::string names[SIZE] = {"Ares",     "Ares",   "Boreas", "Cronus",
-                               "Dionysus", "Eos",    "Eos",    "Freya",
-                               "Gaia",     "Hermes", "Hermes"};
-    int priority[SIZE] = {1, 1, 2, 3, 4, 5, 5, 6, 7, 8, 8};
+    const int SIZE = 20;
+    std::string names[SIZE] = {
+        "Ares",     "Ares", "Boreas",  "Cronus",     "Dionysus",
+        "Eos",      "Eos",  "Freya",   "Gaia",       "Hermes",
+        "Hermes",   "Iris", "Jupiter", "Kappa",      "Lupe",
+        "Morpheus", "Nike", "Oceanus", "Persephone", "Persephone"};
+    int priority[SIZE] = {1, 1, 2,  3,  4,  5,  5,  6,  7,  8,
+                          8, 9, 10, 11, 12, 13, 14, 15, 16, 16};
 
     GIVEN("insertion: w/ ascending items") {
         for(unsigned i = 0; i < SIZE; ++i) {
@@ -73,26 +76,31 @@ SCENARIO("Priority Queue", "[pqueue]") {
             random_items[i] = info;
         }
 
-        // shuffle random_items
-        std::shuffle(random_items.begin(), random_items.end(),
-                     std::default_random_engine(time(nullptr)));
+        // repeat ENTIRE inserts/pops of random items for 100 iterations
+        for(int i = 0; i < 100; ++i) {
+            // shuffle random_items
+            std::shuffle(random_items.begin(), random_items.end(),
+                         std::default_random_engine(time(nullptr)));
 
-        // insert every item in random_items
-        for(unsigned i = 0; i < SIZE; ++i) {
-            is_inserted = pqueue.insert(random_items[i]);
-            REQUIRE(is_inserted == true);
-            REQUIRE(pqueue.empty() == false);
-            REQUIRE(pqueue.size() == i + 1);
-            REQUIRE(pqueue.validate() == true);
-        }
+            // insert every item in random_items
+            for(unsigned i = 0; i < SIZE; ++i) {
+                is_inserted = pqueue.insert(random_items[i]);
+                REQUIRE(is_inserted == true);
+                REQUIRE(pqueue.empty() == false);
+                REQUIRE(pqueue.size() == i + 1);
+                REQUIRE(pqueue.validate() == true);
+            }
 
-        THEN("pop will return the highest priority item") {
+            // assert pop will return the highest priority item
             for(unsigned i = SIZE; i > 0; --i) {
                 item = pqueue.pop();
                 REQUIRE(pqueue.size() == i - 1);
                 REQUIRE(item == names[i - 1]);
                 REQUIRE(pqueue.validate() == true);
             }
+
+            pqueue.clear();
+            REQUIRE(pqueue.size() == 0);
         }
     }
 
