@@ -8,7 +8,8 @@ SRC             := ../src
 LIB             := ../lib
 OBJ             := ${LIB}/catch.o\
                    test_my_node.o test_my_queue.o test_my_stack.o\
-				   test_bst_node.o test_bst.o test_avl.o
+                   test_bst_node.o test_bst.o test_avl.o test_heap.o\
+                   test_pqueue.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -68,6 +69,23 @@ test_avl.out: ${LIB}/catch.o test_avl.o
 test_avl.o: test_avl.cpp\
 	${INC}/bst_node.h\
     ${INC}/avl.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test heap
+test_heap.out: ${LIB}/catch.o test_heap.o
+	$(CXX) -o $@ $^
+
+test_heap.o: test_heap.cpp\
+	${INC}/heap.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test pqueue
+test_pqueue.out: ${LIB}/catch.o test_pqueue.o
+	$(CXX) -o $@ $^
+
+test_pqueue.o: test_pqueue.cpp\
+	${INC}/heap.h\
+	${INC}/pqueue.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

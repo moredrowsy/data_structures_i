@@ -10,6 +10,8 @@ Projects for data structures using C++
 * Assignment 06 - Binary search tree node and functions
 * Assignment 07 - Binary search tree class
 * Assignment 08 - AVL class for balanced binary tree
+* Assignment 09 - Binary max heap tree class
+* Assignment 10 - Priority Queue class
 * Exercise 01 - Car wash simulation using Queue
 * Exercise 02 - State machine to extract tokens via adjacency table
 * Exercise 03 - Recursive fractals
