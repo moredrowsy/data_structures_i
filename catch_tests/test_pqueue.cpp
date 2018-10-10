@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <array>
+#include <ctime>
+#include <random>
 #include <string>
 #include "../include/pqueue.h"
 #include "../lib/catch.hpp"
@@ -11,138 +15,90 @@ SCENARIO("Priority Queue", "[pqueue]") {
     PQueue<std::string> pqueue;
 
     // prepare list
-    const int SIZE = 8;
-    std::string str_list[SIZE] = {"Ares", "Boreas", "Cronus", "Dionysus",
-                                  "Eos",  "Freya",  "Gaia",   "Hermes"};
-    int priority[SIZE] = {1, 2, 3, 4, 5, 6, 7, 8};
+    const int SIZE = 11;
+    std::string names[SIZE] = {"Ares",     "Ares",   "Boreas", "Cronus",
+                               "Dionysus", "Eos",    "Eos",    "Freya",
+                               "Gaia",     "Hermes", "Hermes"};
+    int priority[SIZE] = {1, 1, 2, 3, 4, 5, 5, 6, 7, 8, 8};
 
-    GIVEN("inserted w/ ascending items") {
-        is_inserted = pqueue.insert(str_list[0], priority[0]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 1);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[1], priority[1]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 2);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[2], priority[2]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 3);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[3], priority[3]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 4);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[4], priority[4]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 5);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[5], priority[5]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 6);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[6], priority[6]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 7);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted = pqueue.insert(str_list[7], priority[7]);
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 8);
-        REQUIRE(pqueue.validate() == true);
+    GIVEN("insertion: w/ ascending items") {
+        for(unsigned i = 0; i < SIZE; ++i) {
+            // two arguments insert
+            is_inserted = pqueue.insert(names[i], priority[i]);
+            REQUIRE(is_inserted == true);
+            REQUIRE(pqueue.empty() == false);
+            REQUIRE(pqueue.size() == i + 1);
+            REQUIRE(pqueue.validate() == true);
+        }
 
         THEN("pop will return the highest priority item") {
             for(unsigned i = SIZE; i > 0; --i) {
                 item = pqueue.pop();
-                REQUIRE(item == str_list[i - 1]);
+                REQUIRE(pqueue.size() == i - 1);
+                REQUIRE(item == names[i - 1]);
                 REQUIRE(pqueue.validate() == true);
             }
         }
     }
 
-    GIVEN("inserted w/ descending items") {
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[7], priority[7]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 1);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[6], priority[6]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 2);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[5], priority[5]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 3);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[4], priority[4]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 4);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[3], priority[3]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 5);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[2], priority[2]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 6);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[1], priority[1]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 7);
-        REQUIRE(pqueue.validate() == true);
-
-        is_inserted =
-            pqueue.insert(Info<std::string>(str_list[0], priority[0]));
-        REQUIRE(is_inserted == true);
-        REQUIRE(pqueue.empty() == false);
-        REQUIRE(pqueue.size() == 8);
-        REQUIRE(pqueue.validate() == true);
+    GIVEN("insertion: w/ descending items") {
+        for(unsigned i = SIZE; i > 0; --i) {
+            // one argument insert
+            is_inserted =
+                pqueue.insert(Info<std::string>(names[i - 1], priority[i - 1]));
+            REQUIRE(is_inserted == true);
+            REQUIRE(pqueue.empty() == false);
+            REQUIRE(pqueue.size() == SIZE - i + 1);
+            REQUIRE(pqueue.validate() == true);
+        }
 
         THEN("pop will return the highest priority item") {
             for(unsigned i = SIZE; i > 0; --i) {
                 item = pqueue.pop();
-                REQUIRE(item == str_list[i - 1]);
+                REQUIRE(pqueue.size() == i - 1);
+                REQUIRE(item == names[i - 1]);
+                REQUIRE(pqueue.validate() == true);
+            }
+        }
+    }
+
+    GIVEN("insertion: w/ random items") {
+        std::array<Info<std::string>, SIZE> random_items;
+        Info<std::string> info;
+
+        // populate random_items
+        for(unsigned i = 0; i < SIZE; ++i) {
+            info._item = names[i];
+            info._priority = priority[i];
+            random_items[i] = info;
+        }
+
+        // shuffle random_items
+        std::shuffle(random_items.begin(), random_items.end(),
+                     std::default_random_engine(time(nullptr)));
+
+        // insert every item in random_items
+        for(unsigned i = 0; i < SIZE; ++i) {
+            is_inserted = pqueue.insert(random_items[i]);
+            REQUIRE(is_inserted == true);
+            REQUIRE(pqueue.empty() == false);
+            REQUIRE(pqueue.size() == i + 1);
+            REQUIRE(pqueue.validate() == true);
+        }
+
+        THEN("pop will return the highest priority item") {
+            for(unsigned i = SIZE; i > 0; --i) {
+                item = pqueue.pop();
+                REQUIRE(pqueue.size() == i - 1);
+                REQUIRE(item == names[i - 1]);
                 REQUIRE(pqueue.validate() == true);
             }
         }
     }
 
     GIVEN("CTOR w/ Info item") {
-        PQueue<std::string> pq_item(
-            Info<std::string>(str_list[0], priority[0]));
+        // one argument constructor
+        PQueue<std::string> pq_item(Info<std::string>(names[0], priority[0]));
 
         REQUIRE(pq_item.empty() == false);
         REQUIRE(pq_item.size() == 1);
@@ -150,7 +106,24 @@ SCENARIO("Priority Queue", "[pqueue]") {
 
         THEN("pop will return the highest priority item") {
             item = pq_item.pop();
-            REQUIRE(item == str_list[0]);
+            REQUIRE(pq_item.size() == 0);
+            REQUIRE(item == names[0]);
+            REQUIRE(pq_item.validate() == true);
+        }
+    }
+
+    GIVEN("CTOR w/ T item and int priority") {
+        // two arguments constructor
+        PQueue<std::string> pq_item(names[0], priority[0]);
+
+        REQUIRE(pq_item.empty() == false);
+        REQUIRE(pq_item.size() == 1);
+        REQUIRE(pq_item.validate() == true);
+
+        THEN("pop will return the highest priority item") {
+            item = pq_item.pop();
+            REQUIRE(pq_item.size() == 0);
+            REQUIRE(item == names[0]);
             REQUIRE(pq_item.validate() == true);
         }
     }
@@ -160,18 +133,20 @@ SCENARIO("Priority Queue", "[pqueue]") {
 
         // create Info list
         for(unsigned i = 0; i < SIZE; ++i)
-            ascending_list[i] = Info<std::string>(str_list[i], priority[i]);
+            ascending_list[i] = Info<std::string>(names[i], priority[i]);
 
+        // list constructor
         PQueue<std::string> pq_list(ascending_list, SIZE);
 
         REQUIRE(pq_list.empty() == false);
-        REQUIRE(pq_list.size() == 8);
+        REQUIRE(pq_list.size() == SIZE);
         REQUIRE(pq_list.validate() == true);
 
         THEN("pop will return the highest priority item") {
             for(unsigned i = SIZE; i > 0; --i) {
                 item = pq_list.pop();
-                REQUIRE(item == str_list[i - 1]);
+                REQUIRE(pq_list.size() == i - 1);
+                REQUIRE(item == names[i - 1]);
                 REQUIRE(pq_list.validate() == true);
             }
         }

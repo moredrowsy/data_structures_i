@@ -44,7 +44,7 @@ public:
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
                                     const Heap<T>& print_me) {
-        print_me.print_tree(0, 0, outs);
+        print_me.print_tree(outs);
         return outs;
     }
 
@@ -186,8 +186,7 @@ T Heap<T>::pop() {
 
 template <typename T>
 void Heap<T>::print_tree(std::ostream& outs) const {
-    for(unsigned i = 0; i < _size; ++i) outs << _items[i] << " ";
-    outs << std::endl;
+    print_tree(0, 0, outs);
 }
 
 template <typename T>
@@ -205,7 +204,7 @@ void Heap<T>::print_tree(unsigned root, unsigned level,
 
 template <typename T>
 bool Heap<T>::is_leaf(unsigned i) const {
-    return (i * 2) + 2 >= _size;
+    return (i * 2) + 2 > _size;
 }
 
 template <typename T>

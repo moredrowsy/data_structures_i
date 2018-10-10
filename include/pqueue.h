@@ -28,7 +28,8 @@ struct Info {
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
                                     const Info<T>& print_me) {
-        return outs << print_me._item;
+        return outs << "<" << print_me._item << ", " << print_me._priority
+                    << ">";
     }
 
     friend bool operator<(const Info<T>& lhs, const Info<T>& rhs) {
@@ -61,9 +62,10 @@ public:
     bool empty() const;
     int size() const;
     void print_tree() const;
-    bool validate() const;
+    bool validate() const;  // valide heap structure
 
     // MUTATORS
+    void clear();
     bool insert(const Info<T>& info);
     bool insert(const T& value, int p);
     T pop();
@@ -101,6 +103,11 @@ void PQueue<T>::print_tree() const {
 template <typename T>
 bool PQueue<T>::validate() const {
     return _heap.validate();
+}
+
+template <typename T>
+void PQueue<T>::clear() {
+    _heap.clear();
 }
 
 template <typename T>
