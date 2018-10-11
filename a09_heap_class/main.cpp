@@ -50,7 +50,10 @@ void interactive_tests() {
                 std::cin >> i;
                 is_inserted = heap.insert(i);
 
-                if(!is_inserted) std::cout << "Insertion failed." << std::endl;
+                if(is_inserted)
+                    std::cout << i << std::endl;
+                else
+                    std::cout << "Insertion failed." << std::endl;
 
                 std::cout << heap << std::endl;
 

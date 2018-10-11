@@ -37,7 +37,7 @@ public:
     bool validate(unsigned parent = 0) const;  // valide heap structure
 
     // MUTATORS
-    void clear();         // remove all items
+    void clear();         // remove access to all items
     bool insert(T item);  // insert item and rearrange heap
     T pop();              // remove top item and rearrange heap
 
@@ -285,7 +285,7 @@ bool Heap<T>::validate(unsigned parent) const {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Remove all items.
+ *  Remove access to all items.
  *
  * PRE-CONDITIONS:
  *  none
@@ -322,7 +322,7 @@ bool Heap<T>::insert(T item) {
         ++_size;
         _items[_size - 1] = item;
 
-        heapUp();
+        if(_size > 1) heapUp();
     }
 
     return is_good;
@@ -544,7 +544,8 @@ void Heap<T>::heapUp() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Swap item at current index with parent's.
+ *  Swap item at current index with parent's. Does nothing if current index
+ *  is zero.
  *
  * PRE-CONDITIONS:
  *  none
@@ -557,9 +558,11 @@ void Heap<T>::heapUp() {
  ******************************************************************************/
 template <typename T>
 void Heap<T>::swap_with_parent(unsigned i) {
-    T parent = _items[parent_index(i)];
-    _items[parent_index(i)] = _items[i];
-    _items[i] = parent;
+    if(i) {
+        T parent = _items[parent_index(i)];
+        _items[parent_index(i)] = _items[i];
+        _items[i] = parent;
+    }
 }
 
 /*******************************************************************************

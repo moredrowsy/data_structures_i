@@ -153,7 +153,7 @@ bool PQueue<T>::validate() const {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Remove all items.
+ *  Remove access all items in Heap.
  *
  * PRE-CONDITIONS:
  *  none
