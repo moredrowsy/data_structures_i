@@ -54,7 +54,7 @@ class PQueue {
 public:
     // CONSTRUCTORS
     PQueue() {}
-    PQueue(const T& i, int p) : _heap(Info<T>(i, p)) {}
+    PQueue(const T& i, int p = 0) : _heap(Info<T>(i, p)) {}
     PQueue(const Info<T>& info) : _heap(info) {}
     PQueue(const Info<T>* list, unsigned size);
 

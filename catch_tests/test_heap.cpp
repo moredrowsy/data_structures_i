@@ -280,10 +280,12 @@ SCENARIO("Binary Heap Tree", "[heap]") {
                 for(unsigned i = 0; i < heap.size(); ++i)
                     REQUIRE(root_assign[i] == root[i]);
 
-                THEN("modifying heap_assign does not affect heap") {
-                    heap_assign.clear();
-                    REQUIRE(heap_assign.empty() == true);
-                    REQUIRE(heap_assign.size() == 0);
+                WHEN("modifying heap_assign does not affect heap") {
+                    int item = 0;
+                    item = heap_assign.pop();
+                    REQUIRE(item == 7);
+                    REQUIRE(heap_assign.empty() == false);
+                    REQUIRE(heap_assign.size() == 8);
                     REQUIRE(heap_assign.capacity() == 16);
                     REQUIRE(heap_assign.items() != nullptr);
 
@@ -301,6 +303,25 @@ SCENARIO("Binary Heap Tree", "[heap]") {
                     REQUIRE(heap.items()[6] == 4);
                     REQUIRE(heap.items()[7] == 0);
                     REQUIRE(heap.items()[8] == 3);
+
+                    THEN("reassigning heap_assign to heap") {
+                        heap_assign = heap;
+
+                        // assert heap_assign still have original values
+                        REQUIRE(heap_assign.empty() == false);
+                        REQUIRE(heap_assign.size() == 9);
+                        REQUIRE(heap_assign.capacity() == 16);
+                        REQUIRE(heap_assign.items() != nullptr);
+                        REQUIRE(heap_assign.items()[0] == 7);
+                        REQUIRE(heap_assign.items()[1] == 7);
+                        REQUIRE(heap_assign.items()[2] == 5);
+                        REQUIRE(heap_assign.items()[3] == 6);
+                        REQUIRE(heap_assign.items()[4] == 2);
+                        REQUIRE(heap_assign.items()[5] == 1);
+                        REQUIRE(heap_assign.items()[6] == 4);
+                        REQUIRE(heap_assign.items()[7] == 0);
+                        REQUIRE(heap_assign.items()[8] == 3);
+                    }
                 }
             }
         }

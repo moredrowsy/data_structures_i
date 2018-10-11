@@ -57,8 +57,8 @@ private:
     // print tree in array format
     void print_tree(std::ostream& outs = std::cout) const;
     // print tree in 90 degrees counterclockwise binary format
-    void print_tree(unsigned root, unsigned level = 0,
-                    std::ostream& outs = std::cout) const;
+    void print_tree(unsigned root, std::ostream& outs = std::cout,
+                    unsigned level = 0) const;
     bool is_leaf(unsigned i) const;
     unsigned parent_index(unsigned i) const;
     unsigned left_child_index(unsigned i) const;
@@ -73,6 +73,11 @@ private:
 };
 
 template <typename T>
+Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
+    insert(item);
+}
+
+template <typename T>
 Heap<T>::Heap(const T* list, unsigned size)
     : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < size; ++i) insert(list[i]);
@@ -84,30 +89,20 @@ Heap<T>::~Heap() {
 }
 
 template <typename T>
-Heap<T>::Heap(const T& item) {
-    _capacity = 1;
-    _size = 1;
-    _items = new T[_capacity];
-    _items[0] = item;
-}
-
-template <typename T>
-Heap<T>::Heap(const Heap<T>& src) {
-    _capacity = src._capacity;
-    _size = src._size;
-    _items = new T[_capacity];
-
-    for(unsigned i = 0; i < _size; ++i) _items[i] = src._items[i];
+Heap<T>::Heap(const Heap<T>& src) : _capacity(0), _size(0), _items(nullptr) {
+    for(unsigned i = 0; i < src._size; ++i) insert(src._items[i]);
 }
 
 template <typename T>
 Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
     if(this != &rhs) {
-        _capacity = rhs._capacity;
-        _size = rhs._size;
-        _items = new T[_capacity];
+        if(_items) {
+            delete[] _items;
+            _items = nullptr;
+            _size = _capacity = 0;
+        }
 
-        for(unsigned i = 0; i < _size; ++i) _items[i] = rhs._items[i];
+        for(unsigned i = 0; i < rhs._size; ++i) insert(rhs._items[i]);
     }
 
     return *this;
@@ -175,7 +170,7 @@ bool Heap<T>::insert(T item) {
 
 template <typename T>
 T Heap<T>::pop() {
-    assert(!empty());
+    if(empty()) throw std::range_error("Heap::pop() on size = 0");
 
     T pop = _items[0];
     _items[0] = _items[_size - 1];
@@ -188,20 +183,20 @@ T Heap<T>::pop() {
 
 template <typename T>
 void Heap<T>::print_tree(std::ostream& outs) const {
-    print_tree(0, 0, outs);
+    print_tree(0, outs);
 }
 
 template <typename T>
-void Heap<T>::print_tree(unsigned root, unsigned level,
-                         std::ostream& outs) const {
+void Heap<T>::print_tree(unsigned root, std::ostream& outs,
+                         unsigned level) const {
     if(root >= _size) {
         outs << std::string(10 * level, ' ') << "|||" << std::endl;
         return;
     }
 
-    print_tree(right_child_index(root), level + 1, outs);
+    print_tree(right_child_index(root), outs, level + 1);
     outs << std::string(10 * level, ' ') << _items[root] << std::endl;
-    print_tree(left_child_index(root), level + 1, outs);
+    print_tree(left_child_index(root), outs, level + 1);
 }
 
 template <typename T>
