@@ -44,7 +44,7 @@ void interactive_tests() {
     srand(time(nullptr));
 
     do {
-        std::cout << "[R]andom  [I]nsert  [C]lear  [P]pop     "
+        std::cout << "[R]andom  [I]nsert  [C]lear  [P]op     "
                      "e[X]it: ";
         std::cin >> c;
 

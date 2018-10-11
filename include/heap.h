@@ -69,7 +69,7 @@ private:
     void heapDown();  // move root node down till heap structure
     void heapUp();    // move last node up till heap structure
     void swap_with_parent(unsigned i);  // swap parent/child node
-    void update();                      // update capacity and make new array
+    bool update();                      // update capacity and make new array
 };
 
 template <typename T>
@@ -161,14 +161,16 @@ void Heap<T>::clear() {
 
 template <typename T>
 bool Heap<T>::insert(T item) {
-    update();
+    bool is_good = update();
 
-    ++_size;
-    _items[_size - 1] = item;
+    if(is_good) {  // add item/process heap structure if update is good
+        ++_size;
+        _items[_size - 1] = item;
 
-    heapUp();
+        heapUp();
+    }
 
-    return _items != nullptr ? true : false;
+    return is_good;
 }
 
 template <typename T>
@@ -262,20 +264,26 @@ void Heap<T>::swap_with_parent(unsigned i) {
 }
 
 template <typename T>
-void Heap<T>::update() {
+bool Heap<T>::update() {
+    bool is_good = true;
+
     if(_size >= _capacity) {  // update capacity and create new array
         _capacity = _capacity > 0 ? _capacity * 2 : 1;
 
         T* old_items = _items;
-        _items = nullptr;
-        _items = new T[_capacity];
+        _items = new(std::nothrow) T[_capacity];
 
-        if(_items) {
+        if(_items) {  // allocation success return non-nullptr
             for(unsigned i = 0; i < _size; ++i) _items[i] = old_items[i];
 
             delete[] old_items;
+        } else {  // allocation fails return nullptr
+            _items = old_items;
+            is_good = false;
         }
     }
+
+    return is_good;
 }
 
 }  // namespace heap
