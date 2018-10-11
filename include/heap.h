@@ -87,7 +87,7 @@ private:
  ******************************************************************************/
 template <typename T>
 Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
-    insert(item);
+    if(!insert(item)) throw std::bad_alloc();
 }
 
 /*******************************************************************************
@@ -108,7 +108,8 @@ Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
 template <typename T>
 Heap<T>::Heap(const T* list, const unsigned& size)
     : _capacity(0), _size(0), _items(nullptr) {
-    for(unsigned i = 0; i < size; ++i) insert(list[i]);
+    for(unsigned i = 0; i < size; ++i)
+        if(!insert(list[i])) throw std::bad_alloc();
 }
 
 /*******************************************************************************
@@ -145,7 +146,8 @@ Heap<T>::~Heap() {
  ******************************************************************************/
 template <typename T>
 Heap<T>::Heap(const Heap<T>& src) : _capacity(0), _size(0), _items(nullptr) {
-    for(unsigned i = 0; i < src._size; ++i) insert(src._items[i]);
+    for(unsigned i = 0; i < src._size; ++i)
+        if(!insert(src._items[i])) throw std::bad_alloc();
 }
 
 /*******************************************************************************
@@ -171,7 +173,8 @@ Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
             _size = _capacity = 0;
         }
 
-        for(unsigned i = 0; i < rhs._size; ++i) insert(rhs._items[i]);
+        for(unsigned i = 0; i < rhs._size; ++i)
+            if(!insert(rhs._items[i])) throw std::bad_alloc();
     }
 
     return *this;
@@ -343,13 +346,13 @@ bool Heap<T>::insert(T item) {
  ******************************************************************************/
 template <typename T>
 T Heap<T>::pop() {
-    if(empty()) throw std::range_error("Heap::pop() on size = 0");
+    assert(!empty());
 
     T pop = _items[0];
     _items[0] = _items[_size - 1];
     --_size;
 
-    heapDown();
+    if(_size) heapDown();
 
     return pop;
 }
@@ -493,10 +496,10 @@ unsigned Heap<T>::big_child_index(unsigned i) const {
 /*******************************************************************************
  * DESCRIPTION:
  *  Move item at top down until item is less than parent. Move down to the
- *  larger of children's path.
+ *  larger of children's path. REQUIRE _size > 0. Does nothing if size is 1.
  *
  * PRE-CONDITIONS:
- *  none
+ *  unsigned _size > 0
  *
  * POST-CONDITIONS:
  *  none
@@ -506,6 +509,8 @@ unsigned Heap<T>::big_child_index(unsigned i) const {
  ******************************************************************************/
 template <typename T>
 void Heap<T>::heapDown() {
+    assert(_size);
+
     unsigned parent = 0, child = 0;
     if(!is_leaf(parent)) child = big_child_index(parent);
 
@@ -520,9 +525,10 @@ void Heap<T>::heapDown() {
 /*******************************************************************************
  * DESCRIPTION:
  *  Move item at last leaf up until item is less than parent path.
+ *  REQUIRE _size > 0. Does nothing when _size is 1.
  *
  * PRE-CONDITIONS:
- *  none
+ *  unsigned _size > 0
  *
  * POST-CONDITIONS:
  *  none
@@ -532,6 +538,8 @@ void Heap<T>::heapDown() {
  ******************************************************************************/
 template <typename T>
 void Heap<T>::heapUp() {
+    assert(_size);
+
     unsigned child = _size - 1, parent = parent_index(child);
 
     while(_items[child] > _items[parent]) {
@@ -593,7 +601,7 @@ bool Heap<T>::update() {
             for(unsigned i = 0; i < _size; ++i) _items[i] = old_items[i];
 
             delete[] old_items;
-        } else {  // allocation fails return nullptr
+        } else {  // allocation fail return nullptr
             _items = old_items;
             is_good = false;
         }
