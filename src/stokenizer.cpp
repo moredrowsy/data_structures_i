@@ -108,10 +108,8 @@ std::ostream& operator<<(std::ostream& outs, const Token& t) {
  * RETURN:
  *  none
  ******************************************************************************/
-STokenizer::STokenizer() {
+STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
     _buffer[0] = '\0';
-    _buffer_size = 0;
-    _pos = 0;
     make_table(_table);
 }
 
@@ -130,7 +128,7 @@ STokenizer::STokenizer() {
  * RETURN:
  *  none
  ******************************************************************************/
-STokenizer::STokenizer(char str[]) {
+STokenizer::STokenizer(char str[]) : _buffer(), _buffer_size(0), _pos(0) {
     set_string(str);
     make_table(_table);
 }

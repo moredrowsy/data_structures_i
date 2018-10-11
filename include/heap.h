@@ -21,8 +21,8 @@ class Heap {
 public:
     // CONSTRUCTORS
     Heap() : _capacity(0), _size(0), _items(nullptr) {}
-    Heap(const T& item);                 // construct with one item
-    Heap(const T* list, unsigned size);  // construct Heap with array list
+    Heap(const T& item);                        // construct with one item
+    Heap(const T* list, const unsigned& size);  // construct with array list
 
     // BIG THREE
     ~Heap();
@@ -72,27 +72,96 @@ private:
     bool update();                      // update capacity and make new array
 };
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructs Heap with an item
+ *
+ * PRE-CONDITIONS:
+ *  const T& item: templated item
+ *
+ * POST-CONDITIONS:
+ *  item inserted to Heap, _size and _capacity increased by 1
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
     insert(item);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructs Heap with array of items
+ *
+ * PRE-CONDITIONS:
+ *  const T* list       : array of templated items
+ *  const unsigned& size: array size
+ *
+ * POST-CONDITIONS:
+ *  templated items inserted to Heap, _size and _capacity increased by
+ *  array size
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const T* list, unsigned size)
+Heap<T>::Heap(const T* list, const unsigned& size)
     : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < size; ++i) insert(list[i]);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocates all items.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  memory freed
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 Heap<T>::~Heap() {
     if(_items) delete[] _items;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Copy constructor.
+ *
+ * PRE-CONDITIONS:
+ *  const Heap<T>& src: Heap source
+ *
+ * POST-CONDITIONS:
+ *  items from source inserted to Heap, _size and _capacity increased by
+ *  array size
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 Heap<T>::Heap(const Heap<T>& src) : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < src._size; ++i) insert(src._items[i]);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assignment operator.
+ *
+ * PRE-CONDITIONS:
+ *  const Heap<T>& rhs: Heap source on right side
+ *
+ * POST-CONDITIONS:
+ *  items from source inserted to Heap, _size and _capacity increased by
+ *  array size
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
     if(this != &rhs) {
@@ -108,26 +177,91 @@ Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
     return *this;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks for empty Heap.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool Heap<T>::empty() const {
     return _size == 0;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access Heap's capacity.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
 unsigned Heap<T>::capacity() const {
     return _capacity;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access Heap's size.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
 unsigned Heap<T>::size() const {
     return _size;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access Heap's array of items.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  const T*: pointer to array of items
+ ******************************************************************************/
 template <typename T>
 const T* Heap<T>::items() const {
     return _items;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check Heap for valid heap structure
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool Heap<T>::validate(unsigned parent) const {
     if(parent >= _size) return true;
@@ -149,11 +283,37 @@ bool Heap<T>::validate(unsigned parent) const {
     return is_valid;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove all items.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  _size = 0.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Heap<T>::clear() {
     _size = 0;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insert an item.
+ *
+ * PRE-CONDITIONS:
+ *  T item: templated item
+ *
+ * POST-CONDITIONS:
+ *  item added to Heap
+ *
+ * RETURN:
+ *  boolean: insertion success/failure
+ ******************************************************************************/
 template <typename T>
 bool Heap<T>::insert(T item) {
     bool is_good = update();
@@ -168,6 +328,19 @@ bool Heap<T>::insert(T item) {
     return is_good;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove an item at index 0. Exception is thrown when pop on empty.
+ *
+ * PRE-CONDITIONS:
+ *  non-empty Heap
+ *
+ * POST-CONDITIONS:
+ *  item removed from Heap
+ *
+ * RETURN:
+ *  T: templated item removed from Heap
+ ******************************************************************************/
 template <typename T>
 T Heap<T>::pop() {
     if(empty()) throw std::range_error("Heap::pop() on size = 0");
@@ -181,11 +354,37 @@ T Heap<T>::pop() {
     return pop;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Outstream heap structure.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Heap<T>::print_tree(std::ostream& outs) const {
     print_tree(0, outs);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Outstream heap structure recursively starting at index 0 until size.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Heap<T>::print_tree(unsigned root, std::ostream& outs,
                          unsigned level) const {
@@ -199,26 +398,91 @@ void Heap<T>::print_tree(unsigned root, std::ostream& outs,
     print_tree(left_child_index(root), outs, level + 1);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check if index is leaf.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool Heap<T>::is_leaf(unsigned i) const {
     return (i * 2) + 2 > _size;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find parent's index with current index. Return 0 when current index is 0.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
 unsigned Heap<T>::parent_index(unsigned i) const {
     return (static_cast<int>(i) - 1) / 2;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find left child's index with current index.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
 unsigned Heap<T>::left_child_index(unsigned i) const {
     return i * 2 + 1;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find right child's index with current index.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
 unsigned Heap<T>::right_child_index(unsigned i) const {
     return i * 2 + 2;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find index of the largest of the two children.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
 unsigned Heap<T>::big_child_index(unsigned i) const {
     return _items[left_child_index(i)] < _items[right_child_index(i)]
@@ -226,6 +490,20 @@ unsigned Heap<T>::big_child_index(unsigned i) const {
                : left_child_index(i);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Move item at top down until item is less than parent. Move down to the
+ *  larger of children's path.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Heap<T>::heapDown() {
     unsigned parent = 0, child = 0;
@@ -239,6 +517,19 @@ void Heap<T>::heapDown() {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Move item at last leaf up until item is less than parent path.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Heap<T>::heapUp() {
     unsigned child = _size - 1, parent = parent_index(child);
@@ -251,6 +542,19 @@ void Heap<T>::heapUp() {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Swap item at current index with parent's.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void Heap<T>::swap_with_parent(unsigned i) {
     T parent = _items[parent_index(i)];
@@ -258,6 +562,20 @@ void Heap<T>::swap_with_parent(unsigned i) {
     _items[i] = parent;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  If size is equal or greater than capacity, double capacity and allocate
+ *  new array of items.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolan: allocation success/failure
+ ******************************************************************************/
 template <typename T>
 bool Heap<T>::update() {
     bool is_good = true;

@@ -87,9 +87,8 @@ void Averager::next_number(double value) {
  * RETURN:
  *  none
  ******************************************************************************/
-BoolSource::BoolSource(double probability) {
-    assert(probability >= 0 && probability <= 1);
-    _probability = probability;
+BoolSource::BoolSource(double probability) : _probability(probability) {
+    assert(_probability >= 0 && _probability <= 1);
 }
 
 /*******************************************************************************

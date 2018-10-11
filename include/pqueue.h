@@ -22,8 +22,7 @@ struct Info {
     int _priority;
 
     // CONSTRUCTORS
-    Info() {}
-    Info(const T& i, int p = 0) : _item(i), _priority(p) {}
+    Info(const T& i = T(), const int& p = 0) : _item(i), _priority(p) {}
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
@@ -54,20 +53,20 @@ class PQueue {
 public:
     // CONSTRUCTORS
     PQueue() {}
-    PQueue(const T& i, int p = 0) : _heap(Info<T>(i, p)) {}
+    PQueue(const T& i, const int& p = 0) : _heap(Info<T>(i, p)) {}
     PQueue(const Info<T>& info) : _heap(info) {}
-    PQueue(const Info<T>* list, unsigned size);
+    PQueue(const Info<T>* list, const unsigned& size) : _heap(list, size) {}
 
     // ACCESSORS
     bool empty() const;
-    int size() const;
+    unsigned size() const;
     void print_tree() const;
     bool validate() const;  // valide heap structure
 
     // MUTATORS
     void clear();
     bool insert(const Info<T>& info);
-    bool insert(const T& value, int p);
+    bool insert(const T& value, const int& p);
     T pop();
 
     // FRIENDS
@@ -80,46 +79,146 @@ private:
     heap::Heap<Info<T> > _heap;
 };
 
-template <typename T>
-PQueue<T>::PQueue(const Info<T>* list, unsigned size) {
-    _heap = heap::Heap<Info<T> >(list, size);
-}
-
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks for empty PQueue.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool PQueue<T>::empty() const {
     return _heap.empty();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access PQueue's size.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
 template <typename T>
-int PQueue<T>::size() const {
+unsigned PQueue<T>::size() const {
     return _heap.size();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Console output PQueue's info items.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  console output
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void PQueue<T>::print_tree() const {
     std::cout << _heap;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check PQueue's valid heap structure.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool PQueue<T>::validate() const {
     return _heap.validate();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove all items.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  All Info items removed from PQueue's heap
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void PQueue<T>::clear() {
     _heap.clear();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insert an Info item.
+ *
+ * PRE-CONDITIONS:
+ *  const Info<T>& info: Info of T value and int priority
+ *
+ * POST-CONDITIONS:
+ *  Info added to Heap
+ *
+ * RETURN:
+ *  boolean: insertion success/failure
+ ******************************************************************************/
 template <typename T>
 bool PQueue<T>::insert(const Info<T>& info) {
     return _heap.insert(info);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insert an Info item with T value and int priority.
+ *
+ * PRE-CONDITIONS:
+ *  const T& value: templated item
+ *  int p         : priority of templated item
+ *
+ * POST-CONDITIONS:
+ *  Info added to Heap
+ *
+ * RETURN:
+ *  boolean: insertion success/failure
+ ******************************************************************************/
 template <typename T>
-bool PQueue<T>::insert(const T& value, int p) {
+bool PQueue<T>::insert(const T& value, const int& p) {
     return _heap.insert(Info<T>(value, p));
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove an item at index 0. Exception is thrown from Heap when pop on empty.
+ *
+ * PRE-CONDITIONS:
+ *  non-empty PQueue
+ *
+ * POST-CONDITIONS:
+ *  Info removed from Heap
+ *
+ * RETURN:
+ *  T: templated value of Info removed from Heap
+ ******************************************************************************/
 template <typename T>
 T PQueue<T>::pop() {
     return _heap.pop()._item;

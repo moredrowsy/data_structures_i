@@ -16,13 +16,9 @@ namespace ftokenizer {
  * RETURN:
  *  none
  ******************************************************************************/
-FTokenizer::FTokenizer(char* fname) {
-    _f.open(fname);
+FTokenizer::FTokenizer(char* fname)
+    : _f(fname), _stk(), _pos(0), _block_pos(0), _more(false) {
     assert(_f);
-
-    _pos = 0;
-    _block_pos = 0;
-    _more = false;
 }
 
 /*******************************************************************************
