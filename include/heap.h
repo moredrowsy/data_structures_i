@@ -276,7 +276,7 @@ bool Heap<T>::validate(unsigned parent) const {
 
     bool is_valid = true;
 
-    is_valid &= validate(right_child_index(parent));  // recurve left
+    is_valid &= validate(right_child_index(parent));  // recurse left
 
     // find bitwise AND for all booleans
     if(left_child_index(parent) < _size)
@@ -286,7 +286,7 @@ bool Heap<T>::validate(unsigned parent) const {
         is_valid &=
             _items[parent_index(parent)] >= _items[right_child_index(parent)];
 
-    is_valid &= validate(right_child_index(parent));  // recurve right
+    is_valid &= validate(right_child_index(parent));  // recurse right
 
     return is_valid;
 }
@@ -536,8 +536,7 @@ template <typename T>
 void Heap<T>::heapDown() {
     assert(_size);
 
-    unsigned parent = 0, child = 0;
-    if(!is_leaf(parent)) child = big_child_index(parent);
+    unsigned parent = 0, child = is_leaf(parent) ? 0 : big_child_index(parent);
 
     while(!is_leaf(parent) && _items[parent] < _items[child]) {
         swap_with_parent(child);

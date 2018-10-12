@@ -215,9 +215,9 @@ TreeNode<T>* tree_search(TreeNode<T>* root, const T& target) {
     if(!root || target == root->_item) return root;
 
     if(target < root->_item)
-        return tree_search(root->_left, target);  // recur left node
+        return tree_search(root->_left, target);  // recurse left node
     else
-        return tree_search(root->_right, target);  // recur right node
+        return tree_search(root->_right, target);  // recurse right node
 }
 
 /*******************************************************************************
@@ -245,9 +245,9 @@ bool tree_search(TreeNode<T>* root, const T& target, TreeNode<T>*& found_ptr) {
     }
 
     if(target < root->_item)
-        return tree_search(root->_left, target, found_ptr);  // recur left
+        return tree_search(root->_left, target, found_ptr);  // recurse left
     else
-        return tree_search(root->_right, target, found_ptr);  // recur right
+        return tree_search(root->_right, target, found_ptr);  // recurse right
 }
 
 /*******************************************************************************
@@ -272,9 +272,9 @@ void tree_print(TreeNode<T>* root, std::ostream& outs, int level) {
         return;
     }
 
-    tree_print(root->_right, outs, level + 1);  // recur right
+    tree_print(root->_right, outs, level + 1);  // recurse right
     outs << std::string(5 * level, ' ') << *root << std::endl;
-    tree_print(root->_left, outs, level + 1);  // recur left
+    tree_print(root->_left, outs, level + 1);  // recurse left
 }
 
 /*******************************************************************************
@@ -300,10 +300,10 @@ void tree_print_debug(TreeNode<T>* root, std::ostream& outs, int level) {
         return;
     }
 
-    tree_print_debug(root->_right, outs, level + 1);  // recur right
+    tree_print_debug(root->_right, outs, level + 1);  // recurse right
     outs << std::string(5 * level, ' ') << *root << " <h" << root->_height
          << ", b" << root->balance_factor() << ">" << std::endl;
-    tree_print_debug(root->_left, outs, level + 1);  // recur left
+    tree_print_debug(root->_left, outs, level + 1);  // recurse left
 }
 
 /*******************************************************************************
@@ -322,8 +322,8 @@ void tree_print_debug(TreeNode<T>* root, std::ostream& outs, int level) {
 template <typename T>
 void tree_clear(TreeNode<T>*& root) {
     if(root) {
-        tree_clear(root->_left);   // recur left node
-        tree_clear(root->_right);  // recur right node
+        tree_clear(root->_left);   // recurse left node
+        tree_clear(root->_right);  // recurse right node
 
         delete root;     // delete current root
         root = nullptr;  // reset ptr to nullptr
@@ -368,9 +368,9 @@ bool tree_erase(TreeNode<T>*& root, const T& target, bool balance) {
 
         is_erased = true;
     } else if(target < root->_item)
-        is_erased = tree_erase(root->_left, target, balance);  // recur left
+        is_erased = tree_erase(root->_left, target, balance);  // recurse left
     else
-        is_erased = tree_erase(root->_right, target, balance);  // recur right
+        is_erased = tree_erase(root->_right, target, balance);  // recurse right
 
     if(root) {  // root == nullptr when target is max node
         root->update_height();
@@ -413,7 +413,7 @@ void tree_remove_max(TreeNode<T>*& root, T& max_value, bool balance) {
         return;
     }
 
-    tree_remove_max(root->_right, max_value, balance);  // recur right
+    tree_remove_max(root->_right, max_value, balance);  // recurse right
 
     root->update_height();
     if(balance) root = rotate(root);
@@ -467,8 +467,8 @@ template <typename T>
 void tree_add(TreeNode<T>*& dest, const TreeNode<T>* src, bool balance) {
     if(src) {
         tree_insert(dest, src->_item, balance);
-        tree_add(dest, src->_left, balance);   // recur left
-        tree_add(dest, src->_right, balance);  // recur right
+        tree_add(dest, src->_left, balance);   // recurse left
+        tree_add(dest, src->_right, balance);  // recurse right
     }
 }
 

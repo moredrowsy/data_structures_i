@@ -4,7 +4,7 @@ namespace my_recursions {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Prints out current level, recurve, and prints out level again.
+ *  Prints out current level, recurse, and prints out level again.
  *
  * PRE-CONDITIONS:
  *  unsigned start_level: starting recursion level (low)
@@ -19,15 +19,15 @@ namespace my_recursions {
 void r1_levels(unsigned start_level, unsigned end_level) {
     if(start_level > end_level) return;  // base: start is beyond end level
 
-    // print out first sentence before recurve
+    // print out first sentence before recurse
     std::cout << std::string(start_level, ' ')
               << "This was written by call number " << start_level << "."
               << std::endl;
 
-    // recurve to higher level
+    // recurse to higher level
     r1_levels(start_level + 1, end_level);
 
-    // print out second sentence after recurve
+    // print out second sentence after recurse
     std::cout << std::string(start_level, ' ')
               << "This ALSO written by call number " << start_level << "."
               << std::endl;
@@ -37,7 +37,7 @@ void r1_levels(unsigned start_level, unsigned end_level) {
  * DESCRIPTION:
  *  Prints out prefix + recursive sections.
  *  Mechanism: create new string from prefix, add a digit char (shift ASCII),
- *  add 'dot' if not last level = 1. Then, recurve using new appended string
+ *  add 'dot' if not last level = 1. Then, recurse using new appended string
  *  as new parameter for prefix, and reduce level by 1.
  *  Base: level is 0 and print out prefix string.
  *
@@ -62,7 +62,7 @@ void r2_box(std::string prefix, unsigned level) {
         s += char('0' + i);        // append digit with ASCII shift
         if(level != 1) s += '.';   // append 'dot' if not last valid level
 
-        r2_box(s, level - 1);  // recurve to lower level
+        r2_box(s, level - 1);  // recurse to lower level
     }
 }
 
@@ -88,7 +88,7 @@ void r3_permutation(std::string first, std::string second) {
 
     // loop through all pos of first string
     for(int i = first.size() - 1; i >= 0; --i) {
-        // recurve with first string's char erased at i pos and with second
+        // recurse with first string's char erased at i pos and with second
         // inserted with erased char at front
         r3_permutation(std::string(first).erase(i, 1),
                        std::string(second).insert(0, 1, first[i]));
@@ -97,7 +97,7 @@ void r3_permutation(std::string first, std::string second) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Interactively ask user to enter a number and function recurve until number
+ *  Interactively ask user to enter a number and function recurse until number
  *  is zero.
  *
  * PRE-CONDITIONS:
@@ -105,7 +105,7 @@ void r3_permutation(std::string first, std::string second) {
  *  unsigned level: recursion level, default 0
  *
  * POST-CONDITIONS:
- *  unsigned level: user input level to recurve
+ *  unsigned level: user input level to recurse
  *
  * RETURN:
  *  none
@@ -137,7 +137,7 @@ unsigned r4_i_box(std::string prefix, unsigned level) {
 
             s += '.';  // append 'dot'
 
-            // recurve until user input 0 level and update count
+            // recurse until user input 0 level and update count
             ++count += r4_i_box(s, level);
         }
     }
@@ -161,7 +161,7 @@ unsigned r4_i_box(std::string prefix, unsigned level) {
 double r5_sumover(unsigned level) {
     if(!level) return 0;  // base: level is zero
 
-    return (1.0 / level) + r5_sumover(level - 1);  // return recurve sum
+    return (1.0 / level) + r5_sumover(level - 1);  // return recurse sum
 }
 
 /*******************************************************************************
@@ -198,9 +198,9 @@ int r16_guess(unsigned low, unsigned high) {
         std::cin >> is_yes;
 
         if(is_yes)
-            return r16_guess(low, midpoint - 1);  // recurve first half
+            return r16_guess(low, midpoint - 1);  // recurse first half
         else
-            return r16_guess(midpoint + 1, high);  // recurve second half
+            return r16_guess(midpoint + 1, high);  // recurse second half
     }
 
     // print out inconsistent answers error
