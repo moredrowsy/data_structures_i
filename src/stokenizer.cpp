@@ -4,6 +4,7 @@ namespace stokenizer {
 
 // STATIC VARIABLES
 int STokenizer::_table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
+bool STokenizer::_made_table = false;
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -110,7 +111,8 @@ std::ostream& operator<<(std::ostream& outs, const Token& t) {
  ******************************************************************************/
 STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
     _buffer[0] = '\0';
-    make_table(_table);
+
+    if(!_made_table) make_table(_table);
 }
 
 /*******************************************************************************
@@ -130,7 +132,29 @@ STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
  ******************************************************************************/
 STokenizer::STokenizer(char str[]) : _buffer(), _buffer_size(0), _pos(0) {
     set_string(str);
-    make_table(_table);
+
+    if(!_made_table) make_table(_table);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Default constructor initializes calls set_string to copy const cstring into
+ *  _buffer, set _buffer_size to cstring len, reset _pos to 0 and calls
+ *  make_table to initialize all values in table to -1.
+ *
+ * PRE-CONDITIONS:
+ *  const char str[]: cstring for input buffer
+ *
+ * POST-CONDITIONS:
+ *  initialized member variables via set_string() and make_table()
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+STokenizer::STokenizer(const char str[]) : _buffer(), _buffer_size(0), _pos(0) {
+    set_string(str);
+
+    if(!_made_table) make_table(_table);
 }
 
 /*******************************************************************************
@@ -220,6 +244,35 @@ void STokenizer::set_string(char str[]) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Assign const cstring param to buffer and reset _pos to 0.
+ *
+ * PRE-CONDITIONS:
+ *  const char str[]: cstring
+ *
+ * POST-CONDITIONS:
+ *  char _buffer[]: assigned to str[]
+ *  _buffer_size  : assigned to cstring size
+ *  int _pos      : assigned to 0
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void STokenizer::set_string(const char str[]) {
+    // copy string into buffer
+    int index = 0;
+    while(str[index] != '\0') {
+        assert(index < MAX_BUFFER - 1);
+        _buffer[index] = str[index];
+        ++index;
+    }
+
+    _buffer[index] = '\0';  // NUL terminate cstring
+    _buffer_size = index;   // set buffer size
+    _pos = 0;               // reset cstring pos
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Initialize all values in table to -1.
  *
  * PRE-CONDITIONS:
@@ -241,6 +294,8 @@ void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     mark_table_generic(_table, STATE_SPACE, SPACE);
     mark_table_generic(_table, STATE_ALPHA, ALPHA);
     mark_table_generic(_table, STATE_PUNCT, PUNCT);
+
+    _made_table = true;  // disable further make_table() calls in CTOR
 }
 
 /*******************************************************************************

@@ -124,7 +124,7 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
 void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
                 int state) {
     for(int i = 0; columns[i] != '\0'; ++i) {
-        _table[row][columns[i]] = state;
+        _table[row][(int)columns[i]] = state;
     }
 }
 
@@ -413,9 +413,9 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
         original_pos = _pos;  // original position
 
     // loop until state and char (ascii) is not -1 and until end of string
-    while(input[_pos] > -1 && _table[state][input[_pos]] != -1 &&
+    while(input[_pos] > -1 && _table[state][(int)input[_pos]] != -1 &&
           input[_pos] != '\0') {
-        state = _table[state][input[_pos]];  // current state for char
+        state = _table[state][(int)input[_pos]];
 
         // log success and success pos
         if(is_success(_table, state)) {

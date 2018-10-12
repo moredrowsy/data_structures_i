@@ -48,7 +48,8 @@ class STokenizer {
 public:
     // CONSTRUCTORS
     STokenizer();
-    STokenizer(char str[]);  // cstring param assertion < MAX_BUFFER
+    STokenizer(char str[]);        // cstring param assertion < MAX_BUFFER
+    STokenizer(const char str[]);  // cstring param assertion < MAX_BUFFER
 
     // ACCESSORS
     bool done() const;               // true: there are no more tokens
@@ -56,7 +57,8 @@ public:
     explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
-    void set_string(char str[]);  // set a new string as the input string
+    void set_string(char str[]);        // set a new string as the input string
+    void set_string(const char str[]);  // set a new string as the input string
 
     // FRIENDS
     // extract one token (very similar to the way cin >> works)
@@ -75,6 +77,7 @@ private:
     int _buffer_size;          // input string size
     int _pos;                  // current position in the string
     static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
+    static bool _made_table;  // check if _table is initialized
 };
 
 }  // namespace stokenizer

@@ -16,11 +16,11 @@
 #include "../include/stokenizer.h"  // state_machine, Token, STokenizer class
 
 // continuously extract tokens from char array
-void extract_tokens(char s[]);
+void extract_tokens(const char s[]);
 
 int main() {
     const int TEST_SIZE = 10;
-    char *test_str[TEST_SIZE] = {
+    const char *test_str[TEST_SIZE] = {
         "",   " ",   "!",   "A",      "1",
         ".1", "0.1", "1.0", "1,000!", "Non-ascii: £ and ±!"};
 
@@ -67,7 +67,7 @@ int main() {
  * RETURN:
  *  none
  ******************************************************************************/
-void extract_tokens(char s[]) {
+void extract_tokens(const char s[]) {
     using namespace stokenizer;
 
     STokenizer stk(s);
