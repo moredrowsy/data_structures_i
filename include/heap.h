@@ -66,15 +66,17 @@ private:
     unsigned big_child_index(unsigned i) const;
 
     // MUTATORS
+    void deallocate_and_throw();
     void heapDown();  // move root node down till heap structure
     void heapUp();    // move last node up till heap structure
     void swap_with_parent(unsigned i);  // swap parent/child node
-    bool update();                      // update capacity and make new array
+    bool update();                      // update capacity and array
 };
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Constructs Heap with an item
+ *  Constructs Heap with an item via insert(). If insertion fails, deallocate
+ *  _items and throw exception before constructor fails.
  *
  * PRE-CONDITIONS:
  *  const T& item: templated item
@@ -87,12 +89,13 @@ private:
  ******************************************************************************/
 template <typename T>
 Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
-    if(!insert(item)) throw std::bad_alloc();
+    if(!insert(item)) deallocate_and_throw();
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Constructs Heap with array of items
+ *  Constructs Heap with array of items via insert(). If insertion fails,
+ *  deallocate _items and throw exception before constructor fails.
  *
  * PRE-CONDITIONS:
  *  const T* list       : array of templated items
@@ -109,7 +112,7 @@ template <typename T>
 Heap<T>::Heap(const T* list, const unsigned& size)
     : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < size; ++i)
-        if(!insert(list[i])) throw std::bad_alloc();
+        if(!insert(list[i])) deallocate_and_throw();
 }
 
 /*******************************************************************************
@@ -132,7 +135,8 @@ Heap<T>::~Heap() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Copy constructor.
+ *  Copy constructor via insert(). If insertion fails, deallocate _items and
+ *  throw exception before constructor fails.
  *
  * PRE-CONDITIONS:
  *  const Heap<T>& src: Heap source
@@ -147,12 +151,13 @@ Heap<T>::~Heap() {
 template <typename T>
 Heap<T>::Heap(const Heap<T>& src) : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < src._size; ++i)
-        if(!insert(src._items[i])) throw std::bad_alloc();
+        if(!insert(src._items[i])) deallocate_and_throw();
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Assignment operator.
+ *  Assignment operator via insert(). If insertion fails, deallocate _items and
+ *  throw exception before constructor fails.
  *
  * PRE-CONDITIONS:
  *  const Heap<T>& rhs: Heap source on right side
@@ -174,7 +179,7 @@ Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
         }
 
         for(unsigned i = 0; i < rhs._size; ++i)
-            if(!insert(rhs._items[i])) throw std::bad_alloc();
+            if(!insert(rhs._items[i])) deallocate_and_throw();
     }
 
     return *this;
@@ -333,10 +338,10 @@ bool Heap<T>::insert(T item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Remove an item at index 0. Exception is thrown when pop on empty.
+ *  Remove an item at index 0. Asserts non-empty Heap.
  *
  * PRE-CONDITIONS:
- *  non-empty Heap
+ *  _size > 0
  *
  * POST-CONDITIONS:
  *  item removed from Heap
@@ -495,6 +500,26 @@ unsigned Heap<T>::big_child_index(unsigned i) const {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Deallocate _items and throw bad allocation exception. Use for allocation
+ *  fail on constructors.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void Heap<T>::deallocate_and_throw() {
+    if(_items) delete[] _items;
+    throw std::bad_alloc();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Move item at top down until item is less than parent. Move down to the
  *  larger of children's path. REQUIRE _size > 0. Does nothing if size is 1.
  *
@@ -575,14 +600,16 @@ void Heap<T>::swap_with_parent(unsigned i) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  If size is equal or greater than capacity, double capacity and allocate
- *  new array of items.
+ *  Expand _items array when _size == _capacity. If array expansion fails,
+ *  no exception thrown and old _items array is restored and returns false.
+ *  Heap allocation uses new(std::nothrow) version and check fail via return
+ *  of nullptr. Undefined behavior if _size > _capacity.
  *
  * PRE-CONDITIONS:
  *  none
  *
  * POST-CONDITIONS:
- *  none
+ *  heap allocation if _size == _capacity
  *
  * RETURN:
  *  boolan: allocation success/failure
@@ -591,20 +618,18 @@ template <typename T>
 bool Heap<T>::update() {
     bool is_good = true;
 
-    if(_size >= _capacity) {  // update capacity and create new array
+    if(_size == _capacity) {  // expand capacity and create new array
         _capacity = _capacity > 0 ? _capacity * 2 : 1;
 
-        T* old_items = _items;
-        _items = new(std::nothrow) T[_capacity];
+        T* new_items = new(std::nothrow) T[_capacity];
 
-        if(_items) {  // allocation success return non-nullptr
-            for(unsigned i = 0; i < _size; ++i) _items[i] = old_items[i];
+        if(new_items) {  // allocation success return non-nullptr
+            for(unsigned i = 0; i < _size; ++i) new_items[i] = _items[i];
 
-            delete[] old_items;
-        } else {  // allocation fail return nullptr
-            _items = old_items;
+            delete[] _items;
+            _items = new_items;
+        } else  // allocation fail return nullptr
             is_good = false;
-        }
     }
 
     return is_good;
