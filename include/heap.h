@@ -22,7 +22,7 @@ public:
     // CONSTRUCTORS
     Heap() : _capacity(0), _size(0), _items(nullptr) {}
     Heap(const T& item);                        // construct with one item
-    Heap(const T* list, const unsigned& size);  // construct with array list
+    Heap(const T* list, unsigned size);  // construct with array list
 
     // BIG THREE
     ~Heap();
@@ -109,7 +109,7 @@ Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const T* list, const unsigned& size)
+Heap<T>::Heap(const T* list, unsigned size)
     : _capacity(0), _size(0), _items(nullptr) {
     for(unsigned i = 0; i < size; ++i)
         if(!insert(list[i])) deallocate_and_throw();

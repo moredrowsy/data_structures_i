@@ -22,7 +22,7 @@ struct Info {
     int _priority;
 
     // CONSTRUCTORS
-    Info(const T& i = T(), const int& p = 0) : _item(i), _priority(p) {}
+    Info(const T& i = T(), int p = 0) : _item(i), _priority(p) {}
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
@@ -53,9 +53,9 @@ class PQueue {
 public:
     // CONSTRUCTORS
     PQueue() {}
-    PQueue(const T& i, const int& p = 0) : _heap(Info<T>(i, p)) {}
+    PQueue(const T& i, int p = 0) : _heap(Info<T>(i, p)) {}
     PQueue(const Info<T>& info) : _heap(info) {}
-    PQueue(const Info<T>* list, const unsigned& size) : _heap(list, size) {}
+    PQueue(const Info<T>* list, unsigned size) : _heap(list, size) {}
 
     // ACCESSORS
     bool empty() const;
