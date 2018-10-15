@@ -103,7 +103,7 @@ Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
  *
  * PRE-CONDITIONS:
  *  const T* list       : array of templated items
- *  const unsigned& size: array size
+ *  unsigned size: array size
  *
  * POST-CONDITIONS:
  *  templated items inserted to Heap, _size and _capacity increased by
@@ -128,11 +128,9 @@ Heap<T>::Heap(const T* list, unsigned size)
  *
  * PRE-CONDITIONS:
  *  const T* list       : array of templated items
- *  const unsigned& size: array size
  *
  * POST-CONDITIONS:
- *  templated items inserted to Heap, _size and _capacity increased by
- *  array size
+ *  templated items inserted to Heap, _size and _capacity increased
  *
  * RETURN:
  *  none

@@ -68,7 +68,7 @@ public:
     // MUTATORS
     void clear();
     bool insert(const Info<T>& info);
-    bool insert(const T& value, const int& p);
+    bool insert(const T& value, int p);
     T pop();
     bool reserve(unsigned n);
 
@@ -205,7 +205,7 @@ bool PQueue<T>::insert(const Info<T>& info) {
  *  boolean: insertion success/failure
  ******************************************************************************/
 template <typename T>
-bool PQueue<T>::insert(const T& value, const int& p) {
+bool PQueue<T>::insert(const T& value, int p) {
     return _heap.insert(Info<T>(value, p));
 }
 
