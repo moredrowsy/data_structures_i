@@ -70,6 +70,7 @@ public:
     bool insert(const Info<T>& info);
     bool insert(const T& value, int p);
     T pop();
+    Info<T> pop_debug();
     bool reserve(unsigned n);
 
     // FRIENDS
@@ -225,6 +226,24 @@ bool PQueue<T>::insert(const T& value, int p) {
 template <typename T>
 T PQueue<T>::pop() {
     return _heap.pop()._item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove an item at index 0. Exception is thrown from Heap when pop on empty.
+ *
+ * PRE-CONDITIONS:
+ *  non-empty PQueue
+ *
+ * POST-CONDITIONS:
+ *  Info removed from Heap
+ *
+ * RETURN:
+ *  Info<T>: templated Info removed from Heap
+ ******************************************************************************/
+template <typename T>
+Info<T> PQueue<T>::pop_debug() {
+    return _heap.pop();
 }
 
 /*******************************************************************************
