@@ -11,8 +11,9 @@
 #ifndef PQUEUE_H
 #define PQUEUE_H
 
-#include <iostream>  // stream objects
-#include "heap.h"    // Heap class
+#include <initializer_list>  // initializer list object for CTOR
+#include <iostream>          // stream objects
+#include "heap.h"            // Heap class
 
 namespace pqueue {
 
@@ -56,6 +57,7 @@ public:
     PQueue(const T& i, int p = 0) : _heap(Info<T>(i, p)) {}
     PQueue(const Info<T>& info) : _heap(info) {}
     PQueue(const Info<T>* list, unsigned size) : _heap(list, size) {}
+    PQueue(const std::initializer_list<Info<T> >& list) : _heap(list) {}
 
     // ACCESSORS
     bool empty() const;
@@ -68,6 +70,7 @@ public:
     bool insert(const Info<T>& info);
     bool insert(const T& value, const int& p);
     T pop();
+    bool reserve(unsigned n);
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
@@ -222,6 +225,24 @@ bool PQueue<T>::insert(const T& value, const int& p) {
 template <typename T>
 T PQueue<T>::pop() {
     return _heap.pop()._item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Reserve capacity of PQueue's _heap by at least n items.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned n: ensure Heap's _capcity with at least n items
+ *
+ * POST-CONDITIONS:
+ *  Heap's _items allocation if n > Heap's capacity
+ *
+ * RETURN:
+ *  boolan: allocation success/failure
+ ******************************************************************************/
+template <typename T>
+bool PQueue<T>::reserve(unsigned n) {
+    return _heap.reserve(n);
 }
 
 }  // namespace pqueue

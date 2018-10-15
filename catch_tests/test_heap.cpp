@@ -8,11 +8,11 @@
 SCENARIO("Binary Heap Tree", "[heap]") {
     using namespace heap;
 
-    bool is_inserted = false;
-    Heap<int> heap;
-    int item = -1000;
-
     GIVEN("empty heap") {
+        bool is_inserted = false;
+        Heap<int> heap;
+        int item = -1000;
+
         THEN("empty() = true, size = 0, cap = 0") {
             REQUIRE(heap.empty() == true);
             REQUIRE(heap.size() == 0);
@@ -281,7 +281,6 @@ SCENARIO("Binary Heap Tree", "[heap]") {
                     REQUIRE(root_assign[i] == root[i]);
 
                 WHEN("modifying heap_assign does not affect heap") {
-                    int item = 0;
                     item = heap_assign.pop();
                     REQUIRE(item == 7);
                     REQUIRE(heap_assign.empty() == false);
@@ -421,7 +420,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
             REQUIRE(heap.items()[7] == 0);
         }
 
-        WHEN("insertion: w/ ascending list") {
+        WHEN("CTOR: w/ ascending list") {
             const int SIZE = 8;
             int list[SIZE] = {0, 1, 2, 3, 4, 5, 6, 7};
             Heap<int> heap_from_list(list, SIZE);
@@ -441,8 +440,6 @@ SCENARIO("Binary Heap Tree", "[heap]") {
         }
 
         WHEN("insertion: w/ random items") {
-            bool is_inserted = false;
-            int item = 0;
             const int SIZE = 100;
             std::array<int, SIZE> random_items;
             srand(time(nullptr));
@@ -462,7 +459,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
                     REQUIRE(heap.validate() == true);
                 }
 
-                // sort random_items to prepare for pop assertions
+                // sort random_items to compare for pop() assertions
                 std::sort(random_items.begin(), random_items.end());
 
                 // assert popping will return max item
@@ -477,5 +474,32 @@ SCENARIO("Binary Heap Tree", "[heap]") {
                 REQUIRE(heap.size() == 0);
             }
         }
+    }
+
+    GIVEN("list of random items") {
+        const int SIZE = 100;
+        int random_items[SIZE];
+        srand(time(nullptr));
+
+        // populate random_items with random numbers
+        for(auto &a : random_items) a = rand() % 100;
+
+        THEN("CTOR: w/ list of random items") {
+            Heap<int> heap(random_items, SIZE);
+
+            REQUIRE(heap.empty() == false);
+            REQUIRE(heap.size() == 100);
+            REQUIRE(heap.capacity() == 100);
+            REQUIRE(heap.validate() == true);
+        }
+    }
+
+    GIVEN("CTOR: w/ initializer list") {
+        Heap<int> heap = {9, 1, 8, 2, 7, 3, 6, 4, 5};
+
+        REQUIRE(heap.empty() == false);
+        REQUIRE(heap.size() == 9);
+        REQUIRE(heap.capacity() == 9);
+        REQUIRE(heap.validate() == true);
     }
 }

@@ -1,6 +1,7 @@
 #include <algorithm>            // std::shuffle()
 #include <array>                // std::array
 #include <ctime>                // time()
+#include <initializer_list>     // initializer list object for CTOR
 #include <random>               // std::default_random_engine()
 #include <string>               // string objects
 #include "../include/pqueue.h"  // Info struct and PQueue class
@@ -158,5 +159,17 @@ SCENARIO("Priority Queue", "[pqueue]") {
                 REQUIRE(pq_list.validate() == true);
             }
         }
+    }
+
+    GIVEN("CTOR: w/ initializer list") {
+        typedef Info<std::string> Info_s;
+
+        PQueue<std::string> pqueue_list = {Info_s("One", 1), Info_s("Two", 2),
+                                           Info_s("Three", 3),
+                                           Info_s("Four", 4)};
+
+        REQUIRE(pqueue_list.empty() == false);
+        REQUIRE(pqueue_list.size() == 4);
+        REQUIRE(pqueue_list.validate() == true);
     }
 }
