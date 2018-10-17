@@ -10,11 +10,11 @@
  *      and with different parameters. Assumptions are: unlimited source of
  *      planes incoming and outgoing.
  ******************************************************************************/
-#include <iomanip>                  // output formatting
-#include <iostream>                 // output stream
-#include <string>                   // string objects
-#include "../include/my_airport.h"  // Airport/Averager/BoolSource class
-#include "../include/my_queue.h"    // Queue class
+#include <iomanip>               // output formatting
+#include <iostream>              // output stream
+#include <string>                // string objects
+#include "../include/airport.h"  // Airport/Averager/BoolSource class
+#include "../include/queue.h"    // Queue class
 
 // main airport simulation program
 void simulate_airport(unsigned int landing_time, double landing_probability,
@@ -146,9 +146,9 @@ int main() {
 void simulate_airport(unsigned int landing_time, double landing_probability,
                       unsigned int takeoff_time, double takeoff_probability,
                       unsigned int fuel_limit, unsigned int total_time) {
-    using namespace my_airport;
+    using namespace airport;
 
-    my_queue::Queue<unsigned int> landing_queue,  // queue of landing times
+    queue::Queue<unsigned int> landing_queue,     // queue of landing times
         takeoff_queue;                            // queue of take times
     BoolSource arrival(landing_probability),      // probability to land
         takeoff(takeoff_probability);             // probability to takeoff

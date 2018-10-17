@@ -1,6 +1,6 @@
-#include "../include/my_airport.h"  // my_airport declarations
+#include "../include/airport.h"  // airport declarations
 
-namespace my_airport {
+namespace airport {
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -223,4 +223,4 @@ void Airport::one_second() {
     }
 }
 
-}  // namespace my_airport
+}  // namespace airport

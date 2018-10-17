@@ -1,11 +1,11 @@
-#ifndef TEST_MY_NODE_H
-#define TEST_MY_NODE_H
+#ifndef TEST_NODE_H
+#define TEST_NODE_H
 
 #include <cassert>
 #include <iostream>
-#include "../include/my_node.h"
+#include "../include/node.h"
 
-namespace test_my_node {
+namespace test_node {
 
 // test that pointer is assigned to NULL
 void test_init_head();
@@ -34,8 +34,8 @@ void test_all();
 void test_init_head() {
     std::cout << "test_init_head: ";
 
-    my_node::Node<int> *head = new my_node::Node<int>(10);
-    my_node::Node<int> *temp = head;
+    node::Node<int> *head = new node::Node<int>(10);
+    node::Node<int> *temp = head;
 
     init_head(head);
 
@@ -50,10 +50,10 @@ void test_delete_all() {
     std::cout << "test_delete_all: ";
 
     // create nodes for list
-    my_node::Node<int> *a, *b, *c;
-    a = new my_node::Node<int>(0);
-    b = new my_node::Node<int>(1);
-    c = new my_node::Node<int>(2);
+    node::Node<int> *a, *b, *c;
+    a = new node::Node<int>(0);
+    b = new node::Node<int>(1);
+    c = new node::Node<int>(2);
 
     // link nodes like a list
     a->_next = b;
@@ -68,9 +68,9 @@ void test_delete_all() {
 
 void test_empty() {
     std::cout << "test_int empty: ";
-    my_node::Node<int> *a;
+    node::Node<int> *a;
 
-    a = new my_node::Node<int>(0);
+    a = new node::Node<int>(0);
     assert(empty(a) == false);
 
     delete a;
@@ -84,13 +84,13 @@ void test_copy_list() {
     std::cout << "test_copy_list: ";
 
     // create nodes for list
-    my_node::Node<int> *a, *b, *c, *d, *e, *f;
-    a = new my_node::Node<int>(0);
-    b = new my_node::Node<int>(1);
-    c = new my_node::Node<int>(2);
-    d = new my_node::Node<int>(3);
-    e = new my_node::Node<int>(4);
-    f = new my_node::Node<int>(5);
+    node::Node<int> *a, *b, *c, *d, *e, *f;
+    a = new node::Node<int>(0);
+    b = new node::Node<int>(1);
+    c = new node::Node<int>(2);
+    d = new node::Node<int>(3);
+    e = new node::Node<int>(4);
+    f = new node::Node<int>(5);
 
     // link nodes for list one
     a->_next = b;
@@ -123,7 +123,7 @@ void test_copy_list() {
 void test_insert_head() {
     std::cout << "test_insert_head: ";
 
-    my_node::Node<int> *a = NULL;
+    node::Node<int> *a = NULL;
 
     // assert first insertion
     insert_head(a, 1);
@@ -154,7 +154,7 @@ void test_insert_head() {
 void testing_insert_after() {
     std::cout << "test_insert_after: ";
 
-    my_node::Node<int> *a = NULL, *b = NULL;
+    node::Node<int> *a = NULL, *b = NULL;
 
     // test first insert after
     b = insert_after(a, b, 0);
@@ -194,10 +194,10 @@ void testing_insert_after() {
 void testing_delete_head() {
     std::cout << "test_delete_head: ";
 
-    my_node::Node<int> *a, *b, *c;
-    a = new my_node::Node<int>(0);
-    b = new my_node::Node<int>(1);
-    c = new my_node::Node<int>(2);
+    node::Node<int> *a, *b, *c;
+    a = new node::Node<int>(0);
+    b = new node::Node<int>(1);
+    c = new node::Node<int>(2);
     a->_next = b;
     b->_next = c;
 
@@ -218,8 +218,8 @@ void testing_delete_head() {
     std::cout << "passed." << std::endl;
 }
 
-void tests_my_list() {
-    std::cout << "Unit tests for my_node." << std::endl;
+void tests_list() {
+    std::cout << "Unit tests for node." << std::endl;
 
     test_init_head();
     test_delete_all();
@@ -231,7 +231,7 @@ void tests_my_list() {
 }
 
 void test_all() {
-    std::cout << "Unit tests for my_list." << std::endl;
+    std::cout << "Unit tests for list." << std::endl;
 
     test_init_head();
     test_delete_all();
@@ -242,6 +242,6 @@ void test_all() {
     testing_delete_head();
 }
 
-}  // namespace test_my_node
+}  // namespace test_node
 
-#endif  // TEST_MY_NODE_H
+#endif  // TEST_NODE_H

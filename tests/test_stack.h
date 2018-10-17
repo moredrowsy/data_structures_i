@@ -1,12 +1,12 @@
-#ifndef TEST_MY_STACK_H
-#define TEST_MY_STACK_H
+#ifndef TEST_STACK_H
+#define TEST_STACK_H
 
 #include <cassert>
 #include <iostream>
 #include <sstream>
-#include "../include/my_stack.h"
+#include "../include/stack.h"
 
-namespace test_my_stack {
+namespace test_stack {
 
 // test class Queue and its basic member functions
 void test_stack_basic();
@@ -24,7 +24,7 @@ void test_stack_basic() {
     std::cout << "test_stack_basic: ";
 
     // assert empty;
-    my_stack::Stack<int> s;
+    stack::Stack<int> s;
     assert(s.empty() == true);
 
     // get list's output via std::string stream
@@ -71,7 +71,7 @@ void test_stack_copy_and_assignment_op() {
     std::cout << "test_stack_copy_and_assignment_op: ";
 
     // test one value stack
-    my_stack::Stack<int> s1;
+    stack::Stack<int> s1;
     for(int i = 0; i < 1; ++i) {
         s1.push(i);
     }
@@ -86,7 +86,7 @@ void test_stack_copy_and_assignment_op() {
     assert(output == "[0]->|||");
 
     // create copies to s2 and s3
-    my_stack::Stack<int> s2(s1), s3;
+    stack::Stack<int> s2(s1), s3;
     s3 = s1;
 
     // assert correct output for s2
@@ -180,7 +180,7 @@ void test_stack_copy_and_assignment_op() {
     assert(output == "|||");
 
     // test two values stack
-    my_stack::Stack<int> s4;
+    stack::Stack<int> s4;
     for(int i = 0; i < 2; ++i) {
         s4.push(i);
     }
@@ -192,7 +192,7 @@ void test_stack_copy_and_assignment_op() {
     assert(output == "[1]->[0]->|||");
 
     // create copies to s5 and s6
-    my_stack::Stack<int> s5(s4), s6;
+    stack::Stack<int> s5(s4), s6;
     s6 = s4;
 
     // assert correct output for s5
@@ -286,7 +286,7 @@ void test_stack_copy_and_assignment_op() {
     assert(output == "|||");
 
     // test three values stack
-    my_stack::Stack<int> s7;
+    stack::Stack<int> s7;
     for(int i = 0; i < 3; ++i) {
         s7.push(i);
     }
@@ -298,7 +298,7 @@ void test_stack_copy_and_assignment_op() {
     assert(output == "[2]->[1]->[0]->|||");
 
     // create copies to s8 and s9
-    my_stack::Stack<int> s8(s7), s9;
+    stack::Stack<int> s8(s7), s9;
     s9 = s7;
 
     // assert correct output for s8
@@ -409,7 +409,7 @@ void tests_stack_copy_and_assign_op_with_1mil_items() {
     std::cout << "test_stack_copy_and_assign_op_with_1mil_items: ";
 
     // push 1 million items into stack and static_stack (for comparison)
-    my_stack::Stack<int> s1, static_stack;
+    stack::Stack<int> s1, static_stack;
     for(long i = 0; i < 1000000; ++i) {
         s1.push(i);
         static_stack.push(i);
@@ -418,7 +418,7 @@ void tests_stack_copy_and_assign_op_with_1mil_items() {
     }
 
     // test copy constructor and assignment op for 1 million items
-    my_stack::Stack<int> s2, s3(s1);
+    stack::Stack<int> s2, s3(s1);
     s2 = s1;
 
     // expect same values for s1 and s2
@@ -449,13 +449,13 @@ void tests_stack_copy_and_assign_op_with_1mil_items() {
 }
 
 void test_all() {
-    std::cout << "Unit tests for my_stack." << std::endl;
+    std::cout << "Unit tests for stack." << std::endl;
 
     test_stack_basic();
     test_stack_copy_and_assignment_op();
     tests_stack_copy_and_assign_op_with_1mil_items();
 }
 
-}  // namespace test_my_stack
+}  // namespace test_stack
 
-#endif  // TEST_MY_STACK_H
+#endif  // TEST_STACK_H

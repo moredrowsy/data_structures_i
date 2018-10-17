@@ -11,9 +11,9 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^
 
 main.o: main.cpp\
-	${INC}/my_node.h\
-	${INC}/my_queue.h\
-	${INC}/my_stack.h
+	${INC}/node.h\
+	${INC}/queue.h\
+	${INC}/stack.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

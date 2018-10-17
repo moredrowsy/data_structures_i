@@ -5,7 +5,7 @@ CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
 INC             := ../include
 SRC             := ../src
-OBJ             := test_all.o my_washer.o my_airport.o state_machine.o\
+OBJ             := test_all.o washer.o airport.o state_machine.o\
                    stokenizer.o ftokenizer.o
 
 # tests for al files
@@ -16,63 +16,63 @@ tests_all.o: test_all.cpp\
 	${INC}/*.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_node
-test_my_node.out: test_my_node.o
+# test for node
+test_node.out: test_node.o
 	$(CXX) -o $@ $^
 
-test_my_node.o: test_my_node.cpp\
-	test_my_node.h\
-	${INC}/my_node.h
+test_node.o: test_node.cpp\
+	test_node.h\
+	${INC}/node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_queue
-test_my_queue.out: test_my_queue.o
+# test for queue
+test_queue.out: test_queue.o
 	$(CXX) -o $@ $^
 
-test_my_queue.o: test_my_queue.cpp\
-	test_my_queue.h\
-	${INC}/my_queue.h\
-	${INC}/my_node.h
+test_queue.o: test_queue.cpp\
+	test_queue.h\
+	${INC}/queue.h\
+	${INC}/node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_stack
-test_my_stack.out: test_my_stack.o
+# test for stack
+test_stack.out: test_stack.o
 	$(CXX) -o $@ $^
 
-test_my_stack.o: test_my_stack.cpp\
-	test_my_stack.h\
-	${INC}/my_stack.h\
-	${INC}/my_node.h
+test_stack.o: test_stack.cpp\
+	test_stack.h\
+	${INC}/stack.h\
+	${INC}/node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_washer
-test_my_washer.out: test_my_washer.o\
-	my_washer.o
+# test for washer
+test_washer.out: test_washer.o\
+	washer.o
 	$(CXX) -o $@ $^
 
-test_my_washer.o: test_my_washer.cpp\
-	test_my_washer.h
+test_washer.o: test_washer.cpp\
+	test_washer.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-my_washer.o: ${SRC}/my_washer.cpp\
-	${INC}/my_washer.h\
-	${INC}/my_queue.h\
-	${INC}/my_node.h
+washer.o: ${SRC}/washer.cpp\
+	${INC}/washer.h\
+	${INC}/queue.h\
+	${INC}/node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test for my_airport
-test_my_airport.out: test_my_airport.o\
-	my_airport.o
+# test for airport
+test_airport.out: test_airport.o\
+	airport.o
 	$(CXX) -o $@ $^
 
-test_my_airport.o: test_my_airport.cpp\
-	test_my_airport.h
+test_airport.o: test_airport.cpp\
+	test_airport.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-my_airport.o: ${SRC}/my_airport.cpp\
-	${INC}/my_airport.h\
-	${INC}/my_queue.h\
-	${INC}/my_node.h
+airport.o: ${SRC}/airport.cpp\
+	${INC}/airport.h\
+	${INC}/queue.h\
+	${INC}/node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 # test for state_machine

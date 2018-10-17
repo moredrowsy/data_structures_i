@@ -1,9 +1,9 @@
 #include <sstream>
-#include "../include/my_queue.h"
+#include "../include/queue.h"
 #include "../lib/catch.hpp"
 
-TEST_CASE("my custom queue", "[my_queue]") {
-    using namespace my_queue;
+TEST_CASE("my custom queue", "[queue]") {
+    using namespace queue;
 
     // test empty;
     Queue<int> queue;

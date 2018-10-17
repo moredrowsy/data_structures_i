@@ -1,12 +1,12 @@
-#ifndef TEST_MY_QUEUE_H
-#define TEST_MY_QUEUE_H
+#ifndef TEST_QUEUE_H
+#define TEST_QUEUE_H
 
 #include <cassert>
 #include <iostream>
 #include <sstream>
-#include "../include/my_queue.h"
+#include "../include/queue.h"
 
-namespace test_my_queue {
+namespace test_queue {
 
 // test class Queue and its basic member functions
 void test_queue_basic();
@@ -24,7 +24,7 @@ void test_queue_basic() {
     std::cout << "test_queue_basic: ";
 
     // assert empty
-    my_queue::Queue<int> q;
+    queue::Queue<int> q;
     assert(q.empty() == true);
 
     // get list's output via std::string stream
@@ -71,7 +71,7 @@ void test_queue_copy_and_assignment_op() {
     std::cout << "test_queue_copy_and_assignment_op: ";
 
     // test one value queue
-    my_queue::Queue<int> q1;
+    queue::Queue<int> q1;
     for(int i = 0; i < 1; ++i) {
         q1.push(i);
     }
@@ -86,7 +86,7 @@ void test_queue_copy_and_assignment_op() {
     assert(output == "[0]->|||");
 
     // create copies to q2 and q3
-    my_queue::Queue<int> q2(q1), q3;
+    queue::Queue<int> q2(q1), q3;
     q3 = q1;
 
     // assert correct output for q2
@@ -180,7 +180,7 @@ void test_queue_copy_and_assignment_op() {
     assert(output == "|||");
 
     // test two values queue
-    my_queue::Queue<int> q4;
+    queue::Queue<int> q4;
     for(int i = 0; i < 2; ++i) {
         q4.push(i);
     }
@@ -192,7 +192,7 @@ void test_queue_copy_and_assignment_op() {
     assert(output == "[0]->[1]->|||");
 
     // create copies to q5 and q6
-    my_queue::Queue<int> q5(q4), q6;
+    queue::Queue<int> q5(q4), q6;
     q6 = q4;
 
     // assert correct output for q5
@@ -286,7 +286,7 @@ void test_queue_copy_and_assignment_op() {
     assert(output == "|||");
 
     // test three values queue
-    my_queue::Queue<int> q7;
+    queue::Queue<int> q7;
     for(int i = 0; i < 3; ++i) {
         q7.push(i);
     }
@@ -298,7 +298,7 @@ void test_queue_copy_and_assignment_op() {
     assert(output == "[0]->[1]->[2]->|||");
 
     // create copies to q8 and q9
-    my_queue::Queue<int> q8(q7), q9;
+    queue::Queue<int> q8(q7), q9;
     q9 = q7;
 
     // assert correct output for q8
@@ -409,7 +409,7 @@ void test_queue_copy_and_assign_op_with_1mil_items() {
     std::cout << "test_queue_copy_and_assign_op_with_1mil_items: ";
 
     // push 1 million items into queue and static_queue (for comparison)
-    my_queue::Queue<int> q1, static_queue;
+    queue::Queue<int> q1, static_queue;
     for(long i = 0; i < 1000000; ++i) {
         q1.push(i);
         static_queue.push(i);
@@ -418,7 +418,7 @@ void test_queue_copy_and_assign_op_with_1mil_items() {
     }
 
     // test copy constructor and assignment op for 1 million items
-    my_queue::Queue<int> q2, q3(q1);
+    queue::Queue<int> q2, q3(q1);
     q2 = q1;
 
     // expect same values for q1 and q2
@@ -449,13 +449,13 @@ void test_queue_copy_and_assign_op_with_1mil_items() {
 }
 
 void test_all() {
-    std::cout << "Unit tests for my_queue." << std::endl;
+    std::cout << "Unit tests for queue." << std::endl;
 
     test_queue_basic();
     test_queue_copy_and_assignment_op();
     test_queue_copy_and_assign_op_with_1mil_items();
 }
 
-}  // namespace test_my_queue
+}  // namespace test_queue
 
-#endif  // TEST_MY_QUEUE_H
+#endif  // TEST_QUEUE_H

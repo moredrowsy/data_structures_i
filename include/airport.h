@@ -2,20 +2,20 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : my_airport
+ * HEADER      : airport
  * DESCRIPTION : This header declares three classes: Averager, BoolSource, and
  *      Airport. All three classes work in conjunction to simulate an airport.
  *      Averager will count and calculate unsigned seconds for time.
  *      BoolSource will return boolean for a given probability.
  *      Airport will keep track of landing and takeoff.
  ******************************************************************************/
-#ifndef MY_AIRPORT_H
-#define MY_AIRPORT_H
+#ifndef AIRPORT_H
+#define AIRPORT_H
 
 #include <cassert>  // assertions
 #include <cstdlib>  // provides std::size_t and random generator
 
-namespace my_airport {
+namespace airport {
 
 class Averager {
 public:
@@ -73,6 +73,6 @@ private:
     unsigned int _takeoff_countdown;  // countdown to takeoff
 };
 
-}  // namespace my_airport
+}  // namespace airport
 
-#endif  // MY_AIRPORT_H
+#endif  // AIRPORT_H

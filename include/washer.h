@@ -1,8 +1,8 @@
 #include <cassert>  // assertions
 #include <cstdlib>  // random generator
-#include "../include/my_queue.h"
+#include "../include/queue.h"
 
-namespace my_washer {
+namespace washer {
 
 class Averager {
 public:
@@ -42,4 +42,4 @@ private:
     unsigned int _wash_time_left;    // current washing time in seconds
 };
 
-}  // namespace my_washer
+}  // namespace washer

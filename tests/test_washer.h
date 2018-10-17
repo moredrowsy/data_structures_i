@@ -1,11 +1,11 @@
-#ifndef TEST_MY_WASHER_H
-#define TEST_MY_WASHER_H
+#ifndef TEST_WASHER_H
+#define TEST_WASHER_H
 
 #include <cassert>
 #include <iostream>
-#include "../include/my_washer.h"
+#include "../include/washer.h"
 
-namespace test_my_washer {
+namespace test_washer {
 
 void test_averager_basic();
 void test_bool_source_basic();
@@ -15,7 +15,7 @@ void test_all();
 void test_averager_basic() {
     std::cout << "test_averager_basic: ";
 
-    my_washer::Averager avg;
+    washer::Averager avg;
     int a = 0, b = 1, c = 2, d = 3, e = 4, f = 5;
 
     avg.next_number(a);
@@ -47,8 +47,8 @@ void test_averager_basic() {
 
 void test_bool_source_basic() {
     std::cout << "test_bool_source_basic: ";
-    my_washer::Averager avg;
-    my_washer::BoolSource bs0(0), bs25(0.25), bs50, bs75(0.75), bs100(1);
+    washer::Averager avg;
+    washer::BoolSource bs0(0), bs25(0.25), bs50, bs75(0.75), bs100(1);
 
     // test for always false/true in bs0 and bs100
     for(long i = 0; i < 1000000; ++i) {
@@ -83,10 +83,10 @@ void test_bool_source_basic() {
 void test_washer_basic() {
     std::cout << "test_washer_basic: ";
 
-    my_washer::Washer washer1,  // washing time is 60 seconds
-        washer2(0),             // washing time is 0 seconds
-        washer3(1),             // washing time is 1 seconds
-        washer4(100);           // washing time is 100 seconds
+    washer::Washer washer1,  // washing time is 60 seconds
+        washer2(0),          // washing time is 0 seconds
+        washer3(1),          // washing time is 1 seconds
+        washer4(100);        // washing time is 100 seconds
 
     // test initial states
     assert(washer1.is_busy() == false && washer2.is_busy() == false &&
@@ -128,13 +128,13 @@ void test_washer_basic() {
 }
 
 void test_all() {
-    std::cout << "Unit tests for my_washer." << std::endl;
+    std::cout << "Unit tests for washer." << std::endl;
 
     test_averager_basic();
     test_bool_source_basic();
     test_washer_basic();
 }
 
-}  // namespace test_my_washer
+}  // namespace test_washer
 
-#endif  // TEST_MY_WASHER_H
+#endif  // TEST_WASHER_H

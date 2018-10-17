@@ -1,9 +1,9 @@
 #include <sstream>
-#include "../include/my_stack.h"
+#include "../include/stack.h"
 #include "../lib/catch.hpp"
 
-TEST_CASE("my custom Stack", "[my_stack]") {
-    using namespace my_stack;
+TEST_CASE("my custom Stack", "[stack]") {
+    using namespace stack;
 
     // test empty;
     Stack<int> stack;

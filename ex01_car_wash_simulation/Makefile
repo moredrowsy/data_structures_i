@@ -5,7 +5,7 @@ CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
 INC             := ../include
 SRC             := ../src
-OBJ             := main.o my_washer.o
+OBJ             := main.o washer.o
 
 main.out: $(OBJ)
 	$(CXX) -o $@ $^
@@ -13,10 +13,10 @@ main.out: $(OBJ)
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
-my_washer.o: ${SRC}/my_washer.cpp\
-	${INC}/my_washer.h\
-	${INC}/my_queue.h\
-	${INC}/my_node.h
+washer.o: ${SRC}/washer.cpp\
+	${INC}/washer.h\
+	${INC}/queue.h\
+	${INC}/node.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

@@ -3,13 +3,13 @@
  * ID            : 00991588
  * CLASS         : CS008
  * ASSIGNMENT 01 : Stack and Queue
- * DESCRIPTION   : This application will test my_queue and my_stack classes.
+ * DESCRIPTION   : This application will test queue and stack classes.
  *      Three queues and stacks are created by default constructor, copy
  *      constructor and copied via assignment operator.
  ******************************************************************************/
-#include <iostream>               // output stream
-#include "../include/my_queue.h"  // Queue class
-#include "../include/my_stack.h"  // Stack class
+#include <iostream>            // output stream
+#include "../include/queue.h"  // Queue class
+#include "../include/stack.h"  // Stack class
 
 // test the queue class via the big three (copy, assignment, and destructor)
 void test_queue();
@@ -38,7 +38,7 @@ int main() {
 void test_queue() {
     // testing Queue
     std::cout << "Output For Queue:" << std::endl << std::endl;
-    my_queue::Queue<int> q, q2;
+    queue::Queue<int> q, q2;
 
     // test: add items to q
     for(int i = 0; i < 10; ++i) {
@@ -74,7 +74,7 @@ void test_queue() {
 void test_stack() {
     // testing Stack
     std::cout << "Output For Stack:" << std::endl << std::endl;
-    my_stack::Stack<int> s, s2;
+    stack::Stack<int> s, s2;
 
     // test: add items to s
     for(int i = 0; i < 10; ++i) {

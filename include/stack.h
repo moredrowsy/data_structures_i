@@ -2,45 +2,44 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : my_queue
- * DESCRIPTION : This header defines a templated Queue and its associated
- *      functions. The Queue will pop items at front and push from back.
+ * HEADER      : stack
+ * DESCRIPTION : This header defines a templated Stack and its associated
+ *      functions. The Stack will pop and push at the front.
  ******************************************************************************/
-#ifndef MY_QUEUE_H
-#define MY_QUEUE_H
+#ifndef STACK_H
+#define STACK_H
 
-#include <cassert>               // assertions
-#include "../include/my_node.h"  // Node class
+#include <cassert>            // assertions
+#include "../include/node.h"  // Node class
 
-namespace my_queue {
+namespace stack {
 
 template <typename T>
-class Queue {
+class Stack {
 public:
     // CONSTRUCTORS
-    Queue() : _head(nullptr), _tail(nullptr) {}
+    Stack() : _top(nullptr) {}
 
     // BIG THREE
-    ~Queue();
-    Queue(const Queue<T> &other);              // make deep copy
-    Queue<T> &operator=(const Queue<T> &rhs);  // make deep copy
+    ~Stack();
+    Stack(const Stack<T>& other);              // make deep copy
+    Stack<T>& operator=(const Stack<T>& rhs);  // make deep copy
 
     // ACCESSORS
-    T front() const;     // return head's item
-    bool empty() const;  // check boolean for head is nullptr
+    T top() const;       // return top's item
+    bool empty() const;  // check boolean for top is nullptr
 
     // MUTATORS
-    void push(T item);  // add item behind tail
-    T pop();            // remove head and return old head's item
+    void push(T item);  // add item at top
+    T pop();            // remove top and return old top's item
 
     // FRIENDS
-    friend std::ostream &operator<<(std::ostream &outs, const Queue<T> &q) {
-        return my_node::print_list(q._head, outs);  // return output
+    friend std::ostream& operator<<(std::ostream& outs, const Stack<T>& s) {
+        return node::print_list(s._top, outs);  // return output
     }
 
 private:
-    my_node::Node<T> *_head;  // pointer to front
-    my_node::Node<T> *_tail;  // pointer to back
+    node::Node<T>* _top;  // pointer to front
 };
 
 /*******************************************************************************
@@ -52,37 +51,34 @@ private:
  *  none
  *
  * POST-CONDITIONS:
- *  _head: assigns to nullptr when all nodes deleted successfully
+ *  _top: assigns to nullptr when all nodes deleted successfully
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-Queue<T>::~Queue() {
-    my_node::delete_all(_head);  // deallocates all nodes when not empty
+Stack<T>::~Stack() {
+    node::delete_all(_top);  // deallocates all nodes when not empty
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Copy constructor. Initialize head to nullptr and calls copy_list to make
+ *  Copy constructor. Initialize top to nullptr and calls copy_list to make
  *  deep copy of list.
  *
  * PRE-CONDITIONS:
- *  Queue<T> &other: source to copy from
+ *  Stack<T>& other: source to copy from
  *
  * POST-CONDITIONS:
- *  _head: assigns to first new node from source 'other'
- *  _top : assigns to last new node from source 'other'
+ *  _top: assigns to first new node from source 'other'
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-Queue<T>::Queue(const Queue<T> &other) {
-    my_node::init_head(_head);  // initialize, else copy_list fails
-
-    // make deep copy and update tail to last new node
-    _tail = my_node::copy_list(other._head, _head);
+Stack<T>::Stack(const Stack<T>& other) {
+    node::init_head(_top);              // initialize, else copy_list fails
+    node::copy_list(other._top, _top);  // make deep copy
 }
 
 /*******************************************************************************
@@ -90,20 +86,19 @@ Queue<T>::Queue(const Queue<T> &other) {
  *  Assignment operator. Calls copy_list to make deep copy of list.
  *
  * PRE-CONDITIONS:
- *  Queue<T> &rhs: source to copy from
+ *  Stack<T> &rhs: source to copy from
  *
  * POST-CONDITIONS:
- *  _head: assigns to first new node from source 'other'
- *  _top : assigns to last new node from source 'other'
+ *  _top : assigns to first new node from source 'other'
  *
  * RETURN:
  *  self
  ******************************************************************************/
 template <typename T>
-Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
+Stack<T>& Stack<T>::operator=(const Stack<T>& rhs) {
     // copy_list when not same
     if(this != &rhs) {
-        _tail = my_node::copy_list(rhs._head, _head);
+        node::copy_list(rhs._top, _top);
     }
 
     return *this;
@@ -123,10 +118,10 @@ Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
  *  T item from front
  ******************************************************************************/
 template <typename T>
-T Queue<T>::front() const {
+T Stack<T>::top() const {
     assert(!empty());
 
-    return _head->_item;
+    return _top->_item;
 }
 
 /*******************************************************************************
@@ -143,63 +138,49 @@ T Queue<T>::front() const {
  *  Boolean condition
  ******************************************************************************/
 template <typename T>
-bool Queue<T>::empty() const {
-    return my_node::empty(_head);
+bool Stack<T>::empty() const {
+    return node::empty(_top);
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Add new node with item at front when empty or at back when not.
+ *  Add new node with item at front.
  *
  * PRE-CONDITIONS:
  *  T item: tempalted item for new node's item
  *
  * POST-CONDITIONS:
- *  _head: assigns to new node when empty
- *  _top : assigns to new node whe empty or not empty
+ *  _top : assigns to new node
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-void Queue<T>::push(T item) {
-    // insert @ head when empty, else insert @ tail
-    if(empty()) {
-        _head = _tail = my_node::insert_head(_head, item);
-    } else {
-        _tail = my_node::insert_after(_head, _tail, item);
-    }
+void Stack<T>::push(T item) {
+    _top = node::insert_head(_top, item);  // insert @ top
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Assert not empty. When not empty, delete front node and update head or
- *  tail pointers.
+ *  Assert not empty. When not empty, delete front node and update top.
  *
  * PRE-CONDITIONS:
  *  not empty
  *
  * POST-CONDITIONS:
- *  _head: assigns to next node
- *  _top : assigns to nullptr when list becomes empty after deletion
+ *  _top: assigns to next node, assigns to nullptr when list becomes empty
+ *        after deletion
  *
  * RETURN:
- *  T item from deleted head
+ *  T item from deleted top
  ******************************************************************************/
 template <typename T>
-T Queue<T>::pop() {
+T Stack<T>::pop() {
     assert(!empty());
 
-    T item = my_node::delete_head(_head);
-
-    // assign tail to nullptr when list becomes empty after delete_head
-    if(empty()) {
-        _tail = nullptr;
-    }
-
-    return item;
+    return node::delete_head(_top);
 }
 
-}  // namespace my_queue
+}  // namespace stack
 
-#endif  // MY_QUEUE_H
+#endif  // STACK_H

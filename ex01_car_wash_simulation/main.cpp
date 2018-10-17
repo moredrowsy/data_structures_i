@@ -7,7 +7,7 @@
  *      Average, BoolSource, and Washer.
  ******************************************************************************/
 #include <iostream>
-#include "../include/my_washer.h"
+#include "../include/washer.h"
 
 void simulate_car_washer(unsigned int wash_time, double arrival_probability,
                          unsigned total_time);
@@ -25,13 +25,13 @@ int main() {
 
 void simulate_car_washer(unsigned int wash_time, double arrival_p,
                          unsigned total_time) {
-    using namespace my_washer;
+    using namespace washer;
 
-    my_queue::Queue<unsigned int> arrival_times;  // list of arrival times
-    BoolSource arrival(arrival_p);                // indicates when an arrival
-    Washer washer(wash_time);                     // washing machine
-    Averager wait_times;                          // average wait times
-    unsigned int current_time;                    // current time for simulation
+    queue::Queue<unsigned int> arrival_times;  // list of arrival times
+    BoolSource arrival(arrival_p);             // indicates when an arrival
+    Washer washer(wash_time);                  // washing machine
+    Averager wait_times;                       // average wait times
+    unsigned int current_time;                 // current time for simulation
 
     std::cout << "Washer duration(sec): " << wash_time << std::endl
               << "Arrival probability per second: " << arrival_p << std::endl

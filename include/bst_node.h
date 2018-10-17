@@ -24,7 +24,8 @@ struct TreeNode {
     int _height;
 
     // CONSTRUCTORS
-    TreeNode(T item = T(), TreeNode* left = nullptr, TreeNode* right = nullptr)
+    TreeNode(const T& item = T(), TreeNode* left = nullptr,
+             TreeNode* right = nullptr)
         : _item(item), _left(left), _right(right), _height(height()) {}
 
     // ACCESSORS

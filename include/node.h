@@ -2,17 +2,17 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : my_node
+ * HEADER      : node
  * DESCRIPTION : This header defines a templated node and templated functions
  *      that will process the nodes. These functions are the base to build
  *      higher level linked lists.
  ******************************************************************************/
-#ifndef MY_NODE_H
-#define MY_NODE_H
+#ifndef NODE_H
+#define NODE_H
 
 #include <iostream>  // stream objects
 
-namespace my_node {
+namespace node {
 
 template <typename T>
 struct Node {
@@ -257,6 +257,6 @@ std::ostream &print_list(const Node<T> *head, std::ostream &outs) {
     return outs;
 }
 
-}  // namespace my_node
+}  // namespace node
 
-#endif  // MY_NODE_H
+#endif  // NODE_H

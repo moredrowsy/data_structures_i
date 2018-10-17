@@ -1,6 +1,6 @@
-#include "../include/my_washer.h"
+#include "../include/washer.h"
 
-namespace my_washer {
+namespace washer {
 
 /* Implementation for class Averager */
 double Averager::average() const {
@@ -43,4 +43,4 @@ void Washer::start_washing() {
     }
 }
 
-}  // namespace my_washer
+}  // namespace washer

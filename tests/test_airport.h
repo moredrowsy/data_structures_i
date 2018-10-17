@@ -1,11 +1,11 @@
-#ifndef TEST_MY_AIRPORT_H
-#define TEST_MY_AIRPORT_H
+#ifndef TEST_AIRPORT_H
+#define TEST_AIRPORT_H
 
 #include <cassert>
 #include <iostream>
-#include "../include/my_airport.h"
+#include "../include/airport.h"
 
-namespace test_my_airport {
+namespace test_airport {
 
 // test class Averager and its basic member functions
 void test_averager_basic();
@@ -22,7 +22,7 @@ void test_all();
 void test_averager_basic() {
     std::cout << "test_averager_basic: ";
 
-    my_airport::Averager avg;
+    airport::Averager avg;
     int a = 0, b = 1, c = 2, d = 3, e = 4, f = 5;
 
     avg.next_number(a);
@@ -54,8 +54,8 @@ void test_averager_basic() {
 
 void test_bool_source_basic() {
     std::cout << "test_bool_source_basic: ";
-    my_airport::Averager avg;
-    my_airport::BoolSource bs0(0), bs25(0.25), bs50, bs75(0.75), bs100(1);
+    airport::Averager avg;
+    airport::BoolSource bs0(0), bs25(0.25), bs50, bs75(0.75), bs100(1);
 
     // test for always false/true in bs0 and bs100
     for(long i = 0; i < 1000000; i++) {
@@ -92,7 +92,7 @@ void test_airport_basic() {
 
     std::cout << "case 1...";
     // test airport with landing time = 0, takeoff time = 0
-    my_airport::Airport ap1(0, 0);
+    airport::Airport ap1(0, 0);
 
     // expect default values
     assert(ap1.has_clearance() == true);
@@ -146,7 +146,7 @@ void test_airport_basic() {
     std::cout << "passed, case 2...";
 
     // test airport with default values(landing time = 5, takeoff time = 15)
-    my_airport::Airport ap2;
+    airport::Airport ap2;
 
     // expect default values
     assert(ap2.has_clearance() == true);
@@ -228,13 +228,13 @@ void test_airport_basic() {
 }
 
 void test_all() {
-    std::cout << "Unit tests for my_airport." << std::endl;
+    std::cout << "Unit tests for airport." << std::endl;
 
     test_averager_basic();
     test_bool_source_basic();
     test_airport_basic();
 }
 
-}  // namespace test_my_airport
+}  // namespace test_airport
 
-#endif  // TEST_MY_AIRPORT_H
+#endif  // TEST_AIRPORT_H
