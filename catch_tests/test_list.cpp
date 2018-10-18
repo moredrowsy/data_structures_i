@@ -288,6 +288,54 @@ TEST_CASE("my custom list", "[list]") {
         }
     }
 
+    GIVEN("remove: with Iterator prev and Iterator marker") {
+        bool is_found = false;
+        int target = -1;
+        List<int>::Iterator prev, marker;
+
+        WHEN("first element") {
+            is_found = list.search(0, prev, marker);
+            REQUIRE(is_found == true);
+            REQUIRE((bool)prev == false);
+            REQUIRE(*marker == 0);
+
+            target = list.remove(prev, marker);
+            REQUIRE(target == 0);
+            REQUIRE(list[0] == 1);
+            REQUIRE(list[1] == 2);
+            REQUIRE(list.front() == 1);
+            REQUIRE(list.back() == 2);
+        }
+
+        WHEN("second element") {
+            is_found = list.search(1, prev, marker);
+            REQUIRE(is_found == true);
+            REQUIRE(*prev == 0);
+            REQUIRE(*marker == 1);
+
+            target = list.remove(prev, marker);
+            REQUIRE(target == 1);
+            REQUIRE(list[0] == 0);
+            REQUIRE(list[1] == 2);
+            REQUIRE(list.front() == 0);
+            REQUIRE(list.back() == 2);
+        }
+
+        WHEN("last element") {
+            is_found = list.search(2, prev, marker);
+            REQUIRE(is_found == true);
+            REQUIRE(*prev == 1);
+            REQUIRE(*marker == 2);
+
+            target = list.remove(prev, marker);
+            REQUIRE(target == 2);
+            REQUIRE(list[0] == 0);
+            REQUIRE(list[1] == 1);
+            REQUIRE(list.front() == 0);
+            REQUIRE(list.back() == 1);
+        }
+    }
+
     SECTION("list correctly output values") {
         // get list's output via std::string stream
         std::string output;

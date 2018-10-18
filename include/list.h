@@ -58,23 +58,24 @@ public:
     Iterator begin() const;                  //  iterator to head
     Iterator end() const;                    //  iterator after tail
     Iterator last_node() const;              //  iterator to tail
-    Iterator search(const T &target) const;  //  search for item
+    Iterator search(const T &target) const;  //  search for target
     bool search(const T &target, Iterator &prev, Iterator &found) const;
     T front() const;     //  head's item
     T back() const;      //  tail's item
-    bool empty() const;  // check boolean for head is nullptr
+    bool empty() const;  // check empty list
 
     // MUTATORS
     Iterator insert_head(const T &item);                     // at head
     Iterator insert_after(const T &item, Iterator marker);   // before marker
     Iterator insert_before(const T &item, Iterator marker);  // after marker
-    void push_front(const T &item);  // add item before head
-    void push_back(const T &item);   // add item behind tail
-    void clear();                    // remove all items
-    T pop_front();                   // remove head and return item
-    bool remove(const T &target);    // remove node with target
-    T remove(Iterator marker);       // delete node pointed by marker
-    T &operator[](int i);            // return item at position index
+    void push_front(const T &item);            // add item before head
+    void push_back(const T &item);             // add item behind tail
+    void clear();                              // remove all items
+    T pop_front();                             // remove head
+    bool remove(const T &target);              // remove node with target
+    T remove(Iterator prev, Iterator marker);  // delete with prev and marker
+    T remove(Iterator marker);                 // delete node pointed by marker
+    T &operator[](int i);                      // item at position index
 
     // FRIENDS
     friend std::ostream &operator<<(std::ostream &outs, const List<T> &l) {
@@ -222,7 +223,7 @@ template <typename T>
 typename List<T>::Iterator List<T>::search(const T &target) const {
     node::Node<T> *walker = _head, *found = nullptr;
 
-    while(walker != nullptr) {
+    while(walker) {
         if(walker->_item == target) {
             found = walker;
             break;
@@ -239,7 +240,7 @@ bool List<T>::search(const T &target, Iterator &prev, Iterator &found) const {
     bool is_found = false;
     node::Node<T> *walker = _head;
 
-    while(walker != nullptr) {
+    while(walker) {
         if(walker->_item == target) {
             found = List<T>::Iterator(walker);
             prev = List<T>::Iterator();
@@ -334,7 +335,6 @@ bool List<T>::empty() const {
  * RETURN:
  *  List<T>::Iterator: points to new node at head
  ******************************************************************************/
-
 template <typename T>
 typename List<T>::Iterator List<T>::insert_head(const T &item) {
     if(empty())  // update _tail when empty
@@ -361,7 +361,7 @@ typename List<T>::Iterator List<T>::insert_head(const T &item) {
  ******************************************************************************/
 template <typename T>
 typename List<T>::Iterator List<T>::insert_after(const T &item,
-                                                 List<T>::Iterator marker) {
+                                                 Iterator marker) {
     node::Node<T> *new_node = node::insert_after(_head, marker._ptr, item);
 
     if(marker._ptr == _tail) _tail = new_node;
@@ -385,7 +385,7 @@ typename List<T>::Iterator List<T>::insert_after(const T &item,
  ******************************************************************************/
 template <typename T>
 typename List<T>::Iterator List<T>::insert_before(const T &item,
-                                                  List<T>::Iterator marker) {
+                                                  Iterator marker) {
     node::Node<T> *walker = _head, *new_node = nullptr;
 
     if(walker == marker._ptr) {  // insert at head if nullptr or size 1
@@ -508,7 +508,7 @@ bool List<T>::remove(const T &target) {
     bool is_removed = false;
     node::Node<T> *walker = _head, *pop = nullptr;
 
-    while(walker != nullptr) {
+    while(walker) {
         if(walker->_item == target) {
             pop_front();
             is_removed = true;
@@ -535,6 +535,38 @@ bool List<T>::remove(const T &target) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Remove node pointed by marker with previous marker. Target marker can not
+ *  be nullptr
+ *
+ * PRE-CONDITIONS:
+ *  Iterator prev   : previous node point by marker
+ *  Iterator marker : node point by marker; marker != nullptr
+ *
+ * POST-CONDITIONS:
+ *  _head: is updated if removed
+ *  _tail: is updated if removed
+ *
+ * RETURN:
+ *  T: templated item that was removed
+ ******************************************************************************/
+template <typename T>
+T List<T>::remove(Iterator prev, Iterator marker) {
+    node::Node<T> *pop = marker._ptr;
+    T target = marker._ptr->_item;
+
+    marker._ptr = marker._ptr->_next;
+
+    if(prev) prev._ptr->_next = marker._ptr;
+    if(pop == _head) _head = marker._ptr;
+    if(pop == _tail) _tail = prev._ptr;
+
+    delete pop;
+
+    return target;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Remove node pointed by marker.
  *
  * PRE-CONDITIONS:
@@ -552,7 +584,7 @@ T List<T>::remove(Iterator marker) {
     node::Node<T> *walker = _head, *pop = nullptr;
     T target;
 
-    while(walker != nullptr) {
+    while(walker) {
         if(walker == marker._ptr) {
             target = pop_front();
 
