@@ -26,7 +26,7 @@ void test_insert_head();
 void testing_insert_after();
 
 // test that first node is deallocated
-void testing_delete_node();
+void testing_delete_head();
 
 // call all test functions
 void test_all();
@@ -191,8 +191,8 @@ void testing_insert_after() {
     std::cout << "passed." << std::endl;
 }
 
-void testing_delete_node() {
-    std::cout << "test_delete_node: ";
+void testing_delete_head() {
+    std::cout << "test_delete_head: ";
 
     node::Node<int> *a, *b, *c;
     a = new node::Node<int>(0);
@@ -202,15 +202,15 @@ void testing_delete_node() {
     b->_next = c;
 
     // test first deletion
-    assert(delete_node(a) == 0);
+    assert(delete_head(a) == 0);
     assert(a == b);
 
     // test second deletion
-    assert(delete_node(a) == 1);
+    assert(delete_head(a) == 1);
     assert(a == c);
 
     // tests third deletion
-    assert(delete_node(a) == 2);
+    assert(delete_head(a) == 2);
     assert(a == NULL);
 
     delete_all(a);
@@ -227,7 +227,7 @@ void tests_list() {
     test_copy_list();
     test_insert_head();
     testing_insert_after();
-    testing_delete_node();
+    testing_delete_head();
 }
 
 void test_all() {
@@ -239,7 +239,7 @@ void test_all() {
     test_copy_list();
     test_insert_head();
     testing_insert_after();
-    testing_delete_node();
+    testing_delete_head();
 }
 
 }  // namespace test_node

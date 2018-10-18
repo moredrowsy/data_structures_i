@@ -183,9 +183,9 @@ template <typename T>
 T Queue<T>::pop() {
     assert(!empty());
 
-    T item = node::delete_node(_head);
+    T item = node::delete_head(_head);
 
-    // assign tail to nullptr when list becomes empty after delete_node
+    // assign tail to nullptr when list becomes empty after delete_head
     if(empty()) _tail = nullptr;
 
     return item;

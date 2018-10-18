@@ -175,7 +175,7 @@ template <typename T>
 T Stack<T>::pop() {
     assert(!empty());
 
-    return node::delete_node(_top);
+    return node::delete_head(_top);
 }
 
 }  // namespace stack

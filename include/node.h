@@ -55,9 +55,9 @@ Node<T> *insert_head(Node<T> *&head, T item);
 template <typename T>
 Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item);
 
-// delete the node in list, return the item:
+// delete the node at the head of the list, return the item:
 template <typename T>
-T delete_node(Node<T> *&node);
+T delete_head(Node<T> *&head);
 
 // print the list and return outs
 template <typename T>
@@ -206,23 +206,23 @@ Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  node is stored in pop and assigned to next node. Then pop is deleted.
+ *  Head is stored in pop and assigned to next node. Then pop is deleted.
  *
  * PRE-CONDITIONS:
- *  Node<T> *&node: target node delete
+ *  Node<T> *&head: target node delete
  *
  * POST-CONDITIONS:
- *  Node<T> *&node: node assigns to next node
+ *  Node<T> *&head: head assigns to next node
  *
  * RETURN:
  *  Deleted node's item
  ******************************************************************************/
 template <typename T>
-T delete_node(Node<T> *&node) {
-    // assign pop to node, copy node's item, increment node
-    Node<T> *pop = node;
-    T item = node->_item;
-    node = node->_next;
+T delete_head(Node<T> *&head) {
+    // assign pop to head, copy head's item, increment head
+    Node<T> *pop = head;
+    T item = head->_item;
+    head = head->_next;
 
     delete pop;
 

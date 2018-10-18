@@ -482,7 +482,7 @@ template <typename T>
 T List<T>::pop_front() {
     assert(!empty());
 
-    const T &item = node::delete_node(_head);
+    T item = node::delete_head(_head);
 
     // assign tail to nullptr when list becomes empty after delete_head
     if(empty()) _tail = nullptr;
