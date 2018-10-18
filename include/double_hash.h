@@ -31,6 +31,7 @@ public:
     std::ostream& print(std::ostream& outs = std::cout) const;
 
     // MUTATORS
+    void clear();                 // remove all items
     bool insert(const T& entry);  // insert key, value pair
     bool remove(int key);         // remove this key
 
@@ -142,7 +143,7 @@ std::ostream& DoubleHash<T>::print(std::ostream& outs) const {
 
     outs << std::setfill('0');
     for(std::size_t i = 0; i < _TABLE_SIZE; ++i) {
-        outs << "[" << std::setw(size) << i << "] ";
+        outs << "[" << std::setw(size) << std::right << i << "] ";
 
         if(_data[i]._key > NEVER_USED) {
             outs << _data[i] << " (" << std::setw(size) << hash1(_data[i]._key)
@@ -157,6 +158,15 @@ std::ostream& DoubleHash<T>::print(std::ostream& outs) const {
     }
 
     return outs;
+}
+
+template <typename T>
+void DoubleHash<T>::clear() {
+    if(_data)
+        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = T();
+
+    _collisions = 0;
+    _total_records = 0;
 }
 
 template <typename T>

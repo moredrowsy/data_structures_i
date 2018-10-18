@@ -25,9 +25,8 @@ struct Node {
     Node<T> *_next;  // pointer to next node
 
     // FRIENDS
-    friend std::ostream &operator<<(std::ostream &outs,         // oustream
-                                    const Node<T> &print_me) {  // print node
-        outs << "[" << print_me._item << "]->";
+    friend std::ostream &operator<<(std::ostream &outs, const Node<T> &n) {
+        outs << "[" << n._item << "]->";
         return outs;  // return out stream with node's item
     }
 };

@@ -241,7 +241,7 @@ bool List<T>::search(const T &target, Iterator &prev, Iterator &found) const {
     node::Node<T> *walker = _head;
 
     while(walker) {
-        if(walker->_item == target) {
+        if(walker->_item == target) {  // when target @ head
             found = List<T>::Iterator(walker);
             prev = List<T>::Iterator();
             is_found = true;
@@ -249,6 +249,7 @@ bool List<T>::search(const T &target, Iterator &prev, Iterator &found) const {
             break;
         }
 
+        // when target @ walker->_next
         if(walker->_next && walker->_next->_item == target) {
             found = List<T>::Iterator(walker->_next);
             prev = List<T>::Iterator(walker);
@@ -388,7 +389,7 @@ typename List<T>::Iterator List<T>::insert_before(const T &item,
                                                   Iterator marker) {
     node::Node<T> *walker = _head, *new_node = nullptr;
 
-    if(walker == marker._ptr) {  // insert at head if nullptr or size 1
+    if(walker == marker._ptr) {  // when marker @ head
         new_node = node::insert_head(_head, item);
         if(!_tail) _tail = new_node;
     } else {
@@ -509,13 +510,14 @@ bool List<T>::remove(const T &target) {
     node::Node<T> *walker = _head, *pop = nullptr;
 
     while(walker) {
-        if(walker->_item == target) {
+        if(walker->_item == target) {  // when target @ head
             pop_front();
             is_removed = true;
 
             break;
         }
 
+        // when target @ walker->_next
         if(walker->_next && walker->_next->_item == target) {
             pop = walker->_next;
             walker->_next = walker->_next->_next;
@@ -585,12 +587,13 @@ T List<T>::remove(Iterator marker) {
     T target;
 
     while(walker) {
-        if(walker == marker._ptr) {
+        if(walker == marker._ptr) {  // when marker @ head
             target = pop_front();
 
             break;
         }
 
+        // when marker @ walker->_next
         if(walker->_next && walker->_next == marker._ptr) {
             target = walker->_next->_item;
             pop = walker->_next;
