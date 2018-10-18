@@ -17,6 +17,14 @@ using namespace chained_hash;
 // templated interactive hash table tests; takes in Hash type object pointer
 template <typename O>
 void test_hash_table_interactive(O* obj, std::string name);
+
+// templated random tests for array of hash type objects
+template <typename O, typename L>
+void test_random_hash(O* obj, const L& list, unsigned sample_size,
+                      int iterations, double& collisions, double& insert_time,
+                      double& valid_time, double& valid_found,
+                      double& invalid_time, double& invalid_found);
+
 void test_collisions(unsigned iterations = 700);
 
 int main() {
@@ -63,6 +71,67 @@ int main() {
     return 0;
 }
 
+template <typename O, typename L>
+void test_random_hash(O* obj, const L& list, unsigned sample_size,
+                      int iterations, double& collisions, double& insert_time,
+                      double& valid_time, double& valid_found,
+                      double& invalid_time, double& invalid_found) {
+    using Record = record::Record<int>;
+
+    bool is_found = false;
+    const unsigned SEARCH_SIZE = iterations / 2;
+    clock_t clicks = 0, insert = 0, valid = 0, invalid = 0;
+    Record result;
+
+    srand(time(nullptr));
+
+    // inserts
+    for(unsigned i = 0; i < sample_size; ++i) {
+        clicks = std::clock();
+        for(auto& a : list[i]) obj[i].insert(a);
+        insert += std::clock() - clicks;
+
+        assert(obj[i].size() != 0);
+
+        collisions += obj[i].collisions();
+    }
+    insert_time = (double)insert / sample_size;
+    collisions /= sample_size;
+
+    // search valid
+    for(unsigned i = 0; i < sample_size; ++i) {
+        // ensure that all searches are TRUE
+        for(unsigned j = 0; j < SEARCH_SIZE; ++j) {
+            is_found = obj[i].find(list[i].at(j)._key, result);
+            if(is_found) valid_found += 1;
+        }
+
+        // start timing inserts
+        clicks = std::clock();
+        for(unsigned j = 0; j < SEARCH_SIZE; ++j)
+            obj[i].find(list[i].at(j)._key, result);
+        valid += std::clock() - clicks;
+    }
+    valid_found /= sample_size;
+    valid_time = (double)valid / sample_size;
+
+    // search invalid
+    for(unsigned i = 0; i < sample_size; ++i) {
+        // ensure that all searches are FALSE
+        for(int j = -100; j > -350; --j) {
+            is_found = obj[i].find(j, result);
+            if(is_found) invalid_found += 1;
+        }
+
+        // start timing inserts
+        clicks = std::clock();
+        for(int j = -100; j > -350; --j) obj[i].find(j, result);
+        invalid += std::clock() - clicks;
+    }
+    invalid_found /= sample_size;
+    invalid_time = (double)invalid / sample_size;
+}
+
 void test_collisions(unsigned iterations) {
     using Record = record::Record<int>;
     using OpenHash = open_hash::OpenHash<Record>;
@@ -73,23 +142,18 @@ void test_collisions(unsigned iterations) {
     const unsigned MAX_RANGE = 10001, SIZE = 1000, SEARCH_SIZE = iterations / 2;
 
     // RESULT VARIABLES
-    bool is_found = false;
-    int ohash_found = 0, dhash_found = 0, chash_found = 0, ohash_not_found = 0,
-        dhash_not_found = 0, chash_not_found = 0;
-    clock_t clicks = 0, ohash_insert = 0, ohash_valid = 0, ohash_invalid = 0,
-            dhash_insert = 0, dhash_valid = 0, dhash_invalid = 0,
-            chash_insert = 0, chash_valid = 0, chash_invalid = 0;
-    double ohash_collisions = 0, dhash_collisions = 0;
-    Record result;
+    double ohash_collisions = 0, ohash_insert = 0, ohash_valid = 0,
+           ohash_found = 0, ohash_invalid = 0, ohash_not_found = 0;
+    double dhash_collisions = 0, dhash_insert = 0, dhash_valid = 0,
+           dhash_found = 0, dhash_invalid = 0, dhash_not_found = 0;
+    double chash_collisions, chash_insert = 0, chash_valid = 0, chash_found = 0,
+                             chash_invalid = 0, chash_not_found = 0;
 
-    // LISTs
+    // LISTS
     OpenHash ohash[SIZE];
     DoubleHash dhash[SIZE];
     ChainedHash chash[SIZE];
-
     std::vector<Record> list[SIZE];
-
-    srand(time(nullptr));
 
     // add random values to array of vector of Records
     for(unsigned i = 0; i < SIZE; ++i) {
@@ -99,129 +163,34 @@ void test_collisions(unsigned iterations) {
         assert(list[i].size() == iterations);
     }
 
-    // inserts: OpenHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        clicks = std::clock();
-        for(auto& a : list[i]) ohash[i].insert(a);
-        ohash_insert += std::clock() - clicks;
+    // CALL RANDOM TESTS
+    test_random_hash(ohash, list, SIZE, iterations, ohash_collisions,
+                     ohash_insert, ohash_valid, ohash_found, ohash_invalid,
+                     ohash_not_found);
 
-        assert(ohash[i].size() != 0);
+    test_random_hash(dhash, list, SIZE, iterations, dhash_collisions,
+                     dhash_insert, dhash_valid, dhash_found, dhash_invalid,
+                     dhash_not_found);
 
-        ohash_collisions += ohash[i].collisions();
-    }
+    test_random_hash(chash, list, SIZE, iterations, chash_collisions,
+                     chash_insert, chash_valid, chash_found, chash_invalid,
+                     chash_not_found);
 
-    // inserts: DoubleHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        clicks = std::clock();
-        for(auto& a : list[i]) dhash[i].insert(a);
-        dhash_insert += std::clock() - clicks;
-
-        assert(dhash[i].size() != 0);
-
-        dhash_collisions += dhash[i].collisions();
-    }
-
-    // inserts: ChainedHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        clicks = std::clock();
-        for(auto& a : list[i]) chash[i].insert(a);
-        chash_insert += std::clock() - clicks;
-
-        assert(chash[i].size() != 0);
-    }
-
-    // search valid : OpenHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        // ensure that all searches are TRUE
-        for(unsigned j = 0; j < SEARCH_SIZE; ++j) {
-            is_found = ohash[i].find(list[i].at(j)._key, result);
-            if(is_found) ohash_found += 1;
-        }
-
-        // start timing inserts
-        clicks = std::clock();
-        for(unsigned j = 0; j < SEARCH_SIZE; ++j)
-            ohash[i].find(list[i].at(j)._key, result);
-        ohash_valid += std::clock() - clicks;
-    }
-
-    // search valid : DoubleHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        // ensure that all searches are TRUE
-        for(unsigned j = 0; j < SEARCH_SIZE; ++j) {
-            is_found = dhash[i].find(list[i].at(j)._key, result);
-            if(is_found) dhash_found += 1;
-        }
-
-        // start timing inserts
-        clicks = std::clock();
-        for(unsigned j = 0; j < SEARCH_SIZE; ++j)
-            dhash[i].find(list[i].at(j)._key, result);
-        dhash_valid += std::clock() - clicks;
-    }
-
-    // search valid : ChainedHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        // ensure that all searches are TRUE
-        for(unsigned j = 0; j < SEARCH_SIZE; ++j) {
-            is_found = chash[i].find(list[i].at(j)._key, result);
-            if(is_found) chash_found += 1;
-        }
-
-        // start timing inserts
-        clicks = std::clock();
-        for(unsigned j = 0; j < SEARCH_SIZE; ++j)
-            chash[i].find(list[i].at(j)._key, result);
-        chash_valid += std::clock() - clicks;
-    }
-
-    // search invalid: OpenHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        // ensure that all searches are FALSE
-        for(int j = -100; j > -350; --j) {
-            is_found = ohash[i].find(j, result);
-            if(is_found) ohash_not_found += 1;
-        }
-
-        // start timing inserts
-        clicks = std::clock();
-        for(int j = -100; j > -350; --j) ohash[i].find(j, result);
-        ohash_invalid += std::clock() - clicks;
-    }
-
-    // search invalid: DoubleHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        // ensure that all searches are FALSE
-        for(int j = -100; j > -350; --j) {
-            is_found = dhash[i].find(j, result);
-            if(is_found) dhash_not_found += 1;
-        }
-
-        // start timing inserts
-        clicks = std::clock();
-        for(int j = -100; j > -350; --j) dhash[i].find(j, result);
-        dhash_invalid += std::clock() - clicks;
-    }
-
-    // search invalid: ChainedHash
-    for(unsigned i = 0; i < SIZE; ++i) {
-        // ensure that all searches are FALSE
-        for(int j = -100; j > -350; --j) {
-            is_found = chash[i].find(j, result);
-            if(is_found) chash_not_found += 1;
-        }
-
-        // start timing inserts
-        clicks = std::clock();
-        for(int j = -100; j > -350; --j) chash[i].find(j, result);
-        chash_invalid += std::clock() - clicks;
-    }
-
+    // CREATE DATA ARRAYS FOR OUTPUT
     const int HEAD_SIZE = 7;
+    double odata[HEAD_SIZE - 1] = {ohash_collisions, ohash_insert,
+                                   ohash_valid,      ohash_found,
+                                   ohash_invalid,    ohash_not_found};
+    double ddata[HEAD_SIZE - 1] = {dhash_collisions, dhash_insert,
+                                   dhash_valid,      dhash_found,
+                                   dhash_invalid,    dhash_not_found};
+    double cdata[HEAD_SIZE - 1] = {0,           chash_insert,  chash_valid,
+                                   chash_found, chash_invalid, chash_not_found};
     std::string header[HEAD_SIZE] = {
         "            ", "COLLISIONS",   "INSERTS (t)", "VALIDS (t)",
         "FOUND",        "INVALIDS (t)", "NOT FOUND"};
 
+    // TITLE INFO OUTPUT
     std::cout << std::string(80, '-') << std::endl
               << "COLLISTION TESTS" << std::endl
               << std::string(80, '-') << std::endl
@@ -236,61 +205,51 @@ void test_collisions(unsigned iterations) {
               << "clock ticks" << std::endl
               << std::endl;
 
-    std::cout
-        // header labels 1
-        << std::setw(header[0].size()) << ""  //
-        << std::setw(header[1].size() + 1) << ""
-        << std::setw(header[2].size() + 1) << ""
-        << std::setw(header[3].size() + 1) << std::left << "SEARCH"
-        << std::setw(header[4].size() + 1) << ""
-        << std::setw(header[5].size() + 1) << std::left << "SEARCH"
-        << std::setw(header[6].size() + 1) << ""
-        << std::endl
-        // header labels 2
-        << std::setw(header[0].size()) << header[0]
-        << std::setw(header[1].size() + 1) << header[1]
-        << std::setw(header[2].size() + 1) << header[2]
-        << std::setw(header[3].size() + 1) << header[3]
-        << std::setw(header[4].size() + 1) << header[4]
-        << std::setw(header[5].size() + 1) << header[5]
-        << std::setw(header[6].size() + 1) << header[6]
-        << std::endl
-        // horizontal bars
-        << std::setw(header[0].size()) << std::string(header[0].size(), ' ')
-        << std::setw(header[1].size() + 1) << std::string(header[1].size(), '-')
-        << std::setw(header[2].size() + 1) << std::string(header[2].size(), '-')
-        << std::setw(header[3].size() + 1) << std::string(header[3].size(), '-')
-        << std::setw(header[4].size() + 1) << std::string(header[4].size(), '-')
-        << std::setw(header[5].size() + 1) << std::string(header[5].size(), '-')
-        << std::setw(header[6].size() + 1) << std::string(header[6].size(), '-')
-        << std::endl
-        // OpenHash data
-        << std::setw(header[0].size()) << "OpenHash"
-        << std::setw(header[1].size() + 1) << ohash_collisions / SIZE
-        << std::setw(header[2].size() + 1) << (float)ohash_insert / SIZE
-        << std::setw(header[3].size() + 1) << (float)ohash_valid / SIZE
-        << std::setw(header[4].size() + 1) << (float)ohash_found / SIZE
-        << std::setw(header[5].size() + 1) << (float)ohash_invalid / SIZE
-        << std::setw(header[6].size() + 1) << (float)ohash_not_found / SIZE
-        << std::endl
-        // DoubleHash data
-        << std::setw(header[0].size()) << "DoubleHash"
-        << std::setw(header[1].size() + 1) << dhash_collisions / SIZE
-        << std::setw(header[2].size() + 1) << (float)dhash_insert / SIZE
-        << std::setw(header[3].size() + 1) << (float)dhash_valid / SIZE
-        << std::setw(header[4].size() + 1) << (float)dhash_found / SIZE
-        << std::setw(header[5].size() + 1) << (float)dhash_invalid / SIZE
-        << std::setw(header[6].size() + 1) << (float)dhash_not_found / SIZE
-        << std::endl
-        // ChainedHash data
-        << std::setw(header[0].size()) << "ChainedHash"
-        << std::setw(header[1].size() + 1) << "N/A"
-        << std::setw(header[2].size() + 1) << (float)chash_insert / SIZE
-        << std::setw(header[3].size() + 1) << (float)chash_valid / SIZE
-        << std::setw(header[4].size() + 1) << (float)chash_found / SIZE
-        << std::setw(header[5].size() + 1) << (float)chash_invalid / SIZE
-        << std::setw(header[6].size() + 1) << (float)chash_not_found / SIZE
-        << std::endl;
+    // HEADER LABELS 1
+    std::cout << std::setw(header[0].size()) << ""  //
+              << std::setw(header[1].size() + 1) << ""
+              << std::setw(header[2].size() + 1) << ""
+              << std::setw(header[3].size() + 1) << std::left << "SEARCH"
+              << std::setw(header[4].size() + 1) << ""
+              << std::setw(header[5].size() + 1) << std::left << "SEARCH"
+              << std::setw(header[6].size() + 1) << "" << std::endl;
+
+    // HEADER LABELS 2
+    std::cout << std::setw(header[0].size()) << header[0];
+    for(unsigned i = 1; i < HEAD_SIZE; ++i) {
+        std::cout << std::setw(header[i].size() + 1) << header[i];
+    }
+    std::cout << std::endl;
+
+    // HORIZONTAL BARS
+    std::cout << std::setw(header[0].size())
+              << std::string(header[0].size(), ' ');
+    for(unsigned i = 1; i < HEAD_SIZE; ++i) {
+        std::cout << std::setw(header[i].size() + 1)
+                  << std::string(header[i].size(), '-');
+    }
+    std::cout << std::endl;
+
+    // OPEN HASH DATA
+    std::cout << std::setw(header[0].size()) << "OpenHash";
+    for(int i = 0; i < HEAD_SIZE - 1; ++i) {
+        std::cout << std::setw(header[i + 1].size() + 1) << odata[i];
+    }
+    std::cout << std::endl;
+
+    // DOUBLE HASH DATA
+    std::cout << std::setw(header[0].size()) << "DoubleHash";
+    for(int i = 0; i < HEAD_SIZE - 1; ++i) {
+        std::cout << std::setw(header[i + 1].size() + 1) << ddata[i];
+    }
+    std::cout << std::endl;
+
+    // CHAINED HASH DATA
+    std::cout << std::setw(header[0].size()) << "ChainedHash";
+    for(int i = 0; i < HEAD_SIZE - 1; ++i) {
+        std::cout << std::setw(header[i + 1].size() + 1) << cdata[i];
+    }
+    std::cout << std::endl;
 }
 
 template <typename O>

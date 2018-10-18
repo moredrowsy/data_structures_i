@@ -23,9 +23,10 @@ public:
     ChainedHash<T>& operator=(const ChainedHash<T>& rhs);
 
     // ACCESSORS
-    std::size_t capacity() const;         // total unique entries
-    std::size_t size() const;             // number of keys in the table
-    bool find(int key, T& result) const;  // result <- record with key
+    std::size_t capacity() const;                 // total unique entries
+    std::size_t collisions() const { return 0; }  // dummy function
+    std::size_t size() const;                     // number of keys in the table
+    bool find(int key, T& result) const;          // result <- record with key
     std::ostream& print(std::ostream& outs = std::cout) const;
 
     // MUTATORS

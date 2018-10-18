@@ -173,7 +173,6 @@ template <typename T>
 bool DoubleHash<T>::insert(const T& entry) {
     assert(entry._key >= 0);
 
-    bool is_inserted = false;
     std::size_t i;
 
     if(!find_index(entry._key, i)) {
@@ -182,14 +181,13 @@ bool DoubleHash<T>::insert(const T& entry) {
 
         while(!is_vacant(i)) i = next_index(entry._key, i);
         ++_total_records;
-        is_inserted = true;
     }
 
     if(is_collision(entry._key, i)) ++_collisions;
 
     _data[i] = entry;
 
-    return is_inserted;
+    return true;
 }
 
 template <typename T>

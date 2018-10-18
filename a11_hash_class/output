@@ -1,2 +1,0 @@
-g++ -g -Wall -Werror=return-type -Wextra -pedantic -c main.cpp
-Makefile:21: recipe for target 'main.o' failed
