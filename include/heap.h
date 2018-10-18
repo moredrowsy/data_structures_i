@@ -201,11 +201,9 @@ Heap<T>::Heap(const Heap<T>& src) : _capacity(0), _size(0), _items(nullptr) {
 template <typename T>
 Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
     if(this != &rhs) {
-        if(_items) {
-            delete[] _items;
-            _items = nullptr;
-            _size = _capacity = 0;
-        }
+        delete[] _items;
+        _items = nullptr;
+        _size = _capacity = 0;
 
         if(!reserve(rhs._capacity)) deallocate_and_throw();
 
