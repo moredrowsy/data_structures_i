@@ -12,6 +12,7 @@ main.out: $(OBJ)
 
 main.o: main.cpp\
 	${INC}/node.h\
+	${INC}/list.h\
 	${INC}/queue.h\
 	${INC}/stack.h
 	$(CXX) $(CXXFLAGS) -c $<

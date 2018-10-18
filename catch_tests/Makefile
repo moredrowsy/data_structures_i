@@ -7,7 +7,7 @@ INC             := ../include
 SRC             := ../src
 LIB             := ../lib
 OBJ             := ${LIB}/catch.o\
-                   test_node.o test_queue.o test_stack.o\
+                   test_node.o test_list.o test_queue.o test_stack.o\
                    test_bst_node.o test_bst.o test_avl.o test_heap.o\
                    test_pqueue.o
 
@@ -25,6 +25,15 @@ test_node.out: ${LIB}/catch.o test_node.o
 
 test_node.o: test_node.cpp\
 	${INC}/node.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test queue
+test_list.out: ${LIB}/catch.o test_list.o
+	$(CXX) -o $@ $^
+
+test_list.o: test_list.cpp\
+	${INC}/node.h\
+	${INC}/list.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 # test queue

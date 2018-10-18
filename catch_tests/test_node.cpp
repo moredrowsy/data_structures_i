@@ -138,9 +138,9 @@ TEST_CASE("my custom Node", "[node]") {
         delete_all(empty_head_node);
     }
 
-    SECTION("delete_head() will remove and deallocate the first Node") {
+    SECTION("delete_node() will remove and deallocate the first Node") {
         for(int i = 0; i < 5; ++i) {
-            delete_head(head);
+            delete_node(head);
             if(!empty(head)) {
                 REQUIRE(head->_item == i + 1);
             }

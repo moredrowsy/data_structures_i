@@ -22,7 +22,7 @@ public:
 
     // BIG THREE
     ~Stack();
-    Stack(const Stack<T>& other);              // make deep copy
+    Stack(const Stack<T>& src);                // make deep copy
     Stack<T>& operator=(const Stack<T>& rhs);  // make deep copy
 
     // ACCESSORS
@@ -67,18 +67,18 @@ Stack<T>::~Stack() {
  *  deep copy of list.
  *
  * PRE-CONDITIONS:
- *  Stack<T>& other: source to copy from
+ *  Stack<T>& src: source to copy from
  *
  * POST-CONDITIONS:
- *  _top: assigns to first new node from source 'other'
+ *  _top: assigns to first new node from source 'src'
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-Stack<T>::Stack(const Stack<T>& other) {
-    node::init_head(_top);              // initialize, else copy_list fails
-    node::copy_list(other._top, _top);  // make deep copy
+Stack<T>::Stack(const Stack<T>& src) {
+    node::init_head(_top);            // initialize, else copy_list fails
+    node::copy_list(src._top, _top);  // make deep copy
 }
 
 /*******************************************************************************
@@ -89,17 +89,14 @@ Stack<T>::Stack(const Stack<T>& other) {
  *  Stack<T> &rhs: source to copy from
  *
  * POST-CONDITIONS:
- *  _top : assigns to first new node from source 'other'
+ *  _top : assigns to first new node from source 'src'
  *
  * RETURN:
  *  self
  ******************************************************************************/
 template <typename T>
 Stack<T>& Stack<T>::operator=(const Stack<T>& rhs) {
-    // copy_list when not same
-    if(this != &rhs) {
-        node::copy_list(rhs._top, _top);
-    }
+    if(this != &rhs) node::copy_list(rhs._top, _top);
 
     return *this;
 }
@@ -178,7 +175,7 @@ template <typename T>
 T Stack<T>::pop() {
     assert(!empty());
 
-    return node::delete_head(_top);
+    return node::delete_node(_top);
 }
 
 }  // namespace stack

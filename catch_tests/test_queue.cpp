@@ -42,8 +42,6 @@ TEST_CASE("my custom queue", "[queue]") {
         ss << queue;
         output = ss.str();
         assert(output == "|||");
-
-        std::cout << "passed." << std::endl;
     }
 
     SECTION("copy constructor of queue") {

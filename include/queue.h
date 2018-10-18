@@ -22,7 +22,7 @@ public:
 
     // BIG THREE
     ~Queue();
-    Queue(const Queue<T> &other);              // make deep copy
+    Queue(const Queue<T> &src);                // make deep copy
     Queue<T> &operator=(const Queue<T> &rhs);  // make deep copy
 
     // ACCESSORS
@@ -68,21 +68,21 @@ Queue<T>::~Queue() {
  *  deep copy of list.
  *
  * PRE-CONDITIONS:
- *  Queue<T> &other: source to copy from
+ *  Queue<T> &src: source to copy from
  *
  * POST-CONDITIONS:
- *  _head: assigns to first new node from source 'other'
- *  _top : assigns to last new node from source 'other'
+ *  _head: assigns to first new node from source 'src'
+ *  _tail: assigns to last new node from source 'src'
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-Queue<T>::Queue(const Queue<T> &other) {
+Queue<T>::Queue(const Queue<T> &src) {
     node::init_head(_head);  // initialize, else copy_list fails
 
     // make deep copy and update tail to last new node
-    _tail = node::copy_list(other._head, _head);
+    _tail = node::copy_list(src._head, _head);
 }
 
 /*******************************************************************************
@@ -93,18 +93,16 @@ Queue<T>::Queue(const Queue<T> &other) {
  *  Queue<T> &rhs: source to copy from
  *
  * POST-CONDITIONS:
- *  _head: assigns to first new node from source 'other'
- *  _top : assigns to last new node from source 'other'
+ *  _head: assigns to first new node from source 'src'
+ *  _tail: assigns to last new node from source 'src'
  *
  * RETURN:
  *  self
  ******************************************************************************/
 template <typename T>
 Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
-    // copy_list when not same
-    if(this != &rhs) {
-        _tail = node::copy_list(rhs._head, _head);
-    }
+    // make deep copy and update tail to last new node
+    if(this != &rhs) _tail = node::copy_list(rhs._head, _head);
 
     return *this;
 }
@@ -156,19 +154,14 @@ bool Queue<T>::empty() const {
  *
  * POST-CONDITIONS:
  *  _head: assigns to new node when empty
- *  _top : assigns to new node whe empty or not empty
+ *  _tail: assigns to new node whe empty or not empty
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
 void Queue<T>::push(T item) {
-    // insert @ head when empty, else insert @ tail
-    if(empty()) {
-        _head = _tail = node::insert_head(_head, item);
-    } else {
-        _tail = node::insert_after(_head, _tail, item);
-    }
+    _tail = node::insert_after(_head, _tail, item);
 }
 
 /*******************************************************************************
@@ -181,7 +174,7 @@ void Queue<T>::push(T item) {
  *
  * POST-CONDITIONS:
  *  _head: assigns to next node
- *  _top : assigns to nullptr when list becomes empty after deletion
+ *  _tail: assigns to nullptr when list becomes empty after deletion
  *
  * RETURN:
  *  T item from deleted head
@@ -190,12 +183,10 @@ template <typename T>
 T Queue<T>::pop() {
     assert(!empty());
 
-    T item = node::delete_head(_head);
+    T item = node::delete_node(_head);
 
-    // assign tail to nullptr when list becomes empty after delete_head
-    if(empty()) {
-        _tail = nullptr;
-    }
+    // assign tail to nullptr when list becomes empty after delete_node
+    if(empty()) _tail = nullptr;
 
     return item;
 }

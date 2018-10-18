@@ -56,9 +56,9 @@ Node<T> *insert_head(Node<T> *&head, T item);
 template <typename T>
 Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item);
 
-// delete the node at the head of the list, return the item:
+// delete the node in list, return the item:
 template <typename T>
-T delete_head(Node<T> *&head);
+T delete_node(Node<T> *&node);
 
 // print the list and return outs
 template <typename T>
@@ -129,9 +129,7 @@ bool empty(const Node<T> *head) {
 template <typename T>
 Node<T> *copy_list(const Node<T> *head, Node<T> *&cpy) {
     // delete all nodes when target cpy is not empty
-    if(cpy != nullptr) {
-        delete_all(cpy);
-    }
+    if(cpy != nullptr) delete_all(cpy);
 
     // initialize walker for cpy
     Node<T> *copy_walker = nullptr;
@@ -196,10 +194,12 @@ Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item) {
     Node<T> *insert = new Node<T>(item);
 
     // when pointers are nullptr, insert at head, else insert behind 'after'
-    if(head == nullptr || after == nullptr) {
+    if(head == nullptr || after == nullptr)
         head = insert;
-    } else {
+    else {
+        Node<T> *t = after->_next;
         after->_next = insert;
+        insert->_next = t;
     }
 
     return insert;
@@ -207,23 +207,23 @@ Node<T> *insert_after(Node<T> *&head, Node<T> *after, const T &item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Head is stored in pop and assigned to next node. Then pop is deleted.
+ *  node is stored in pop and assigned to next node. Then pop is deleted.
  *
  * PRE-CONDITIONS:
- *  Node<T> *&head: target node delete
+ *  Node<T> *&node: target node delete
  *
  * POST-CONDITIONS:
- *  Node<T> *&head: head assigns to next node
+ *  Node<T> *&node: node assigns to next node
  *
  * RETURN:
  *  Deleted node's item
  ******************************************************************************/
 template <typename T>
-T delete_head(Node<T> *&head) {
-    // assign pop to head, copy head's item, increment head
-    Node<T> *pop = head;
-    T item = head->_item;
-    head = head->_next;
+T delete_node(Node<T> *&node) {
+    // assign pop to node, copy node's item, increment node
+    Node<T> *pop = node;
+    T item = node->_item;
+    node = node->_next;
 
     delete pop;
 
