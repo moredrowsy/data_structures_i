@@ -1,8 +1,8 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include <cassert>            // assertions
-#include "../include/node.h"  // Node class
+#include <cassert>  // assertions
+#include "node.h"   // Node class
 
 namespace list {
 
@@ -28,6 +28,7 @@ public:
             return *this;
         }
 
+        // FRIENDS
         friend bool operator!=(const Iterator &lhs, const Iterator &rhs) {
             return lhs._ptr != rhs._ptr;
         }
@@ -217,7 +218,7 @@ typename List<T>::Iterator List<T>::last_node() const {
  *  none
  *
  * RETURN:
- *  List<T>::Iterator: iterator points item; else nullptr
+ *  List<T>::Iterator found: iterator points target; else nullptr
  ******************************************************************************/
 template <typename T>
 typename List<T>::Iterator List<T>::search(const T &target) const {
@@ -235,6 +236,22 @@ typename List<T>::Iterator List<T>::search(const T &target) const {
     return List<T>::Iterator(found);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Search for templated item. Returns boolean and by reference return prev
+ *  and found pointers.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool                   : search success/failure
+ *  List<T>::Iterator prev : iterator points before target; else nullptr
+ *  List<T>::Iterator found: iterator points target; else nullptr
+ ******************************************************************************/
 template <typename T>
 bool List<T>::search(const T &target, Iterator &prev, Iterator &found) const {
     bool is_found = false;

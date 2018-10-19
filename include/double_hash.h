@@ -1,10 +1,21 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : double_hash
+ * DESCRIPTION : This header defines a templated DoubleHash. Item insertions
+ *      are done via record type's _key. If key's hash clashes with previous
+ *      key, then insertion attempts as second hash value until empty spot.
+ *      Item insertions are limited to hash table size. Table size for hash
+ *      class uses dynamic allocation for user specificed table size.
+ ******************************************************************************/
 #ifndef DOUBLE_HASH_H
 #define DOUBLE_HASH_H
 
-#include <cassert>
-#include <iomanip>
-#include <iostream>
-#include <string>
+#include <cassert>   // assert()
+#include <iomanip>   // setw()
+#include <iostream>  // stream objects
+#include <string>    // string objects
 
 namespace double_hash {
 
@@ -57,18 +68,58 @@ private:
     inline bool is_vacant(std::size_t i) const;
 };
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructor with default size argument to TABLE_SIZE. Dynamically allocate
+ *  _data array with _TABLE_SIZE attribute.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  new memory allocated to _data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 DoubleHash<T>::DoubleHash(std::size_t size)
     : _TABLE_SIZE(size), _collisions(0), _total_records(0), _data(nullptr) {
     assert(_TABLE_SIZE > 0);
-    _data = new T[size];
+    _data = new T[_TABLE_SIZE];
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocate all heap data.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  delete memory allocated to _data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 DoubleHash<T>::~DoubleHash() {
     delete[] _data;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Copy constructor
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  new memory allocated to _data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 DoubleHash<T>::DoubleHash(const DoubleHash<T>& src)
     : _TABLE_SIZE(src._TABLE_SIZE),
@@ -79,6 +130,19 @@ DoubleHash<T>::DoubleHash(const DoubleHash<T>& src)
     for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = src._data[i];
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assginmen operator.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  delete old _data and new memory allocated to _data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 DoubleHash<T>& DoubleHash<T>::operator=(const DoubleHash<T>& rhs) {
     if(this != &rhs) {
@@ -90,23 +154,77 @@ DoubleHash<T>& DoubleHash<T>::operator=(const DoubleHash<T>& rhs) {
         _data = new T[_TABLE_SIZE];
         for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = rhs._data[i];
     }
+
+    return *this;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access to _capacity
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::capacity() const {
     return _TABLE_SIZE;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access to _collisions
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::collisions() const {
     return _collisions;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access to _total_records
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::size() const {
     return _total_records;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find templated item with key.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::find(int key, T& result) const {
     bool is_found = false;
@@ -120,11 +238,37 @@ bool DoubleHash<T>::find(int key, T& result) const {
     return is_found;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print _data into table format.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  table output
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::is_collision(int key, std::size_t i) const {
     return hash1(key) != i;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find if _data table has given key occupied.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  table output
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::is_present(int key) const {
     std::size_t count = 0, i = hash1(key);
@@ -137,6 +281,19 @@ bool DoubleHash<T>::is_present(int key) const {
     return _data[i]._key == key;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print _data into table format.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  table output
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 std::ostream& DoubleHash<T>::print(std::ostream& outs) const {
     std::size_t size = std::to_string(_TABLE_SIZE).size();
@@ -160,6 +317,20 @@ std::ostream& DoubleHash<T>::print(std::ostream& outs) const {
     return outs;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Clear all data by assigning templated item with default constructor
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  _collisions = 0
+ *  _total_records = 0
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void DoubleHash<T>::clear() {
     if(_data)
@@ -169,6 +340,21 @@ void DoubleHash<T>::clear() {
     _total_records = 0;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insert templated item into _data table via its _key
+ *
+ * PRE-CONDITIONS:
+ *  _total_records < _TABLE_SIZE
+ *
+ * POST-CONDITIONS:
+ *  _collisions + 1 if entry's key is not hash value
+ *  _total_records + 1
+ *  item added into _data if success
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::insert(const T& entry) {
     assert(entry._key >= 0);
@@ -190,6 +376,21 @@ bool DoubleHash<T>::insert(const T& entry) {
     return true;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove templated item from _data table via its _key
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  _collisions - 1 if entry's key is not hash value
+ *  _total_records - 1
+ *  item removed from _data if success
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::remove(int key) {
     bool is_removed = false;
@@ -245,6 +446,19 @@ std::size_t DoubleHash<T>::hash2(int key) const {
     return 1 + (key % (_TABLE_SIZE - 2));
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Find the index with specified key.
+ *
+ * PRE-CONDITIONS:
+ *  int key: >= 0
+ *
+ * POST-CONDITIONS:
+ *  std::size_t& i: updated it found
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::find_index(int key, std::size_t& i) const {
     std::size_t count = 0;
@@ -258,16 +472,55 @@ bool DoubleHash<T>::find_index(int key, std::size_t& i) const {
     return _data[i]._key == key;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return's next hash position.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t i: array index >= 0
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::size_t: array index
+ ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::next_index(int key, std::size_t i) const {
     return (i + hash2(key)) % _TABLE_SIZE;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check for array index has never been used.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t i: array index >= 0
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::never_used(std::size_t i) const {
     return _data[i]._key == NEVER_USED;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Check for array index is free / not occupied.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t i: array index >= 0
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool DoubleHash<T>::is_vacant(std::size_t i) const {
     return _data[i]._key <= NEVER_USED;

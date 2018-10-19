@@ -10,7 +10,7 @@
 #ifndef AVL_H
 #define AVL_H
 
-#include "bst_node.h"
+#include "bst_node.h"  // BINARY SEARCH TREE TreeNode class
 
 namespace avl {
 
@@ -27,6 +27,8 @@ public:
     ~AVL();
 
     // ACCESSORS
+    bool empty() const;
+    void print_inorder(std::ostream& outs = std::cout) const;
     const bst_node::TreeNode<T>* root() const;
     bool search(const T& target, bst_node::TreeNode<T>*& found_ptr) const;
 
@@ -128,6 +130,43 @@ AVL<T>& AVL<T>::operator=(const AVL<T>& rhs) {
 template <typename T>
 AVL<T>::~AVL() {
     bst_node::tree_clear(_root);  // deallocate old data
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if AVL is empty.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool AVL<T>::empty() const {
+    return !_root;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print AVL's item with inorder traversal.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void AVL<T>::print_inorder(std::ostream& outs) const {
+    if(!_root) outs << "|||";
+    bst_node::inorder(_root, [&outs](auto& r) { outs << *r << "->"; });
 }
 
 /*******************************************************************************

@@ -14,10 +14,12 @@ main.o: main.cpp\
 	${INC}/record.h\
 	${INC}/node.h\
 	${INC}/list.h\
-	${INC}/chained_hash.h\
-	${INC}/double_hash.h\
+	${INC}/bst_node.h\
+	${INC}/avl.h\
 	${INC}/open_hash.h\
-	${INC}/chained_hash.h
+	${INC}/double_hash.h\
+	${INC}/chained_avl_hash.h\
+	${INC}/chained_list_hash.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
