@@ -184,15 +184,17 @@ void test_collisions(unsigned table_size, unsigned iterations,
     data[3] = test_random_hash(cl_hash, list, sample_size, iterations);
 
     // CREATE DATA ARRAYS FOR OUTPUT
-    std::string names[4] = {"OpenHash", "DoubleHash", "ChainedAVLHash",
-                            "ChainedListHash"};
-    std::string header[HEAD_SIZE] = {std::string(names[3].size(), ' '),
-                                     "COLLISIONS",
-                                     "INSERTS (t)",
-                                     "VALIDS (t)",
-                                     "FOUND",
-                                     "INVALIDS (t)",
-                                     "NOT FOUND"};
+    std::string name_type = "TYPE";
+    std::string names[DATA_SIZE] = {"OpenHash", "DoubleHash", "ChainedAVLHash",
+                                    "ChainedListHash"};
+    std::string header[HEAD_SIZE] = {
+        name_type + std::string(names[3].size() - name_type.size(), ' '),
+        "COLLISIONS",
+        "INSERTS (t)",
+        "VALIDS (t)",
+        "FOUND",
+        "INVALIDS (t)",
+        "NOT FOUND"};
 
     // TITLE INFO OUTPUT
     std::cout << std::string(80, '-') << std::endl
@@ -227,9 +229,7 @@ void test_collisions(unsigned table_size, unsigned iterations,
     std::cout << std::endl;
 
     // HORIZONTAL BARS
-    std::cout << std::setw(header[0].size() + 1)
-              << std::string(header[0].size(), ' ');
-    for(unsigned i = 1; i < HEAD_SIZE; ++i) {
+    for(unsigned i = 0; i < HEAD_SIZE; ++i) {
         std::cout << std::setw(header[i].size() + 1)
                   << std::string(header[i].size(), '-');
     }

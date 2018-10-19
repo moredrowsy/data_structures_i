@@ -226,7 +226,7 @@ std::size_t OpenHash<T>::size() const {
 template <typename T>
 bool OpenHash<T>::find(int key, T& result) const {
     bool is_found = false;
-    std::size_t i = -1;
+    std::size_t i = 0;
 
     if(find_index(key, i)) {
         result = _data[i];
@@ -269,14 +269,8 @@ bool OpenHash<T>::is_collision(int key, std::size_t i) const {
  ******************************************************************************/
 template <typename T>
 bool OpenHash<T>::is_present(int key) const {
-    std::size_t count = 0, i = hash(key);
-
-    while(count < _TABLE_SIZE && !never_used(i) && _data[i]._key != key) {
-        ++count;
-        i = next_index(i);
-    }
-
-    return _data[i]._key == key;
+    std::size_t i;
+    return find_index(key, i);
 }
 
 /*******************************************************************************
@@ -359,11 +353,15 @@ bool OpenHash<T>::insert(const T& entry) {
 
     std::size_t i;
 
-    if(!find_index(entry._key, i)) {
+    if(!find_index(entry._key, i)) {  // <--- see find_index's notes!
         // EXIT and return false when hash key not found and FULL TABLE
         if(_total_records >= _TABLE_SIZE) return false;
 
-        while(!is_vacant(i)) i = next_index(i);
+        if(_data[hash(entry._key)]._key <= NEVER_USED)  // if 1st pos is avail
+            i = hash(entry._key);
+        else
+            while(!is_vacant(i)) i = next_index(i);  // look until vacant
+
         ++_total_records;
     }
 
@@ -426,13 +424,19 @@ std::size_t OpenHash<T>::hash(int key) const {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Find the index with specified key.
+ *  Searches _data array with key until it finds KEY position or NEVER_USED
+ *  position. Does NOT return PREVIOUSLY_USED position. If KEY position is
+ *  PREVIOUSLY_USED (which is vacant), it will NOT return vacant position but
+ *  the next cell marked NEVER_USED.
+ *
+ *  EX: Insert @ 0, [0] = OCCUPIED. Remove @ 0, [0] = PREVIOUSLY_USED.
+ *      Find_index returns i = 1 because [1] = NEVER_USED.
  *
  * PRE-CONDITIONS:
  *  int key: >= 0
  *
  * POST-CONDITIONS:
- *  std::size_t& i: updated it found
+ *  std::size_t& i: @NEVER_USED, @KEY's or @original hash if not found
  *
  * RETURN:
  *  bool
