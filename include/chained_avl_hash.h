@@ -6,15 +6,17 @@
  * DESCRIPTION : This header defines a templated ChainedHash via Binary Search
  *      Tree list AVL (Adelson-Velsky and Landis). Table size for hash class
  *      uses dynamic allocation for user specificed table size.
+ *
+ *      NOTE: Unlike Open/Double Hash, T's _key can be negative for hash insert.
  ******************************************************************************/
 #ifndef CHAINED_AVL_HASH_H
 #define CHAINED_AVL_HASH_H
 
-#include <cassert>
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include "avl.h"
+#include <cassert>   // assert()
+#include <iomanip>   // setw()
+#include <iostream>  // stream objects
+#include <string>    // string objects
+#include "avl.h"     // BST's AVL class
 
 namespace chained_avl_hash {
 
@@ -276,8 +278,6 @@ void ChainedAVLHash<T>::clear() {
  ******************************************************************************/
 template <typename T>
 bool ChainedAVLHash<T>::insert(const T& entry) {
-    assert(entry._key >= 0);
-
     bool is_found = false;
     bst_node::TreeNode<T>* search;
 

@@ -8,6 +8,8 @@
  *      then insertion attempts next +1 position until it finds an empty spot.
  *      Item insertions are limited to hash table size. Table size for hash
  *      class uses dynamic allocation for user specificed table size.
+ *
+ *      NOTE: Requires T's _key as unsigned for hash insert!
  ******************************************************************************/
 #ifndef OPEN_HASH_H
 #define OPEN_HASH_H

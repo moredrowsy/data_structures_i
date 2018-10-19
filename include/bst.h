@@ -10,7 +10,8 @@
 #ifndef BST_H
 #define BST_H
 
-#include "bst_node.h"
+#include <cassert>     // assert()
+#include "bst_node.h"  // BST TreeNode class
 
 namespace bst {
 
@@ -27,6 +28,8 @@ public:
     ~BST();
 
     // ACCESSORS
+    bool empty() const;
+    T& front() const;
     const bst_node::TreeNode<T>* root() const;
     bool search(const T& target, bst_node::TreeNode<T>*& found_ptr) const;
 
@@ -34,6 +37,7 @@ public:
     void clear();
     bool erase(const T& target);
     bool insert(const T& insert_me);
+    void pop_front();
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BST<T>& tree) {
@@ -131,6 +135,43 @@ BST<T>::~BST() {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Checks if AVL is empty.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool BST<T>::empty() const {
+    return !_root;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Access _root's item.
+ *
+ * PRE-CONDITIONS:
+ *  _root != nullptr
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T: root's item by reference
+ ******************************************************************************/
+template <typename T>
+T& BST<T>::front() const {
+    assert(!empty());
+    return _root->_item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Returns access to copy BST's root.
  *
  * PRE-CONDITIONS:
@@ -218,6 +259,24 @@ bool BST<T>::erase(const T& target) {
 template <typename T>
 bool BST<T>::insert(const T& insert_me) {
     return bst_node::tree_insert(_root, insert_me);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove root's item and rotate/rebalance tree.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  TreeNode<T>* _root: root points to next suitable child.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BST<T>::pop_front() {
+    tree_pop_root(_root);
 }
 
 }  // namespace bst

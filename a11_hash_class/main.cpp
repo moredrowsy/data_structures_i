@@ -1,14 +1,14 @@
-#include <cstdlib>
-#include <ctime>
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include <vector>
-#include "../include/chained_avl_hash.h"
-#include "../include/chained_list_hash.h"
-#include "../include/double_hash.h"
-#include "../include/open_hash.h"
-#include "../include/record.h"
+#include <cstdlib>                         // rand(), srand()
+#include <ctime>                           // time()
+#include <iomanip>                         // setw()
+#include <iostream>                        // stream objects
+#include <string>                          // string objects
+#include <vector>                          // vector objects
+#include "../include/chained_avl_hash.h"   // BST AVL class
+#include "../include/chained_list_hash.h"  // List class
+#include "../include/double_hash.h"        // DoubleHash class
+#include "../include/open_hash.h"          // OpenHash Class
+#include "../include/record.h"             // Record class
 
 using Record = record::Record<int>;
 using OpenHash = open_hash::OpenHash<Record>;
@@ -25,8 +25,9 @@ template <typename O, typename L>
 double* test_random_hash(O* obj, const L* list, unsigned sample_size,
                          int iterations);
 
-void test_collisions(unsigned table_size = 811, unsigned iterations = 700,
-                     unsigned sample_size = 1000);
+// test collisions, insert and search times for open, double, chained hash
+void test_timing_hashes(unsigned table_size = 811, unsigned iterations = 700,
+                        unsigned sample_size = 1000);
 
 int main() {
     const bool RANDOM = true;
@@ -41,7 +42,7 @@ int main() {
     ChainedListHash* chained_list = nullptr;
 
     if(RANDOM) {
-        test_collisions();
+        test_timing_hashes();
         std::cout << std::endl << std::endl;
     }
 
@@ -140,8 +141,8 @@ double* test_random_hash(O* obj, const L* list, unsigned sample_size,
                          valid_found, invalid_time, invalid_found};
 }
 
-void test_collisions(unsigned table_size, unsigned iterations,
-                     unsigned sample_size) {
+void test_timing_hashes(unsigned table_size, unsigned iterations,
+                        unsigned sample_size) {
     assert(table_size >= iterations);
     assert(sample_size > 0);
 
@@ -198,7 +199,7 @@ void test_collisions(unsigned table_size, unsigned iterations,
 
     // TITLE INFO OUTPUT
     std::cout << std::string(80, '-') << std::endl
-              << "COLLISTION TESTS" << std::endl
+              << "COLLISTION AND TIMING TESTS" << std::endl
               << std::string(80, '-') << std::endl
               << std::setw(11) << "sample size"
               << " : " << sample_size << std::endl
@@ -211,6 +212,8 @@ void test_collisions(unsigned table_size, unsigned iterations,
               << std::setw(11) << "t"
               << " : "
               << "clock ticks per second" << std::endl
+              << std::endl
+              << "* results are averaged by sample size" << std::endl
               << std::endl;
 
     // HEADER LABELS 1

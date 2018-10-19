@@ -46,8 +46,8 @@ void random_bst_test() {
     std::vector<int> rvector = gen_rand_vec();
 
     do {
-        std::cout << "[R]andom  [I]nsert  [C]lear  [S]earch  [E]rase      "
-                     "e[X]it: ";
+        std::cout << "[R]andom  [I]nsert  [C]lear  [S]earch  [E]rase  [P]op"
+                     "     e[X]it: ";
         std::cin >> c;
 
         switch(c) {
@@ -84,6 +84,20 @@ void random_bst_test() {
                 std::cin >> i;
 
                 tree.insert(i);
+                std::cout << tree << std::endl;
+
+                break;
+            case 'P':
+            case 'p':
+                std::cout << "-- Pop front: ";
+                if(!tree.empty()) {
+                    i = tree.front();
+                    tree.pop_front();
+
+                    std::cout << i << std::endl;
+                } else
+                    std::cout << "empty list" << std::endl;
+
                 std::cout << tree << std::endl;
 
                 break;

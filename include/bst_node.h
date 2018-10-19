@@ -69,6 +69,9 @@ template <typename T>  // erase rightmost node from the tree
                        // store the item in max_value
 void tree_remove_max(TreeNode<T>*& root, T& max_value, bool balance = false);
 
+template <typename T>  // remove pop top root and redirect tree
+void tree_pop_root(TreeNode<T>*& root, bool balance = false);
+
 template <typename T>  // return copy of tree pointed to by root
 TreeNode<T>* tree_copy(TreeNode<T>* root, bool balance = false);
 
@@ -373,7 +376,7 @@ bool tree_erase(TreeNode<T>*& root, const T& target, bool balance) {
     else
         is_erased = tree_erase(root->_right, target, balance);  // recurse right
 
-    if(root) {  // root == nullptr when target is max node
+    if(root) {  // check root b/c root == nullptr when target is max node
         root->update_height();
         if(balance) root = rotate(root);
     };
@@ -418,6 +421,41 @@ void tree_remove_max(TreeNode<T>*& root, T& max_value, bool balance) {
 
     root->update_height();
     if(balance) root = rotate(root);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Erase and return the root's item.
+ *
+ * PRE-CONDITIONS:
+ *  TreeNode<T>*& root: root by reference
+ *
+ * POST-CONDITIONS:
+ *  TreeNode<T>*& root: node erased from root
+ *
+ * RETURN:
+ *  T: templated item removed if root != nullptr
+ ******************************************************************************/
+template <typename T>
+void tree_pop_root(TreeNode<T>*& root, bool balance) {
+    if(root) {
+        if(!root->_left) {
+            TreeNode<T>* pop = root;
+            root = root->_right;  // root = nullptr when !root->_right
+
+            delete pop;
+            pop = nullptr;
+        } else {
+            T max;
+            tree_remove_max(root->_left, max, balance);
+            root->_item = max;
+        }
+
+        if(root) {  // check root b/c root == nullptr when target is max node
+            root->update_height();
+            if(balance) root = rotate(root);
+        };
+    };
 }
 
 /*******************************************************************************

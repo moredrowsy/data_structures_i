@@ -10,7 +10,8 @@
 #ifndef AVL_H
 #define AVL_H
 
-#include "bst_node.h"  // BINARY SEARCH TREE TreeNode class
+#include <cassert>     // assert()
+#include "bst_node.h"  // BST TreeNode class
 
 namespace avl {
 
@@ -28,6 +29,7 @@ public:
 
     // ACCESSORS
     bool empty() const;
+    T& front() const;
     void print_inorder(std::ostream& outs = std::cout) const;
     const bst_node::TreeNode<T>* root() const;
     bool search(const T& target, bst_node::TreeNode<T>*& found_ptr) const;
@@ -36,6 +38,7 @@ public:
     void clear();
     bool erase(const T& target);
     bool insert(const T& insert_me);
+    void pop_front();
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const AVL<T>& tree) {
@@ -152,6 +155,25 @@ bool AVL<T>::empty() const {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Access _root's item.
+ *
+ * PRE-CONDITIONS:
+ *  _root != nullptr
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T: root's item by reference
+ ******************************************************************************/
+template <typename T>
+T& AVL<T>::front() const {
+    assert(!empty());
+    return _root->_item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Print AVL's item with inorder traversal.
  *
  * PRE-CONDITIONS:
@@ -260,6 +282,24 @@ bool AVL<T>::erase(const T& target) {
 template <typename T>
 bool AVL<T>::insert(const T& insert_me) {
     return bst_node::tree_insert(_root, insert_me, true);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove root's item and rotate/rebalance tree.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  TreeNode<T>* _root: root points to next suitable child.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void AVL<T>::pop_front() {
+    tree_pop_root(_root, true);
 }
 
 }  // namespace avl

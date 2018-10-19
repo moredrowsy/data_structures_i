@@ -8,6 +8,8 @@
  *      key, then insertion attempts as second hash value until empty spot.
  *      Item insertions are limited to hash table size. Table size for hash
  *      class uses dynamic allocation for user specificed table size.
+ *
+ *      NOTE: Requires T's _key as unsigned for hash insert!
  ******************************************************************************/
 #ifndef DOUBLE_HASH_H
 #define DOUBLE_HASH_H

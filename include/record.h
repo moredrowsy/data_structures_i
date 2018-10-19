@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : double_hash
+ * DESCRIPTION : This header defines a templated Record structure with _key
+ *      and _value pair. Comparison of Record type are by _key, not _value.
+ *      Used by Hash type classes.
+ ******************************************************************************/
 #ifndef RECORD_H
 #define RECORD_H
 
@@ -11,6 +20,7 @@ struct Record {
     // CONSTRUCTORS
     Record(int k = -1, const T& v = T()) : _key(k), _value(v) {}
 
+    // FRIENDS
     friend bool operator==(const Record& left, const Record& right) {
         return left._key == right._key;
     }

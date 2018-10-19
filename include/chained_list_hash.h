@@ -6,6 +6,8 @@
  * DESCRIPTION : This header defines a templated ChainedHash via singly Linked
  *      List. Table size for hash class uses dynamic allocation for user
  *      specificed table size.
+ *
+ *      NOTE: Unlike Open/Double Hash, T's _key can be negative for hash insert.
  ******************************************************************************/
 #ifndef CHAINED_LIST_HASH_H
 #define CHAINED_LIST_HASH_H
@@ -270,8 +272,6 @@ void ChainedListHash<T>::clear() {
  ******************************************************************************/
 template <typename T>
 bool ChainedListHash<T>::insert(const T& entry) {
-    assert(entry._key >= 0);
-
     typename list::List<T>::Iterator search;
     search = _data[hash(entry._key)].search(entry);
 
