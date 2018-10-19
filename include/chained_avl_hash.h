@@ -264,7 +264,10 @@ void ChainedAVLHash<T>::clear() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Insert templated item into _data table via its _key
+ *  Insert entry item with its _key. Entries are non-unique. If two entries
+ *  have the same _key but different _value, then old entry is replaced.
+ *  AVL's reinsert allow reinserting the same item but with different
+ *  subproperties.
  *
  * PRE-CONDITIONS:
  *  none
@@ -274,20 +277,11 @@ void ChainedAVLHash<T>::clear() {
  *  item added into _data
  *
  * RETURN:
- *  bool
+ *  none
  ******************************************************************************/
 template <typename T>
 bool ChainedAVLHash<T>::insert(const T& entry) {
-    bool is_found = false;
-    bst_node::TreeNode<T>* search;
-
-    is_found = _data[hash(entry._key)].search(T(entry._key), search);
-
-    if(is_found)
-        search->_item = entry;
-    else
-        _data[hash(entry._key)].insert(entry);
-
+    _data[hash(entry._key)].reinsert(entry);  // reinsert allow modifications
     ++_total_records;
 
     return true;

@@ -258,7 +258,8 @@ void ChainedListHash<T>::clear() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Insert templated item into _data table via its _key
+ *  Insert entry item with its _key. Entries are non-unique. If two entries
+ *  have the same _key but different _value, then old entry is replaced.
  *
  * PRE-CONDITIONS:
  *  none

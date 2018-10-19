@@ -338,7 +338,8 @@ void DoubleHash<T>::clear() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Insert templated item into _data table via its _key
+ *  Insert entry item with its _key. Entries are non-unique. If two entries
+ *  have the same _key but different _value, then old entry is replaced.
  *
  * PRE-CONDITIONS:
  *  _total_records < _TABLE_SIZE
@@ -361,10 +362,7 @@ bool DoubleHash<T>::insert(const T& entry) {
         // EXIT and return false when hash key not found and FULL TABLE
         if(_total_records >= _TABLE_SIZE) return false;
 
-        if(_data[hash1(entry._key)]._key <= NEVER_USED)  // if 1st pos is avail
-            i = hash1(entry._key);
-        else
-            while(!is_vacant(i)) i = next_index(entry._key, i);
+        while(!is_vacant(i)) i = next_index(entry._key, i);
         ++_total_records;
     }
 

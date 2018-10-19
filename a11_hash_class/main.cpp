@@ -29,12 +29,37 @@ double* test_random_hash(O* obj, const L* list, unsigned sample_size,
 void test_timing_hashes(unsigned table_size = 811, unsigned iterations = 700,
                         unsigned sample_size = 1000);
 
-int main() {
-    const bool RANDOM = true;
-    const bool INTERACTIVE_OPEN = false;
-    const bool INTERACTIVE_DOUBLE = false;
-    const bool INTERACTIVE_CHAINED_AVL = false;
-    const bool INTERACTIVE_CHAINED_LIST = false;
+int main(int argc, char* argv[]) {
+    const int BOOL_SIZE = 5;
+    bool RANDOM = false;
+    bool INTERACTIVE_OPEN = false;
+    bool INTERACTIVE_DOUBLE = false;
+    bool INTERACTIVE_CHAINED_AVL = false;
+    bool INTERACTIVE_CHAINED_LIST = false;
+    bool* options[] = {&RANDOM, &INTERACTIVE_OPEN, &INTERACTIVE_DOUBLE,
+                       &INTERACTIVE_CHAINED_AVL, &INTERACTIVE_CHAINED_LIST};
+
+    // PROCESS ARGUMENT FLAGS
+    if(argc == 1) RANDOM = true;
+    for(int i = 1; i < argc; ++i) {
+        if(std::string(argv[i]) == "-all")
+            for(int i = 0; i < BOOL_SIZE; ++i) *options[i] = true;
+
+        if(std::string(argv[i]) == "-interactive-all")
+            for(int i = 1; i < BOOL_SIZE; ++i) *options[i] = true;
+
+        if(std::string(argv[i]) == "-random") RANDOM = true;
+
+        if(std::string(argv[i]) == "-open") INTERACTIVE_OPEN = true;
+
+        if(std::string(argv[i]) == "-double") INTERACTIVE_DOUBLE = true;
+
+        if(std::string(argv[i]) == "-chained-avl")
+            INTERACTIVE_CHAINED_AVL = true;
+
+        if(std::string(argv[i]) == "-chained-list")
+            INTERACTIVE_CHAINED_LIST = true;
+    }
 
     OpenHash* open = nullptr;
     DoubleHash* doubleh = nullptr;
@@ -42,29 +67,30 @@ int main() {
     ChainedListHash* chained_list = nullptr;
 
     if(RANDOM) {
+        std::cout << std::endl;
         test_timing_hashes();
-        std::cout << std::endl << std::endl;
     }
 
     if(INTERACTIVE_OPEN) {
+        std::cout << std::endl;
         open = new OpenHash(17);
         test_hash_table_interactive(open, "open_hash_table");
-        std::cout << std::endl << std::endl;
     }
 
     if(INTERACTIVE_DOUBLE) {
+        std::cout << std::endl;
         doubleh = new DoubleHash(17);
         test_hash_table_interactive(doubleh, "double_hash_table");
-        std::cout << std::endl << std::endl;
     }
 
     if(INTERACTIVE_CHAINED_AVL) {
+        std::cout << std::endl;
         chained_AVL = new ChainedAVLHash(17);
         test_hash_table_interactive(chained_AVL, "chained_avl_hash_table");
-        std::cout << std::endl << std::endl;
     }
 
     if(INTERACTIVE_CHAINED_LIST) {
+        std::cout << std::endl;
         chained_list = new ChainedListHash(17);
         test_hash_table_interactive(chained_list, "chained_list_hash_table");
     }

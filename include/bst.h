@@ -37,6 +37,7 @@ public:
     void clear();
     bool erase(const T& target);
     bool insert(const T& insert_me);
+    void reinsert(const T& insert_me);
     void pop_front();
 
     // FRIENDS
@@ -259,6 +260,25 @@ bool BST<T>::erase(const T& target) {
 template <typename T>
 bool BST<T>::insert(const T& insert_me) {
     return bst_node::tree_insert(_root, insert_me);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Reinsert an equivalent T item, which has different sub-properties.
+ *  Ex: _key of old and new item are the same but have different item _values.
+ *
+ * PRE-CONDITIONS:
+ *  const T& insert_me: target item
+ *
+ * POST-CONDITIONS:
+ *  TreeNode<T>* _root: new node inserted
+ *
+ * RETURN:
+ *  bool: insertion success/failure
+ ******************************************************************************/
+template <typename T>
+void BST<T>::reinsert(const T& insert_me) {
+    return bst_node::tree_reinsert(_root, insert_me, true);
 }
 
 /*******************************************************************************

@@ -359,11 +359,7 @@ bool OpenHash<T>::insert(const T& entry) {
         // EXIT and return false when hash key not found and FULL TABLE
         if(_total_records >= _TABLE_SIZE) return false;
 
-        if(_data[hash(entry._key)]._key <= NEVER_USED)  // if 1st pos is avail
-            i = hash(entry._key);
-        else
-            while(!is_vacant(i)) i = next_index(i);  // look until vacant
-
+        while(!is_vacant(i)) i = next_index(i);
         ++_total_records;
     }
 

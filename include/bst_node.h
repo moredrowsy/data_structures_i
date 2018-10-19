@@ -43,7 +43,10 @@ struct TreeNode {
 };
 
 template <typename T>  // add a node in the binary tree
-bool tree_insert(TreeNode<T>*& root, const T& insert_me, bool balance = false);
+bool tree_insert(TreeNode<T>*& root, const T& target, bool balance = false);
+
+template <typename T>  // add a node in the binary tree
+void tree_reinsert(TreeNode<T>*& root, const T& target, bool balance = false);
 
 template <typename T>  // search tree and return node if found
 TreeNode<T>* tree_search(TreeNode<T>* root, const T& target);
@@ -181,21 +184,53 @@ int TreeNode<T>::update_height() {
  *  bool: insertion success/failure
  ******************************************************************************/
 template <typename T>
-bool tree_insert(TreeNode<T>*& root, const T& insert_me, bool balance) {
+bool tree_insert(TreeNode<T>*& root, const T& target, bool balance) {
     bool is_insert = false;
 
     if(!root) {
-        root = new TreeNode<T>(insert_me);
+        root = new TreeNode<T>(target);
         is_insert = true;
-    } else if(insert_me < root->_item)
-        is_insert = tree_insert(root->_left, insert_me, balance);  // --> left
-    else if(insert_me > root->_item)
-        is_insert = tree_insert(root->_right, insert_me, balance);  // --> right
+    } else if(target < root->_item)
+        is_insert = tree_insert(root->_left, target, balance);  // --> left
+    else if(target > root->_item)
+        is_insert = tree_insert(root->_right, target, balance);  // --> right
 
     root->update_height();
     if(balance) root = rotate(root);
 
     return is_insert;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Reinsert an equivalent T item, which has different sub-properties.
+ *  Ex: _key of old and new item are the same but have different item _values.
+ *  If balance is true, will rotate tree to full or complete binary tree.
+ *
+ * PRE-CONDITIONS:
+ *  TreeNode<T>*& root: root by reference
+ *  const T& insert_me: target item
+ *  bool balance      : rotate nodes to balance tree
+ *
+ * POST-CONDITIONS:
+ *  TreeNode<T>*& root: node added to root
+ *
+ * RETURN:
+ *  bool: insertion success/failure
+ ******************************************************************************/
+template <typename T>
+void tree_reinsert(TreeNode<T>*& root, const T& target, bool balance) {
+    if(!root)
+        root = new TreeNode<T>(target);
+    else if(target == root->_item)
+        root->_item = target;
+    else if(target < root->_item)
+        tree_insert(root->_left, target, balance);  // --> left
+    else if(target > root->_item)
+        tree_insert(root->_right, target, balance);  // --> right
+
+    root->update_height();
+    if(balance) root = rotate(root);
 }
 
 /*******************************************************************************
