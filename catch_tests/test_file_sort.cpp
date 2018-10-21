@@ -6,38 +6,63 @@ void gen_rand_int_file(std::string fname, int sample_osize = 250000);
 SCENARIO("FileSort", "[fsort]") {
     using namespace file_sort;
 
-    int random_size = 250000, buffer_size = 2500;
+    bool is_sorted = false;
+    int random_size = 250000, buffer_size = 2500, in_count = -1, out_count = -1;
+    std::ifstream fin;
+    std::ofstream fout;
     std::string test_file = "test.txt", result_file = "result.txt";
 
     GIVEN("varying data sizes, varying block sizes > 0") {
-        FileSort<int> fsort(test_file, result_file);
-
-        random_size = 1;
-        buffer_size = 1;
+        FileSort<int> fsort;
 
         for(int i = 0; i < 25; ++i) {
             random_size = i;
+
             for(int j = 1; j < 50; ++j) {  // BUFFER SIZE CAN NOT BE ZERO!
-                buffer_size = j;
+                // open and close fstreams in binary mode!
+                fin.close();
+                fout.close();
+
                 gen_rand_int_file(test_file, random_size);
 
-                fsort.set_block_size(buffer_size);
-                fsort.sort();
+                buffer_size = j;
+                fsort.set_buffer(buffer_size);
 
-                // assert data count from infile matches outfile
-                REQUIRE(fsort.count_infile() == fsort.count_outfile());
+                fin.open(test_file, std::ios::binary);
+                fout.open(result_file, std::ios::binary);
 
-                // if outfile has data, assert that data is sorted
-                if(fsort.count_infile())
-                    REQUIRE(fsort.validate_sorted() == true);
+                fin >> fsort;
+                fout << fsort;
+
+                fin.close();
+                fout.close();
+
+                fin.open(test_file, std::ios::binary);
+                in_count = count_file<int>(fin);
+                fin.close();
+
+                fin.open(result_file, std::ios::binary);
+                out_count = count_file<int>(fin);
+                is_sorted = validate_sorted_file<int>(fin);
+                fin.close();
+
+                if(i != 0) {
+                    REQUIRE(in_count != 0);
+                    REQUIRE(out_count != 0);
+                }
+
+                REQUIRE(in_count == out_count);
+                REQUIRE(is_sorted == true);
 
                 // clean up associated files to repare for next iteration
-                fsort.remove_in_file();
-                fsort.remove_out_file();
-                fsort.cleanup();
+                std::remove(test_file.c_str());
+                std::remove(result_file.c_str());
             }
         }
     }
+
+    std::remove(test_file.c_str());
+    std::remove(result_file.c_str());
 }
 
 void gen_rand_int_file(std::string fname, int sample_osize) {

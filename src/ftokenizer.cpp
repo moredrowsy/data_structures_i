@@ -17,7 +17,11 @@ namespace ftokenizer {
  *  none
  ******************************************************************************/
 FTokenizer::FTokenizer(char* fname)
-    : _f(fname), _stk(), _pos(0), _block_pos(0), _more(false) {
+    : _f(fname, std::ios::binary),
+      _stk(),
+      _pos(0),
+      _block_pos(0),
+      _more(false) {
     assert(_f);
 }
 

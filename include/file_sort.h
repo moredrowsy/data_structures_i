@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : file_sort
+ * DESCRIPTION : This header defines a templated file data sort. It takes in an
+ *      ifstream object and parses it into temporary files. It then takes in
+ *      an ofstream object and return sorted items to it.
+ *
+ *      NOTE: Fstream objects must be opened in binary mode, std::ios::binary!
+ *            Under Windows, opening in text mode will not have 1:1 read
+ *            chars:position. Thus text mode give seek position.
+ ******************************************************************************/
 #ifndef FILE_SORT_H
 #define FILE_SORT_H
 
@@ -14,7 +27,7 @@ namespace file_sort {
 
 struct FileInfo {
     // CONSTRUCTORS
-    FileInfo(std::string name, int fpos = 0)
+    FileInfo(std::string name, std::streampos fpos = 0)
         : _name(name), _if(_name, std::ios::binary), _fpos(fpos) {
         assert(_if.is_open());
     }
@@ -26,7 +39,7 @@ struct FileInfo {
 
     std::string _name;
     std::ifstream _if;  // must initialize with existing file or fail!
-    int _fpos;
+    std::streampos _fpos;
 };
 
 template <typename T>
@@ -35,176 +48,87 @@ public:
     enum { MAX_BLOCK = 250000 };
 
     // CONSTRUCTOR & DESTRUCTOR
-    FileSort(std::string in = "in_file.txt", std::string out = "out_file.txt",
-             std::size_t s = MAX_BLOCK);
+    FileSort(std::size_t s = MAX_BLOCK, std::string tname = "__temp");
     ~FileSort();
 
-    // ACCESSORS
-    std::string in_filename() const;   // return current in-file name
-    std::string out_filename() const;  // return current out-file name
-
     // MUTATORS
-    int count_infile();      // total data elements in in-file
-    int count_outfile();     // total data elements in out-file
-    bool validate_sorted();  // validate outfile is sorted
-    void cleanup();          // clean up all stream objects and temp files
-    void remove_in_file();   // remove out-file
-    void remove_out_file();  // remove out-file
-    bool set_ifname(std::string ifname);    // change in-file name
-    void set_ofname(std::string ofname);    // change out-file name
-    void set_block_size(std::size_t size);  // change max block size
-    void sort();                            // process input file and sort
+    void cleanup();  // clean up all stream objects and temp files
+    void set_buffer(std::size_t size);      // change max block size
+    void set_temp_name(std::string tname);  // set temp output file prefix
+
+    // FRIENDS
+    friend std::istream &operator>>(std::istream &ins, FileSort<T> &fs) {
+        return fs._parse_infile(ins);
+    }
+
+    friend std::ostream &operator<<(std::ostream &outs, FileSort<T> &fs) {
+        return fs._parse_tempfiles(outs);
+    }
 
 private:
-    std::string _ifname;                // in-file stream name
-    std::string _ofname;                // out-file stream name
-    std::ifstream _if;                  // in-stream object
-    std::ofstream _of;                  // out-stream object
+    std::size_t _buffer_size;           // maximum size for memory allocation
     std::size_t _tsize;                 // number of temporary file outputs
-    std::size_t _max_block;             // maximum size for memory allocation
+    std::string _tname;                 // temporary file prefix
     std::vector<FileInfo> _file_infos;  // holds file name, pos and ifstream
 
     // MUTATORS
-    void _parse_infile();     // start in-file via _if
-    void _parse_tempfiles();  // sort temporary files and output via _of
-    void _output_block(int *block, std::size_t size);  // create temp files
+    std::istream &_parse_infile(std::istream &ins);      // read in-stream
+    std::ostream &_parse_tempfiles(std::ostream &outs);  // write out-stream
+    // output a block of data to a unique temporary file
+    void _output_block(int *block, std::size_t size);
 };
 
+// public helper function to count data in file stream
 template <typename T>
-FileSort<T>::FileSort(std::string in, std::string out, std::size_t s)
-    : _ifname(in),
-      _ofname(out),
-      _if(_ifname, std::ios::binary),
-      _tsize(0),
-      _max_block(s) {
-    assert(!_ifname.empty());
-    assert(!_ofname.empty());
-    assert(_max_block > 0);
+int count_file(std::istream &ins);
+
+// public helper function to verify a medium sized file is sorted
+// for testing purposes
+template <typename T>
+bool validate_sorted_file(std::istream &ins);
+
+template <typename T>
+FileSort<T>::FileSort(std::size_t s, std::string tname)
+    : _buffer_size(s), _tsize(0), _tname(tname) {
+    assert(_buffer_size > 0);
+    assert(!_tname.empty());
 }
 
 template <typename T>
 FileSort<T>::~FileSort() {
-    for(auto &a : _file_infos) std::remove(a._name.c_str());  // delete all temp
-}
-
-template <typename T>
-std::string FileSort<T>::in_filename() const {
-    return _ifname;
-}
-
-template <typename T>
-std::string FileSort<T>::out_filename() const {
-    return _ofname;
-}
-
-template <typename T>
-int FileSort<T>::count_infile() {
-    _if.close();
-    std::ifstream read(_ifname, std::ios::binary);
-
-    int count = 0;
-    T temp;
-    while(read >> temp) ++count;
-
-    return count;
-}
-
-template <typename T>
-int FileSort<T>::count_outfile() {
-    _of.close();
-    std::ifstream read(_ofname, std::ios::binary);
-
-    int count = 0;
-    T temp;
-    while(read >> temp) ++count;
-
-    return count;
-}
-
-template <typename T>
-bool FileSort<T>::validate_sorted() {
-    _of.close();
-
-    std::ifstream fin(_ofname.c_str(), std::ios::binary);
-    bool is_sorted = fin.is_open();
-    T prev, current;
-
-    fin >> prev;
-    while(fin >> current) {
-        if(prev > current) {
-            is_sorted = false;
-            break;
-        }
-
-        prev = current;
-    }
-
-    return is_sorted;
+    cleanup();
 }
 
 template <typename T>
 void FileSort<T>::cleanup() {
     for(auto &a : _file_infos) std::remove(a._name.c_str());  // delete all temp
-
     _file_infos.clear();
     _tsize = 0;
-    _if.close();
-    _of.close();
 }
 
 template <typename T>
-void FileSort<T>::remove_in_file() {
-    _if.close();
-    std::remove(_ifname.c_str());
-}
-
-template <typename T>
-void FileSort<T>::remove_out_file() {
-    _of.close();
-    std::remove(_ofname.c_str());
-}
-
-template <typename T>
-bool FileSort<T>::set_ifname(std::string ifname) {
-    _ifname = ifname;
-    _if.close();
-    _if.open(_ifname, std::ios::binary);
-
-    return _if.is_open();
-}
-
-template <typename T>
-void FileSort<T>::set_ofname(std::string ofname) {
-    _ofname = ofname;
-}
-
-template <typename T>
-void FileSort<T>::set_block_size(std::size_t size) {
+void FileSort<T>::set_buffer(std::size_t size) {
     assert(size > 0);
-    _max_block = size;
+    _buffer_size = size;
 }
 
 template <typename T>
-void FileSort<T>::sort() {
-    // reopen file if not open!
-    if(!_if.is_open()) _if.open(_ifname.c_str(), std::ios::binary);
-    assert(_if.is_open());
-
-    _parse_infile();
-    _parse_tempfiles();
+void FileSort<T>::set_temp_name(std::string tname) {
+    assert(!tname.empty());
+    _tname = tname;
 }
 
 template <typename T>
-void FileSort<T>::_parse_infile() {
+std::istream &FileSort<T>::_parse_infile(std::istream &ins) {
     int i = 0;
     T *block = nullptr;
 
-    block = new T[_max_block];
+    block = new T[_buffer_size];
 
-    while(_if >> block[i]) {
+    while(ins >> block[i]) {
         ++i;
 
-        if(i == (int)_max_block) {  // file output if block is full
+        if(i == (int)_buffer_size) {  // file output if block is full
             _output_block(block, i);
             i = 0;
         }
@@ -212,14 +136,15 @@ void FileSort<T>::_parse_infile() {
     if(i) _output_block(block, i);  // output last block if has data
 
     delete[] block;
+
+    return ins;
 }
 
 template <typename T>
-void FileSort<T>::_parse_tempfiles() {
+std::ostream &FileSort<T>::_parse_tempfiles(std::ostream &outs) {
+    int min_index = -1;
+    std::streampos fpos = -1;
     T current, min;
-    int min_index = -1, fpos = -1;
-
-    if(_file_infos.size()) _of.open(_ofname, std::ios::binary);
 
     while(_file_infos.size()) {  // loop until _file_infos is size zero
         // read first data to current
@@ -245,7 +170,7 @@ void FileSort<T>::_parse_tempfiles() {
         }
 
         // add min to output file and update fpos to min_index's FileInfo
-        _of << min << std::endl;
+        outs << min << std::endl;
         _file_infos[min_index]._fpos = fpos;
 
         // remove block file if file read fails via fpos -1 or 0
@@ -256,13 +181,13 @@ void FileSort<T>::_parse_tempfiles() {
         }
     }
 
-    _of.close();
+    return outs;
 }
 
 template <typename T>
 void FileSort<T>::_output_block(int *block, std::size_t size) {
     // generate unique block file name
-    std::string name = _ifname + "." + std::to_string(_tsize++);
+    std::string name = _tname + "." + std::to_string(_tsize++);
 
     std::sort(block, block + size);  // sort block
 
@@ -275,6 +200,36 @@ void FileSort<T>::_output_block(int *block, std::size_t size) {
     fout.close();
 
     _file_infos.push_back(name);  // must push back name after file creation!!!
+}
+
+template <typename T>
+int count_file(std::istream &ins) {
+    ins.seekg(0);
+
+    int count = 0;
+    T temp;
+    while(ins >> temp) ++count;
+
+    return count;
+}
+
+template <typename T>
+bool validate_sorted_file(std::istream &ins) {
+    bool is_sorted = true;
+    T prev, current;
+
+    ins.seekg(0);
+    ins >> prev;
+    while(ins >> current) {
+        if(prev > current) {
+            is_sorted = false;
+            break;
+        }
+
+        prev = current;
+    }
+
+    return is_sorted;
 }
 
 }  // namespace file_sort

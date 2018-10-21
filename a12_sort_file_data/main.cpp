@@ -23,20 +23,30 @@ void gen_rand_int_file(std::string fname, int sample_osize) {
 void test_file_sort() {
     using namespace file_sort;
 
-    int random_size = 250000;
-    int buffer_size = 2500;
+    int random_size = 23;
+    int buffer_size = 5;
     std::string in_file = "random_ints.txt", out_file = "results.txt";
 
     gen_rand_int_file(in_file, random_size);
 
-    FileSort<int> fsort(in_file, out_file);
+    std::ifstream fin(in_file.c_str(), std::ios::binary);
+    std::ofstream fout(out_file.c_str(), std::ios::binary);
+    FileSort<int> fsort(buffer_size);
 
-    fsort.sort();
+    fin >> fsort;
+    fout << fsort;
+    fout.close();
 
-    std::cout << "Count for infile: " << fsort.count_infile() << std::endl;
+    fin.close();
+    fin.open(in_file, std::ios::binary);
+    std::cout << "Count for infile: " << count_file<int>(fin) << std::endl;
 
-    std::cout << "Count for outfile: " << fsort.count_outfile() << std::endl;
+    fin.close();
+    fin.open(out_file, std::ios::binary);
+    std::cout << "Count for outfile: " << count_file<int>(fin) << std::endl;
 
-    std::cout << "Output file is sorted: " << fsort.validate_sorted()
+    fin.close();
+    fin.open(out_file, std::ios::binary);
+    std::cout << "Output file is sorted: " << validate_sorted_file<int>(fin)
               << std::endl;
 }
