@@ -9,7 +9,7 @@ LIB             := ../lib
 OBJ             := ${LIB}/catch.o\
                    test_node.o test_list.o test_queue.o test_stack.o\
                    test_bst_node.o test_bst.o test_avl.o test_heap.o\
-                   test_pqueue.o
+                   test_pqueue.o test_file_sort.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -95,6 +95,14 @@ test_pqueue.out: ${LIB}/catch.o test_pqueue.o
 test_pqueue.o: test_pqueue.cpp\
 	${INC}/heap.h\
 	${INC}/pqueue.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test file_sort
+test_file_sort.out: ${LIB}/catch.o test_file_sort.o
+	$(CXX) -o $@ $^
+
+test_file_sort.o: test_file_sort.cpp\
+	${INC}/file_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
