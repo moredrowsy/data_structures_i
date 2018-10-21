@@ -41,7 +41,7 @@ SCENARIO("FileSort", "[fsort]") {
 }
 
 void gen_rand_int_file(std::string fname, int sample_osize) {
-    std::ofstream fout(fname.c_str());
+    std::ofstream fout(fname.c_str(), std::ios::binary);
 
     for(int i = 0; i < sample_osize; ++i) {
         fout << rand() << std::endl;

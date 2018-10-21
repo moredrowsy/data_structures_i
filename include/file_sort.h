@@ -15,7 +15,7 @@ namespace file_sort {
 struct FileInfo {
     // CONSTRUCTORS
     FileInfo(std::string name, int fpos = 0)
-        : _name(name), _if(_name), _fpos(fpos) {
+        : _name(name), _if(_name, std::ios::binary), _fpos(fpos) {
         assert(_if.is_open());
     }
 
@@ -72,7 +72,11 @@ private:
 
 template <typename T>
 FileSort<T>::FileSort(std::string in, std::string out, std::size_t s)
-    : _ifname(in), _ofname(out), _if(_ifname), _tsize(0), _max_block(s) {
+    : _ifname(in),
+      _ofname(out),
+      _if(_ifname, std::ios::binary),
+      _tsize(0),
+      _max_block(s) {
     assert(!_ifname.empty());
     assert(!_ofname.empty());
     assert(_max_block > 0);
@@ -96,7 +100,7 @@ std::string FileSort<T>::out_filename() const {
 template <typename T>
 int FileSort<T>::count_infile() {
     _if.close();
-    std::ifstream read(_ifname);
+    std::ifstream read(_ifname, std::ios::binary);
 
     int count = 0;
     T temp;
@@ -108,7 +112,7 @@ int FileSort<T>::count_infile() {
 template <typename T>
 int FileSort<T>::count_outfile() {
     _of.close();
-    std::ifstream read(_ofname);
+    std::ifstream read(_ofname, std::ios::binary);
 
     int count = 0;
     T temp;
@@ -121,7 +125,7 @@ template <typename T>
 bool FileSort<T>::validate_sorted() {
     _of.close();
 
-    std::ifstream fin(_ofname.c_str());
+    std::ifstream fin(_ofname.c_str(), std::ios::binary);
     bool is_sorted = fin.is_open();
     T prev, current;
 
@@ -164,7 +168,7 @@ template <typename T>
 bool FileSort<T>::set_ifname(std::string ifname) {
     _ifname = ifname;
     _if.close();
-    _if.open(_ifname);
+    _if.open(_ifname, std::ios::binary);
 
     return _if.is_open();
 }
@@ -182,8 +186,10 @@ void FileSort<T>::set_block_size(std::size_t size) {
 
 template <typename T>
 void FileSort<T>::sort() {
-    if(!_if.is_open()) _if.open(_ifname.c_str());  // reopen file if not open!
+    // reopen file if not open!
+    if(!_if.is_open()) _if.open(_ifname.c_str(), std::ios::binary);
     assert(_if.is_open());
+
     _parse_infile();
     _parse_tempfiles();
 }
@@ -213,7 +219,7 @@ void FileSort<T>::_parse_tempfiles() {
     T current, min;
     int min_index = -1, fpos = -1;
 
-    if(_file_infos.size()) _of.open(_ofname);
+    if(_file_infos.size()) _of.open(_ofname, std::ios::binary);
 
     while(_file_infos.size()) {  // loop until _file_infos is size zero
         // read first data to current
@@ -242,8 +248,8 @@ void FileSort<T>::_parse_tempfiles() {
         _of << min << std::endl;
         _file_infos[min_index]._fpos = fpos;
 
-        // remove block file if file read fails via fpos -1
-        if(fpos < 0) {
+        // remove block file if file read fails via fpos -1 or 0
+        if(fpos < 1) {
             std::remove(_file_infos[min_index]._name.c_str());
             _file_infos.erase(_file_infos.begin() + min_index);
             --_tsize;
@@ -260,7 +266,7 @@ void FileSort<T>::_output_block(int *block, std::size_t size) {
 
     std::sort(block, block + size);  // sort block
 
-    std::ofstream fout(name, std::ofstream::out | std::ofstream::trunc);
+    std::ofstream fout(name, std::ios::binary | std::ios::trunc);
     for(std::size_t i = 0; i < size; ++i) {
         fout << block[i];
 
