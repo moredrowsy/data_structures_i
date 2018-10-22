@@ -58,11 +58,11 @@ public:
 
     // FRIENDS
     friend std::istream &operator>>(std::istream &ins, FileSort<T> &fs) {
-        return fs._parse_infile(ins);
+        return fs._extractions(ins);
     }
 
     friend std::ostream &operator<<(std::ostream &outs, FileSort<T> &fs) {
-        return fs._parse_tempfiles(outs);
+        return fs._insertions(outs);
     }
 
 private:
@@ -72,20 +72,23 @@ private:
     std::vector<FileInfo> _file_infos;  // holds file name, pos and ifstream
 
     // MUTATORS
-    std::istream &_parse_infile(std::istream &ins);      // read in-stream
-    std::ostream &_parse_tempfiles(std::ostream &outs);  // write out-stream
+    std::istream &_extractions(std::istream &ins);  // read in-stream
+    std::ostream &_insertions(std::ostream &outs);  // write out-stream
     // output a block of data to a unique temporary file
     void _output_block(int *block, std::size_t size);
 };
 
+// public helper function to determine file size in BYTES
+std::ifstream::pos_type filesize(std::string fname);
+
 // public helper function to count data in file stream
 template <typename T>
-int count_file(std::istream &ins);
+int count_file(std::string fname);
 
 // public helper function to verify a medium sized file is sorted
 // for testing purposes
 template <typename T>
-bool validate_sorted_file(std::istream &ins);
+bool validate_sorted_file(std::string fname);
 
 template <typename T>
 FileSort<T>::FileSort(std::size_t s, std::string tname)
@@ -119,7 +122,7 @@ void FileSort<T>::set_temp_name(std::string tname) {
 }
 
 template <typename T>
-std::istream &FileSort<T>::_parse_infile(std::istream &ins) {
+std::istream &FileSort<T>::_extractions(std::istream &ins) {
     int i = 0;
     T *block = nullptr;
 
@@ -141,8 +144,8 @@ std::istream &FileSort<T>::_parse_infile(std::istream &ins) {
 }
 
 template <typename T>
-std::ostream &FileSort<T>::_parse_tempfiles(std::ostream &outs) {
-    int min_index = -1;
+std::ostream &FileSort<T>::_insertions(std::ostream &outs) {
+    std::size_t min_index = 0;
     std::streampos fpos = -1;
     T current, min;
 
@@ -202,9 +205,14 @@ void FileSort<T>::_output_block(int *block, std::size_t size) {
     _file_infos.push_back(name);  // must push back name after file creation!!!
 }
 
+std::ifstream::pos_type filesize(std::string fname) {
+    std::ifstream in(fname.c_str(), std::ios::ate | std::ios::binary);
+    return in.tellg();
+}
+
 template <typename T>
-int count_file(std::istream &ins) {
-    ins.seekg(0);
+int count_file(std::string fname) {
+    std::ifstream ins(fname.c_str(), std::ios::binary);
 
     int count = 0;
     T temp;
@@ -214,11 +222,11 @@ int count_file(std::istream &ins) {
 }
 
 template <typename T>
-bool validate_sorted_file(std::istream &ins) {
+bool validate_sorted_file(std::string fname) {
     bool is_sorted = true;
+    std::ifstream ins(fname.c_str(), std::ios::binary);
     T prev, current;
 
-    ins.seekg(0);
     ins >> prev;
     while(ins >> current) {
         if(prev > current) {

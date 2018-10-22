@@ -11,11 +11,11 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^
 
 main.o: main.cpp\
-	${INC}/record.h\
+	${INC}/timer.h\
 	${INC}/file_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
 
 clean:
-	rm -f *.o *.out
+	rm -f *.o *.out random_ints.txt results.txt
