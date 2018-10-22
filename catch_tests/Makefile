@@ -9,7 +9,7 @@ LIB             := ../lib
 OBJ             := ${LIB}/catch.o\
                    test_node.o test_list.o test_queue.o test_stack.o\
                    test_bst_node.o test_bst.o test_avl.o test_heap.o\
-                   test_pqueue.o test_file_sort.o
+                   test_pqueue.o  test_hash.o test_fstream_sort.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -97,12 +97,28 @@ test_pqueue.o: test_pqueue.cpp\
 	${INC}/pqueue.h
 	$(CXX) $(CXXFLAGS) -c $<
 
-# test file_sort
-test_file_sort.out: ${LIB}/catch.o test_file_sort.o
+# test hash
+test_hash.out: ${LIB}/catch.o test_hash.o
 	$(CXX) -o $@ $^
 
-test_file_sort.o: test_file_sort.cpp\
-	${INC}/file_sort.h
+test_hash.o: test_hash.cpp\
+	${INC}/record.h\
+	${INC}/node.h\
+	${INC}/list.h\
+	${INC}/bst_node.h\
+	${INC}/avl.h\
+	${INC}/open_hash.h\
+	${INC}/double_hash.h\
+	${INC}/chained_avl_hash.h\
+	${INC}/chained_list_hash.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test file_sort
+test_fstream_sort.out: ${LIB}/catch.o test_fstream_sort.o
+	$(CXX) -o $@ $^
+
+test_fstream_sort.o: test_fstream_sort.cpp\
+	${INC}/fstream_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

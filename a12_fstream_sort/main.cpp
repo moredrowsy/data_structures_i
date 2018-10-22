@@ -1,9 +1,9 @@
-#include <fstream>                 // fstream objects
-#include <iomanip>                 // setw()
-#include <iostream>                // stream objects
-#include <string>                  // c_str()
-#include "../include/file_sort.h"  // FileSort class
-#include "../include/timer.h"      // Timer class
+#include <fstream>                    // fstream objects
+#include <iomanip>                    // setw()
+#include <iostream>                   // stream objects
+#include <string>                     // c_str()
+#include "../include/fstream_sort.h"  // FStreamSort class
+#include "../include/timer.h"         // Timer class
 
 void gen_rand_int_file(std::string fname, int sample_osize = 250000);
 void test_file_sort();
@@ -18,11 +18,11 @@ void gen_rand_int_file(std::string fname, int sample_osize) {
     std::ofstream fout(fname.c_str());
 
     srand(time(nullptr));
-    for(int i = 0; i < sample_osize; ++i) fout << rand() << std::endl;
+    for(int i = 0; i < sample_osize; ++i) fout << rand() << '\n';
 }
 
 void test_file_sort() {
-    using namespace file_sort;
+    using namespace fstream_sort;
 
     int random_size = 2500000;
     int buffer_size = 250000;
@@ -39,7 +39,7 @@ void test_file_sort() {
 
     std::ifstream fin(in_file.c_str(), std::ios::binary);
     std::ofstream fout(out_file.c_str(), std::ios::binary);
-    FileSort<int> fsort(buffer_size);
+    FStreamSort<int> fsort(buffer_size);
 
     timer.start();
     fin >> fsort;

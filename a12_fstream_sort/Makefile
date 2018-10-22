@@ -12,7 +12,7 @@ main.out: $(OBJ)
 
 main.o: main.cpp\
 	${INC}/timer.h\
-	${INC}/file_sort.h
+	${INC}/fstream_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

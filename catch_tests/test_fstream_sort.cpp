@@ -1,14 +1,15 @@
-#include "../include/file_sort.h"
+#include <ctime>
+#include "../include/fstream_sort.h"
 #include "../lib/catch.hpp"
 
 void gen_rand_int_file(std::string fname, int sample_osize = 250000);
 
-SCENARIO("FileSort", "[fsort]") {
-    using namespace file_sort;
+SCENARIO("FStreamStort", "[fsort]") {
+    using namespace fstream_sort;
 
     bool is_sorted = false;
     int random_size = 250000, buffer_size = 2500, in_count = -1, out_count = -1;
-    FileSort<int> fsort;
+    FStreamSort<int> fsort;
     std::ifstream fin;
     std::ofstream fout;
     std::string test_file = "test.txt", result_file = "result.txt";
@@ -52,6 +53,8 @@ SCENARIO("FileSort", "[fsort]") {
         }
     }
 
+    fin.close();
+    fout.close();
     std::remove(test_file.c_str());
     std::remove(result_file.c_str());
 }
