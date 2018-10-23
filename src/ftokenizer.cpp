@@ -4,8 +4,7 @@ namespace ftokenizer {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Contructor that initializes ifstream to argument and performs assertion on
- *  ifstream.
+ *  Contructor initializes ifstream from cstring name and default block size
  *
  * PRE-CONDITIONS:
  *  char* fname: cstring for valid file name
@@ -16,11 +15,12 @@ namespace ftokenizer {
  * RETURN:
  *  none
  ******************************************************************************/
-FTokenizer::FTokenizer(char* fname)
+FTokenizer::FTokenizer(char *fname, std::size_t block_size)
     : _f(fname, std::ios::binary),
       _stk(),
       _pos(0),
       _block_pos(0),
+      _block_size(block_size),
       _more(false) {
     assert(_f);
 }
@@ -131,7 +131,7 @@ stokenizer::Token FTokenizer::next_token() {
  * RETURN:
  *  FTokenizer for extraction  chaining
  ******************************************************************************/
-FTokenizer& operator>>(FTokenizer& f, stokenizer::Token& t) {
+FTokenizer &operator>>(FTokenizer &f, stokenizer::Token &t) {
     t = f.next_token();
 
     return f;
@@ -153,15 +153,30 @@ FTokenizer& operator>>(FTokenizer& f, stokenizer::Token& t) {
  ******************************************************************************/
 bool FTokenizer::get_new_block() {
     // get block from file
-    char* block = new char[MAX_BLOCK];
-    _f.read(block, MAX_BLOCK - 1);
-    block[_f.gcount()] = '\0';
+    char *block = new char[_block_size];
+    _f.read(block, _block_size - 1);
+    int gcount = _f.gcount() - 1;
+
+    // rewind until non-truncation
+    while(block[gcount] != ' ' && block[gcount] != '\n' &&
+          block[gcount] != '\t' && gcount > -1)
+        --gcount;  // (gcount < 1) if rewind before initial index
+
+    if(gcount > 0) {  // when gcount is still valid from rewind
+        _f.seekg((int)_f.tellg() - ((int)_f.gcount() - ++gcount));
+        block[gcount] = '\0';
+    } else
+        block[_f.gcount()] = '\0';
 
     // add block to stk when gcount has valid char extracted in block
     if(_f.gcount()) {
         _stk.set_string(block);
-        _pos += _f.gcount();  // update position in file
-        _block_pos = 0;       // reset block position
+        _block_pos = 0;  // reset block position
+
+        if(gcount > 0)
+            _pos += gcount;
+        else
+            _pos += _f.gcount();  // update position in file
     }
 
     delete[] block;

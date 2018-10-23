@@ -6,11 +6,13 @@
  * DESCRIPTION : This header defines a templated fstream sorting.
  *      FStreamSort first takes in an istream object via operator extraction,
  *      where data are read and then dumps their contents to FStreamData
- *objects. FStreamData takes a buffer of data and write to temporary files. It's
- *attribute, _data, holds the first data element of the buffer. Internally, it
- *creates an ifstream object linked to the temp file and continuously reads its
- *content into _data. FStreamSort's finally writes the output data via operator
- *insertion. Internally, it cycles through all of FStreamData objects, find the
+ *      objects.
+ *      FStreamData takes a buffer of data and write to temporary files. It's
+ *      attribute, _data, holds the first data element of the buffer.
+ *      Internally, it creates an ifstream object linked to the temp file and
+ *      continuously reads its content into _data.
+ *      FStreamSort's finally writes the output data via operator insertion.
+ *      Internally, it cycles through  all of FStreamData objects, find the
  *      mininum value and write to the output file.
  ******************************************************************************/
 #ifndef FSTREAM_SORT_H
@@ -78,7 +80,7 @@ struct FStreamData {
 
     char _delim;
     std::string _name;
-    std::ifstream _ifstream;  // must initialize with existing file or fail!
+    std::ifstream _ifstream;
     T _data;
 };
 
@@ -109,14 +111,13 @@ private:
     char _delim;
     std::size_t _buffer_size;  // maximum size for memory allocation
     std::string _tname;        // temporary file prefix
-    std::vector<FStreamData<T>>
-        _file_infos;  // has file name, data and ifstream
+    std::vector<FStreamData<T> > _file_infos;  // FStreamData make temp files
 
     // MUTATORS
     std::istream &_extractions(std::istream &ins);  // read in-stream
     std::ostream &_insertions(std::ostream &outs);  // write out-stream
-    // output a block of data to a unique temporary file
-    inline void _dump_block(T *block, std::size_t size);
+    // sort and dump data to FStreamData objects, which writes temp files
+    inline void _sort_and_dump(T *block, std::size_t size);
 };
 
 // public helper function to determine file size in BYTES
@@ -136,13 +137,15 @@ FStreamData<T>::FStreamData(std::string name, T *block, std::size_t size,
                             char delim)
     : _delim(delim), _name(name), _ifstream(), _data() {
     if(block && size) {
-        _data = block[0];
+        _data = block[0];  // store first data element
+
+        // write the rest to temp file
         std::ofstream outs(_name, std::ios::binary | std::ios::trunc);
         for(std::size_t i = 1; i < size; ++i) outs << block[i] << _delim;
-        outs.close();
+        outs.close();  // close ofstream writing
     }
 
-    _ifstream.open(_name.c_str(), std::ios::binary);
+    _ifstream.open(_name.c_str(), std::ios::binary);  // open ifstream reading
 }
 
 template <typename T>
@@ -152,18 +155,18 @@ FStreamData<T>::operator bool() {
 
 template <typename T>
 FStreamData<T> &FStreamData<T>::operator>>(std::ostream &outs) {
-    if(_ifstream) {
-        outs << _data;
-        _ifstream >> _data;
+    if(_ifstream) {          // when ifstream is good
+        outs << _data;       // insert current data
+        _ifstream >> _data;  // extract next data
     }
     return *this;
 }
 
 template <typename T>
 FStreamData<T> &FStreamData<T>::operator>>(T &data) {
-    if(_ifstream) {
-        data = _data;
-        _ifstream >> _data;
+    if(_ifstream) {          // when ifstream is good
+        data = _data;        // insert current data
+        _ifstream >> _data;  // extract next data
     }
     return *this;
 }
@@ -180,13 +183,15 @@ bool FStreamData<T>::set_data(T *block, std::size_t size, char delim) {
     std::remove(_name.c_str());
 
     if(block && size) {
-        _data = block[0];
+        _data = block[0];  // store first data element
+
+        // write the rest to temp file
         std::ofstream outs(_name, std::ios::binary | std::ios::trunc);
         for(std::size_t i = 1; i < size; ++i) outs << block[i] << _delim;
-        outs.close();
+        outs.close();  // close ofstream writing
     }
 
-    _ifstream.open(_name.c_str(), std::ios::binary);
+    _ifstream.open(_name.c_str(), std::ios::binary);  // open ifstream reading
 
     return _ifstream.good();
 }
@@ -241,12 +246,12 @@ std::istream &FStreamSort<T>::_extractions(std::istream &ins) {
     while(ins >> block[i]) {
         ++i;
 
-        if(i == _buffer_size) {     // when block is full
-            _dump_block(block, i);  // sort and write block
+        if(i == _buffer_size) {        // when block is full
+            _sort_and_dump(block, i);  // sort and dump block
             i = 0;
         }
     }
-    if(i) _dump_block(block, i);  // sort and write last block if has data
+    if(i) _sort_and_dump(block, i);  // sort and write last block if has data
 
     delete[] block;
 
@@ -285,11 +290,11 @@ std::ostream &FStreamSort<T>::_insertions(std::ostream &outs) {
 }
 
 template <typename T>
-void FStreamSort<T>::_dump_block(T *block, std::size_t size) {
+void FStreamSort<T>::_sort_and_dump(T *block, std::size_t size) {
     // generate unique file name
     std::string name = _tname + std::to_string(_file_infos.size());
 
-    std::sort(block, block + size);  // sort block before passing to FStreamData
+    std::sort(block, block + size);  // sort data before passing to FStreamData
 
     // pass block of data to FStreamData to create temp file
     _file_infos.emplace_back(name, block, size, _delim);
