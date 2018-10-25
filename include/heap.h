@@ -3,17 +3,17 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : heap
- * DESCRIPTION : This header defines a templated binary MAX heap tree. Max item
- *      are on top of the tree and children nodes' item are less than the
- *      parent's.
+ * DESCRIPTION : This header defines a templated binary heap tree.
+ *      Default ordering is minimum heap, else with reverse = true, max heap.
+ *      Desired (min or max) item are on top of the tree and children nodes'
+ *      item are less than the parent's.
  ******************************************************************************/
 #ifndef HEAP_H
 #define HEAP_H
 
-#include <cassert>           // assertions
-#include <initializer_list>  // initializer list object for CTOR
-#include <iostream>          // stream objects
-#include <string>            // string objects
+#include <cassert>   // assertions
+#include <iostream>  // stream objects
+#include <string>    // string objects
 
 namespace heap {
 
@@ -21,10 +21,13 @@ template <typename T>
 class Heap {
 public:
     // CONSTRUCTORS
-    Heap() : _capacity(0), _size(0), _items(nullptr) {}
-    Heap(const T& item);                 // construct with one item
-    Heap(const T* list, unsigned size);  // construct with array list
-    Heap(const std::initializer_list<T>& list);
+    Heap(bool reverse = false);
+    Heap(bool (*cmp)(const T& left, const T& right));
+    Heap(const T& item, bool reverse = false);
+    Heap(const T& item, bool (*cmp)(const T& left, const T& right) = &min_cmp);
+    Heap(const T* list, unsigned size, bool reverse = false);
+    Heap(const T* list, unsigned size,
+         bool (*cmp)(const T& left, const T& right) = &min_cmp);
 
     // BIG THREE
     ~Heap();
@@ -43,6 +46,9 @@ public:
     bool insert(T item);       // insert item and rearrange heap
     T pop();                   // remove top item and rearrange heap
     bool reserve(unsigned n);  // increase capacity by amount i
+    // set the comparison function
+    void set_comp(bool (*cmp)(const T& left, const T& right));
+    void set_reverse(bool reverse);  // set heap's ordering when empty
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
@@ -52,34 +58,65 @@ public:
     }
 
 private:
+    bool _reverse = false;                        // reverse sorting to max
+    bool (*_cmp)(const T& left, const T& right);  // comparison function ptr
     unsigned _capacity;
     unsigned _size;
     T* _items;
 
     // ACCESSORS
+    // min function comparison
+    static bool min_cmp(const T& left, const T& right);
+    static bool max_cmp(const T& left, const T& right);
     // print tree in array format
     void print_tree(std::ostream& outs = std::cout) const;
     // print tree in 90 degrees counterclockwise binary format
     void print_tree(unsigned root, std::ostream& outs = std::cout,
                     unsigned level = 0) const;
-    bool is_leaf(unsigned i) const;
-    unsigned parent_index(unsigned i) const;
-    unsigned left_child_index(unsigned i) const;
-    unsigned right_child_index(unsigned i) const;
-    unsigned big_child_index(unsigned i) const;
+    inline bool is_leaf(unsigned i) const;
+    inline unsigned parent_index(unsigned i) const;
+    inline unsigned left_child_index(unsigned i) const;
+    inline unsigned right_child_index(unsigned i) const;
+    inline unsigned big_child_index(unsigned i) const;
+    inline unsigned small_child_index(unsigned i) const;
+    inline unsigned child_index(unsigned i) const;
 
     // MUTATORS
-    void deallocate_and_throw();
-    bool expand();    // update capacity and array
-    void heapDown();  // move root node down till heap structure
-    void heapUp();    // move last node up till heap structure
-    void swap_with_parent(unsigned i);  // swap parent/child node
+    inline void deallocate_and_throw();
+    inline bool expand();  // update capacity and array
+                           // move root node down till heap structure
+    inline void heapDown(bool (*cmp)(const T& left, const T& right));
+    // move last node up till heap structure
+    inline void heapUp(bool (*cmp)(const T& left, const T& right));
+    inline void swap_with_parent(unsigned i);  // swap parent/child node
 };
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Constructs Heap with an item via insert(). If insertion fails, deallocate
- *  _items and throw exception before constructor fails.
+ *  Default constructor for empty heap.
+ *
+ * PRE-CONDITIONS:
+ *  bool reverse: default is false
+ *
+ * POST-CONDITIONS:
+ *  bool reverse: user provided boolean for reverse sorting
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+Heap<T>::Heap(bool reverse)
+    : _reverse(reverse),
+      _cmp(&min_cmp),
+      _capacity(0),
+      _size(0),
+      _items(nullptr) {
+    if(_reverse) _cmp = &max_cmp;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructs Heap with provided comparison function.
  *
  * PRE-CONDITIONS:
  *  const T& item: templated item
@@ -91,7 +128,53 @@ private:
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
+Heap<T>::Heap(bool (*cmp)(const T& left, const T& right))
+    : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructs Heap with an item via insert(). If insertion fails, deallocate
+ *  _items and throw exception before constructor fails.
+ *
+ * PRE-CONDITIONS:
+ *  const T& item: templated item
+ *  bool reverse : reverse sorting
+ *
+ * POST-CONDITIONS:
+ *  item inserted to Heap, _size and _capacity increased by 1
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+Heap<T>::Heap(const T& item, bool reverse)
+    : _reverse(reverse),
+      _cmp(&min_cmp),
+      _capacity(0),
+      _size(0),
+      _items(nullptr) {
+    if(_reverse) _cmp = &max_cmp;
+    if(!insert(item)) deallocate_and_throw();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructs Heap with an item via insert(). If insertion fails, deallocate
+ *  _items and throw exception before constructor fails.
+ *
+ * PRE-CONDITIONS:
+ *  const T& item: templated item
+ * bool (*cmp)   : comparision function with two params
+ *
+ * POST-CONDITIONS:
+ *  item inserted to Heap, _size and _capacity increased by 1
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+Heap<T>::Heap(const T& item, bool (*cmp)(const T& left, const T& right))
+    : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {
     if(!insert(item)) deallocate_and_throw();
 }
 
@@ -113,10 +196,15 @@ Heap<T>::Heap(const T& item) : _capacity(0), _size(0), _items(nullptr) {
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const T* list, unsigned size)
-    : _capacity(0), _size(0), _items(nullptr) {
-    if(!reserve(size)) deallocate_and_throw();
+Heap<T>::Heap(const T* list, unsigned size, bool reverse)
+    : _reverse(reverse),
+      _cmp(&min_cmp),
+      _capacity(0),
+      _size(0),
+      _items(nullptr) {
+    if(_reverse) _cmp = &max_cmp;
 
+    if(!reserve(size)) deallocate_and_throw();
     for(unsigned i = 0; i < size; ++i) insert(list[i]);
 }
 
@@ -128,19 +216,21 @@ Heap<T>::Heap(const T* list, unsigned size)
  *
  * PRE-CONDITIONS:
  *  const T* list       : array of templated items
+ *  unsigned size: array size
  *
  * POST-CONDITIONS:
- *  templated items inserted to Heap, _size and _capacity increased
+ *  templated items inserted to Heap, _size and _capacity increased by
+ *  array size
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const std::initializer_list<T>& list)
-    : _capacity(0), _size(0), _items(nullptr) {
-    if(!reserve(list.size())) deallocate_and_throw();
-
-    for(const T& i : list) insert(i);
+Heap<T>::Heap(const T* list, unsigned size,
+              bool (*cmp)(const T& left, const T& right))
+    : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {
+    if(!reserve(size)) deallocate_and_throw();
+    for(unsigned i = 0; i < size; ++i) insert(list[i]);
 }
 
 /*******************************************************************************
@@ -177,9 +267,13 @@ Heap<T>::~Heap() {
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const Heap<T>& src) : _capacity(0), _size(0), _items(nullptr) {
+Heap<T>::Heap(const Heap<T>& src)
+    : _reverse(src._reverse),
+      _cmp(src._cmp),
+      _capacity(0),
+      _size(0),
+      _items(nullptr) {
     if(!reserve(src._capacity)) deallocate_and_throw();
-
     for(unsigned i = 0; i < src._size; ++i) insert(src._items[i]);
 }
 
@@ -202,11 +296,12 @@ template <typename T>
 Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
     if(this != &rhs) {
         delete[] _items;
+        _reverse = rhs._reverse;
+        _cmp = rhs._cmp;
         _items = nullptr;
         _size = _capacity = 0;
 
         if(!reserve(rhs._capacity)) deallocate_and_throw();
-
         for(unsigned i = 0; i < rhs._size; ++i) insert(rhs._items[i]);
     }
 
@@ -358,7 +453,7 @@ bool Heap<T>::insert(T item) {
         ++_size;
         _items[_size - 1] = item;
 
-        if(_size > 1) heapUp();
+        if(_size > 1) heapUp(_cmp);
     }
 
     return is_good;
@@ -385,7 +480,7 @@ T Heap<T>::pop() {
     _items[0] = _items[_size - 1];
     --_size;
 
-    if(_size) heapDown();
+    if(_size) heapDown(_cmp);
 
     return pop;
 }
@@ -425,6 +520,82 @@ bool Heap<T>::reserve(unsigned n) {
     }
 
     return is_good;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Override the heap's internal comparison function.
+ *
+ * PRE-CONDITIONS:
+ *  bool (*cmp)(const T& left, const T& right): comparison function
+ *
+ * POST-CONDITIONS:
+ *  _cmp = cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void Heap<T>::set_comp(bool (*cmp)(const T& left, const T& right)) {
+    assert(empty());
+    _cmp = cmp;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set the heap's internal sort ordering. Must be set when heap is empty!
+ *  Will also override user provided comparison function if set to true.
+ *
+ * PRE-CONDITIONS:
+ *  bool reverse: true = max ordering, false = min ordering
+ *
+ * POST-CONDITIONS:
+ *  _items allocation if n > _capacity
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void Heap<T>::set_reverse(bool reverse) {
+    assert(empty());
+    _reverse = reverse;
+    if(_reverse) _cmp = &max_cmp;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Less than comparison
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+bool Heap<T>::min_cmp(const T& left, const T& right) {
+    return left < right;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Greater than comparison
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+bool Heap<T>::max_cmp(const T& left, const T& right) {
+    return left > right;
 }
 
 /*******************************************************************************
@@ -545,10 +716,10 @@ unsigned Heap<T>::right_child_index(unsigned i) const {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Find index of the largest of the two children.
+ * Find index of the larger of the two children.
  *
  * PRE-CONDITIONS:
- *  none
+ *  unsigned i: parent's index
  *
  * POST-CONDITIONS:
  *  none
@@ -561,6 +732,53 @@ unsigned Heap<T>::big_child_index(unsigned i) const {
     return _items[left_child_index(i)] < _items[right_child_index(i)]
                ? right_child_index(i)
                : left_child_index(i);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ * Find index of the smaller of the two children.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned i: parent's index
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
+template <typename T>
+unsigned Heap<T>::small_child_index(unsigned i) const {
+    return _items[left_child_index(i)] < _items[right_child_index(i)]
+               ? left_child_index(i)
+               : right_child_index(i);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ * Find index of the smaller of the two children.
+ *
+ * PRE-CONDITIONS:
+ *  unsigned i: parent's index
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  unsigned
+ ******************************************************************************/
+template <typename T>
+unsigned Heap<T>::child_index(unsigned i) const {
+    unsigned child = 0;
+
+    if(!is_leaf(i)) {
+        if(_cmp(0, 1))
+            child = small_child_index(i);
+        else
+            child = big_child_index(i);
+    }
+
+    return child;
 }
 
 /*******************************************************************************
@@ -622,8 +840,9 @@ bool Heap<T>::expand() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Move item at top down until item is less than parent. Move down to the
- *  larger of children's path. REQUIRE _size > 0. Does nothing if size is 1.
+ *  Move item at top down until child compares to parent is false.
+ *  NOTE: big_child used for max cmp, while small_child for min cmp.
+ *  REQUIRE _size > 0. Does nothing if size is 1.
  *
  * PRE-CONDITIONS:
  *  unsigned _size > 0
@@ -635,16 +854,16 @@ bool Heap<T>::expand() {
  *  none
  ******************************************************************************/
 template <typename T>
-void Heap<T>::heapDown() {
+void Heap<T>::heapDown(bool (*cmp)(const T& left, const T& right)) {
     assert(_size);
 
-    unsigned parent = 0, child = is_leaf(parent) ? 0 : big_child_index(parent);
+    unsigned parent = 0, child = child_index(parent);
 
-    while(!is_leaf(parent) && _items[parent] < _items[child]) {
+    while(!is_leaf(parent) && cmp(_items[child], _items[parent])) {
         swap_with_parent(child);
 
         parent = child;
-        if(!is_leaf(parent)) child = big_child_index(parent);
+        child = child_index(parent);
     }
 }
 
@@ -663,12 +882,12 @@ void Heap<T>::heapDown() {
  *  none
  ******************************************************************************/
 template <typename T>
-void Heap<T>::heapUp() {
+void Heap<T>::heapUp(bool (*cmp)(const T& left, const T& right)) {
     assert(_size);
 
     unsigned child = _size - 1, parent = parent_index(child);
 
-    while(_items[child] > _items[parent]) {
+    while(cmp(_items[child], _items[parent])) {
         swap_with_parent(child);
 
         child = parent;

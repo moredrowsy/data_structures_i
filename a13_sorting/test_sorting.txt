@@ -1,0 +1,111 @@
+Sample size: 10        Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.00000115
+            Selection  !SORTED  SORTED     0.00000108
+            Insertion  !SORTED  SORTED     0.00000071
+                Merge  !SORTED  SORTED     0.00000177
+           Quick @mid  !SORTED  SORTED     0.00000106
+         Quick @front  !SORTED  SORTED     0.00000130
+                 Heap  !SORTED  SORTED     0.00000304
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00000150
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00000105
+
+Sample size: 50        Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.00002192
+            Selection  !SORTED  SORTED     0.00001479
+            Insertion  !SORTED  SORTED     0.00000922
+                Merge  !SORTED  SORTED     0.00001090
+           Quick @mid  !SORTED  SORTED     0.00000722
+         Quick @front  !SORTED  SORTED     0.00000883
+                 Heap  !SORTED  SORTED     0.00002312
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00000933
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00000651
+
+Sample size: 100       Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.00008451
+            Selection  !SORTED  SORTED     0.00005198
+            Insertion  !SORTED  SORTED     0.00003296
+                Merge  !SORTED  SORTED     0.00002373
+           Quick @mid  !SORTED  SORTED     0.00001608
+         Quick @front  !SORTED  SORTED     0.00001959
+                 Heap  !SORTED  SORTED     0.00005340
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00002031
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00001378
+
+Sample size: 150       Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.00014963
+            Selection  !SORTED  SORTED     0.00008940
+            Insertion  !SORTED  SORTED     0.00005458
+                Merge  !SORTED  SORTED     0.00003093
+           Quick @mid  !SORTED  SORTED     0.00002087
+         Quick @front  !SORTED  SORTED     0.00002377
+                 Heap  !SORTED  SORTED     0.00006684
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00002518
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00001659
+
+Sample size: 200       Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.00021094
+            Selection  !SORTED  SORTED     0.00011263
+            Insertion  !SORTED  SORTED     0.00007464
+                Merge  !SORTED  SORTED     0.00003026
+           Quick @mid  !SORTED  SORTED     0.00002230
+         Quick @front  !SORTED  SORTED     0.00002550
+                 Heap  !SORTED  SORTED     0.00007177
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00002581
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00001751
+
+Sample size: 1000      Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.00548428
+            Selection  !SORTED  SORTED     0.00220456
+            Insertion  !SORTED  SORTED     0.00156344
+                Merge  !SORTED  SORTED     0.00016279
+           Quick @mid  !SORTED  SORTED     0.00012853
+         Quick @front  !SORTED  SORTED     0.00014769
+                 Heap  !SORTED  SORTED     0.00041546
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00013674
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00009466
+
+Sample size: 10000     Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED     0.49471164
+            Selection  !SORTED  SORTED     0.21881184
+            Insertion  !SORTED  SORTED     0.15661166
+                Merge  !SORTED  SORTED     0.00208044
+           Quick @mid  !SORTED  SORTED     0.00182493
+         Quick @front  !SORTED  SORTED     0.00192571
+                 Heap  !SORTED  SORTED     0.00571745
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00174896
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00121732
+
+Sample size: 50000     Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT    Timings (s) 
+---------------------  -------- ------- -------------
+               Bubble  !SORTED  SORTED    12.57745195
+            Selection  !SORTED  SORTED     5.31220049
+            Insertion  !SORTED  SORTED     3.83238850
+                Merge  !SORTED  SORTED     0.01168939
+           Quick @mid  !SORTED  SORTED     0.01124812
+         Quick @front  !SORTED  SORTED     0.01101954
+                 Heap  !SORTED  SORTED     0.03326406
+    Merge w/o cmp ptr  !SORTED  SORTED     0.00953970
+    Quick w/o cmp ptr  !SORTED  SORTED     0.00680884

@@ -34,7 +34,7 @@ enum { MAX_BLOCK = 250000, endl = 10, space = 32, tab = 9 };
 template <typename T>
 struct FStreamData {
     // CONSTRUCTORS
-    FStreamData(std::string name, T *block = nullptr, std::size_t size = 0,
+    FStreamData(std::string name, T *buffer = nullptr, std::size_t size = 0,
                 char delim = char(endl));
 
     // MUTATORS
@@ -42,7 +42,7 @@ struct FStreamData {
     FStreamData<T> &operator>>(std::ostream &outs);
     FStreamData<T> &operator>>(T &data);
     void clear();
-    bool set_data(T *block = nullptr, std::size_t size = 0,
+    bool set_data(T *buffer = nullptr, std::size_t size = 0,
                   char delim = char(endl));
 
     // FRIENDS
@@ -88,13 +88,13 @@ template <typename T>
 class FStreamSort {
 public:
     // CONSTRUCTOR & DESTRUCTOR
-    FStreamSort(std::size_t s = MAX_BLOCK, short delim = endl,
+    FStreamSort(std::size_t size = MAX_BLOCK, short delim = endl,
                 std::string tname = "__temp__");
     ~FStreamSort();
 
     // MUTATORS
     void cleanup();  // clean up all stream objects and temp files
-    void set_buffer(std::size_t size);      // change max block size
+    void set_max_buffer(std::size_t size);  // change max buffer size
     void set_delim(short delim);            // change delimiter between data
     void set_temp_name(std::string tname);  // set temp output file prefix
 
@@ -109,15 +109,15 @@ public:
 
 private:
     char _delim;
-    std::size_t _buffer_size;  // maximum size for memory allocation
-    std::string _tname;        // temporary file prefix
-    std::vector<FStreamData<T> > _file_infos;  // FStreamData make temp files
+    std::size_t _max_buf;  // maximum size for memory allocation
+    std::string _tname;    // temporary file prefix
+    std::vector<FStreamData<T> > _fstream_data;  // FStreamData make temp files
 
     // MUTATORS
     std::istream &_extractions(std::istream &ins);  // read in-stream
     std::ostream &_insertions(std::ostream &outs);  // write out-stream
     // sort and dump data to FStreamData objects, which writes temp files
-    inline void _sort_and_dump(T *block, std::size_t size);
+    inline void _sort_and_dump(T *buffer, std::size_t size);
 };
 
 // public helper function to determine file size in BYTES
@@ -133,15 +133,15 @@ template <typename T>
 bool validate_sorted_file(std::string fname);
 
 template <typename T>
-FStreamData<T>::FStreamData(std::string name, T *block, std::size_t size,
+FStreamData<T>::FStreamData(std::string name, T *buffer, std::size_t size,
                             char delim)
     : _delim(delim), _name(name), _ifstream(), _data() {
-    if(block && size) {
-        _data = block[0];  // store first data element
+    if(buffer && size) {
+        _data = buffer[0];  // store first data element
 
         // write the rest to temp file
         std::ofstream outs(_name, std::ios::binary | std::ios::trunc);
-        for(std::size_t i = 1; i < size; ++i) outs << block[i] << _delim;
+        for(std::size_t i = 1; i < size; ++i) outs << buffer[i] << _delim;
         outs.close();  // close ofstream writing
     }
 
@@ -178,16 +178,16 @@ void FStreamData<T>::clear() {
 }
 
 template <typename T>
-bool FStreamData<T>::set_data(T *block, std::size_t size, char delim) {
+bool FStreamData<T>::set_data(T *buffer, std::size_t size, char delim) {
     _ifstream.close();
     std::remove(_name.c_str());
 
-    if(block && size) {
-        _data = block[0];  // store first data element
+    if(buffer && size) {
+        _data = buffer[0];  // store first data element
 
         // write the rest to temp file
         std::ofstream outs(_name, std::ios::binary | std::ios::trunc);
-        for(std::size_t i = 1; i < size; ++i) outs << block[i] << _delim;
+        for(std::size_t i = 1; i < size; ++i) outs << buffer[i] << _delim;
         outs.close();  // close ofstream writing
     }
 
@@ -197,10 +197,10 @@ bool FStreamData<T>::set_data(T *block, std::size_t size, char delim) {
 }
 
 template <typename T>
-FStreamSort<T>::FStreamSort(std::size_t s, short delim, std::string tname)
-    : _delim(delim), _buffer_size(s), _tname(tname) {
+FStreamSort<T>::FStreamSort(std::size_t size, short delim, std::string tname)
+    : _delim(delim), _max_buf(size), _tname(tname) {
     assert(delim == endl || delim == space || delim == tab);
-    assert(_buffer_size > 0);
+    assert(_max_buf > 0);
     assert(!_tname.empty());
 }
 
@@ -211,17 +211,17 @@ FStreamSort<T>::~FStreamSort() {
 
 template <typename T>
 void FStreamSort<T>::cleanup() {
-    for(auto &a : _file_infos) {
+    for(auto &a : _fstream_data) {
         a._ifstream.close();
         std::remove(a._name.c_str());
     }
-    _file_infos.clear();
+    _fstream_data.clear();
 }
 
 template <typename T>
-void FStreamSort<T>::set_buffer(std::size_t size) {
+void FStreamSort<T>::set_max_buffer(std::size_t size) {
     assert(size > 0);
-    _buffer_size = size;
+    _max_buf = size;
 }
 
 template <typename T>
@@ -239,50 +239,47 @@ void FStreamSort<T>::set_temp_name(std::string tname) {
 template <typename T>
 std::istream &FStreamSort<T>::_extractions(std::istream &ins) {
     std::size_t i = 0;
-    T *block = nullptr;
+    T *buffer = nullptr;
 
-    block = new T[_buffer_size];
+    buffer = new T[_max_buf];
 
-    while(ins >> block[i]) {
-        ++i;
-
-        if(i == _buffer_size) {        // when block is full
-            _sort_and_dump(block, i);  // sort and dump block
+    while(ins >> buffer[i++]) {         // inc i after read
+        if(i == _max_buf) {             // when buffer is full
+            _sort_and_dump(buffer, i);  // sort and dump buffer
             i = 0;
         }
     }
-    if(i) _sort_and_dump(block, i);  // sort and write last block if has data
 
-    delete[] block;
+    // dec i to reverse previous inc; sort and dump last buffer if has data
+    if(--i) _sort_and_dump(buffer, i);
+
+    delete[] buffer;
 
     return ins;
 }
 
 template <typename T>
 std::ostream &FStreamSort<T>::_insertions(std::ostream &outs) {
+    FStreamData<T> *min_fstream_data;
     std::size_t min_index;
-    T current, min;
 
-    while(_file_infos.size()) {  // loop until _file_infos are gone
-        current = _file_infos[0]._data;
-        min = current;
+    while(_fstream_data.size()) {  // loop until _fstream_data are gone
+        min_fstream_data = &_fstream_data[0];
         min_index = 0;
 
-        for(std::size_t i = 1; i < _file_infos.size(); ++i) {  // find min index
-            current = _file_infos[i]._data;
-
-            if(current < min) {
-                min = current;
+        for(std::size_t i = 1; i < _fstream_data.size(); ++i) {  // find min
+            if(_fstream_data[i]._data < min_fstream_data->_data) {
+                min_fstream_data = &_fstream_data[i];
                 min_index = i;
             }
         }
 
-        outs << _file_infos[min_index] << _delim;  // write data @ min index
+        outs << _fstream_data[min_index] << _delim;  // write data @ min index
 
-        if(!_file_infos[min_index]) {  // remove file and delete FStreamData
-            _file_infos[min_index]._ifstream.close();
-            std::remove(_file_infos[min_index]._name.c_str());
-            _file_infos.erase(_file_infos.begin() + min_index);
+        if(!_fstream_data[min_index]) {  // remove file and delete FStreamData
+            _fstream_data[min_index]._ifstream.close();
+            std::remove(_fstream_data[min_index]._name.c_str());
+            _fstream_data.erase(_fstream_data.begin() + min_index);
         }
     }
 
@@ -290,14 +287,14 @@ std::ostream &FStreamSort<T>::_insertions(std::ostream &outs) {
 }
 
 template <typename T>
-void FStreamSort<T>::_sort_and_dump(T *block, std::size_t size) {
+void FStreamSort<T>::_sort_and_dump(T *buffer, std::size_t size) {
     // generate unique file name
-    std::string name = _tname + std::to_string(_file_infos.size());
+    std::string name = _tname + std::to_string(_fstream_data.size());
 
-    std::sort(block, block + size);  // sort data before passing to FStreamData
+    std::sort(buffer, buffer + size);  // sort before passing to FStreamData
 
-    // pass block of data to FStreamData to create temp file
-    _file_infos.emplace_back(name, block, size, _delim);
+    // pass buffer to FStreamData to create temp file
+    _fstream_data.emplace_back(name, buffer, size, _delim);
 }
 
 std::ifstream::pos_type filesize(std::string fname) {

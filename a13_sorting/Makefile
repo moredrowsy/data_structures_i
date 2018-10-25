@@ -1,8 +1,7 @@
 CXX             := g++
 DEBUG_LEVEL     := #-g
-OPTIMIZATIONS   := -O2
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
-CXXFLAGS        := $(DEBUG_LEVEL) $(OPTIMIZATIONS) $(EXTRA_CCFLAGS)
+CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
 INC             := ../include
 SRC             := ../src
@@ -12,11 +11,10 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^
 
 main.o: main.cpp\
-	${INC}/timer.h\
-	${INC}/fstream_sort.h
+	${INC}/sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
 
 clean:
-	rm -f *.o *.out random_ints.txt results.txt
+	rm -f *.o *.out

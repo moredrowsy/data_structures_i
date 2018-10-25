@@ -190,6 +190,7 @@ template <typename T>
 void AVL<T>::print_inorder(std::ostream& outs) const {
     if(!_root) outs << "|||";
     bst_node::inorder(_root, [&outs](auto& r) { outs << *r << "->"; });
+    if(_root) outs << "|||";
 }
 
 /*******************************************************************************

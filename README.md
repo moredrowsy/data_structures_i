@@ -12,6 +12,10 @@ Projects for data structures using C++
 * Assignment 08 - AVL class for balanced binary tree
 * Assignment 09 - Binary max heap tree class
 * Assignment 10 - Priority Queue class
+* Assignment 11 - Open Hash, Double Hash, Chained AVL Hash, Chained List Hash\
+                  class
+* Assignment 12 - Very large file sort - file stream partition, sort, and merge
+* Assignment 13 - Bubble, selection, insertion, merge, quick and heap sort
 * Exercise 01 - Car wash simulation using Queue
 * Exercise 02 - State machine to extract tokens via adjacency table
 * Exercise 03 - Recursive fractals

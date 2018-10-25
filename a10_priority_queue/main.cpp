@@ -15,8 +15,8 @@
 #include <string>               // string objects
 #include "../include/pqueue.h"  // Info struct, PQueue class
 
-void interactive_tests();  // interactive test harness for PQueue class
-void test_random_items();  // test insertions/pop with 100 random items
+void interactive_tests(bool reverse = true);
+void test_random_items(bool reverse = true);  // test with 100 random items
 
 int main() {
     interactive_tests();
@@ -26,7 +26,7 @@ int main() {
     return 0;
 }
 
-void interactive_tests() {
+void interactive_tests(bool reverse) {
     using namespace pqueue;
 
     bool is_inserted = false;
@@ -35,7 +35,7 @@ void interactive_tests() {
     const int SIZE = 24;
     std::string item;
     Info<std::string> info;
-    PQueue<std::string> pqueue;
+    PQueue<std::string> pqueue(reverse);
     std::string items[SIZE] = {"Alpha",  "Beta", "Gamma", "Delta", "Epsilon",
                                "Zeta",   "Eta",  "Theta", "Iota",  "Kappa",
                                "Lambda", "Mu",   "Nu",    "Xi",    "Omicron",
@@ -115,7 +115,7 @@ void interactive_tests() {
     } while(c != 'X' && c != 'x');
 }
 
-void test_random_items() {
+void test_random_items(bool reverse) {
     using namespace pqueue;
 
     std::cout << std::string(80, '-') << std::endl
@@ -124,7 +124,7 @@ void test_random_items() {
 
     // insert random items into pqueue
     std::cout << "Making pqueue with 100 random inserts" << std::endl;
-    PQueue<int> pqueue;
+    PQueue<int> pqueue(reverse);
     for(int i = 0; i < 100; ++i) pqueue.insert(rand() % 1000, rand() % 10);
 
     // create pqueue_copy

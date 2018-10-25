@@ -13,7 +13,7 @@ SCENARIO("Priority Queue", "[pqueue]") {
     bool is_inserted = false;
     Info<std::string> info;
     std::string item;
-    PQueue<std::string> pqueue;
+    PQueue<std::string> pqueue(true);
 
     // prepare list
     const int SIZE = 20;
@@ -107,7 +107,8 @@ SCENARIO("Priority Queue", "[pqueue]") {
 
     GIVEN("CTOR w/ Info item") {
         // one argument constructor
-        PQueue<std::string> pq_item(Info<std::string>(items[0], priorities[0]));
+        PQueue<std::string> pq_item(Info<std::string>(items[0], priorities[0]),
+                                    true);
 
         REQUIRE(pq_item.empty() == false);
         REQUIRE(pq_item.size() == 1);
@@ -123,7 +124,7 @@ SCENARIO("Priority Queue", "[pqueue]") {
 
     GIVEN("CTOR w/ T item and int priorities") {
         // two arguments constructor
-        PQueue<std::string> pq_item(items[0], priorities[0]);
+        PQueue<std::string> pq_item(items[0], priorities[0], true);
 
         REQUIRE(pq_item.empty() == false);
         REQUIRE(pq_item.size() == 1);
@@ -145,7 +146,7 @@ SCENARIO("Priority Queue", "[pqueue]") {
             ascending_list[i] = Info<std::string>(items[i], priorities[i]);
 
         // list constructor
-        PQueue<std::string> pq_list(ascending_list, SIZE);
+        PQueue<std::string> pq_list(ascending_list, SIZE, true);
 
         REQUIRE(pq_list.empty() == false);
         REQUIRE(pq_list.size() == SIZE);
@@ -164,9 +165,9 @@ SCENARIO("Priority Queue", "[pqueue]") {
     GIVEN("CTOR: w/ initializer list") {
         typedef Info<std::string> Info_s;
 
-        PQueue<std::string> pqueue_list = {Info_s("One", 1), Info_s("Two", 2),
-                                           Info_s("Three", 3),
-                                           Info_s("Four", 4)};
+        PQueue<std::string> pqueue_list(true);
+        pqueue_list = {Info_s("One", 1), Info_s("Two", 2), Info_s("Three", 3),
+                       Info_s("Four", 4)};
 
         REQUIRE(pqueue_list.empty() == false);
         REQUIRE(pqueue_list.size() == 4);

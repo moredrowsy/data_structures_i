@@ -233,8 +233,6 @@ std::ostream& ChainedAVLHash<T>::print(std::ostream& outs) const {
 
         _data[i].print_inorder();
 
-        if(!_data[i].empty()) outs << "|||";
-
         outs << std::endl;
     }
 

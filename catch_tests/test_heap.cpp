@@ -10,7 +10,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
 
     GIVEN("empty heap") {
         bool is_inserted = false;
-        Heap<int> heap;
+        Heap<int> heap(true);
         int item = -1000;
 
         THEN("empty() = true, size = 0, cap = 0") {
@@ -423,7 +423,7 @@ SCENARIO("Binary Heap Tree", "[heap]") {
         WHEN("CTOR: w/ ascending list") {
             const int SIZE = 8;
             int list[SIZE] = {0, 1, 2, 3, 4, 5, 6, 7};
-            Heap<int> heap_from_list(list, SIZE);
+            Heap<int> heap_from_list(list, SIZE, true);
 
             REQUIRE(heap_from_list.empty() == false);
             REQUIRE(heap_from_list.size() == 8);
@@ -485,21 +485,12 @@ SCENARIO("Binary Heap Tree", "[heap]") {
         for(auto &a : random_items) a = rand() % 100;
 
         THEN("CTOR: w/ list of random items") {
-            Heap<int> heap(random_items, SIZE);
+            Heap<int> heap(random_items, SIZE, true);
 
             REQUIRE(heap.empty() == false);
             REQUIRE(heap.size() == 100);
             REQUIRE(heap.capacity() == 100);
             REQUIRE(heap.validate() == true);
         }
-    }
-
-    GIVEN("CTOR: w/ initializer list") {
-        Heap<int> heap = {9, 1, 8, 2, 7, 3, 6, 4, 5};
-
-        REQUIRE(heap.empty() == false);
-        REQUIRE(heap.size() == 9);
-        REQUIRE(heap.capacity() == 9);
-        REQUIRE(heap.validate() == true);
     }
 }

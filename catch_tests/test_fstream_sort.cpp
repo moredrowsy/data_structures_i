@@ -28,7 +28,7 @@ SCENARIO("FStreamStort", "[fsort]") {
 
                 std::ifstream fin(test_file.c_str(), std::ios::binary);
                 std::ofstream fout(result_file.c_str(), std::ios::binary);
-                fsort.set_buffer(buffer_size);
+                fsort.set_max_buffer(buffer_size);
 
                 fin >> fsort;
                 fin.close();

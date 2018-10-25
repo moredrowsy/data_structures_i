@@ -11,9 +11,8 @@
 #ifndef PQUEUE_H
 #define PQUEUE_H
 
-#include <initializer_list>  // initializer list object for CTOR
-#include <iostream>          // stream objects
-#include "heap.h"            // Heap class
+#include <iostream>  // stream objects
+#include "heap.h"    // Heap class
 
 namespace pqueue {
 
@@ -53,11 +52,11 @@ template <typename T>
 class PQueue {
 public:
     // CONSTRUCTORS
-    PQueue() {}
-    PQueue(const T& i, int p = 0) : _heap(Info<T>(i, p)) {}
-    PQueue(const Info<T>& info) : _heap(info) {}
-    PQueue(const Info<T>* list, unsigned size) : _heap(list, size) {}
-    PQueue(const std::initializer_list<Info<T> >& list) : _heap(list) {}
+    PQueue(bool r = false) : _heap(r) {}  // r = sorting reverse
+    PQueue(const T& i, int p = 0, bool r = false) : _heap(Info<T>(i, p), r) {}
+    PQueue(const Info<T>& info, bool r = false) : _heap(info, r) {}
+    PQueue(const Info<T>* list, unsigned size, bool r = false)
+        : _heap(list, size, r) {}
 
     // ACCESSORS
     bool empty() const;
@@ -72,6 +71,9 @@ public:
     T pop();
     Info<T> pop_debug();
     bool reserve(unsigned n);
+    // set the comparison function
+    void set_comp(bool (*cmp)(const T& left, const T& right));
+    void set_reverse(bool reverse);  // set heap's ordering when empty
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs,
@@ -262,6 +264,42 @@ Info<T> PQueue<T>::pop_debug() {
 template <typename T>
 bool PQueue<T>::reserve(unsigned n) {
     return _heap.reserve(n);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set the comparison function for the Heap when empty!
+ *
+ * PRE-CONDITIONS:
+ *  bool (*cmp)(const T& left, const T& right): comparison function
+ *
+ * POST-CONDITIONS:
+ *  _cmp = cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void PQueue<T>::set_comp(bool (*cmp)(const T& left, const T& right)) {
+    _heap.set_comp(cmp);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set the heap's sort ordering. Must be set when heap's size is 0!
+ *
+ * PRE-CONDITIONS:
+ *  bool reverse: true = max ordering, false = min ordering
+ *
+ * POST-CONDITIONS:
+ *  _items allocation if n > _capacity
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void PQueue<T>::set_reverse(bool reverse) {
+    _heap.set_reverse(reverse);
 }
 
 }  // namespace pqueue
