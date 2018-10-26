@@ -1,151 +1,151 @@
 Sample size: 10        Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED         0.00094
+               Bubble  !SORTED  SORTED         0.00091
        Bubble w/o cmp  !SORTED  SORTED         0.00075
-            Selection  !SORTED  SORTED         0.00064
-    Selection w/o cmp  !SORTED  SORTED         0.00081
-            Insertion  !SORTED  SORTED         0.00062
-    Insertion w/o cmp  !SORTED  SORTED         0.00048
-                Merge  !SORTED  SORTED         0.00257
-        Merge w/o cmp  !SORTED  SORTED         0.00183
-           Quick @mid  !SORTED  SORTED         0.00089
-   Quick @mid w/o cmp  !SORTED  SORTED         0.00075
-         Quick @front  !SORTED  SORTED         0.00131
- Quick @front w/o cmp  !SORTED  SORTED         0.00085
-                 Heap  !SORTED  SORTED         0.00175
-         Heap w/o cmp  !SORTED  SORTED         0.00163
+            Selection  !SORTED  SORTED         0.00060
+    Selection w/o cmp  !SORTED  SORTED         0.00075
+            Insertion  !SORTED  SORTED         0.00054
+    Insertion w/o cmp  !SORTED  SORTED         0.00046
+                Merge  !SORTED  SORTED         0.00197
+        Merge w/o cmp  !SORTED  SORTED         0.00159
+           Quick @mid  !SORTED  SORTED         0.00086
+   Quick @mid w/o cmp  !SORTED  SORTED         0.00068
+         Quick @front  !SORTED  SORTED         0.00123
+ Quick @front w/o cmp  !SORTED  SORTED         0.00080
+                 Heap  !SORTED  SORTED         0.00096
+         Heap w/o cmp  !SORTED  SORTED         0.00074
 
 Sample size: 50        Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED         0.01384
-       Bubble w/o cmp  !SORTED  SORTED         0.01059
-            Selection  !SORTED  SORTED         0.00873
-    Selection w/o cmp  !SORTED  SORTED         0.00711
-            Insertion  !SORTED  SORTED         0.00658
-    Insertion w/o cmp  !SORTED  SORTED         0.00269
-                Merge  !SORTED  SORTED         0.01073
-        Merge w/o cmp  !SORTED  SORTED         0.00920
-           Quick @mid  !SORTED  SORTED         0.00536
-   Quick @mid w/o cmp  !SORTED  SORTED         0.00407
-         Quick @front  !SORTED  SORTED         0.00753
- Quick @front w/o cmp  !SORTED  SORTED         0.00487
-                 Heap  !SORTED  SORTED         0.00822
-         Heap w/o cmp  !SORTED  SORTED         0.00815
+               Bubble  !SORTED  SORTED         0.01430
+       Bubble w/o cmp  !SORTED  SORTED         0.01039
+            Selection  !SORTED  SORTED         0.00867
+    Selection w/o cmp  !SORTED  SORTED         0.00707
+            Insertion  !SORTED  SORTED         0.00499
+    Insertion w/o cmp  !SORTED  SORTED         0.00305
+                Merge  !SORTED  SORTED         0.01063
+        Merge w/o cmp  !SORTED  SORTED         0.00914
+           Quick @mid  !SORTED  SORTED         0.00556
+   Quick @mid w/o cmp  !SORTED  SORTED         0.00404
+         Quick @front  !SORTED  SORTED         0.00742
+ Quick @front w/o cmp  !SORTED  SORTED         0.00489
+                 Heap  !SORTED  SORTED         0.00619
+         Heap w/o cmp  !SORTED  SORTED         0.00508
 
 Sample size: 100       Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED         0.03398
-       Bubble w/o cmp  !SORTED  SORTED         0.02729
-            Selection  !SORTED  SORTED         0.02312
-    Selection w/o cmp  !SORTED  SORTED         0.01527
-            Insertion  !SORTED  SORTED         0.01222
-    Insertion w/o cmp  !SORTED  SORTED         0.00514
-                Merge  !SORTED  SORTED         0.01451
-        Merge w/o cmp  !SORTED  SORTED         0.01229
-           Quick @mid  !SORTED  SORTED         0.00827
-   Quick @mid w/o cmp  !SORTED  SORTED         0.00603
-         Quick @front  !SORTED  SORTED         0.01091
- Quick @front w/o cmp  !SORTED  SORTED         0.00702
-                 Heap  !SORTED  SORTED         0.01151
-         Heap w/o cmp  !SORTED  SORTED         0.01154
+               Bubble  !SORTED  SORTED         0.05559
+       Bubble w/o cmp  !SORTED  SORTED         0.03843
+            Selection  !SORTED  SORTED         0.03425
+    Selection w/o cmp  !SORTED  SORTED         0.02264
+            Insertion  !SORTED  SORTED         0.01715
+    Insertion w/o cmp  !SORTED  SORTED         0.00938
+                Merge  !SORTED  SORTED         0.02201
+        Merge w/o cmp  !SORTED  SORTED         0.01907
+           Quick @mid  !SORTED  SORTED         0.01194
+   Quick @mid w/o cmp  !SORTED  SORTED         0.00881
+         Quick @front  !SORTED  SORTED         0.01702
+ Quick @front w/o cmp  !SORTED  SORTED         0.01038
+                 Heap  !SORTED  SORTED         0.01389
+         Heap w/o cmp  !SORTED  SORTED         0.01139
 
 Sample size: 150       Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED         0.06247
-       Bubble w/o cmp  !SORTED  SORTED         0.04704
-            Selection  !SORTED  SORTED         0.04270
-    Selection w/o cmp  !SORTED  SORTED         0.02471
-            Insertion  !SORTED  SORTED         0.02258
-    Insertion w/o cmp  !SORTED  SORTED         0.00849
-                Merge  !SORTED  SORTED         0.01910
-        Merge w/o cmp  !SORTED  SORTED         0.01564
-           Quick @mid  !SORTED  SORTED         0.01045
-   Quick @mid w/o cmp  !SORTED  SORTED         0.00777
-         Quick @front  !SORTED  SORTED         0.01424
- Quick @front w/o cmp  !SORTED  SORTED         0.00884
-                 Heap  !SORTED  SORTED         0.01719
-         Heap w/o cmp  !SORTED  SORTED         0.01486
+               Bubble  !SORTED  SORTED         0.04877
+       Bubble w/o cmp  !SORTED  SORTED         0.02940
+            Selection  !SORTED  SORTED         0.03030
+    Selection w/o cmp  !SORTED  SORTED         0.01635
+            Insertion  !SORTED  SORTED         0.01269
+    Insertion w/o cmp  !SORTED  SORTED         0.00668
+                Merge  !SORTED  SORTED         0.01174
+        Merge w/o cmp  !SORTED  SORTED         0.00996
+           Quick @mid  !SORTED  SORTED         0.00663
+   Quick @mid w/o cmp  !SORTED  SORTED         0.00483
+         Quick @front  !SORTED  SORTED         0.00890
+ Quick @front w/o cmp  !SORTED  SORTED         0.00548
+                 Heap  !SORTED  SORTED         0.00751
+         Heap w/o cmp  !SORTED  SORTED         0.00640
 
 Sample size: 200       Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED         0.08665
-       Bubble w/o cmp  !SORTED  SORTED         0.06633
-            Selection  !SORTED  SORTED         0.05961
-    Selection w/o cmp  !SORTED  SORTED         0.03561
-            Insertion  !SORTED  SORTED         0.03290
-    Insertion w/o cmp  !SORTED  SORTED         0.01167
-                Merge  !SORTED  SORTED         0.01966
-        Merge w/o cmp  !SORTED  SORTED         0.01665
-           Quick @mid  !SORTED  SORTED         0.01108
-   Quick @mid w/o cmp  !SORTED  SORTED         0.00848
-         Quick @front  !SORTED  SORTED         0.01494
- Quick @front w/o cmp  !SORTED  SORTED         0.00976
-                 Heap  !SORTED  SORTED         0.01672
-         Heap w/o cmp  !SORTED  SORTED         0.01568
+               Bubble  !SORTED  SORTED         0.07574
+       Bubble w/o cmp  !SORTED  SORTED         0.05244
+            Selection  !SORTED  SORTED         0.04917
+    Selection w/o cmp  !SORTED  SORTED         0.02692
+            Insertion  !SORTED  SORTED         0.02218
+    Insertion w/o cmp  !SORTED  SORTED         0.01141
+                Merge  !SORTED  SORTED         0.01628
+        Merge w/o cmp  !SORTED  SORTED         0.01382
+           Quick @mid  !SORTED  SORTED         0.00932
+   Quick @mid w/o cmp  !SORTED  SORTED         0.00672
+         Quick @front  !SORTED  SORTED         0.01211
+ Quick @front w/o cmp  !SORTED  SORTED         0.00756
+                 Heap  !SORTED  SORTED         0.01047
+         Heap w/o cmp  !SORTED  SORTED         0.00894
 
 Sample size: 1000      Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED         1.87540
-       Bubble w/o cmp  !SORTED  SORTED         1.49649
-            Selection  !SORTED  SORTED         1.45760
-    Selection w/o cmp  !SORTED  SORTED         0.55967
-            Insertion  !SORTED  SORTED         0.55619
-    Insertion w/o cmp  !SORTED  SORTED         0.19125
-                Merge  !SORTED  SORTED         0.09208
-        Merge w/o cmp  !SORTED  SORTED         0.07463
-           Quick @mid  !SORTED  SORTED         0.05905
-   Quick @mid w/o cmp  !SORTED  SORTED         0.04270
-         Quick @front  !SORTED  SORTED         0.07572
- Quick @front w/o cmp  !SORTED  SORTED         0.04590
-                 Heap  !SORTED  SORTED         0.08159
-         Heap w/o cmp  !SORTED  SORTED         0.07870
+               Bubble  !SORTED  SORTED         2.01864
+       Bubble w/o cmp  !SORTED  SORTED         1.41987
+            Selection  !SORTED  SORTED         1.47492
+    Selection w/o cmp  !SORTED  SORTED         0.55876
+            Insertion  !SORTED  SORTED         0.53356
+    Insertion w/o cmp  !SORTED  SORTED         0.25217
+                Merge  !SORTED  SORTED         0.09624
+        Merge w/o cmp  !SORTED  SORTED         0.08145
+           Quick @mid  !SORTED  SORTED         0.06123
+   Quick @mid w/o cmp  !SORTED  SORTED         0.04297
+         Quick @front  !SORTED  SORTED         0.07745
+ Quick @front w/o cmp  !SORTED  SORTED         0.04645
+                 Heap  !SORTED  SORTED         0.06803
+         Heap w/o cmp  !SORTED  SORTED         0.05652
 
 Sample size: 10000     Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED       198.15867
-       Bubble w/o cmp  !SORTED  SORTED       158.16966
-            Selection  !SORTED  SORTED       158.02320
-    Selection w/o cmp  !SORTED  SORTED        52.61496
-            Insertion  !SORTED  SORTED        53.40047
-    Insertion w/o cmp  !SORTED  SORTED        18.88065
-                Merge  !SORTED  SORTED         1.18128
-        Merge w/o cmp  !SORTED  SORTED         0.92702
-           Quick @mid  !SORTED  SORTED         0.77866
-   Quick @mid w/o cmp  !SORTED  SORTED         0.56137
-         Quick @front  !SORTED  SORTED         1.06219
- Quick @front w/o cmp  !SORTED  SORTED         0.58756
-                 Heap  !SORTED  SORTED         1.11571
-         Heap w/o cmp  !SORTED  SORTED         1.08646
+               Bubble  !SORTED  SORTED       205.97571
+       Bubble w/o cmp  !SORTED  SORTED       146.23034
+            Selection  !SORTED  SORTED       156.83233
+    Selection w/o cmp  !SORTED  SORTED        51.98636
+            Insertion  !SORTED  SORTED        50.88098
+    Insertion w/o cmp  !SORTED  SORTED        24.07202
+                Merge  !SORTED  SORTED         1.13875
+        Merge w/o cmp  !SORTED  SORTED         0.92438
+           Quick @mid  !SORTED  SORTED         0.76923
+   Quick @mid w/o cmp  !SORTED  SORTED         0.55172
+         Quick @front  !SORTED  SORTED         1.02024
+ Quick @front w/o cmp  !SORTED  SORTED         0.57964
+                 Heap  !SORTED  SORTED         0.91420
+         Heap w/o cmp  !SORTED  SORTED         0.75826
 
 Sample size: 50000     Iterations: 15
 --------------------------------------------------------------------------------
-    Sorting Algorithm  CONTROL  RESULT    Timings (ms) 
+    Sorting Algorithm  CONTROL  RESULT    Timings (ms)
 ---------------------  -------- ------- --------------
-               Bubble  !SORTED  SORTED      4936.33146
-       Bubble w/o cmp  !SORTED  SORTED      3900.38337
-            Selection  !SORTED  SORTED      3947.98312
-    Selection w/o cmp  !SORTED  SORTED      1287.25250
-            Insertion  !SORTED  SORTED      1278.38307
-    Insertion w/o cmp  !SORTED  SORTED       461.60529
-                Merge  !SORTED  SORTED         6.50195
-        Merge w/o cmp  !SORTED  SORTED         5.16036
-           Quick @mid  !SORTED  SORTED         4.45830
-   Quick @mid w/o cmp  !SORTED  SORTED         3.21161
-         Quick @front  !SORTED  SORTED         6.14102
- Quick @front w/o cmp  !SORTED  SORTED         3.31629
-                 Heap  !SORTED  SORTED         6.71658
-         Heap w/o cmp  !SORTED  SORTED         6.86827
+               Bubble  !SORTED  SORTED      5194.04597
+       Bubble w/o cmp  !SORTED  SORTED      3714.17270
+            Selection  !SORTED  SORTED      3954.11662
+    Selection w/o cmp  !SORTED  SORTED      1302.67324
+            Insertion  !SORTED  SORTED      1274.10279
+    Insertion w/o cmp  !SORTED  SORTED       605.08399
+                Merge  !SORTED  SORTED         6.51715
+        Merge w/o cmp  !SORTED  SORTED         5.14460
+           Quick @mid  !SORTED  SORTED         4.51298
+   Quick @mid w/o cmp  !SORTED  SORTED         3.16005
+         Quick @front  !SORTED  SORTED         6.09697
+ Quick @front w/o cmp  !SORTED  SORTED         3.32332
+                 Heap  !SORTED  SORTED         5.94168
+         Heap w/o cmp  !SORTED  SORTED         4.67512

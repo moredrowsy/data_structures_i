@@ -5,13 +5,13 @@
 #include "../include/sort.h"   // various sort functions
 #include "../include/timer.h"  // ChronoTimer class
 
-struct SortData {
+struct SortData {  // stores sortedness data
     SortData(std::string n = "", bool c = true, bool r = true, double t = 0)
         : is_ctrl_sorted(c), is_rslt_sorted(r), timings(t), name(n) {}
-    bool is_ctrl_sorted;
-    bool is_rslt_sorted;
-    double timings;
-    std::string name;
+    bool is_ctrl_sorted;  // is control sorted?
+    bool is_rslt_sorted;  // is result sorted?
+    double timings;       // timings
+    std::string name;     // name of data
 };
 
 void test_sorts_timings(std::size_t sample_size = 50000,

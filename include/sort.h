@@ -7,16 +7,14 @@
 
 namespace sort {
 
-typedef bool (*Comp)(const int &l, const int &r);
-
 template <typename T>  // less than comparison
-static bool less(const T &left, const T &right);
+static inline bool less(const T &left, const T &right);
 
 template <typename T>  // greater than comparison
-static bool greater(const T &left, const T &right);
+static inline bool greater(const T &left, const T &right);
 
 template <typename T>  // swap two elements
-void swap(T &left, T &right);
+inline void swap(T &left, T &right);
 
 template <typename T>  // shuffle elements of data[]
 void shuffle(T *data, std::size_t size);
@@ -25,15 +23,17 @@ template <typename T>
 void copy_array(T *dest, const T *src, std::size_t size);
 
 template <typename T>  // return true if data[] is in ascending order
-bool verify(const T *data, std::size_t size, Comp cmp = &less);
+bool verify(const T *data, std::size_t size,
+            bool (*cmp)(const T &l, const T &r) = &less);
 
 template <typename T>  // return "SORTED" or "NOT SORTED" when data[] is sorted
-std::string verifystr(const T *data, std::size_t size, Comp cmp = &less);
+std::string verifystr(const T *data, std::size_t size,
+                      bool (*cmp)(const T &l, const T &r) = &less);
 
 // print the array if status_only is true with info on sortedness of data[]
 template <typename T>
 void print_array(const T *data, std::size_t size, bool status_only = false,
-                 Comp cmp = &less);
+                 bool (*cmp)(const T &l, const T &r) = &less);
 
 template <typename T>
 void print_array_segment(T *data, std::size_t start, std::size_t end);
@@ -42,43 +42,47 @@ template <typename T>
 void bubble_sort(T *data, std::size_t size);
 
 template <typename T>
-void bubble_sort(T *data, std::size_t size, Comp cmp);
+void bubble_sort(T *data, std::size_t size,
+                 bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void selection_sort(T *data, std::size_t size);
 
 template <typename T>
-void selection_sort(T *data, std::size_t size, Comp cmp);
+void selection_sort(T *data, std::size_t size,
+                    bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void insertion_sort(T *data, std::size_t size);
 
 template <typename T>
-void insertion_sort(T *data, std::size_t size, Comp cmp);
+void insertion_sort(T *data, std::size_t size,
+                    bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void merge_sort(T *data, std::size_t size);
 
 template <typename T>
-void merge_sort(T *data, std::size_t size, Comp cmp);
+void merge_sort(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void quick_sort(T *data, std::size_t size);
 
 template <typename T>
-void quick_sort(T *data, std::size_t size, Comp cmp);
+void quick_sort(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void quick_sort2(T *data, std::size_t size);
 
 template <typename T>
-void quick_sort2(T *data, std::size_t size, Comp cmp);
+void quick_sort2(T *data, std::size_t size,
+                 bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void heap_sort(T *data, std::size_t size);
 
 template <typename T>
-void heap_sort(T *data, std::size_t size, Comp cmp);
+void heap_sort(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r));
 
 // INTERNAL DECLARATIONS
 namespace internal {
@@ -87,19 +91,40 @@ template <typename T>
 void merge(T *data, std::size_t size1, std::size_t size2);
 
 template <typename T>
-void merge(T *data, std::size_t size1, std::size_t size2, Comp cmp);
+void merge(T *data, std::size_t size1, std::size_t size2,
+           bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 std::size_t partition(T *data, std::size_t size);
 
 template <typename T>
-std::size_t partition(T *data, std::size_t size, Comp cmp);
+std::size_t partition(T *data, std::size_t size,
+                      bool (*cmp)(const T &l, const T &r));
 
 template <typename T>
 void partition2(T *data, std::size_t size, std::size_t &pivot);
 
 template <typename T>
-void partition2(T *data, std::size_t size, std::size_t &pivot, Comp cmp);
+void partition2(T *data, std::size_t size, std::size_t &pivot,
+                bool (*cmp)(const T &l, const T &r));
+
+template <typename T>
+void make_heap(T *data, std::size_t size);
+
+template <typename T>
+void make_heap(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r));
+
+template <typename T>
+void heap_down(T *data, std::size_t size);
+
+template <typename T>
+void heap_down(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r));
+
+inline std::size_t parent(std::size_t i);
+
+inline std::size_t left_child(std::size_t i);
+
+inline std::size_t right_child(std::size_t i);
 
 }  // namespace internal
 
@@ -134,7 +159,8 @@ void copy_array(T dest[], const T src[], std::size_t size) {
 }
 
 template <typename T>
-bool verify(const T *data, std::size_t size, Comp cmp) {
+bool verify(const T *data, std::size_t size,
+            bool (*cmp)(const T &l, const T &r)) {
     bool is_sorted = true;
     if(size > 1) {
         for(std::size_t i = 1; i < size; ++i) {
@@ -149,7 +175,8 @@ bool verify(const T *data, std::size_t size, Comp cmp) {
 }
 
 template <typename T>
-std::string verifystr(const T *data, std::size_t size, Comp cmp) {
+std::string verifystr(const T *data, std::size_t size,
+                      bool (*cmp)(const T &l, const T &r)) {
     bool is_sorted = true;
     if(size > 1) {
         for(std::size_t i = 1; i < size; ++i) {
@@ -164,7 +191,8 @@ std::string verifystr(const T *data, std::size_t size, Comp cmp) {
 }
 
 template <typename T>
-void print_array(const T *data, std::size_t size, bool status_only, Comp cmp) {
+void print_array(const T *data, std::size_t size, bool status_only,
+                 bool (*cmp)(const T &l, const T &r)) {
     if(status_only)
         std::cout << verifystr(data, size, cmp) << std::endl;
     else {
@@ -198,7 +226,8 @@ void bubble_sort(T *data, std::size_t size) {
 }
 
 template <typename T>
-void bubble_sort(T *data, std::size_t size, Comp cmp) {
+void bubble_sort(T *data, std::size_t size,
+                 bool (*cmp)(const T &l, const T &r)) {
     bool swapped = false;
 
     do {
@@ -229,7 +258,8 @@ void selection_sort(T *data, std::size_t size) {
     }
 }
 template <typename T>
-void selection_sort(T *data, std::size_t size, Comp cmp) {
+void selection_sort(T *data, std::size_t size,
+                    bool (*cmp)(const T &l, const T &r)) {
     T *min = nullptr;
 
     for(std::size_t i = 0; i < size - 1; ++i) {  // don't need to swap last
@@ -264,7 +294,8 @@ void insertion_sort(T *data, std::size_t size) {
 }
 
 template <typename T>
-void insertion_sort(T *data, std::size_t size, Comp cmp) {
+void insertion_sort(T *data, std::size_t size,
+                    bool (*cmp)(const T &l, const T &r)) {
     int j = 0;  // walker
     T fixed;
 
@@ -297,7 +328,8 @@ void merge_sort(T *data, std::size_t size) {
 }
 
 template <typename T>
-void merge_sort(T *data, std::size_t size, Comp cmp) {
+void merge_sort(T *data, std::size_t size,
+                bool (*cmp)(const T &l, const T &r)) {
     if(size > 1) {  // merge sort when 2 or more elements
         std::size_t size1 = size / 2;
         std::size_t size2 = size - size1;
@@ -318,7 +350,8 @@ void quick_sort(T *data, std::size_t size) {
 }
 
 template <typename T>
-void quick_sort(T *data, std::size_t size, Comp cmp) {
+void quick_sort(T *data, std::size_t size,
+                bool (*cmp)(const T &l, const T &r)) {
     if(size > 1) {
         std::size_t pivot = internal::partition(data, size, cmp);
         quick_sort(data, pivot, cmp);  // recurse b4 pivot
@@ -342,7 +375,8 @@ void quick_sort2(T *data, std::size_t size) {
 }
 
 template <typename T>
-void quick_sort2(T *data, std::size_t size, Comp cmp) {
+void quick_sort2(T *data, std::size_t size,
+                 bool (*cmp)(const T &l, const T &r)) {
     if(size > 1) {
         std::size_t pivot = 0;  // pivot @ front
 
@@ -359,16 +393,28 @@ void quick_sort2(T *data, std::size_t size, Comp cmp) {
 
 template <typename T>
 void heap_sort(T *data, std::size_t size) {
-    heap::Heap<T> heap(data, size);
+    std::size_t unsorted = size;
 
-    for(std::size_t i = 0; i < size; ++i) data[i] = heap.pop();
+    internal::make_heap(data, size);
+
+    while(unsorted > 1) {
+        --unsorted;
+        swap(data[0], data[unsorted]);
+        internal::heap_down(data, unsorted);
+    }
 }
 
 template <typename T>
-void heap_sort(T *data, std::size_t size, Comp cmp) {
-    heap::Heap<T> heap(data, size, cmp);
+void heap_sort(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r)) {
+    std::size_t unsorted = size;
 
-    for(std::size_t i = 0; i < size; ++i) data[i] = heap.pop();
+    internal::make_heap(data, size, cmp);
+
+    while(unsorted > 1) {
+        --unsorted;
+        swap(data[0], data[unsorted]);
+        internal::heap_down(data, unsorted, cmp);
+    }
 }
 
 // INTERNAL FUNCTIONS
@@ -397,7 +443,8 @@ void merge(T *data, std::size_t size1, std::size_t size2) {
 }
 
 template <typename T>
-void merge(T *data, std::size_t size1, std::size_t size2, Comp cmp) {
+void merge(T *data, std::size_t size1, std::size_t size2,
+           bool (*cmp)(const T &l, const T &r)) {
     std::size_t copied = 0, copied1 = 0, copied2 = 0;
     T *buffer = new T[size1 + size2];  // temporary array
 
@@ -420,9 +467,9 @@ void merge(T *data, std::size_t size1, std::size_t size2, Comp cmp) {
 
 template <typename T>
 std::size_t partition(T *data, std::size_t size) {
-    int pivot = size / 2;    // choose pivot in middle
-    std::size_t count = 0;   // counter to remember last swapped position
-    std::size_t walker = 0;  // walks through list
+    std::size_t pivot = size / 2;  // choose pivot in middle
+    std::size_t count = 0;         // counter to remember last swapped position
+    std::size_t walker = 0;        // walks through list
 
     if(size > 0) {
         swap(data[pivot], data[size - 1]);  // swap pivot to end
@@ -442,10 +489,11 @@ std::size_t partition(T *data, std::size_t size) {
 }
 
 template <typename T>
-std::size_t partition(T *data, std::size_t size, Comp cmp) {
-    int pivot = size / 2;    // choose pivot in middle
-    std::size_t count = 0;   // counter to remember last swapped position
-    std::size_t walker = 0;  // walks through list
+std::size_t partition(T *data, std::size_t size,
+                      bool (*cmp)(const T &l, const T &r)) {
+    std::size_t pivot = size / 2;  // choose pivot in middle
+    std::size_t count = 0;         // counter to remember last swapped position
+    std::size_t walker = 0;        // walks through list
 
     if(size > 0) {
         swap(data[pivot], data[size - 1]);  // swap pivot to end
@@ -482,7 +530,8 @@ void partition2(T *data, std::size_t size, std::size_t &pivot) {
 }
 
 template <typename T>
-void partition2(T *data, std::size_t size, std::size_t &pivot, Comp cmp) {
+void partition2(T *data, std::size_t size, std::size_t &pivot,
+                bool (*cmp)(const T &l, const T &r)) {
     std::size_t big = 1;
     std::size_t small = size - 1;
 
@@ -500,6 +549,102 @@ void partition2(T *data, std::size_t size, std::size_t &pivot, Comp cmp) {
     swap(data[pivot], data[small]);  // swap final small element with pivot's
     pivot = small;                   // return by ref to pivot's new index
 }
+
+template <typename T>
+void make_heap(T *data, std::size_t size) {
+    std::size_t i;  // index of next element to be added to heap
+    std::size_t k;  // index of newly added element pushed up through heap
+
+    for(i = 1; i < size; ++i) {
+        k = i;  // k is now child to be pushed up through heap
+
+        // push through while child is greater than parent's
+        while(k > 0 && data[parent(k)] < data[k]) {
+            swap(data[k], data[parent(k)]);  // swap child and parent
+            k = parent(k);  // get new parent's index from child
+        }
+    }
+}
+
+template <typename T>
+void make_heap(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r)) {
+    std::size_t i;  // index of next element to be added to heap
+    std::size_t k;  // index of newly added element pushed up through heap
+
+    for(i = 1; i < size; ++i) {
+        k = i;  // k is now child to be pushed up through heap
+
+        // push through while child is greater than parent's
+        while(k > 0 && cmp(data[parent(k)], data[k])) {
+            swap(data[k], data[parent(k)]);  // swap child and parent
+            k = parent(k);  // get new parent's index from child
+        }
+    }
+}
+
+template <typename T>
+void heap_down(T *data, std::size_t size) {
+    std::size_t parent = 0;
+    std::size_t child;
+    bool is_heap = false;
+
+    // walk down still parent still has left child or until heap
+    while(!is_heap && left_child(parent) < size) {
+        // find larger of child index
+        if(right_child(parent) >= size)
+            // There is no right child, so left child must be largest
+            child = left_child(parent);
+        else
+            child = data[left_child(parent)] < data[right_child(parent)]
+                        ? right_child(parent)
+                        : left_child(parent);
+
+        if(data[parent] < data[child]) {  // if parent/child is out of order
+            swap(data[parent], data[child]);
+            parent = child;
+        } else
+            is_heap = true;
+    }
+}
+
+template <typename T>
+void heap_down(T *data, std::size_t size, bool (*cmp)(const T &l, const T &r)) {
+    std::size_t parent = 0;
+    std::size_t child;
+    bool is_heap = false;
+
+    // walk down still parent still has left child or until heap
+    while(!is_heap && left_child(parent) < size) {
+        // find child index
+        if(cmp(0, 1)) {                      // path for less than comparison
+            if(right_child(parent) >= size)  // if no right, then must be left
+                child = left_child(parent);
+            else  // find largest child
+                child = cmp(data[left_child(parent)], data[right_child(parent)])
+                            ? right_child(parent)
+                            : left_child(parent);
+        } else {                             // path for greater than comparison
+            if(right_child(parent) >= size)  // if no right, then must be left
+                child = left_child(parent);
+            else  // find smallest child
+                child = cmp(data[right_child(parent)], data[left_child(parent)])
+                            ? left_child(parent)
+                            : right_child(parent);
+        }
+
+        if(cmp(data[parent], data[child])) {  // if parent/child is out of order
+            swap(data[parent], data[child]);
+            parent = child;
+        } else
+            is_heap = true;
+    }
+}
+
+std::size_t parent(std::size_t i) { return (i - 1) / 2; }
+
+std::size_t left_child(std::size_t i) { return 2 * i + 1; }
+
+std::size_t right_child(std::size_t i) { return 2 * i + 2; }
 
 }  // namespace internal
 
