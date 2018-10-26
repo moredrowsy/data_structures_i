@@ -13,7 +13,7 @@ public:
 
     // ACCESSORS
     std::clock_t clock_ticks() const { return _stop - _start; }
-    double seconds() const { return (_stop - _start) / CLOCKS_PER_SEC; }
+    double seconds() const { return (double)(_stop - _start) / CLOCKS_PER_SEC; }
 
     // MUTATORS
     void start() { _start = std::clock(); }

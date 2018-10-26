@@ -1,6 +1,7 @@
 #ifndef SORT_H
 #define SORT_H
 
+#include <cmath>              // log()
 #include <cstdlib>            // rand(), srand()
 #include <string>             // string objects
 #include "../include/heap.h"  // Heap class
@@ -80,6 +81,12 @@ void heap_sort(T *data, std::size_t size);
 template <typename T, typename C>
 void heap_sort(T *data, std::size_t size, C cmp);
 
+template <typename T>
+void intro_sort(T *data, std::size_t size);
+
+template <typename T, typename C>
+void intro_sort(T *data, std::size_t size, C cmp);
+
 // INTERNAL DECLARATIONS
 namespace internal {
 
@@ -88,6 +95,13 @@ void merge(T *data, std::size_t size1, std::size_t size2);
 
 template <typename T, typename C>
 void merge(T *data, std::size_t size1, std::size_t size2, C cmp);
+
+template <typename T>
+void intro(T *data, std::size_t size, std::size_t &limit, std::size_t depth);
+
+template <typename T, typename C>
+void intro(T *data, std::size_t size, C cmp, std::size_t &limit,
+           std::size_t depth);
 
 template <typename T>
 std::size_t partition(T *data, std::size_t size);
@@ -402,6 +416,18 @@ void heap_sort(T *data, std::size_t size, C cmp) {
     }
 }
 
+template <typename T>
+void intro_sort(T *data, std::size_t size) {
+    std::size_t limit = 2 * log(size);
+    internal::intro(data, size, limit, 0);
+}
+
+template <typename T, typename C>
+void intro_sort(T *data, std::size_t size, C cmp) {
+    std::size_t limit = 2 * log(size);
+    internal::intro(data, size, cmp, limit, 0);
+}
+
 // INTERNAL FUNCTIONS
 namespace internal {
 
@@ -450,12 +476,64 @@ void merge(T *data, std::size_t size1, std::size_t size2, C cmp) {
 }
 
 template <typename T>
+void intro(T *data, std::size_t size, std::size_t &limit, std::size_t depth) {
+    if(size > 1) {
+        if(size < 16)  // *research* says that < 16 is optimal for insertion
+            insertion_sort(data, size);
+        else if(depth > limit)  // *research* says > limit is optimal for heap
+            heap_sort(data, size);
+        else {  // else use quicksort
+            std::size_t pivot = partition(data, size);
+            intro(data, pivot, limit, depth + 1);  // recurse b4 pivot
+            intro(data + pivot + 1, size - pivot - 1, limit,
+                  depth + 1);  // after
+        }
+    }
+}
+
+template <typename T, typename C>
+void intro(T *data, std::size_t size, C cmp, std::size_t &limit,
+           std::size_t depth) {
+    if(size > 1) {
+        if(size < 16)  // *research* says that < 16 is optimal for insertion
+            insertion_sort(data, size, cmp);
+        else if(depth > limit)  // *research* says > 62 is optimal for heap
+            heap_sort(data, size, cmp);
+        else {  // else use quicksort
+            std::size_t pivot = partition(data, size, cmp);
+            intro(data, pivot, cmp, limit, depth + 1);  // recurse b4 pivot
+            intro(data + pivot + 1, size - pivot - 1, cmp, limit,
+                  depth + 1);  // after
+        }
+    }
+}
+
+template <typename T>
 std::size_t partition(T *data, std::size_t size) {
-    std::size_t pivot = size / 2;  // choose pivot in middle
-    std::size_t count = 0;         // counter to remember last swapped position
-    std::size_t walker = 0;        // walks through list
+    std::size_t count = 0;   // counter to remember last swapped position
+    std::size_t walker = 0;  // walks through list
 
     if(size > 0) {
+        std::size_t mid = size / 2;  // find midpoint
+        std::size_t pivot;           // pivot
+
+        // get pivot from median of front, middle, end
+        if(data[0] > data[mid]) {
+            if(data[mid] > data[size - 1])
+                pivot = mid;
+            else if(data[0] > data[size - 1])
+                pivot = size - 1;
+            else
+                pivot = 0;
+        } else {
+            if(data[0] > data[size - 1])
+                pivot = 0;
+            else if(data[mid] > data[size - 1])
+                pivot = size - 1;
+            else
+                pivot = mid;
+        }
+
         swap(data[pivot], data[size - 1]);  // swap pivot to end
 
         while(walker < size - 1) {
@@ -474,11 +552,30 @@ std::size_t partition(T *data, std::size_t size) {
 
 template <typename T, typename C>
 std::size_t partition(T *data, std::size_t size, C cmp) {
-    std::size_t pivot = size / 2;  // choose pivot in middle
-    std::size_t count = 0;         // counter to remember last swapped position
-    std::size_t walker = 0;        // walks through list
+    std::size_t count = 0;   // counter to remember last swapped position
+    std::size_t walker = 0;  // walks through list
 
     if(size > 0) {
+        std::size_t mid = size / 2;  // find midpoint
+        std::size_t pivot;           // pivot
+
+        // get pivot from median of front, middle, end
+        if(data[0] > data[mid]) {
+            if(data[mid] > data[size - 1])
+                pivot = mid;
+            else if(data[0] > data[size - 1])
+                pivot = size - 1;
+            else
+                pivot = 0;
+        } else {
+            if(data[0] > data[size - 1])
+                pivot = 0;
+            else if(data[mid] > data[size - 1])
+                pivot = size - 1;
+            else
+                pivot = mid;
+        }
+
         swap(data[pivot], data[size - 1]);  // swap pivot to end
 
         while(walker < size - 1) {

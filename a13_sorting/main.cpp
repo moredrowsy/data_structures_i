@@ -172,7 +172,7 @@ void test_partial(std::size_t iterations) {
 }
 
 void test_benchmark_full(std::size_t sample_size, std::size_t iterations) {
-    const int FUNC_SIZE = 7, HEADER_SIZE = 4;
+    const int FUNC_SIZE = 8, HEADER_SIZE = 4;
     timer::ChronoTimer chrono;
 
     // arrays of headers and names
@@ -182,13 +182,16 @@ void test_benchmark_full(std::size_t sample_size, std::size_t iterations) {
                                         "Selection",    "Selection w/o cmp",
                                         "Insertion",    "Insertion w/o cmp",
                                         "Merge",        "Merge w/o cmp",
-                                        "Quick @mid",   "Quick @mid w/o cmp",
+                                        "Quick @med",   "Quick @med w/o cmp",
                                         "Quick @front", "Quick @front w/o cmp",
-                                        "Heap",         "Heap w/o cmp"};
+                                        "Heap",         "Heap w/o cmp",
+                                        "Intro",        "Intro w/o cmp"};
 
-    // declare function pointer type
+    // declare function pointer type for sorting with CMP function pointer
     typedef void (*fn_ptr1)(int *data, std::size_t size,
                             bool (*cmp)(const int &l, const int &r));
+
+    // declare function pointer type for sorting WITHOUT CMP function pointer
     typedef void (*fn_ptr2)(int *data, std::size_t size);
 
     // array of function pointers to sort functions
@@ -196,14 +199,14 @@ void test_benchmark_full(std::size_t sample_size, std::size_t iterations) {
         &sort::bubble_sort<int>,    &sort::selection_sort<int>,
         &sort::insertion_sort<int>, &sort::merge_sort<int>,
         &sort::quick_sort<int>,     &sort::quick_sort2<int>,
-        &sort::heap_sort<int>};
+        &sort::heap_sort<int>,      &sort::intro_sort<int>};
 
     // array of function pointers to sort functions w/o cmp function pointer
     fn_ptr2 fn_arr2[FUNC_SIZE] = {
         &sort::bubble_sort<int>,    &sort::selection_sort<int>,
         &sort::insertion_sort<int>, &sort::merge_sort<int>,
         &sort::quick_sort<int>,     &sort::quick_sort2<int>,
-        &sort::heap_sort<int>};
+        &sort::heap_sort<int>,      &sort::intro_sort<int>};
 
     // data declaration and allocations
     SortData results1[FUNC_SIZE], results2[FUNC_SIZE];
@@ -213,7 +216,7 @@ void test_benchmark_full(std::size_t sample_size, std::size_t iterations) {
     arr2 = new int[sample_size];
 
     // populate array 2
-    for(std::size_t i = 0; i < sample_size; ++i) arr2[i] = i;
+    for(std::size_t i = 0; i < sample_size; ++i) arr2[i] = rand();
 
     // array 1 will be copied from array 2 at every iterations
     for(std::size_t i = 0; i < iterations; ++i) {
@@ -272,31 +275,34 @@ void test_benchmark_full(std::size_t sample_size, std::size_t iterations) {
 }
 
 void test_benchmark_partial(std::size_t sample_size, std::size_t iterations) {
-    const int FUNC_SIZE = 4, HEADER_SIZE = 2;
+    const int FUNC_SIZE = 5, HEADER_SIZE = 2;
     timer::ChronoTimer chrono;
 
     // arrays of headers and names
     std::string headers[HEADER_SIZE] = {"    Sorting Algorithm",
                                         "Timings (ms)"};
     std::string names[FUNC_SIZE * 2] = {"Merge",        "Merge w/o cmp",
-                                        "Quick @mid",   "Quick @mid w/o cmp",
+                                        "Quick @med",   "Quick @med w/o cmp",
                                         "Quick @front", "Quick @front w/o cmp",
-                                        "Heap",         "Heap w/o cmp"};
+                                        "Heap",         "Heap w/o cmp",
+                                        "Intro",        "Intro w/o cmp"};
 
-    // declare function pointer type
+    // declare function pointer type for sorting with CMP function pointer
     typedef void (*fn_ptr1)(int *data, std::size_t size,
                             bool (*cmp)(const int &l, const int &r));
+
+    // declare function pointer type for sorting WITHOUT CMP function pointer
     typedef void (*fn_ptr2)(int *data, std::size_t size);
 
     // array of function pointers to sort functions
     fn_ptr1 fn_arr1[FUNC_SIZE] = {
         &sort::merge_sort<int>, &sort::quick_sort<int>, &sort::quick_sort2<int>,
-        &sort::heap_sort<int>};
+        &sort::heap_sort<int>, &sort::intro_sort<int>};
 
     // array of function pointers to sort functions w/o cmp function pointer
     fn_ptr2 fn_arr2[FUNC_SIZE] = {
         &sort::merge_sort<int>, &sort::quick_sort<int>, &sort::quick_sort2<int>,
-        &sort::heap_sort<int>};
+        &sort::heap_sort<int>, &sort::intro_sort<int>};
 
     // data declaration and allocations
     SortData results1[FUNC_SIZE], results2[FUNC_SIZE];
@@ -306,7 +312,7 @@ void test_benchmark_partial(std::size_t sample_size, std::size_t iterations) {
     arr2 = new int[sample_size];
 
     // populate array 2
-    for(std::size_t i = 0; i < sample_size; ++i) arr2[i] = i;
+    for(std::size_t i = 0; i < sample_size; ++i) arr2[i] = rand();
 
     // array 1 will be copied from array 2 at every iterations
     for(std::size_t i = 0; i < iterations; ++i) {
