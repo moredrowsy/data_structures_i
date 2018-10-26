@@ -769,7 +769,7 @@ unsigned Heap<T, C>::child_index(unsigned i) const {
     unsigned child = 0;
 
     if(!is_leaf(i)) {
-        if(_cmp(0, 1))
+        if(_cmp(_items[small_child_index(i)], _items[big_child_index(i)]))
             child = small_child_index(i);
         else
             child = big_child_index(i);

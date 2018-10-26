@@ -598,21 +598,12 @@ void heap_down(T *data, std::size_t size, C cmp) {
     // walk down still parent still has left child or until heap
     while(!is_heap && left_child(parent) < size) {
         // find child index
-        if(cmp(0, 1)) {                      // path for less than comparison
-            if(right_child(parent) >= size)  // if no right, then must be left
-                child = left_child(parent);
-            else  // find largest child
-                child = cmp(data[left_child(parent)], data[right_child(parent)])
-                            ? right_child(parent)
-                            : left_child(parent);
-        } else {                             // path for greater than comparison
-            if(right_child(parent) >= size)  // if no right, then must be left
-                child = left_child(parent);
-            else  // find smallest child
-                child = cmp(data[right_child(parent)], data[left_child(parent)])
-                            ? left_child(parent)
-                            : right_child(parent);
-        }
+        if(right_child(parent) >= size)  // if no right, then must be left
+            child = left_child(parent);
+        else
+            child = cmp(data[left_child(parent)], data[right_child(parent)])
+                        ? right_child(parent)
+                        : left_child(parent);
 
         if(cmp(data[parent], data[child])) {  // if parent/child is out of order
             swap(data[parent], data[child]);

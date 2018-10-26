@@ -42,22 +42,28 @@ int main(int argc, char* argv[]) {
     // PROCESS ARGUMENT FLAGS
     if(argc == 1) RANDOM = true;
     for(int i = 1; i < argc; ++i) {
-        if(std::string(argv[i]) == "-all")
+        if(std::string(argv[i]) == "-a" || std::string(argv[i]) == "--all")
             for(int i = 0; i < BOOL_SIZE; ++i) *options[i] = true;
 
-        if(std::string(argv[i]) == "-interactive-all")
+        if(std::string(argv[i]) == "-i" ||
+           std::string(argv[i]) == "--interactive-all")
             for(int i = 1; i < BOOL_SIZE; ++i) *options[i] = true;
 
-        if(std::string(argv[i]) == "-random") RANDOM = true;
+        if(std::string(argv[i]) == "-r" || std::string(argv[i]) == "--random")
+            RANDOM = true;
 
-        if(std::string(argv[i]) == "-open") INTERACTIVE_OPEN = true;
+        if(std::string(argv[i]) == "-o" || std::string(argv[i]) == "--open")
+            INTERACTIVE_OPEN = true;
 
-        if(std::string(argv[i]) == "-double") INTERACTIVE_DOUBLE = true;
+        if(std::string(argv[i]) == "-d" || std::string(argv[i]) == "--double")
+            INTERACTIVE_DOUBLE = true;
 
-        if(std::string(argv[i]) == "-chained-avl")
+        if(std::string(argv[i]) == "-ca" ||
+           std::string(argv[i]) == "--chained-avl")
             INTERACTIVE_CHAINED_AVL = true;
 
-        if(std::string(argv[i]) == "-chained-list")
+        if(std::string(argv[i]) == "-cl" ||
+           std::string(argv[i]) == "--chained-list")
             INTERACTIVE_CHAINED_LIST = true;
     }
 
