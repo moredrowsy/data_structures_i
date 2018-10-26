@@ -76,9 +76,8 @@ public:
     void set_reverse(bool reverse);  // set heap's ordering when empty
 
     // FRIENDS
-    friend std::ostream& operator<<(std::ostream& outs,
-                                    const PQueue<T>& print_me) {
-        return outs << print_me._heap;
+    friend std::ostream& operator<<(std::ostream& outs, const PQueue<T>& pq) {
+        return outs << pq._heap;
     }
 
 private:

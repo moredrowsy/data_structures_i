@@ -17,27 +17,27 @@
 
 namespace heap {
 
-template <typename T>
+template <typename T, typename C = bool (*)(T const &, T const &)>
 class Heap {
 public:
     // CONSTRUCTORS
     Heap(bool reverse = false);
-    Heap(bool (*cmp)(const T& l, const T& r));
-    Heap(const T& item, bool reverse = false);
-    Heap(const T& item, bool (*cmp)(const T& l, const T& r));
-    Heap(const T* list, unsigned size, bool reverse = false);
-    Heap(const T* list, unsigned size, bool (*cmp)(const T& l, const T& r));
+    Heap(C cmp);
+    Heap(const T &item, bool reverse = false);
+    Heap(const T &item, C cmp);
+    Heap(const T *list, unsigned size, bool reverse = false);
+    Heap(const T *list, unsigned size, C cmp);
 
     // BIG THREE
     ~Heap();
-    Heap(const Heap<T>& src);
-    Heap<T>& operator=(const Heap<T>& rhs);
+    Heap(const Heap<T, C> &src);
+    Heap<T, C> &operator=(const Heap<T, C> &rhs);
 
     // ACCESSORS
     bool empty() const;
     unsigned capacity() const;
     unsigned size() const;
-    const T* items() const;  // returns const ptr to array of items
+    const T *items() const;  // returns const ptr to array of items
     bool validate(unsigned parent = 0) const;  // valide heap structure
 
     // MUTATORS
@@ -46,31 +46,30 @@ public:
     T pop();                   // remove top item and rearrange heap
     bool reserve(unsigned n);  // increase capacity by amount i
     // set the comparison function
-    void set_comp(bool (*cmp)(const T& l, const T& r));
+    void set_comp(bool (*cmp)(const T &l, const T &r));
     void set_reverse(bool reverse);  // set heap's ordering when empty
 
     // FRIENDS
-    friend std::ostream& operator<<(std::ostream& outs,
-                                    const Heap<T>& print_me) {
-        print_me.print_tree(outs);
+    friend std::ostream &operator<<(std::ostream &outs, const Heap<T, C> &h) {
+        h.print_tree(outs);
         return outs;
     }
 
 private:
     bool _reverse = false;                        // reverse sorting to max
-    bool (*_cmp)(const T& left, const T& right);  // comparison function ptr
+    bool (*_cmp)(const T &left, const T &right);  // comparison function ptr
     unsigned _capacity;
     unsigned _size;
-    T* _items;
+    T *_items;
 
     // ACCESSORS
     // min function comparison
-    static bool min_cmp(const T& left, const T& right);
-    static bool max_cmp(const T& left, const T& right);
+    static bool min_cmp(const T &left, const T &right);
+    static bool max_cmp(const T &left, const T &right);
     // print tree in array format
-    void print_tree(std::ostream& outs = std::cout) const;
+    void print_tree(std::ostream &outs = std::cout) const;
     // print tree in 90 degrees counterclockwise binary format
-    void print_tree(unsigned root, std::ostream& outs = std::cout,
+    void print_tree(unsigned root, std::ostream &outs = std::cout,
                     unsigned level = 0) const;
     inline bool is_leaf(unsigned i) const;
     inline unsigned parent_index(unsigned i) const;
@@ -84,9 +83,9 @@ private:
     inline void deallocate_and_throw();
     inline bool expand();  // update capacity and array
                            // move root node down till heap structure
-    inline void heap_down(bool (*cmp)(const T& l, const T& r));
+    inline void heap_down(bool (*cmp)(const T &l, const T &r));
     // move last node up till heap structure
-    inline void heap_up(bool (*cmp)(const T& l, const T& r));
+    inline void heap_up(bool (*cmp)(const T &l, const T &r));
     inline void swap_with_parent(unsigned i);  // swap parent/child node
 };
 
@@ -103,8 +102,8 @@ private:
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(bool reverse)
+template <typename T, typename C>
+Heap<T, C>::Heap(bool reverse)
     : _reverse(reverse),
       _cmp(&min_cmp),
       _capacity(0),
@@ -126,8 +125,8 @@ Heap<T>::Heap(bool reverse)
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(bool (*cmp)(const T& l, const T& r))
+template <typename T, typename C>
+Heap<T, C>::Heap(C cmp)
     : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {}
 
 /*******************************************************************************
@@ -145,8 +144,8 @@ Heap<T>::Heap(bool (*cmp)(const T& l, const T& r))
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(const T& item, bool reverse)
+template <typename T, typename C>
+Heap<T, C>::Heap(const T &item, bool reverse)
     : _reverse(reverse),
       _cmp(&min_cmp),
       _capacity(0),
@@ -171,8 +170,8 @@ Heap<T>::Heap(const T& item, bool reverse)
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(const T& item, bool (*cmp)(const T& l, const T& r))
+template <typename T, typename C>
+Heap<T, C>::Heap(const T &item, C cmp)
     : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {
     if(!insert(item)) deallocate_and_throw();
 }
@@ -194,8 +193,8 @@ Heap<T>::Heap(const T& item, bool (*cmp)(const T& l, const T& r))
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(const T* list, unsigned size, bool reverse)
+template <typename T, typename C>
+Heap<T, C>::Heap(const T *list, unsigned size, bool reverse)
     : _reverse(reverse),
       _cmp(&min_cmp),
       _capacity(0),
@@ -224,8 +223,8 @@ Heap<T>::Heap(const T* list, unsigned size, bool reverse)
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(const T* list, unsigned size, bool (*cmp)(const T& l, const T& r))
+template <typename T, typename C>
+Heap<T, C>::Heap(const T *list, unsigned size, C cmp)
     : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {
     if(!reserve(size)) deallocate_and_throw();
     for(unsigned i = 0; i < size; ++i) insert(list[i]);
@@ -244,8 +243,8 @@ Heap<T>::Heap(const T* list, unsigned size, bool (*cmp)(const T& l, const T& r))
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::~Heap() {
+template <typename T, typename C>
+Heap<T, C>::~Heap() {
     delete[] _items;
 }
 
@@ -255,7 +254,7 @@ Heap<T>::~Heap() {
  *  fails, deallocate _items and throw exception before constructor fails.
  *
  * PRE-CONDITIONS:
- *  const Heap<T>& src: Heap source
+ *  const Heap<T, C>& src: Heap source
  *
  * POST-CONDITIONS:
  *  items from source inserted to Heap, _size and _capacity increased by
@@ -264,8 +263,8 @@ Heap<T>::~Heap() {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>::Heap(const Heap<T>& src)
+template <typename T, typename C>
+Heap<T, C>::Heap(const Heap<T, C> &src)
     : _reverse(src._reverse),
       _cmp(src._cmp),
       _capacity(0),
@@ -281,7 +280,7 @@ Heap<T>::Heap(const Heap<T>& src)
  *  fails, deallocate _items and throw exception before constructor fails.
  *
  * PRE-CONDITIONS:
- *  const Heap<T>& rhs: Heap source on right side
+ *  const Heap<T, C>& rhs: Heap source on right side
  *
  * POST-CONDITIONS:
  *  items from source inserted to Heap, _size and _capacity increased by
@@ -290,8 +289,8 @@ Heap<T>::Heap(const Heap<T>& src)
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
+template <typename T, typename C>
+Heap<T, C> &Heap<T, C>::operator=(const Heap<T, C> &rhs) {
     if(this != &rhs) {
         delete[] _items;
         _reverse = rhs._reverse;
@@ -319,8 +318,8 @@ Heap<T>& Heap<T>::operator=(const Heap<T>& rhs) {
  * RETURN:
  *  boolean
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::empty() const {
+template <typename T, typename C>
+bool Heap<T, C>::empty() const {
     return _size == 0;
 }
 
@@ -337,8 +336,8 @@ bool Heap<T>::empty() const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::capacity() const {
+template <typename T, typename C>
+unsigned Heap<T, C>::capacity() const {
     return _capacity;
 }
 
@@ -355,8 +354,8 @@ unsigned Heap<T>::capacity() const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::size() const {
+template <typename T, typename C>
+unsigned Heap<T, C>::size() const {
     return _size;
 }
 
@@ -373,8 +372,8 @@ unsigned Heap<T>::size() const {
  * RETURN:
  *  const T*: pointer to array of items
  ******************************************************************************/
-template <typename T>
-const T* Heap<T>::items() const {
+template <typename T, typename C>
+const T *Heap<T, C>::items() const {
     return _items;
 }
 
@@ -391,8 +390,8 @@ const T* Heap<T>::items() const {
  * RETURN:
  *  boolean
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::validate(unsigned parent) const {
+template <typename T, typename C>
+bool Heap<T, C>::validate(unsigned parent) const {
     if(parent >= _size) return true;
 
     bool is_valid = true;
@@ -425,8 +424,8 @@ bool Heap<T>::validate(unsigned parent) const {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::clear() {
+template <typename T, typename C>
+void Heap<T, C>::clear() {
     _size = 0;
 }
 
@@ -443,8 +442,8 @@ void Heap<T>::clear() {
  * RETURN:
  *  boolean: insertion success/failure
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::insert(T item) {
+template <typename T, typename C>
+bool Heap<T, C>::insert(T item) {
     bool is_good = expand();
 
     if(is_good) {  // add item/process heap structure if update is good
@@ -470,8 +469,8 @@ bool Heap<T>::insert(T item) {
  * RETURN:
  *  T: templated item removed from Heap
  ******************************************************************************/
-template <typename T>
-T Heap<T>::pop() {
+template <typename T, typename C>
+T Heap<T, C>::pop() {
     assert(!empty());
 
     T pop = _items[0];
@@ -499,14 +498,14 @@ T Heap<T>::pop() {
  * RETURN:
  *  boolan: allocation success/failure
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::reserve(unsigned n) {
+template <typename T, typename C>
+bool Heap<T, C>::reserve(unsigned n) {
     bool is_good = true;
 
     if(n > _capacity) {  // expand capacity and create new array
         _capacity = n;
 
-        T* new_items = new(std::nothrow) T[_capacity];
+        T *new_items = new(std::nothrow) T[_capacity];
 
         if(new_items) {  // allocation success return non-nullptr
             for(unsigned i = 0; i < _size; ++i) new_items[i] = _items[i];
@@ -533,8 +532,8 @@ bool Heap<T>::reserve(unsigned n) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::set_comp(bool (*cmp)(const T& l, const T& r)) {
+template <typename T, typename C>
+void Heap<T, C>::set_comp(bool (*cmp)(const T &l, const T &r)) {
     assert(empty());
     _cmp = cmp;
 }
@@ -553,8 +552,8 @@ void Heap<T>::set_comp(bool (*cmp)(const T& l, const T& r)) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::set_reverse(bool reverse) {
+template <typename T, typename C>
+void Heap<T, C>::set_reverse(bool reverse) {
     assert(empty());
     _reverse = reverse;
     if(_reverse) _cmp = &max_cmp;
@@ -573,8 +572,8 @@ void Heap<T>::set_reverse(bool reverse) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::min_cmp(const T& left, const T& right) {
+template <typename T, typename C>
+bool Heap<T, C>::min_cmp(const T &left, const T &right) {
     return left < right;
 }
 
@@ -591,8 +590,8 @@ bool Heap<T>::min_cmp(const T& left, const T& right) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::max_cmp(const T& left, const T& right) {
+template <typename T, typename C>
+bool Heap<T, C>::max_cmp(const T &left, const T &right) {
     return left > right;
 }
 
@@ -609,8 +608,8 @@ bool Heap<T>::max_cmp(const T& left, const T& right) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::print_tree(std::ostream& outs) const {
+template <typename T, typename C>
+void Heap<T, C>::print_tree(std::ostream &outs) const {
     print_tree(0, outs);
 }
 
@@ -627,9 +626,9 @@ void Heap<T>::print_tree(std::ostream& outs) const {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::print_tree(unsigned root, std::ostream& outs,
-                         unsigned level) const {
+template <typename T, typename C>
+void Heap<T, C>::print_tree(unsigned root, std::ostream &outs,
+                            unsigned level) const {
     if(root >= _size) {
         outs << std::string(10 * level, ' ') << "|||" << std::endl;
         return;
@@ -653,8 +652,8 @@ void Heap<T>::print_tree(unsigned root, std::ostream& outs,
  * RETURN:
  *  boolean
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::is_leaf(unsigned i) const {
+template <typename T, typename C>
+bool Heap<T, C>::is_leaf(unsigned i) const {
     return (i * 2) + 2 > _size;
 }
 
@@ -671,8 +670,8 @@ bool Heap<T>::is_leaf(unsigned i) const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::parent_index(unsigned i) const {
+template <typename T, typename C>
+unsigned Heap<T, C>::parent_index(unsigned i) const {
     return (static_cast<int>(i) - 1) / 2;
 }
 
@@ -689,8 +688,8 @@ unsigned Heap<T>::parent_index(unsigned i) const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::left_child_index(unsigned i) const {
+template <typename T, typename C>
+unsigned Heap<T, C>::left_child_index(unsigned i) const {
     return i * 2 + 1;
 }
 
@@ -707,8 +706,8 @@ unsigned Heap<T>::left_child_index(unsigned i) const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::right_child_index(unsigned i) const {
+template <typename T, typename C>
+unsigned Heap<T, C>::right_child_index(unsigned i) const {
     return i * 2 + 2;
 }
 
@@ -725,8 +724,8 @@ unsigned Heap<T>::right_child_index(unsigned i) const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::big_child_index(unsigned i) const {
+template <typename T, typename C>
+unsigned Heap<T, C>::big_child_index(unsigned i) const {
     return _items[left_child_index(i)] < _items[right_child_index(i)]
                ? right_child_index(i)
                : left_child_index(i);
@@ -745,8 +744,8 @@ unsigned Heap<T>::big_child_index(unsigned i) const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::small_child_index(unsigned i) const {
+template <typename T, typename C>
+unsigned Heap<T, C>::small_child_index(unsigned i) const {
     return _items[left_child_index(i)] < _items[right_child_index(i)]
                ? left_child_index(i)
                : right_child_index(i);
@@ -765,8 +764,8 @@ unsigned Heap<T>::small_child_index(unsigned i) const {
  * RETURN:
  *  unsigned
  ******************************************************************************/
-template <typename T>
-unsigned Heap<T>::child_index(unsigned i) const {
+template <typename T, typename C>
+unsigned Heap<T, C>::child_index(unsigned i) const {
     unsigned child = 0;
 
     if(!is_leaf(i)) {
@@ -793,8 +792,8 @@ unsigned Heap<T>::child_index(unsigned i) const {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::deallocate_and_throw() {
+template <typename T, typename C>
+void Heap<T, C>::deallocate_and_throw() {
     if(_items) delete[] _items;
     throw std::bad_alloc();
 }
@@ -815,14 +814,14 @@ void Heap<T>::deallocate_and_throw() {
  * RETURN:
  *  boolan: allocation success/failure
  ******************************************************************************/
-template <typename T>
-bool Heap<T>::expand() {
+template <typename T, typename C>
+bool Heap<T, C>::expand() {
     bool is_good = true;
 
     if(_size == _capacity) {  // expand capacity and create new array
         _capacity = _capacity > 0 ? _capacity * 2 : 1;
 
-        T* new_items = new(std::nothrow) T[_capacity];
+        T *new_items = new(std::nothrow) T[_capacity];
 
         if(new_items) {  // allocation success return non-nullptr
             for(unsigned i = 0; i < _size; ++i) new_items[i] = _items[i];
@@ -851,8 +850,8 @@ bool Heap<T>::expand() {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::heap_down(bool (*cmp)(const T& l, const T& r)) {
+template <typename T, typename C>
+void Heap<T, C>::heap_down(bool (*cmp)(const T &l, const T &r)) {
     assert(_size);
 
     unsigned parent = 0, child = child_index(parent);
@@ -879,8 +878,8 @@ void Heap<T>::heap_down(bool (*cmp)(const T& l, const T& r)) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::heap_up(bool (*cmp)(const T& l, const T& r)) {
+template <typename T, typename C>
+void Heap<T, C>::heap_up(bool (*cmp)(const T &l, const T &r)) {
     assert(_size);
 
     unsigned child = _size - 1, parent = parent_index(child);
@@ -907,8 +906,8 @@ void Heap<T>::heap_up(bool (*cmp)(const T& l, const T& r)) {
  * RETURN:
  *  none
  ******************************************************************************/
-template <typename T>
-void Heap<T>::swap_with_parent(unsigned i) {
+template <typename T, typename C>
+void Heap<T, C>::swap_with_parent(unsigned i) {
     if(i) {
         T parent = _items[parent_index(i)];
         _items[parent_index(i)] = _items[i];
