@@ -10,7 +10,7 @@ Projects for data structures using C++
 * Assignment 06 - Binary search tree node and functions
 * Assignment 07 - Binary search tree class
 * Assignment 08 - AVL class for balanced binary tree
-* Assignment 09 - Binary max heap tree class
+* Assignment 09 - Heap class
 * Assignment 10 - Priority Queue class
 * Assignment 11 - Open Hash, Double Hash, Chained AVL Hash, Chained List Hash\
                   class

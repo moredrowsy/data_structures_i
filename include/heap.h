@@ -17,17 +17,18 @@
 
 namespace heap {
 
+typedef bool (*Comp)(const int& l, const int& r);
+
 template <typename T>
 class Heap {
 public:
     // CONSTRUCTORS
     Heap(bool reverse = false);
-    Heap(bool (*cmp)(const T& left, const T& right));
+    Heap(Comp cmp);
     Heap(const T& item, bool reverse = false);
-    Heap(const T& item, bool (*cmp)(const T& left, const T& right) = &min_cmp);
+    Heap(const T& item, Comp cmp);
     Heap(const T* list, unsigned size, bool reverse = false);
-    Heap(const T* list, unsigned size,
-         bool (*cmp)(const T& left, const T& right) = &min_cmp);
+    Heap(const T* list, unsigned size, Comp cmp);
 
     // BIG THREE
     ~Heap();
@@ -47,7 +48,7 @@ public:
     T pop();                   // remove top item and rearrange heap
     bool reserve(unsigned n);  // increase capacity by amount i
     // set the comparison function
-    void set_comp(bool (*cmp)(const T& left, const T& right));
+    void set_comp(Comp cmp);
     void set_reverse(bool reverse);  // set heap's ordering when empty
 
     // FRIENDS
@@ -85,9 +86,9 @@ private:
     inline void deallocate_and_throw();
     inline bool expand();  // update capacity and array
                            // move root node down till heap structure
-    inline void heapDown(bool (*cmp)(const T& left, const T& right));
+    inline void heapDown(Comp cmp);
     // move last node up till heap structure
-    inline void heapUp(bool (*cmp)(const T& left, const T& right));
+    inline void heapUp(Comp cmp);
     inline void swap_with_parent(unsigned i);  // swap parent/child node
 };
 
@@ -128,7 +129,7 @@ Heap<T>::Heap(bool reverse)
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(bool (*cmp)(const T& left, const T& right))
+Heap<T>::Heap(Comp cmp)
     : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {}
 
 /*******************************************************************************
@@ -173,7 +174,7 @@ Heap<T>::Heap(const T& item, bool reverse)
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const T& item, bool (*cmp)(const T& left, const T& right))
+Heap<T>::Heap(const T& item, Comp cmp)
     : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {
     if(!insert(item)) deallocate_and_throw();
 }
@@ -226,8 +227,7 @@ Heap<T>::Heap(const T* list, unsigned size, bool reverse)
  *  none
  ******************************************************************************/
 template <typename T>
-Heap<T>::Heap(const T* list, unsigned size,
-              bool (*cmp)(const T& left, const T& right))
+Heap<T>::Heap(const T* list, unsigned size, Comp cmp)
     : _reverse(false), _cmp(cmp), _capacity(0), _size(0), _items(nullptr) {
     if(!reserve(size)) deallocate_and_throw();
     for(unsigned i = 0; i < size; ++i) insert(list[i]);
@@ -527,7 +527,7 @@ bool Heap<T>::reserve(unsigned n) {
  *  Override the heap's internal comparison function.
  *
  * PRE-CONDITIONS:
- *  bool (*cmp)(const T& left, const T& right): comparison function
+ *  Comp cmp: comparison function
  *
  * POST-CONDITIONS:
  *  _cmp = cmp
@@ -536,7 +536,7 @@ bool Heap<T>::reserve(unsigned n) {
  *  none
  ******************************************************************************/
 template <typename T>
-void Heap<T>::set_comp(bool (*cmp)(const T& left, const T& right)) {
+void Heap<T>::set_comp(Comp cmp) {
     assert(empty());
     _cmp = cmp;
 }
@@ -854,7 +854,7 @@ bool Heap<T>::expand() {
  *  none
  ******************************************************************************/
 template <typename T>
-void Heap<T>::heapDown(bool (*cmp)(const T& left, const T& right)) {
+void Heap<T>::heapDown(Comp cmp) {
     assert(_size);
 
     unsigned parent = 0, child = child_index(parent);
@@ -882,7 +882,7 @@ void Heap<T>::heapDown(bool (*cmp)(const T& left, const T& right)) {
  *  none
  ******************************************************************************/
 template <typename T>
-void Heap<T>::heapUp(bool (*cmp)(const T& left, const T& right)) {
+void Heap<T>::heapUp(Comp cmp) {
     assert(_size);
 
     unsigned child = _size - 1, parent = parent_index(child);
