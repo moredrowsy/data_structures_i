@@ -161,16 +161,4 @@ SCENARIO("Priority Queue", "[pqueue]") {
             }
         }
     }
-
-    GIVEN("CTOR: w/ initializer list") {
-        typedef Info<std::string> Info_s;
-
-        PQueue<std::string> pqueue_list(true);
-        pqueue_list = {Info_s("One", 1), Info_s("Two", 2), Info_s("Three", 3),
-                       Info_s("Four", 4)};
-
-        REQUIRE(pqueue_list.empty() == false);
-        REQUIRE(pqueue_list.size() == 4);
-        REQUIRE(pqueue_list.validate() == true);
-    }
 }
