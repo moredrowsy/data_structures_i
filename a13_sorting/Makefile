@@ -8,7 +8,7 @@ SRC             := ../src
 OBJ             := main.o
 
 main.out: $(OBJ)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ -pthread
 
 main.o: main.cpp\
 	${INC}/sort.h
