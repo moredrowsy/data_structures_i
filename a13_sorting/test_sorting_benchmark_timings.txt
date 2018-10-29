@@ -1,100 +1,202 @@
-***** ********* *********
-***** LINUX G++ *********
-***** ********* *********
+***** ********* *****
+***** LINUX G++ *****
+***** ********* *****
 $ g++ --version
 g++ (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0
 
-Sample size: 10000     Iterations: 50
+ARRAY SIZE: 10000      SAMPLE: 50
 --------------------------------------------------------------------------------
     Sorting Algorithm  % diff to STL Timings (ms)
 ---------------------  ------------- ------------
-       Merge w/lambda       166.14 %      1.18794
-                Merge       105.81 %      0.91868
-    Quick_v1 w/lambda        66.01 %      0.74103
-             Quick_v1        20.84 %      0.53940
-    Quick_v2 w/lambda       135.93 %      1.05312
-             Quick_v2        37.39 %      0.61327
-        Heap w/lambda        82.47 %      0.81447
-                 Heap        70.98 %      0.76320
-       Intro w/lambda        65.27 %      0.73773
-                Intro         6.32 %      0.47459
-      Intro2 w/lambda       102.71 %      0.90483
-               Intro2        12.03 %      0.50008
-  std::sort w/ lambda        -0.03 %      0.44623
-            std::sort         0.00 %      0.44637
+       Merge w/lambda       162.29 %      1.16879
+                Merge       100.25 %      0.89235
+      Quick1 w/lambda        63.82 %      0.73003
+               Quick1        32.24 %      0.58927
+      Quick2 w/lambda       141.07 %      1.07426
+               Quick2        41.60 %      0.63100
+        Heap w/lambda        80.50 %      0.80436
+                 Heap        71.19 %      0.76287
+       Intro w/lambda        58.67 %      0.70708
+                Intro         6.23 %      0.47340
+      Intro2 w/lambda        97.23 %      0.87888
+               Intro2         6.71 %      0.47551
+  std::sort w/ lambda         0.49 %      0.44778
+            std::sort         0.00 %      0.44562
 
-Sample size: 50000     Iterations: 50
+ARRAY SIZE: 50000      SAMPLE: 50
 --------------------------------------------------------------------------------
     Sorting Algorithm  % diff to STL Timings (ms)
 ---------------------  ------------- ------------
-       Merge w/lambda       150.77 %      6.41228
-                Merge        96.44 %      5.02316
-    Quick_v1 w/lambda        74.08 %      4.45124
-             Quick_v1        18.39 %      3.02729
-    Quick_v2 w/lambda       139.58 %      6.12612
-             Quick_v2        35.16 %      3.45619
-        Heap w/lambda       105.64 %      5.25834
-                 Heap        78.71 %      4.56975
-       Intro w/lambda        64.26 %      4.20033
-                Intro         7.41 %      2.74647
-      Intro2 w/lambda       102.41 %      5.17571
-               Intro2        14.09 %      2.91738
-  std::sort w/ lambda        -0.11 %      2.55433
-            std::sort         0.00 %      2.55705
+       Merge w/lambda       185.54 %      7.43501
+                Merge        95.11 %      5.08040
+      Quick1 w/lambda        82.39 %      4.74923
+               Quick1        31.84 %      3.43296
+      Quick2 w/lambda       150.49 %      6.52231
+               Quick2        39.37 %      3.62898
+        Heap w/lambda       106.48 %      5.37651
+                 Heap        80.34 %      4.69569
+       Intro w/lambda        57.19 %      4.09294
+                Intro         9.01 %      2.83841
+      Intro2 w/lambda       102.00 %      5.25988
+               Intro2         8.16 %      2.81640
+  std::sort w/ lambda         0.16 %      2.60799
+            std::sort         0.00 %      2.60386
 
-Sample size: 100000    Iterations: 50
+ARRAY SIZE: 100000     SAMPLE: 50
 --------------------------------------------------------------------------------
     Sorting Algorithm  % diff to STL Timings (ms)
 ---------------------  ------------- ------------
-       Merge w/lambda       166.11 %     14.46438
-                Merge        93.15 %     10.49855
-    Quick_v1 w/lambda        78.36 %      9.69490
-             Quick_v1        18.12 %      6.42018
-    Quick_v2 w/lambda       143.99 %     13.26214
-             Quick_v2        33.73 %      7.26884
-        Heap w/lambda       115.14 %     11.69375
-                 Heap        82.62 %      9.92644
-       Intro w/lambda        62.61 %      8.83853
-                Intro         7.72 %      5.85521
-      Intro2 w/lambda       103.32 %     11.05146
-               Intro2        14.35 %      6.21549
-  std::sort w/ lambda        -0.03 %      5.43377
-            std::sort         0.00 %      5.43551
+       Merge w/lambda       172.82 %     15.00330
+                Merge        93.99 %     10.66822
+      Quick1 w/lambda        73.47 %      9.53966
+               Quick1        31.41 %      7.22639
+      Quick2 w/lambda       145.31 %     13.49013
+               Quick2        38.75 %      7.62999
+        Heap w/lambda       118.33 %     12.00635
+                 Heap        84.84 %     10.16467
+       Intro w/lambda        57.57 %      8.66502
+                Intro         9.79 %      6.03780
+      Intro2 w/lambda       104.58 %     11.25034
+               Intro2         9.64 %      6.02934
+  std::sort w/ lambda         0.24 %      5.51253
+            std::sort         0.00 %      5.49928
 
-Sample size: 1000000   Iterations: 50
+ARRAY SIZE: 1000000    SAMPLE: 50
 --------------------------------------------------------------------------------
     Sorting Algorithm  % diff to STL Timings (ms)
 ---------------------  ------------- ------------
-       Merge w/lambda       147.07 %    160.23075
-                Merge        89.89 %    123.14909
-    Quick_v1 w/lambda        71.74 %    111.37724
-             Quick_v1        17.48 %     76.18700
-    Quick_v2 w/lambda       140.09 %    155.70135
-             Quick_v2        32.23 %     85.75449
-        Heap w/lambda       174.90 %    178.27970
-                 Heap       101.67 %    130.78605
-       Intro w/lambda        63.49 %    106.02876
-                Intro         8.77 %     70.54126
-      Intro2 w/lambda       105.76 %    133.43977
-               Intro2        15.52 %     74.91787
-  std::sort w/ lambda        -0.44 %     64.56643
-            std::sort         0.00 %     64.85185
+       Merge w/lambda       149.00 %    162.09087
+                Merge        90.91 %    124.27840
+      Quick1 w/lambda        73.55 %    112.97495
+               Quick1        30.48 %     84.93810
+      Quick2 w/lambda       143.69 %    158.63260
+               Quick2        36.28 %     88.71361
+        Heap w/lambda       181.64 %    183.33834
+                 Heap       103.97 %    132.77517
+       Intro w/lambda        57.78 %    102.71036
+                Intro        11.85 %     72.81302
+      Intro2 w/lambda       106.94 %    134.71363
+               Intro2        11.14 %     72.35133
+  std::sort w/ lambda         0.30 %     65.28999
+            std::sort         0.00 %     65.09641
 
-Sample size: 10000000  Iterations: 50
+ARRAY SIZE: 10000000   SAMPLE: 50
 --------------------------------------------------------------------------------
     Sorting Algorithm  % diff to STL Timings (ms)
 ---------------------  ------------- ------------
-       Merge w/lambda       141.03 %   1822.54999
-                Merge        89.32 %   1431.55579
-    Quick_v1 w/lambda        72.02 %   1300.67760
-             Quick_v1        17.00 %    884.67296
-    Quick_v2 w/lambda       134.82 %   1775.57839
-             Quick_v2        30.25 %    984.83960
-        Heap w/lambda       394.87 %   3741.86168
-                 Heap       186.24 %   2164.38543
-       Intro w/lambda        63.39 %   1235.45882
-                Intro         9.45 %    827.60273
-      Intro2 w/lambda       105.28 %   1552.17584
-               Intro2        15.46 %    873.05748
-  std::sort w/ lambda        -0.53 %    752.09857
-            std::sort         0.00 %    756.13748
+       Merge w/lambda       143.42 %   1845.30503
+                Merge        88.13 %   1426.18203
+      Quick1 w/lambda        73.20 %   1312.97777
+               Quick1        29.53 %    981.95996
+      Quick2 w/lambda       138.09 %   1804.92046
+               Quick2        33.77 %   1014.09784
+        Heap w/lambda       416.21 %   3913.21190
+                 Heap       191.71 %   2211.38385
+       Intro w/lambda        57.34 %   1192.72906
+                Intro        14.16 %    865.40830
+      Intro2 w/lambda       107.22 %   1570.87085
+               Intro2        12.09 %    849.73888
+  std::sort w/ lambda         0.66 %    763.08979
+            std::sort         0.00 %    758.07202
+
+
+***** ***** *****
+***** CLANG *****
+***** ***** *****
+clang --version
+clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)
+
+ARRAY SIZE: 10000      SAMPLE: 50
+--------------------------------------------------------------------------------
+    Sorting Algorithm  % diff to STL Timings (ms)
+---------------------  ------------- ------------
+       Merge w/lambda       153.61 %      1.11711
+                Merge        82.22 %      0.80263
+      Quick1 w/lambda        73.73 %      0.76525
+               Quick1        27.41 %      0.56120
+      Quick2 w/lambda       105.71 %      0.90610
+               Quick2        80.48 %      0.79496
+        Heap w/lambda       163.42 %      1.16029
+                 Heap        65.87 %      0.73061
+       Intro w/lambda        64.85 %      0.72612
+                Intro         0.20 %      0.44137 <-- WTHELL CLANG???
+      Intro2 w/lambda       111.88 %      0.93328
+               Intro2        11.99 %      0.49329
+  std::sort w/ lambda         1.05 %      0.44512
+            std::sort         0.00 %      0.44048
+
+ARRAY SIZE: 50000      SAMPLE: 50
+--------------------------------------------------------------------------------
+    Sorting Algorithm  % diff to STL Timings (ms)
+---------------------  ------------- ------------
+       Merge w/lambda       142.87 %      6.09868
+                Merge        66.18 %      4.17280
+      Quick1 w/lambda        76.42 %      4.43015
+               Quick1        23.54 %      3.10226
+      Quick2 w/lambda       102.83 %      5.09325
+               Quick2        76.68 %      4.43661
+        Heap w/lambda       172.47 %      6.84182
+                 Heap        71.27 %      4.30076
+       Intro w/lambda        62.67 %      4.08467
+                Intro         0.38 %      2.52073 <-- WTHELL CLANG???
+      Intro2 w/lambda       113.02 %      5.34905
+               Intro2        12.71 %      2.83035
+  std::sort w/ lambda         0.14 %      2.51465
+            std::sort         0.00 %      2.51108
+
+ARRAY SIZE: 100000     SAMPLE: 50
+--------------------------------------------------------------------------------
+    Sorting Algorithm  % diff to STL Timings (ms)
+---------------------  ------------- ------------
+       Merge w/lambda       149.72 %     13.36181
+                Merge        60.81 %      8.60438
+      Quick1 w/lambda        72.60 %      9.23532
+               Quick1        23.00 %      6.58159
+      Quick2 w/lambda       102.75 %     10.84841
+               Quick2        76.09 %      9.42177
+        Heap w/lambda       177.19 %     14.83165
+                 Heap        76.04 %      9.41918
+       Intro w/lambda        63.23 %      8.73393
+                Intro         0.42 %      5.37307 <-- WTHELL CLANG???
+      Intro2 w/lambda       114.21 %     11.46148
+               Intro2        14.52 %      6.12774
+  std::sort w/ lambda         0.24 %      5.36345
+            std::sort         0.00 %      5.35067
+
+ARRAY SIZE: 1000000    SAMPLE: 50
+--------------------------------------------------------------------------------
+    Sorting Algorithm  % diff to STL Timings (ms)
+---------------------  ------------- ------------
+       Merge w/lambda       115.51 %    136.20876
+                Merge        47.57 %     93.27259
+      Quick1 w/lambda        68.71 %    106.63284
+               Quick1        20.45 %     76.12983
+      Quick2 w/lambda       100.24 %    126.56259
+               Quick2        74.32 %    110.17624
+        Heap w/lambda       205.05 %    192.80758
+                 Heap        98.26 %    125.30820
+       Intro w/lambda        62.37 %    102.62629
+                Intro         1.79 %     64.33601 <-- WTHELL CLANG???
+      Intro2 w/lambda       118.71 %    138.23492
+               Intro2        16.10 %     73.38316
+  std::sort w/ lambda        -0.00 %     63.20260
+            std::sort         0.00 %     63.20437
+
+ARRAY SIZE: 10000000   SAMPLE: 50
+--------------------------------------------------------------------------------
+    Sorting Algorithm  % diff to STL Timings (ms)
+---------------------  ------------- ------------
+       Merge w/lambda       104.33 %   1503.60066
+                Merge        42.13 %   1045.86602
+      Quick1 w/lambda        67.35 %   1231.46304
+               Quick1        18.40 %    871.26474
+      Quick2 w/lambda        99.47 %   1467.85155
+               Quick2        71.40 %   1261.29141
+        Heap w/lambda       315.07 %   3054.37058
+                 Heap       189.46 %   2130.03005
+       Intro w/lambda        62.10 %   1192.84505
+                Intro         2.52 %    754.41489 <-- WTHELL CLANG???
+      Intro2 w/lambda       119.51 %   1615.32036
+               Intro2        16.82 %    859.61919
+  std::sort w/ lambda        -0.06 %    735.44343
+            std::sort         0.00 %    735.86789

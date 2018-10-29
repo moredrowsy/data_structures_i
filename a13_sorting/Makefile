@@ -1,8 +1,9 @@
-CXX             := g++
-LDFLAGS         := -pthread
+CXX             := clang
 DEBUG_LEVEL     := #-g
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
-CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS) -O2
+OPT             := -O2
+CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS) $(OPT)
+LDFLAGS         := -lm -lstdc++ -pthread
 
 INC             := ../include
 SRC             := ../src
@@ -12,7 +13,8 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
 main.o: main.cpp\
-	${INC}/sort.h
+	${INC}/sort.h\
+	${INC}/timer.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

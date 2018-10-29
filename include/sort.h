@@ -91,10 +91,10 @@ template <typename T>
 void quick_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &));
 
 template <typename T>
-void quick_sort2(T *data, std::size_t size, bool cmp = less);
+void quick2_sort(T *data, std::size_t size, bool cmp = less);
 
 template <typename T>
-void quick_sort2(T *data, std::size_t size, bool (*cmp)(T const &, T const &));
+void quick2_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &));
 
 template <typename T>
 void heap_sort(T *data, std::size_t size);
@@ -282,7 +282,8 @@ void swap(T &left, T &right) {
  ******************************************************************************/
 template <typename T>
 void shuffle(T *data, std::size_t size) {
-    while(size && --size) swap(data[size], data[rand() % size]);
+    if(size)
+        while(--size) swap(data[size], data[rand() % size]);
 }
 
 /*******************************************************************************
@@ -348,12 +349,13 @@ bool verify(const T *data, std::size_t size,
             bool (*cmp)(T const &, T const &)) {
     bool is_sorted = true;
 
-    while(size && --size) {
-        if(cmp(data[size], data[size - 1])) {
-            is_sorted = false;
-            break;
+    if(size)
+        while(--size) {
+            if(cmp(data[size], data[size - 1])) {
+                is_sorted = false;
+                break;
+            }
         }
-    }
 
     return is_sorted;
 }
@@ -795,7 +797,7 @@ void quick_sort(T *data, std::size_t size, bool cmp) {
  ******************************************************************************/
 template <typename T>
 void quick_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
-    if(size > 1) {
+    if(size) {
         std::size_t pivot = internal::partition(data, size, cmp);
         quick_sort(data, pivot, cmp);  // recurse b4 pivot
         quick_sort(data + pivot + 1, size - pivot - 1, cmp);  // after
@@ -826,7 +828,7 @@ void quick_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
  *  none
  ******************************************************************************/
 template <typename T>
-void quick_sort2(T *data, std::size_t size, bool cmp) {
+void quick2_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
         internal::quick2_sort_less(data, size);
     else
@@ -857,8 +859,8 @@ void quick_sort2(T *data, std::size_t size, bool cmp) {
  *  none
  ******************************************************************************/
 template <typename T>
-void quick_sort2(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
-    if(size > 1) {
+void quick2_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
+    if(size) {
         std::size_t pivot = 0;  // pivot @ front
 
         // partition data and find
@@ -866,8 +868,8 @@ void quick_sort2(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
         std::size_t size1 = pivot;
         std::size_t size2 = size - size1 - 1;
 
-        quick_sort2(data, size1, cmp);              // recurse before pivot
-        quick_sort2(data + pivot + 1, size2, cmp);  // recurse after pivot
+        quick2_sort(data, size1, cmp);              // recurse before pivot
+        quick2_sort(data + pivot + 1, size2, cmp);  // recurse after pivot
     }
 }
 
@@ -1095,12 +1097,13 @@ template <typename T>
 bool verify_less(const T *data, std::size_t size) {
     bool is_sorted = true;
 
-    while(size && --size) {
-        if(data[size] < data[size - 1]) {
-            is_sorted = false;
-            break;
+    if(size)
+        while(--size) {
+            if(data[size] < data[size - 1]) {
+                is_sorted = false;
+                break;
+            }
         }
-    }
 
     return is_sorted;
 }
@@ -1123,12 +1126,13 @@ template <typename T>
 bool verify_greater(const T *data, std::size_t size) {
     bool is_sorted = true;
 
-    while(size && --size) {
-        if(data[size] > data[size - 1]) {
-            is_sorted = false;
-            break;
+    if(size)
+        while(--size) {
+            if(data[size] > data[size - 1]) {
+                is_sorted = false;
+                break;
+            }
         }
-    }
 
     return is_sorted;
 }
@@ -1509,7 +1513,7 @@ void merge(T *data, std::size_t size1, std::size_t size2,
  ******************************************************************************/
 template <typename T>
 void quick_sort_less(T *data, std::size_t size) {
-    if(size > 1) {
+    if(size) {
         std::size_t pivot = internal::partition_less(data, size);
         quick_sort_less(data, pivot);  // recurse b4 pivot
         quick_sort_less(data + pivot + 1, size - pivot - 1);  // after
@@ -1533,7 +1537,7 @@ void quick_sort_less(T *data, std::size_t size) {
  ******************************************************************************/
 template <typename T>
 void quick_sort_greater(T *data, std::size_t size) {
-    if(size > 1) {
+    if(size) {
         std::size_t pivot = internal::partition_greater(data, size);
         quick_sort_greater(data, pivot);  // recurse b4 pivot
         quick_sort_greater(data + pivot + 1, size - pivot - 1);  // after
@@ -1557,7 +1561,7 @@ void quick_sort_greater(T *data, std::size_t size) {
  ******************************************************************************/
 template <typename T>
 void quick2_sort_less(T *data, std::size_t size) {
-    if(size > 1) {
+    if(size) {
         std::size_t pivot = 0;  // pivot @ index 0
 
         // partition data and find pivot
@@ -1587,7 +1591,7 @@ void quick2_sort_less(T *data, std::size_t size) {
  ******************************************************************************/
 template <typename T>
 void quick2_sort_greater(T *data, std::size_t size) {
-    if(size > 1) {
+    if(size) {
         std::size_t pivot = 0;  // pivot @ index 0
 
         // partition data and find pivot
@@ -2217,7 +2221,7 @@ std::size_t right_child(std::size_t i) { return 2 * i + 2; }
 template <typename T>
 void intro_less(T *data, std::size_t size, std::size_t &limit,
                 std::size_t depth) {
-    if(size > 1) {
+    if(size) {
         if(size < 64)  // *research* says that < 16 is optimal for insertion
             insertion_sort_less(data, size);
         else if(depth > limit)  // *research* says > limit is optimal for heap
@@ -2254,7 +2258,7 @@ void intro_less(T *data, std::size_t size, std::size_t &limit,
 template <typename T>
 void intro_greater(T *data, std::size_t size, std::size_t &limit,
                    std::size_t depth) {
-    if(size > 1) {
+    if(size) {
         if(size < 64)  // *research* says that < 16 is optimal for insertion
             insertion_sort_greater(data, size);
         else if(depth > limit)  // *research* says > limit is optimal for heap
@@ -2292,7 +2296,7 @@ void intro_greater(T *data, std::size_t size, std::size_t &limit,
 template <typename T>
 void intro(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
            std::size_t &limit, std::size_t depth) {
-    if(size > 1) {
+    if(size) {
         if(size < 64)  // *research* says that < 16 is optimal for insertion
             insertion_sort(data, size, cmp);
         else if(depth > limit)  // *research* says > 62 is optimal for heap
@@ -2329,7 +2333,7 @@ void intro(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
 template <typename T>
 void intro2_less(T *data, std::size_t size, std::size_t &limit,
                  std::size_t depth) {
-    if(size > 1) {
+    if(size) {
         if(size < 64)  // *research* says that < 16 is optimal for insertion
             insertion_sort_less(data, size);
         else if(depth > limit)  // *research* says > limit is optimal for heap
@@ -2372,7 +2376,7 @@ void intro2_less(T *data, std::size_t size, std::size_t &limit,
 template <typename T>
 void intro2_greater(T *data, std::size_t size, std::size_t &limit,
                     std::size_t depth) {
-    if(size > 1) {
+    if(size) {
         if(size < 64)  // *research* says that < 16 is optimal for insertion
             insertion_sort_greater(data, size);
         else if(depth > limit)  // *research* says > limit is optimal for heap
@@ -2416,7 +2420,7 @@ void intro2_greater(T *data, std::size_t size, std::size_t &limit,
 template <typename T>
 void intro2(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
             std::size_t &limit, std::size_t depth) {
-    if(size > 1) {
+    if(size) {
         if(size < 64)  // *research* says that < 16 is optimal for insertion
             insertion_sort(data, size, cmp);
         else if(depth > limit)  // *research* says > 62 is optimal for heap
