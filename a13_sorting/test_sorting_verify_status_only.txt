@@ -1,0 +1,298 @@
+Sample size: 0         Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  SORTED   SORTED       0.00014
+               Bubble  SORTED   SORTED       0.00009
+   Selection w/lambda  SORTED   SORTED       0.00011
+            Selection  SORTED   SORTED       0.00009
+   Insertion w/lambda  SORTED   SORTED       0.00010
+            Insertion  SORTED   SORTED       0.00011
+       Merge w/lambda  SORTED   SORTED       0.00010
+                Merge  SORTED   SORTED       0.00011
+   Quick_v1  w/lambda  SORTED   SORTED       0.00011
+             Quick_v1  SORTED   SORTED       0.00013
+    Quick_v2 w/lambda  SORTED   SORTED       0.00011
+             Quick_v2  SORTED   SORTED       0.00009
+        Heap w/lambda  SORTED   SORTED       0.00012
+                 Heap  SORTED   SORTED       0.00012
+       Intro w/lambda  SORTED   SORTED       0.00128
+                Intro  SORTED   SORTED       0.00014
+      Intro2 w/lambda  SORTED   SORTED       0.00015
+               Intro2  SORTED   SORTED       0.00018
+
+Sample size: 1         Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  SORTED   SORTED       0.00015
+               Bubble  SORTED   SORTED       0.00010
+   Selection w/lambda  SORTED   SORTED       0.00012
+            Selection  SORTED   SORTED       0.00011
+   Insertion w/lambda  SORTED   SORTED       0.00011
+            Insertion  SORTED   SORTED       0.00010
+       Merge w/lambda  SORTED   SORTED       0.00011
+                Merge  SORTED   SORTED       0.00011
+   Quick_v1  w/lambda  SORTED   SORTED       0.00011
+             Quick_v1  SORTED   SORTED       0.00010
+    Quick_v2 w/lambda  SORTED   SORTED       0.00012
+             Quick_v2  SORTED   SORTED       0.00009
+        Heap w/lambda  SORTED   SORTED       0.00011
+                 Heap  SORTED   SORTED       0.00010
+       Intro w/lambda  SORTED   SORTED       0.00132
+                Intro  SORTED   SORTED       0.00014
+      Intro2 w/lambda  SORTED   SORTED       0.00015
+               Intro2  SORTED   SORTED       0.00015
+
+Sample size: 2         Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.00016
+               Bubble  !SORTED  SORTED       0.00009
+   Selection w/lambda  !SORTED  SORTED       0.00011
+            Selection  !SORTED  SORTED       0.00011
+   Insertion w/lambda  !SORTED  SORTED       0.00011
+            Insertion  !SORTED  SORTED       0.00010
+       Merge w/lambda  !SORTED  SORTED       0.00022
+                Merge  !SORTED  SORTED       0.00019
+   Quick_v1  w/lambda  !SORTED  SORTED       0.00015
+             Quick_v1  !SORTED  SORTED       0.00013
+    Quick_v2 w/lambda  !SORTED  SORTED       0.00017
+             Quick_v2  !SORTED  SORTED       0.00013
+        Heap w/lambda  !SORTED  SORTED       0.00011
+                 Heap  !SORTED  SORTED       0.00010
+       Intro w/lambda  !SORTED  SORTED       0.00152
+                Intro  !SORTED  SORTED       0.00015
+      Intro2 w/lambda  !SORTED  SORTED       0.00018
+               Intro2  !SORTED  SORTED       0.00016
+
+Sample size: 10        Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.00045
+               Bubble  !SORTED  SORTED       0.00033
+   Selection w/lambda  !SORTED  SORTED       0.00029
+            Selection  !SORTED  SORTED       0.00033
+   Insertion w/lambda  !SORTED  SORTED       0.00027
+            Insertion  !SORTED  SORTED       0.00024
+       Merge w/lambda  !SORTED  SORTED       0.00100
+                Merge  !SORTED  SORTED       0.00079
+   Quick_v1  w/lambda  !SORTED  SORTED       0.00041
+             Quick_v1  !SORTED  SORTED       0.00036
+    Quick_v2 w/lambda  !SORTED  SORTED       0.00055
+             Quick_v2  !SORTED  SORTED       0.00046
+        Heap w/lambda  !SORTED  SORTED       0.00047
+                 Heap  !SORTED  SORTED       0.00037
+       Intro w/lambda  !SORTED  SORTED       0.00048
+                Intro  !SORTED  SORTED       0.00025
+      Intro2 w/lambda  !SORTED  SORTED       0.00029
+               Intro2  !SORTED  SORTED       0.00023
+
+Sample size: 11        Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.00064
+               Bubble  !SORTED  SORTED       0.00041
+   Selection w/lambda  !SORTED  SORTED       0.00038
+            Selection  !SORTED  SORTED       0.00042
+   Insertion w/lambda  !SORTED  SORTED       0.00032
+            Insertion  !SORTED  SORTED       0.00028
+       Merge w/lambda  !SORTED  SORTED       0.00125
+                Merge  !SORTED  SORTED       0.00100
+   Quick_v1  w/lambda  !SORTED  SORTED       0.00049
+             Quick_v1  !SORTED  SORTED       0.00046
+    Quick_v2 w/lambda  !SORTED  SORTED       0.00068
+             Quick_v2  !SORTED  SORTED       0.00059
+        Heap w/lambda  !SORTED  SORTED       0.00056
+                 Heap  !SORTED  SORTED       0.00047
+       Intro w/lambda  !SORTED  SORTED       0.00073
+                Intro  !SORTED  SORTED       0.00033
+      Intro2 w/lambda  !SORTED  SORTED       0.00040
+               Intro2  !SORTED  SORTED       0.00031
+
+Sample size: 50        Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.00628
+               Bubble  !SORTED  SORTED       0.00456
+   Selection w/lambda  !SORTED  SORTED       0.00402
+            Selection  !SORTED  SORTED       0.00321
+   Insertion w/lambda  !SORTED  SORTED       0.00229
+            Insertion  !SORTED  SORTED       0.00128
+       Merge w/lambda  !SORTED  SORTED       0.00548
+                Merge  !SORTED  SORTED       0.00480
+   Quick_v1  w/lambda  !SORTED  SORTED       0.00255
+             Quick_v1  !SORTED  SORTED       0.00203
+    Quick_v2 w/lambda  !SORTED  SORTED       0.00349
+             Quick_v2  !SORTED  SORTED       0.00257
+        Heap w/lambda  !SORTED  SORTED       0.00274
+                 Heap  !SORTED  SORTED       0.00249
+       Intro w/lambda  !SORTED  SORTED       0.00269
+                Intro  !SORTED  SORTED       0.00130
+      Intro2 w/lambda  !SORTED  SORTED       0.00243
+               Intro2  !SORTED  SORTED       0.00128
+
+Sample size: 51        Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.00736
+               Bubble  !SORTED  SORTED       0.00511
+   Selection w/lambda  !SORTED  SORTED       0.00448
+            Selection  !SORTED  SORTED       0.00348
+   Insertion w/lambda  !SORTED  SORTED       0.00270
+            Insertion  !SORTED  SORTED       0.00142
+       Merge w/lambda  !SORTED  SORTED       0.00621
+                Merge  !SORTED  SORTED       0.00512
+   Quick_v1  w/lambda  !SORTED  SORTED       0.00278
+             Quick_v1  !SORTED  SORTED       0.00219
+    Quick_v2 w/lambda  !SORTED  SORTED       0.00396
+             Quick_v2  !SORTED  SORTED       0.00287
+        Heap w/lambda  !SORTED  SORTED       0.00295
+                 Heap  !SORTED  SORTED       0.00270
+       Intro w/lambda  !SORTED  SORTED       0.00312
+                Intro  !SORTED  SORTED       0.00148
+      Intro2 w/lambda  !SORTED  SORTED       0.00274
+               Intro2  !SORTED  SORTED       0.00144
+
+Sample size: 100       Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.02112
+               Bubble  !SORTED  SORTED       0.01511
+   Selection w/lambda  !SORTED  SORTED       0.01424
+            Selection  !SORTED  SORTED       0.00921
+   Insertion w/lambda  !SORTED  SORTED       0.00719
+            Insertion  !SORTED  SORTED       0.00318
+       Merge w/lambda  !SORTED  SORTED       0.00926
+                Merge  !SORTED  SORTED       0.00813
+   Quick_v1  w/lambda  !SORTED  SORTED       0.00486
+             Quick_v1  !SORTED  SORTED       0.00377
+    Quick_v2 w/lambda  !SORTED  SORTED       0.00673
+             Quick_v2  !SORTED  SORTED       0.00484
+        Heap w/lambda  !SORTED  SORTED       0.00502
+                 Heap  !SORTED  SORTED       0.00488
+       Intro w/lambda  !SORTED  SORTED       0.00469
+                Intro  !SORTED  SORTED       0.00260
+      Intro2 w/lambda  !SORTED  SORTED       0.00486
+               Intro2  !SORTED  SORTED       0.00275
+
+Sample size: 200       Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.09290
+               Bubble  !SORTED  SORTED       0.06658
+   Selection w/lambda  !SORTED  SORTED       0.06944
+            Selection  !SORTED  SORTED       0.03460
+   Insertion w/lambda  !SORTED  SORTED       0.02930
+            Insertion  !SORTED  SORTED       0.01266
+       Merge w/lambda  !SORTED  SORTED       0.02313
+                Merge  !SORTED  SORTED       0.01900
+   Quick_v1  w/lambda  !SORTED  SORTED       0.01194
+             Quick_v1  !SORTED  SORTED       0.00925
+    Quick_v2 w/lambda  !SORTED  SORTED       0.01649
+             Quick_v2  !SORTED  SORTED       0.01157
+        Heap w/lambda  !SORTED  SORTED       0.01231
+                 Heap  !SORTED  SORTED       0.01191
+       Intro w/lambda  !SORTED  SORTED       0.01138
+                Intro  !SORTED  SORTED       0.00678
+      Intro2 w/lambda  !SORTED  SORTED       0.01230
+               Intro2  !SORTED  SORTED       0.00700
+
+Sample size: 500       Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       0.63646
+               Bubble  !SORTED  SORTED       0.44723
+   Selection w/lambda  !SORTED  SORTED       0.47066
+            Selection  !SORTED  SORTED       0.19467
+   Insertion w/lambda  !SORTED  SORTED       0.17607
+            Insertion  !SORTED  SORTED       0.06540
+       Merge w/lambda  !SORTED  SORTED       0.05905
+                Merge  !SORTED  SORTED       0.04882
+   Quick_v1  w/lambda  !SORTED  SORTED       0.03272
+             Quick_v1  !SORTED  SORTED       0.02533
+    Quick_v2 w/lambda  !SORTED  SORTED       0.04584
+             Quick_v2  !SORTED  SORTED       0.03146
+        Heap w/lambda  !SORTED  SORTED       0.03468
+                 Heap  !SORTED  SORTED       0.03482
+       Intro w/lambda  !SORTED  SORTED       0.03222
+                Intro  !SORTED  SORTED       0.01953
+      Intro2 w/lambda  !SORTED  SORTED       0.03620
+               Intro2  !SORTED  SORTED       0.02058
+
+Sample size: 1000      Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED       1.93505
+               Bubble  !SORTED  SORTED       1.40190
+   Selection w/lambda  !SORTED  SORTED       1.45607
+            Selection  !SORTED  SORTED       0.57840
+   Insertion w/lambda  !SORTED  SORTED       0.54731
+            Insertion  !SORTED  SORTED       0.21652
+       Merge w/lambda  !SORTED  SORTED       0.10299
+                Merge  !SORTED  SORTED       0.08524
+   Quick_v1  w/lambda  !SORTED  SORTED       0.05897
+             Quick_v1  !SORTED  SORTED       0.04430
+    Quick_v2 w/lambda  !SORTED  SORTED       0.08104
+             Quick_v2  !SORTED  SORTED       0.05283
+        Heap w/lambda  !SORTED  SORTED       0.05836
+                 Heap  !SORTED  SORTED       0.05980
+       Intro w/lambda  !SORTED  SORTED       0.05550
+                Intro  !SORTED  SORTED       0.03635
+      Intro2 w/lambda  !SORTED  SORTED       0.06487
+               Intro2  !SORTED  SORTED       0.03744
+
+Sample size: 10000     Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED     196.35395
+               Bubble  !SORTED  SORTED     145.78051
+   Selection w/lambda  !SORTED  SORTED     157.98241
+            Selection  !SORTED  SORTED      53.62573
+   Insertion w/lambda  !SORTED  SORTED      51.04137
+            Insertion  !SORTED  SORTED      18.31826
+       Merge w/lambda  !SORTED  SORTED       1.15327
+                Merge  !SORTED  SORTED       0.92112
+   Quick_v1  w/lambda  !SORTED  SORTED       0.72034
+             Quick_v1  !SORTED  SORTED       0.52760
+    Quick_v2 w/lambda  !SORTED  SORTED       1.03435
+             Quick_v2  !SORTED  SORTED       0.60856
+        Heap w/lambda  !SORTED  SORTED       0.78638
+                 Heap  !SORTED  SORTED       0.76859
+       Intro w/lambda  !SORTED  SORTED       0.70645
+                Intro  !SORTED  SORTED       0.45126
+      Intro2 w/lambda  !SORTED  SORTED       0.86825
+               Intro2  !SORTED  SORTED       0.47626
+
+Sample size: 50000     Iterations: 10
+--------------------------------------------------------------------------------
+    Sorting Algorithm  CONTROL  RESULT  Timings (ms)
+---------------------  -------- ------- ------------
+      Bubble w/lambda  !SORTED  SORTED    4913.27419
+               Bubble  !SORTED  SORTED    3687.43674
+   Selection w/lambda  !SORTED  SORTED    3946.99723
+            Selection  !SORTED  SORTED    1327.15143
+   Insertion w/lambda  !SORTED  SORTED    1271.18899
+            Insertion  !SORTED  SORTED     461.64381
+       Merge w/lambda  !SORTED  SORTED       6.46936
+                Merge  !SORTED  SORTED       5.18923
+   Quick_v1  w/lambda  !SORTED  SORTED       4.29268
+             Quick_v1  !SORTED  SORTED       3.07375
+    Quick_v2 w/lambda  !SORTED  SORTED       6.09781
+             Quick_v2  !SORTED  SORTED       3.53095
+        Heap w/lambda  !SORTED  SORTED       5.37233
+                 Heap  !SORTED  SORTED       4.72138
+       Intro w/lambda  !SORTED  SORTED       4.10612
+                Intro  !SORTED  SORTED       2.70563
+      Intro2 w/lambda  !SORTED  SORTED       5.27157
+               Intro2  !SORTED  SORTED       2.85758

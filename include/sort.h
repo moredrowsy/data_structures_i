@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sort
+ * DESCRIPTION : This header defines a templated sorting functions.
+ *      - Bubble sort, selection sort, insertion sort, merge sort, quick sort,
+ *        heap sort, introspective sort.
+ *      - Includes various helper functions to shuffle, copy and print arrays.
+ ******************************************************************************/
 #ifndef SORT_H
 #define SORT_H
 
@@ -7,7 +17,7 @@
 
 namespace sort {
 
-enum { greater = 0, less = 1 };
+enum { greater = 0, less = 1 };  // choose sorting order
 
 template <typename T>
 inline void swap(T &left, T &right);
@@ -235,6 +245,20 @@ void intro2(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
 
 }  // namespace internal
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Swap two objects.
+ *
+ * PRE-CONDITIONS:
+ *  T &left : left item
+ *  T &right: right item
+ *
+ * POST-CONDITIONS:
+ *  Items swapped.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void swap(T &left, T &right) {
     T temp = left;
@@ -242,19 +266,60 @@ void swap(T &left, T &right) {
     right = temp;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Randomly shuffle contents in array using rand().
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  array shuffled
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void shuffle(T *data, std::size_t size) {
-    while(size) {
-        swap(data[size - 1], data[rand() % size]);
-        --size;
-    }
+    while(size && --size) swap(data[size], data[rand() % size]);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Copy contents of one array to another.
+ *
+ * PRE-CONDITIONS:
+ *  T *dest         : valid destination
+ *  const T *src    : valid source
+ *  std::size_t size: size of src == destination
+ *
+ * POST-CONDITIONS:
+ *  T *dest: unique copy of src.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
-void copy_array(T dest[], const T src[], std::size_t size) {
+void copy_array(T *dest, const T *src, std::size_t size) {
     for(std::size_t i = 0; i < size; ++i) dest[i] = src[i];
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verify sortedness of the array, using specified relation order, cmp.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool verify(const T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -263,22 +328,51 @@ bool verify(const T *data, std::size_t size, bool cmp) {
         return internal::verify_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verify sortedness of the array, using specified relation order, cmp.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool verify(const T *data, std::size_t size,
             bool (*cmp)(T const &, T const &)) {
     bool is_sorted = true;
-    if(size > 1) {
-        for(std::size_t i = 1; i < size; ++i) {
-            if(cmp(data[i], data[i - 1])) {
-                is_sorted = false;
-                break;
-            }
+
+    while(size && --size) {
+        if(cmp(data[size], data[size - 1])) {
+            is_sorted = false;
+            break;
         }
     }
 
     return is_sorted;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verify sortedness of the array, using specified relation order, cmp.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::string: "SORTED" or "NOT SORTED"
+ ******************************************************************************/
 template <typename T>
 std::string verifystr(const T *data, std::size_t size, bool cmp) {
     bool is_sorted = true;
@@ -291,41 +385,120 @@ std::string verifystr(const T *data, std::size_t size, bool cmp) {
     return is_sorted ? "SORTED" : "NOT SORTED";
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verify sortedness of the array, using specified relation order, cmp.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::string: "SORTED" or "NOT SORTED"
+ ******************************************************************************/
 template <typename T>
 std::string verifystr(const T *data, std::size_t size,
                       bool (*cmp)(T const &, T const &)) {
     return verify(data, size, cmp) ? "SORTED" : "NOT SORTED";
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print the array along with sortedness information.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *  bool status_only: print only SORTED or NOT SORTED
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void print_array(const T *data, std::size_t size, bool cmp, bool status_only) {
-    std::cout << "calling bool cmp\n";
     if(status_only)
         std::cout << verifystr(data, size, cmp) << std::endl;
     else {
         for(std::size_t i = 0; i < size; ++i) std::cout << data[i] << ' ';
-        std::cout << '\n' << verifystr(data, size, cmp) << std::endl;
+        std::cout << " --> " << verifystr(data, size, cmp) << std::endl;
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print the array along with sortedness information.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void print_array(const T *data, std::size_t size,
                  bool (*cmp)(T const &, T const &), bool status_only) {
-    std::cout << "calling bool (*cmp)(T const &, T const &)\n";
     if(status_only)
         std::cout << verifystr(data, size, cmp) << std::endl;
     else {
         for(std::size_t i = 0; i < size; ++i) std::cout << data[i] << ' ';
-        std::cout << '\n' << verifystr(data, size, cmp) << std::endl;
+        std::cout << " --> " << verifystr(data, size, cmp) << std::endl;
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print from segment [start, end).
+ *
+ * PRE-CONDITIONS:
+ *  T *data          : templated array
+ *  std::size_t start: inclusive start point
+ *  std::size_t end  : exclusive endpoint
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void print_array_segment(T *data, std::size_t start, std::size_t end) {
     while(start != end) std::cout << data[start++] << " ";
     std::cout << std::endl;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Bubble sort algorithm, of specified enum cmp.
+ *  Slowest.
+ *
+ *  Time complexity : O(n2)
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void bubble_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -334,6 +507,25 @@ void bubble_sort(T *data, std::size_t size, bool cmp) {
         internal::bubble_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Bubble sort algorithm, of comparision function cmp.
+ *  Slowest.
+ *
+ *  Time complexity : O(n2)
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void bubble_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     bool swapped = false;
@@ -352,6 +544,25 @@ void bubble_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     } while(swapped);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Selection sort algorithm, of specified enum cmp.
+ *  Slightly faster than bubble.
+ *
+ *  Time complexity : O(n2)
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void selection_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -360,6 +571,25 @@ void selection_sort(T *data, std::size_t size, bool cmp) {
         internal::selection_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Selection sort algorithm, of comparision function cmp. Slowest.
+ *  Slightly faster than bubble.
+ *
+ *  Time complexity : O(n2)
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void selection_sort(T *data, std::size_t size,
                     bool (*cmp)(T const &, T const &)) {
@@ -377,6 +607,25 @@ void selection_sort(T *data, std::size_t size,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insertion sort algorithm, of specified enum cmp.
+ *  Fastest on small arrays of size 1 to ~64.
+ *
+ *  Time complexity : O(n2)
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void insertion_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -385,6 +634,25 @@ void insertion_sort(T *data, std::size_t size, bool cmp) {
         internal::insertion_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insertion sort algorithm, of comparision function cmp.
+ *  Fastest on small arrays of size 1 to ~64.
+ *
+ *  Time complexity : O(n2)
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void insertion_sort(T *data, std::size_t size,
                     bool (*cmp)(T const &, T const &)) {
@@ -407,6 +675,29 @@ void insertion_sort(T *data, std::size_t size,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Merge sort algorithm, of specified enum cmp.
+ *
+ *  On large arrays, faster than bubble, selection, insertion. Has better
+ *  worst case than quick, heap and introspective sort. However, space
+ *  complexity is undesired because it requires more memory to allocate
+ *  new array for merging partitions together, which also incur overhead.
+ *
+ *  Time complexity : O(n log n) for worst, avg, and best
+ *  Space complexity: O(n)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -415,6 +706,29 @@ void merge_sort(T *data, std::size_t size, bool cmp) {
         internal::merge_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Merge sort algorithm, of comparision function cmp.
+ *
+ *  On large arrays, faster than bubble, selection, insertion. Has better
+ *  worst case than quick, heap and introspective sort. However, space
+ *  complexity is undesired because it requires more memory to allocate
+ *  new array for merging partitions together, which also incur overhead.
+ *
+ *  Time complexity : O(n log n) for worst, avg, and best
+ *  Space complexity: O(n)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     if(size > 1) {  // merge sort when 2 or more elements
@@ -427,6 +741,28 @@ void merge_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Quick sort algorithm, of specified enum cmp.
+ *  This version uses median of front, mid, and end as pivot.
+ *
+ *  On very large arrays, this has second fastest. However, worst case time
+ *  complexity is slowest of O(n2) if the data is nearly sorted.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -435,6 +771,28 @@ void quick_sort(T *data, std::size_t size, bool cmp) {
         internal::quick_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Quick sort algorithm, of comparision function cmp.
+ *  This version uses median of front, mid, and end as pivot.
+ *
+ *  On very large arrays, this has second fastest. However, worst case time
+ *  complexity is slowest of O(n2) if the data is nearly sorted.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     if(size > 1) {
@@ -444,6 +802,29 @@ void quick_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Quick sort algorithm, of specified enum cmp.
+ *  This version uses front as pivot. Slightly slower than version 1 on some
+ *  data sets that's somewhat sorted.
+ *
+ *  On very large arrays, this has second fastest. However, worst case time
+ *  complexity is slowest of O(n2) if the data is nearly sorted.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick_sort2(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -452,6 +833,29 @@ void quick_sort2(T *data, std::size_t size, bool cmp) {
         internal::quick2_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Quick sort algorithm, of comparision function cmp.
+ *  This version uses front as pivot. Slightly slower than version 1 on some
+ *  data sets that's somewhat sorted.
+ *
+ *  On very large arrays, this has second fastest. However, worst case time
+ *  complexity is slowest of O(n2) if the data is nearly sorted.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick_sort2(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     if(size > 1) {
@@ -467,6 +871,30 @@ void quick_sort2(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Heap sort algorithm, of specified enum cmp.
+ *  Faster than merge but slower than quick and introspection.
+ *
+ *  On very large arrays, this has third fastest speed. Even though the time
+ *  complexity, O(2n log n), is theoretically slower than merge, in practice
+ *  it is faster because merge has overhead allocating space to merge
+ *  partitions.
+ *
+ *  Time complexity : O(n log n) for worst, avg, and best
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_sort(T *data, std::size_t size, bool cmp) {
     if(cmp)
@@ -475,6 +903,30 @@ void heap_sort(T *data, std::size_t size, bool cmp) {
         internal::heap_sort_greater(data, size);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Heap sort algorithm, of comparision function cmp.
+ *  Faster than merge but slower than quick and introspection.
+ *
+ *  On very large arrays, this has third fastest speed. Even though the time
+ *  complexity, O(2n log n), is theoretically slower than merge, in practice
+ *  it is faster because merge has overhead allocating space to merge
+ *  partitions.
+ *
+ *  Time complexity : O(n log n) for worst, avg, and best
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     std::size_t unsorted = size;
@@ -488,6 +940,31 @@ void heap_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Heap sort algorithm, of specified enum cmp.
+ *  This version uses median of front, mid, and end as pivot.
+ *  Fastest.
+ *
+ *  On very large arrays, fastest algorithm in pratice. It combines the
+ *  benefits using insertion on fastest sort on SMALL arrays, and heap sort
+ *  when recursion goes too deep and else uses quick sort to divide and
+ *  conquer.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro_sort(T *data, std::size_t size, bool cmp) {
     std::size_t limit = 2 * (std::size_t)log(size);
@@ -498,12 +975,63 @@ void intro_sort(T *data, std::size_t size, bool cmp) {
         internal::intro_greater(data, size, limit, 0);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Heap sort algorithm, of comparision function cmp.
+ *  This version uses median of front, mid, and end as pivot.
+ *  Fastest.
+ *
+ *  On very large arrays, fastest algorithm in pratice. It combines the
+ *  benefits using insertion on fastest sort on SMALL arrays, and heap sort
+ *  when recursion goes too deep and else uses quick sort to divide and
+ *  conquer.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     std::size_t limit = 2 * (std::size_t)log(size);
     internal::intro(data, size, cmp, limit, 0);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Heap sort algorithm, of specified enum cmp.
+ *  This version uses front as pivot. Slightly slower than version 1 on some
+ *  data sets that's somewhat sorted.
+ *  Fast but slightly slower than version 1.
+ *
+ *  On very large arrays, fastest algorithm in pratice. It combines the
+ *  benefits using insertion on fastest sort on SMALL arrays, and heap sort
+ *  when recursion goes too deep and else uses quick sort to divide and
+ *  conquer.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool cmp        : enum of sort::less, or sort::greater
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro2_sort(T *data, std::size_t size, bool cmp) {
     std::size_t limit = 2 * (std::size_t)log(size);
@@ -514,6 +1042,32 @@ void intro2_sort(T *data, std::size_t size, bool cmp) {
         internal::intro2_greater(data, size, limit, 0);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Heap sort algorithm, of comparision function cmp.
+ *  This version uses front as pivot. Slightly slower than version 1 on some
+ *  data sets that's somewhat sorted.
+ *  Fast but slightly slower than version 1.
+ *
+ *  On very large arrays, fastest algorithm in pratice. It combines the
+ *  benefits using insertion on fastest sort on SMALL arrays, and heap sort
+ *  when recursion goes too deep and else uses quick sort to divide and
+ *  conquer.
+ *
+ *  Time complexity : O(n log n) avg, and best but O(n2) for worst.
+ *  Space complexity: O(1)
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparision function
+ *
+ * POST-CONDITIONS:
+ *  T * data: sorted by relation order, cmp
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro2_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     std::size_t limit = 2 * (std::size_t)log(size);
@@ -523,36 +1077,76 @@ void intro2_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
 // INTERNAL FUNCTIONS
 namespace internal {
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to verify data in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool verify_less(const T *data, std::size_t size) {
     bool is_sorted = true;
-    if(size > 1) {
-        for(std::size_t i = 1; i < size; ++i) {
-            if(data[i] < data[i - 1]) {
-                is_sorted = false;
-                break;
-            }
+
+    while(size && --size) {
+        if(data[size] < data[size - 1]) {
+            is_sorted = false;
+            break;
         }
     }
 
     return is_sorted;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to verify data in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  boolean
+ ******************************************************************************/
 template <typename T>
 bool verify_greater(const T *data, std::size_t size) {
     bool is_sorted = true;
-    if(size > 1) {
-        for(std::size_t i = 1; i < size; ++i) {
-            if(data[i] > data[i - 1]) {
-                is_sorted = false;
-                break;
-            }
+
+    while(size && --size) {
+        if(data[size] > data[size - 1]) {
+            is_sorted = false;
+            break;
         }
     }
 
     return is_sorted;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to bubble sort data in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void bubble_sort_less(T *data, std::size_t size) {
     bool swapped = false;
@@ -571,6 +1165,20 @@ void bubble_sort_less(T *data, std::size_t size) {
     } while(swapped);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to bubble sort data in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void bubble_sort_greater(T *data, std::size_t size) {
     bool swapped = false;
@@ -589,6 +1197,20 @@ void bubble_sort_greater(T *data, std::size_t size) {
     } while(swapped);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to selection sort data in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void selection_sort_less(T *data, std::size_t size) {
     if(size) {
@@ -605,6 +1227,20 @@ void selection_sort_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to selection sort data in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void selection_sort_greater(T *data, std::size_t size) {
     if(size) {
@@ -621,6 +1257,20 @@ void selection_sort_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to insertion sort data in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void insertion_sort_less(T *data, std::size_t size) {
     int j = 0;  // walker
@@ -642,6 +1292,20 @@ void insertion_sort_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to insertion sort data in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void insertion_sort_greater(T *data, std::size_t size) {
     int j = 0;  // walker
@@ -663,6 +1327,20 @@ void insertion_sort_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to merge sort data in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge_sort_less(T *data, std::size_t size) {
     if(size > 1) {  // merge sort when 2 or more elements
@@ -675,6 +1353,20 @@ void merge_sort_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to merge sort data in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge_sort_greater(T *data, std::size_t size) {
     if(size > 1) {  // merge sort when 2 or more elements
@@ -687,6 +1379,21 @@ void merge_sort_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to merge two partitions in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data          : templated array
+ *  std::size_t size1: first partition size, ie midpoint of entire array
+ *  std::size_t size2: second partition size, ie endpoint of entire array
+ *
+ * POST-CONDITIONS:
+ *  T *data: two partitions of *data is merged in sorted order.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge_less(T *data, std::size_t size1, std::size_t size2) {
     std::size_t copied = 0, copied1 = 0, copied2 = 0;
@@ -709,6 +1416,21 @@ void merge_less(T *data, std::size_t size1, std::size_t size2) {
     delete[] buffer;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to merge two partitions in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data          : templated array
+ *  std::size_t size1: first partition size, ie midpoint of entire array
+ *  std::size_t size2: second partition size, ie endpoint of entire array
+ *
+ * POST-CONDITIONS:
+ *  T *data: two partitions of *data is merged in sorted order.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge_greater(T *data, std::size_t size1, std::size_t size2) {
     std::size_t copied = 0, copied1 = 0, copied2 = 0;
@@ -731,6 +1453,22 @@ void merge_greater(T *data, std::size_t size1, std::size_t size2) {
     delete[] buffer;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to merge two partitions using comparision function.
+ *
+ * PRE-CONDITIONS:
+ *  T *data          : templated array
+ *  std::size_t size1: first partition size, ie midpoint of entire array
+ *  std::size_t size2: second partition size, ie endpoint of entire array
+ *  bool (*cmp)     : comparison function
+ *
+ * POST-CONDITIONS:
+ *  T *data: two partitions of *data is merged in sorted order.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void merge(T *data, std::size_t size1, std::size_t size2,
            bool (*cmp)(T const &, T const &)) {
@@ -754,6 +1492,21 @@ void merge(T *data, std::size_t size1, std::size_t size2,
     delete[] buffer;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to quick sort in ascending order. Version 1 using median
+ *  of front, mid and end as pivot.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick_sort_less(T *data, std::size_t size) {
     if(size > 1) {
@@ -763,6 +1516,21 @@ void quick_sort_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to quick sort in descending order. Version 1 using median
+ *  of front, mid and end as pivot.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick_sort_greater(T *data, std::size_t size) {
     if(size > 1) {
@@ -772,12 +1540,27 @@ void quick_sort_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to quick sort in ascending order. Version 2 using just
+ *  front as pivot.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick2_sort_less(T *data, std::size_t size) {
     if(size > 1) {
         std::size_t pivot = 0;  // pivot @ index 0
 
-        // partition data and find
+        // partition data and find pivot
         internal::partition2_less(data, size, pivot);
         std::size_t size1 = pivot;
         std::size_t size2 = size - size1 - 1;
@@ -787,12 +1570,27 @@ void quick2_sort_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to quick sort in descending order. Version 2 using just
+ *  front as pivot.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void quick2_sort_greater(T *data, std::size_t size) {
     if(size > 1) {
         std::size_t pivot = 0;  // pivot @ index 0
 
-        // partition data and find
+        // partition data and find pivot
         internal::partition2_greater(data, size, pivot);
         std::size_t size1 = pivot;
         std::size_t size2 = size - size1 - 1;
@@ -802,6 +1600,21 @@ void quick2_sort_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to partition data in ascending order. Partition data
+ *  by pivot: median of front, mid, and end. Used for quick sort version 1.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: all data moved left/right of pivot
+ *
+ * RETURN:
+ *  std::size_t: pivot index
+ ******************************************************************************/
 template <typename T>
 std::size_t partition_less(T *data, std::size_t size) {
     std::size_t count = 0;   // counter to remember last swapped position
@@ -844,6 +1657,21 @@ std::size_t partition_less(T *data, std::size_t size) {
     return count;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to partition data in descending order. Partition data
+ *  by pivot: median of front, mid, and end. Used for quick sort version 1.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: all data moved left/right of pivot
+ *
+ * RETURN:
+ *  std::size_t: pivot index
+ ******************************************************************************/
 template <typename T>
 std::size_t partition_greater(T *data, std::size_t size) {
     std::size_t count = 0;   // counter to remember last swapped position
@@ -886,6 +1714,23 @@ std::size_t partition_greater(T *data, std::size_t size) {
     return count;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to partition data using comparison function.
+ *  Partition data by pivot: median of front, mid, and end. Used for quick
+ *  sort version 1.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparison function
+ *
+ * POST-CONDITIONS:
+ *  T *data: all data moved left/right of pivot
+ *
+ * RETURN:
+ *  std::size_t: pivot index
+ ******************************************************************************/
 template <typename T>
 std::size_t partition(T *data, std::size_t size,
                       bool (*cmp)(T const &, T const &)) {
@@ -929,6 +1774,22 @@ std::size_t partition(T *data, std::size_t size,
     return count;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to partition data in ascending order. Partition data
+ *  by pivot @ front. Used for quick sort version 2.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data    : all data moved left/right of pivot
+ *  std::size_t: pivot index by reference
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void partition2_less(T *data, std::size_t size, std::size_t &pivot) {
     std::size_t big = 1;
@@ -946,6 +1807,22 @@ void partition2_less(T *data, std::size_t size, std::size_t &pivot) {
     pivot = small;                   // return by ref to pivot's new index
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to partition data in descending order. Partition data
+ *  by pivot @ front. Used for quick sort version 2.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data    : all data moved left/right of pivot
+ *  std::size_t: pivot index by reference
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void partition2_greater(T *data, std::size_t size, std::size_t &pivot) {
     std::size_t big = 1;
@@ -963,6 +1840,23 @@ void partition2_greater(T *data, std::size_t size, std::size_t &pivot) {
     pivot = small;                   // return by ref to pivot's new index
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to partition data using comparision function.
+ *  Partition data by pivot @ front. Used for quick sort version 2.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparison function
+ *
+ * POST-CONDITIONS:
+ *  T *data    : all data moved left/right of pivot
+ *  std::size_t: pivot index by reference
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void partition2(T *data, std::size_t size, std::size_t &pivot,
                 bool (*cmp)(T const &, T const &)) {
@@ -984,6 +1878,20 @@ void partition2(T *data, std::size_t size, std::size_t &pivot,
     pivot = small;                   // return by ref to pivot's new index
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to heap sort data in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_sort_less(T *data, std::size_t size) {
     std::size_t unsorted = size;
@@ -997,6 +1905,20 @@ void heap_sort_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to heap sort data in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_sort_greater(T *data, std::size_t size) {
     std::size_t unsorted = size;
@@ -1010,6 +1932,22 @@ void heap_sort_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to convert unsorted data into a binary heap structure,
+ *  using ascending order.
+ *  Data is still unsorted but has correct parent and children node indices.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: unsorted but with corect parent/children indices placements
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void make_heap_less(T *data, std::size_t size) {
     std::size_t i;  // index of next element to be added to heap
@@ -1026,6 +1964,22 @@ void make_heap_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to convert unsorted data into a binary heap structure,
+ *  using descending order.
+ *  Data is still unsorted but has correct parent and children node indices.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: unsorted but with corect parent/children indices placements
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void make_heap_greater(T *data, std::size_t size) {
     std::size_t i;  // index of next element to be added to heap
@@ -1042,6 +1996,23 @@ void make_heap_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to convert unsorted data into a binary heap structure,
+ *  using comparision function.
+ *  Data is still unsorted but has correct parent and children node indices.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparison function
+ *
+ * POST-CONDITIONS:
+ *  T *data: unsorted but with corect parent/children indices placements
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void make_heap(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     std::size_t i;  // index of next element to be added to heap
@@ -1058,6 +2029,21 @@ void make_heap(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to move incorrect parent's order downwards through the
+ *  binary heap structure, in ascending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: unsorted, but with parent in correct place.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_down_less(T *data, std::size_t size) {
     std::size_t parent = 0;
@@ -1083,6 +2069,21 @@ void heap_down_less(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to move incorrect parent's order downwards through the
+ *  binary heap structure, in descending order.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  T *data: unsorted, but with parent in correct place.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_down_greater(T *data, std::size_t size) {
     std::size_t parent = 0;
@@ -1108,6 +2109,22 @@ void heap_down_greater(T *data, std::size_t size) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to move incorrect parent's order downwards through the
+ *  binary heap structure, in comparision function.
+ *
+ * PRE-CONDITIONS:
+ *  T *data         : templated array
+ *  std::size_t size: size of array
+ *  bool (*cmp)     : comparison function
+ *
+ * POST-CONDITIONS:
+ *  T *data: unsorted, but with parent in correct place.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void heap_down(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     std::size_t parent = 0;
@@ -1132,12 +2149,71 @@ void heap_down(T *data, std::size_t size, bool (*cmp)(T const &, T const &)) {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to find the parent's index with child.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t i: child index
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::size_t: parent's index
+ ******************************************************************************/
 std::size_t parent(std::size_t i) { return (i - 1) / 2; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to find the left child's index with parent's index.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t i: parent index
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::size_t: left child's index
+ ******************************************************************************/
 std::size_t left_child(std::size_t i) { return 2 * i + 1; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to find the right child's index with parent's index.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t i: parent index
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::size_t: right child's index
+ ******************************************************************************/
 std::size_t right_child(std::size_t i) { return 2 * i + 2; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to introspectively sort data in ascending order. This
+ *  algorithm a hybrid of insertion sort, heap sort and quick sort. When data
+ *  size is small, it uses insertion. When recursion depth goes too deep, it
+ *  switches to heap sort. Otherwise, it uses quick sort to divide and
+ *  conquer. This version uses quick sort version 1.
+ *
+ * PRE-CONDITIONS:
+ *  T *data           : templated array
+ *  std::size_t size  : size of array
+ *  std::size_t &limit: recursion limit
+ *  td::size_t depth  : recursion depth
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro_less(T *data, std::size_t size, std::size_t &limit,
                 std::size_t depth) {
@@ -1155,6 +2231,26 @@ void intro_less(T *data, std::size_t size, std::size_t &limit,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to introspectively sort data in descending order. This
+ *  algorithm a hybrid of insertion sort, heap sort and quick sort. When data
+ *  size is small, it uses insertion. When recursion depth goes too deep, it
+ *  switches to heap sort. Otherwise, it uses quick sort to divide and
+ *  conquer. This version uses quick sort version 1.
+ *
+ * PRE-CONDITIONS:
+ *  T *data           : templated array
+ *  std::size_t size  : size of array
+ *  std::size_t &limit: recursion limit
+ *  td::size_t depth  : recursion depth
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro_greater(T *data, std::size_t size, std::size_t &limit,
                    std::size_t depth) {
@@ -1172,6 +2268,27 @@ void intro_greater(T *data, std::size_t size, std::size_t &limit,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to introspectively sort data in comparison function. This
+ *  algorithm a hybrid of insertion sort, heap sort and quick sort. When data
+ *  size is small, it uses insertion. When recursion depth goes too deep, it
+ *  switches to heap sort. Otherwise, it uses quick sort to divide and
+ *  conquer. This version uses quick sort version 1.
+ *
+ * PRE-CONDITIONS:
+ *  T *data           : templated array
+ *  std::size_t size  : size of array
+ *  bool (*cmp)       : comparison function
+ *  std::size_t &limit: recursion limit
+ *  td::size_t depth  : recursion depth
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
            std::size_t &limit, std::size_t depth) {
@@ -1189,6 +2306,26 @@ void intro(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to introspectively sort data in ascending order. This
+ *  algorithm a hybrid of insertion sort, heap sort and quick sort. When data
+ *  size is small, it uses insertion. When recursion depth goes too deep, it
+ *  switches to heap sort. Otherwise, it uses quick sort to divide and
+ *  conquer. This version uses quick sort version 2.
+ *
+ * PRE-CONDITIONS:
+ *  T *data           : templated array
+ *  std::size_t size  : size of array
+ *  std::size_t &limit: recursion limit
+ *  td::size_t depth  : recursion depth
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro2_less(T *data, std::size_t size, std::size_t &limit,
                  std::size_t depth) {
@@ -1212,6 +2349,26 @@ void intro2_less(T *data, std::size_t size, std::size_t &limit,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to introspectively sort data in descending order. This
+ *  algorithm a hybrid of insertion sort, heap sort and quick sort. When data
+ *  size is small, it uses insertion. When recursion depth goes too deep, it
+ *  switches to heap sort. Otherwise, it uses quick sort to divide and
+ *  conquer. This version uses quick sort version 2.
+ *
+ * PRE-CONDITIONS:
+ *  T *data           : templated array
+ *  std::size_t size  : size of array
+ *  std::size_t &limit: recursion limit
+ *  td::size_t depth  : recursion depth
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro2_greater(T *data, std::size_t size, std::size_t &limit,
                     std::size_t depth) {
@@ -1235,6 +2392,27 @@ void intro2_greater(T *data, std::size_t size, std::size_t &limit,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Internal function to introspectively sort data in comparison function. This
+ *  algorithm a hybrid of insertion sort, heap sort and quick sort. When data
+ *  size is small, it uses insertion. When recursion depth goes too deep, it
+ *  switches to heap sort. Otherwise, it uses quick sort to divide and
+ *  conquer. This version uses quick sort version 2.
+ *
+ * PRE-CONDITIONS:
+ *  T *data           : templated array
+ *  std::size_t size  : size of array
+ *  bool (*cmp)       : comparison function
+ *  std::size_t &limit: recursion limit
+ *  td::size_t depth  : recursion depth
+ *
+ * POST-CONDITIONS:
+ *  T *data: sorted
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void intro2(T *data, std::size_t size, bool (*cmp)(T const &, T const &),
             std::size_t &limit, std::size_t depth) {

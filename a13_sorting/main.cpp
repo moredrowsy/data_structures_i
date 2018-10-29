@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sort
+ * DESCRIPTION : This program is the main test harness for the various sorting
+ *      functions. It includes a simple test to visually print before and after
+ *      sorted array. It also has deeper tests to perform higher samples to
+ *      test the sorting functions. Finally, it bench marks the fast sorting
+ *      algorithms and display their times against STL's sort algorithm.
+ ******************************************************************************/
 #include <algorithm>           // test std::sort()
 #include <cstdlib>             // srand(), rand(), atoi()
 #include <ctime>               // time()
@@ -8,8 +19,13 @@
 #include "../include/timer.h"  // ChronoTimer class
 
 struct SortData {  // stores sortedness data
-    SortData(std::string n = "", bool c = true, bool r = true, double t = 0)
-        : is_ctrl_sorted(c), is_rslt_sorted(r), timings(t), name(n) {}
+    SortData(std::string n = "", bool c = true, bool r = true, double t = 0,
+             double d = 0)
+        : is_ctrl_sorted(c),
+          is_rslt_sorted(r),
+          timings(t),
+          std_diff(d),
+          name(n) {}
 
     SortData &operator+=(const SortData &rhs) {
         this->name = rhs.name;
@@ -28,6 +44,7 @@ struct SortData {  // stores sortedness data
 };
 
 // main test wrappers
+void simple_tests();                          // test sorts and prints
 void verify(std::size_t iterations = 10);     // call test_sortedness
 void benchmark(std::size_t iterations = 10);  // call test_timings
 
@@ -48,6 +65,11 @@ template <typename F, typename T>
 SortData test_sort_func2(F *f, T *data, std::size_t size, std::string name,
                          bool cmp = sort::less, bool verify = true);
 
+// test for sort functions and print array elements
+template <typename F, typename T>
+void test_sorts_and_print(F *f, T *data, std::size_t size,
+                          bool cmp = sort::less);
+
 // print results
 void print_data(std::string headers[], int h_size, SortData s_data[],
                 int data_size, bool verify = true, bool std_diff = false);
@@ -57,8 +79,7 @@ int main(int argc, char *argv[]) {
 
     // PROCESS ARGUMENT FLAGS
     if(argc == 1) {
-        verify(iterations_verify);
-        benchmark(iterations_timings);
+        simple_tests();
     } else {
         for(int i = 1; i < argc; ++i) {
             if(std::string(argv[i]) == "-a" ||
@@ -84,6 +105,53 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+void simple_tests() {
+    const int FUNC_SIZE = 9, SIZE = 4, SAMPLE_SIZE_1 = 20, SAMPLE_SIZE_2 = 27;
+    int *arrays[SIZE];
+
+    std::string names[FUNC_SIZE] = {"BUBBLE", "SELECTION", "INSERTION",
+                                    "MERGE",  "QUICK V1",  "QUICK V2",
+                                    "HEAP",   "INTRO",     "INTRO V2"};
+
+    // declare function pointer type for sorting normal
+    typedef void (*fn_ptr2)(int *data, std::size_t size, bool cmp);
+
+    // array of function pointers for sorting normal
+    fn_ptr2 fn_arr2[FUNC_SIZE] = {
+        &sort::bubble_sort<int>,    &sort::selection_sort<int>,
+        &sort::insertion_sort<int>, &sort::merge_sort<int>,
+        &sort::quick_sort<int>,     &sort::quick_sort2<int>,
+        &sort::heap_sort<int>,      &sort::intro_sort<int>,
+        &sort::intro2_sort<int>};
+
+    arrays[0] = new int[SAMPLE_SIZE_1];
+    arrays[1] = new int[SAMPLE_SIZE_2];
+    arrays[2] = new int[SAMPLE_SIZE_1];
+    arrays[3] = new int[SAMPLE_SIZE_2];
+
+    // populate arrays[0] and arrays[1] with random numbers as CONTROL
+    for(int i = 0; i < SAMPLE_SIZE_1; ++i) arrays[0][i] = rand() % 10;
+    for(int i = 0; i < SAMPLE_SIZE_2; ++i) arrays[1][i] = rand() % 10;
+
+    for(int i = 0; i < FUNC_SIZE; ++i) {
+        // copy control arrays to test arrays[2] and arrays[3]
+        sort::copy_array(arrays[2], arrays[0], SAMPLE_SIZE_1);
+        sort::copy_array(arrays[3], arrays[1], SAMPLE_SIZE_2);
+
+        std::cout << std::string(80, '-') << std::endl;
+        std::cout << "ALGORITHM: " << names[i] << std::endl;
+        std::cout << std::string(80, '-') << std::endl;
+        test_sorts_and_print(fn_arr2[i], arrays[2], SAMPLE_SIZE_1);
+        std::cout << std::endl;
+        test_sorts_and_print(fn_arr2[i], arrays[3], SAMPLE_SIZE_2);
+
+        if(i != FUNC_SIZE - 1) std::cout << std::endl << std::endl;
+    }
+
+    // delete arrays
+    for(int i = 0; i < SIZE; ++i) delete[] arrays[i];
+}
+
 void verify(std::size_t iterations) {
     const int SIZE = 13;
     int sample_sizes[SIZE] = {0,   1,   2,   10,   11,    50,   51,
@@ -99,8 +167,8 @@ void verify(std::size_t iterations) {
 }
 
 void benchmark(std::size_t iterations) {
-    const int SIZE = 4;
-    int sample_sizes[SIZE] = {10000, 50000, 100000, 1000000};
+    const int SIZE = 5;
+    int sample_sizes[SIZE] = {10000, 50000, 100000, 1000000, 10000000};
 
     for(int i = 0; i < SIZE; ++i) {
         std::cout << "Sample size: " << std::setw(10) << std::left
@@ -153,26 +221,26 @@ void test_sortedness(std::size_t sample_size, std::size_t iterations) {
     SortData final_results[TOTAL_SIZE];
     std::thread *threads[MAX_THREADS];
     int *arrays[TOTAL_SIZE];
-    int *arr = nullptr;
-    arr = new int[sample_size];
+    int *control = nullptr;
+    control = new int[sample_size];
 
     // allocate new memory for array of arrays
     for(int i = 0; i < TOTAL_SIZE; ++i) arrays[i] = new int[sample_size];
 
-    // populate arr with random numbers
-    for(std::size_t i = 0; i < sample_size; ++i) arr[i] = rand();
+    // populate control with random numbers
+    for(std::size_t i = 0; i < sample_size; ++i) control[i] = rand();
 
     // testing every sort functions with same copies of arr using arrays[]
     for(std::size_t i = 0; i < iterations; ++i) {
-        sort::shuffle(arr, sample_size);  // shuffle arr
+        sort::shuffle(control, sample_size);  // shuffle control
 
-        // copy array[0] to array[15] w/ 4 threads for copy 4 arrays each time
+        // copy control to arrays[] with MAX_THREADS at each iteration
         int threads_repeat = TOTAL_SIZE / MAX_THREADS;
         for(int j = 0; j < threads_repeat; ++j) {
             for(int k = 0; k < MAX_THREADS; ++k)
                 threads[k] = new std::thread(sort::copy_array<int>,
-                                             arrays[k + j * MAX_THREADS], arr,
-                                             sample_size);
+                                             arrays[k + j * MAX_THREADS],
+                                             control, sample_size);
 
             for(int k = 0; k < MAX_THREADS; ++k) {
                 threads[k]->join();
@@ -180,12 +248,12 @@ void test_sortedness(std::size_t sample_size, std::size_t iterations) {
             }
         }
 
-        // copy last two array[16] to array[17] with 2 threads
+        // copy control to left over arrays[] with x threads under max
         int threads_left_over = TOTAL_SIZE - MAX_THREADS * threads_repeat;
         for(int i = 0; i < threads_left_over; ++i)
-            threads[i] =
-                new std::thread(sort::copy_array<int>,
-                                arrays[i + 4 * MAX_THREADS], arr, sample_size);
+            threads[i] = new std::thread(sort::copy_array<int>,
+                                         arrays[i + 4 * MAX_THREADS], control,
+                                         sample_size);
         for(int i = 0; i < threads_left_over; ++i) {
             threads[i]->join();
             delete threads[i];
@@ -225,7 +293,7 @@ void test_sortedness(std::size_t sample_size, std::size_t iterations) {
     print_data(headers, HEADER_SIZE, final_results, TOTAL_SIZE, true);
 
     // delete arrays
-    delete[] arr;
+    delete[] control;
     for(int i = 0; i < TOTAL_SIZE; ++i) delete[] arrays[i];
 }
 
@@ -267,27 +335,27 @@ void test_timings(std::size_t sample_size, std::size_t iterations) {
     SortData final_results[TOTAL_SIZE];  // add 2 for two std::sort()
     std::thread *threads[MAX_THREADS];
     int *arrays[TOTAL_SIZE];
-    int *arr = nullptr;
+    int *control = nullptr;
 
-    arr = new int[sample_size];
+    control = new int[sample_size];
 
     // allocate new memory for array of arrays
     for(int i = 0; i < TOTAL_SIZE; ++i) arrays[i] = new int[sample_size];
 
-    // populate arr with random numbers
-    for(std::size_t i = 0; i < sample_size; ++i) arr[i] = rand();
+    // populate control with random numbers
+    for(std::size_t i = 0; i < sample_size; ++i) control[i] = rand();
 
     // testing every sort functions with same copies of arr using arrays[]
     for(std::size_t i = 0; i < iterations; ++i) {
-        sort::shuffle(arr, sample_size);  // shuffle arr
+        sort::shuffle(control, sample_size);  // shuffle control
 
-        // copy array[0] to array[11] w/ 4 threads for copy 4 arrays each time
+        // copy control to arrays[] with MAX_THREADS at each iteration
         int threads_repeat = TOTAL_SIZE / MAX_THREADS;
         for(int j = 0; j < threads_repeat; ++j) {
             for(int k = 0; k < MAX_THREADS; ++k)
                 threads[k] = new std::thread(sort::copy_array<int>,
-                                             arrays[k + j * MAX_THREADS], arr,
-                                             sample_size);
+                                             arrays[k + j * MAX_THREADS],
+                                             control, sample_size);
 
             for(int k = 0; k < MAX_THREADS; ++k) {
                 threads[k]->join();
@@ -295,12 +363,12 @@ void test_timings(std::size_t sample_size, std::size_t iterations) {
             }
         }
 
-        // copy last two array[12] to array[13] with 2 threads
+        // copy control to left over arrays[] with x threads under max
         int threads_left_over = TOTAL_SIZE - MAX_THREADS * threads_repeat;
         for(int i = 0; i < threads_left_over; ++i)
-            threads[i] =
-                new std::thread(sort::copy_array<int>,
-                                arrays[i + 3 * MAX_THREADS], arr, sample_size);
+            threads[i] = new std::thread(sort::copy_array<int>,
+                                         arrays[i + 3 * MAX_THREADS], control,
+                                         sample_size);
         for(int i = 0; i < threads_left_over; ++i) {
             threads[i]->join();
             delete threads[i];
@@ -376,7 +444,7 @@ void test_timings(std::size_t sample_size, std::size_t iterations) {
     print_data(headers, HEADER_SIZE, final_results, TOTAL_SIZE, false, true);
 
     // delete arrays
-    delete[] arr;
+    delete[] control;
     for(int i = 0; i < TOTAL_SIZE; ++i) delete[] arrays[i];
 }
 
@@ -418,6 +486,16 @@ SortData test_sort_func2(F *f, T *data, std::size_t size, std::string name,
     if(verify) is_rslt_sorted = sort::verify<T>(data, size);
 
     return SortData(name, is_ctrl_sorted, is_rslt_sorted, chrono.seconds());
+}
+
+template <typename F, typename T>
+void test_sorts_and_print(F *f, T *data, std::size_t size, bool cmp) {
+    std::cout << "SAMPLE SIZE: " << size << std::endl;
+    std::cout << "\nCONTROL: ";
+    sort::print_array<T>(data, size);
+    f(data, size, cmp);
+    std::cout << "\nRESULTS: ";
+    sort::print_array<T>(data, size);
 }
 
 void print_data(std::string headers[], int h_size, SortData s_data[],

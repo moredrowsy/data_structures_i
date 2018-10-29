@@ -1,4 +1,5 @@
 CXX             := g++
+LDFLAGS         := -pthread
 DEBUG_LEVEL     := #-g
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
 CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS) -O2
@@ -8,7 +9,7 @@ SRC             := ../src
 OBJ             := main.o
 
 main.out: $(OBJ)
-	$(CXX) -o $@ $^ -pthread
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 main.o: main.cpp\
 	${INC}/sort.h
