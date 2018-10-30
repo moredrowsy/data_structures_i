@@ -43,31 +43,28 @@ struct SortData {  // stores sortedness data
     std::string name;     // name of data
 };
 
-// main test wrappers
+// // main test wrappers
 void simple_tests();                      // test sorts and prints
 void verify(std::size_t sample = 10);     // call test_sortedness
 void benchmark(std::size_t sample = 10);  // call test_timings
 
 // test all sorting functions with sortedness verifications
-void test_sortedness(std::size_t array_size = 50000, std::size_t sample = 10);
+void test_sortedness(std::size_t array_size = 50000, std::size_t sample = 10,
+                     bool verify = true);
 
 // test timings the fastest sorting functions without sortedness verifications
-void test_timings(std::size_t array_size = 50000, std::size_t sample = 10);
+void test_timings(std::size_t array_size = 50000, std::size_t sample = 10,
+                  bool verify = true);
 
 // test sort functions with lambda
-template <typename F, typename T, typename C = bool (*)(T const &, T const &)>
-SortData test_sort_func1(F *f, T *data, std::size_t size, std::string name,
-                         C cmp, bool verify = true);
-
-// test for sort functions WITHOUT lambda
-template <typename F, typename T>
-SortData test_sort_func2(F *f, T *data, std::size_t size, std::string name,
-                         bool cmp = sort::less, bool verify = true);
+template <typename F, typename T, typename C = decltype(sort::compare<T>)>
+SortData test_sort_func(F *f, T *data, std::size_t size, std::string name,
+                        C cmp = sort::compare<T>, bool verify = true);
 
 // test for sort functions and print array elements
-template <typename F, typename T>
+template <typename F, typename T, typename C = decltype(sort::compare<T>)>
 void test_sorts_and_print(F *f, T *data, std::size_t size,
-                          bool cmp = sort::less);
+                          C cmp = sort::compare<T>);
 
 // print results
 void print_data(std::string headers[], int h_size, SortData s_data[],
@@ -115,7 +112,8 @@ void simple_tests() {
                                     "HEAP",   "INTRO",     "INTRO V2"};
 
     // declare function pointer type for sorting normal
-    typedef void (*fn_ptr2)(int *data, std::size_t size, bool cmp);
+    typedef void (*fn_ptr2)(int *data, std::size_t size,
+                            decltype(sort::compare<int>));
 
     // array of function pointers for sorting normal
     fn_ptr2 fn_arr2[FUNC_SIZE] = {
@@ -175,31 +173,24 @@ void benchmark(std::size_t sample) {
         std::cout << "ARRAY SIZE: " << std::setw(11) << std::left
                   << ARRAY_SIZES[i] << "SAMPLE: " << sample << "\n";
         std::cout << std::string(80, '-') << std::endl;
-        test_timings(ARRAY_SIZES[i], sample);
+        test_timings(ARRAY_SIZES[i], sample, false);
         if(i != SIZE - 1) std::cout << std::endl;
     }
 }
 
-void test_sortedness(std::size_t array_size, std::size_t sample) {
-    const int FUNC_SIZE = 9, HEADER_SIZE = 4, MAX_THREADS = 4,
-              TOTAL_SIZE = FUNC_SIZE * 2;
+void test_sortedness(std::size_t array_size, std::size_t sample, bool verify) {
+    const int FUNC_SIZE = 9, HEADER_SIZE = 4, MAX_THREADS = 4;
 
     // arrays of headers and names
     std::string headers[HEADER_SIZE] = {"    Sorting Algorithm", "CONTROL ",
                                         "RESULT ", "Timings (ms)"};
-    std::string names[TOTAL_SIZE] = {
-        "Bubble w/lambda",    "Bubble",    "Selection w/lambda", "Selection",
-        "Insertion w/lambda", "Insertion", "Merge w/lambda",     "Merge",
-        "Quick1 w/lambda",    "Quick1",    "Quick2 w/lambda",    "Quick2",
-        "Heap w/lambda",      "Heap",      "Intro w/lambda",     "Intro",
-        "Intro2 w/lambda",    "Intro2"};
+    std::string names[FUNC_SIZE] = {"Bubble", "Selection", "Insertion",
+                                    "Merge",  "Quick1",    "Quick2",
+                                    "Heap",   "Intro",     "Intro2"};
 
     // declare function pointer type for sorting with lambda
     typedef void (*fn_ptr1)(int *data, std::size_t size,
-                            bool (*cmp)(const int &l, const int &r));
-
-    // declare function pointer type for sorting normal
-    typedef void (*fn_ptr2)(int *data, std::size_t size, bool cmp);
+                            decltype(sort::compare<int>));
 
     // array of function pointers for sorting with lambda
     fn_ptr1 fn_arr1[FUNC_SIZE] = {
@@ -209,26 +200,17 @@ void test_sortedness(std::size_t array_size, std::size_t sample) {
         &sort::heap_sort<int>,      &sort::intro_sort<int>,
         &sort::intro2_sort<int>};
 
-    // array of function pointers for sorting normal
-    fn_ptr2 fn_arr2[FUNC_SIZE] = {
-        &sort::bubble_sort<int>,    &sort::selection_sort<int>,
-        &sort::insertion_sort<int>, &sort::merge_sort<int>,
-        &sort::quick_sort<int>,     &sort::quick2_sort<int>,
-        &sort::heap_sort<int>,      &sort::intro_sort<int>,
-        &sort::intro2_sort<int>};
-
     // data declaration and allocations
-    SortData results1[FUNC_SIZE], results2[FUNC_SIZE];
-    SortData final_results[TOTAL_SIZE];
+    SortData results1[FUNC_SIZE];
     std::thread *threads[MAX_THREADS];
-    int *arrays[TOTAL_SIZE];
+    int *arrays[FUNC_SIZE];
     int *control = nullptr;
     control = new int[array_size];
 
     // srand(time(nullptr));
 
     // allocate new memory for array of arrays
-    for(int i = 0; i < TOTAL_SIZE; ++i) arrays[i] = new int[array_size];
+    for(int i = 0; i < FUNC_SIZE; ++i) arrays[i] = new int[array_size];
 
     // populate control with random numbers
     for(std::size_t i = 0; i < array_size; ++i) control[i] = rand();
@@ -238,7 +220,7 @@ void test_sortedness(std::size_t array_size, std::size_t sample) {
         sort::shuffle(control, array_size);  // shuffle control
 
         // copy control to arrays[] with MAX_THREADS at each iteration
-        int threads_repeat = TOTAL_SIZE / MAX_THREADS;
+        int threads_repeat = FUNC_SIZE / MAX_THREADS;
         for(int j = 0; j < threads_repeat; ++j) {
             for(int k = 0; k < MAX_THREADS; ++k)
                 threads[k] = new std::thread(sort::copy_array<int>,
@@ -252,12 +234,12 @@ void test_sortedness(std::size_t array_size, std::size_t sample) {
         }
 
         // copy control to left over arrays[] with x threads under max
-        int threads_left_over = TOTAL_SIZE - MAX_THREADS * threads_repeat;
-        for(int i = 0; i < threads_left_over; ++i)
-            threads[i] = new std::thread(sort::copy_array<int>,
-                                         arrays[i + 4 * MAX_THREADS], control,
-                                         array_size);
-        for(int i = 0; i < threads_left_over; ++i) {
+        int left_over = FUNC_SIZE - MAX_THREADS * threads_repeat;
+        for(int i = 0; i < left_over; ++i)
+            threads[i] = new std::thread(
+                sort::copy_array<int>, arrays[i + threads_repeat * MAX_THREADS],
+                control, array_size);
+        for(int i = 0; i < left_over; ++i) {
             threads[i]->join();
             delete threads[i];
         }
@@ -265,61 +247,35 @@ void test_sortedness(std::size_t array_size, std::size_t sample) {
         // iterate array of function pointeres to test all sort functions
         for(int j = 0; j < FUNC_SIZE; ++j) {
             // iterate array of funct pointeres to sort functions with lambda
-            results1[j] += test_sort_func1(
-                fn_arr1[j], arrays[j], array_size, names[j * 2],
-                [](const auto &a, const auto &b) { return a < b; });
-        }
-
-        // iterate array of funct pointeres to sort functions WITHOUT lambda
-        for(int j = 0; j < FUNC_SIZE; ++j) {
-            // test merge and quick w/o comparison pointers with arr1
-            results2[j] +=
-                test_sort_func2(fn_arr2[j], arrays[j + 9], array_size,
-                                names[j * 2 + 1], sort::less);
+            results1[j] += test_sort_func(fn_arr1[j], arrays[j], array_size,
+                                          names[j], sort::compare<int>, verify);
         }
     }
 
     // calculate average for results1
     for(int i = 0; i < FUNC_SIZE; ++i) results1[i].timings /= sample;
 
-    // calculate average for results2
-    for(int i = 0; i < FUNC_SIZE; ++i) results2[i].timings /= sample;
-
-    // merge results1 and results2 to final results
-    for(int i = 0; i < TOTAL_SIZE; ++i) {
-        if(i % 2 == 0)
-            final_results[i] = results1[i / 2];
-        else
-            final_results[i] = results2[i / 2];
-    }
-
-    print_data(headers, HEADER_SIZE, final_results, TOTAL_SIZE, true);
+    print_data(headers, HEADER_SIZE, results1, FUNC_SIZE, true);
 
     // delete arrays
     delete[] control;
-    for(int i = 0; i < TOTAL_SIZE; ++i) delete[] arrays[i];
+    for(int i = 0; i < FUNC_SIZE; ++i) delete[] arrays[i];
 }
 
-void test_timings(std::size_t array_size, std::size_t sample) {
-    const int FUNC_SIZE = 6, HEADER_SIZE = 3, TOTAL_SIZE = FUNC_SIZE * 2 + 2,
+void test_timings(std::size_t array_size, std::size_t sample, bool verify) {
+    const int FUNC_SIZE = 6, HEADER_SIZE = 3, TOTAL_SIZE = FUNC_SIZE + 1,
               MAX_THREADS = 4;
     timer::ChronoTimer chrono_timer;
 
     // arrays of headers and names
     std::string headers[HEADER_SIZE] = {"    Sorting Algorithm",
                                         "% diff to STL", "Timings (ms)"};
-    std::string names[TOTAL_SIZE] = {
-        "Merge w/lambda",      "Merge",    "Quick1 w/lambda", "Quick1",
-        "Quick2 w/lambda",     "Quick2",   "Heap w/lambda",   "Heap",
-        "Intro w/lambda",      "Intro",    "Intro2 w/lambda", "Intro2",
-        "std::sort w/ lambda", "std::sort"};
+    std::string names[TOTAL_SIZE] = {"Merge", "Quick1", "Quick2",   "Heap",
+                                     "Intro", "Intro2", "std::sort"};
 
     // declare function pointer type for sorting with lambda
     typedef void (*fn_ptr1)(int *data, std::size_t size,
-                            bool (*cmp)(const int &l, const int &r));
-
-    // declare function pointer type for sorting normal
-    typedef void (*fn_ptr2)(int *data, std::size_t size, bool cmp);
+                            decltype(sort::compare<int>));
 
     // array of function pointers for sorting with lambda
     fn_ptr1 fn_arr1[FUNC_SIZE] = {
@@ -327,14 +283,8 @@ void test_timings(std::size_t array_size, std::size_t sample) {
         &sort::quick2_sort<int>, &sort::heap_sort<int>,
         &sort::intro_sort<int>,  &sort::intro2_sort<int>};
 
-    // array of function pointers for sorting normal
-    fn_ptr2 fn_arr2[FUNC_SIZE] = {
-        &sort::merge_sort<int>,  &sort::quick_sort<int>,
-        &sort::quick2_sort<int>, &sort::heap_sort<int>,
-        &sort::intro_sort<int>,  &sort::intro2_sort<int>};
-
     // data declaration and allocations
-    SortData results1[FUNC_SIZE], results2[FUNC_SIZE], std_results[2];
+    SortData results1[TOTAL_SIZE];
     SortData final_results[TOTAL_SIZE];  // add 2 for two std::sort()
     std::thread *threads[MAX_THREADS];
     int *arrays[TOTAL_SIZE];
@@ -368,12 +318,12 @@ void test_timings(std::size_t array_size, std::size_t sample) {
         }
 
         // copy control to left over arrays[] with x threads under max
-        int threads_left_over = TOTAL_SIZE - MAX_THREADS * threads_repeat;
-        for(int i = 0; i < threads_left_over; ++i)
-            threads[i] = new std::thread(sort::copy_array<int>,
-                                         arrays[i + 3 * MAX_THREADS], control,
-                                         array_size);
-        for(int i = 0; i < threads_left_over; ++i) {
+        int left_over = TOTAL_SIZE - MAX_THREADS * threads_repeat;
+        for(int i = 0; i < left_over; ++i)
+            threads[i] = new std::thread(
+                sort::copy_array<int>, arrays[i + threads_repeat * MAX_THREADS],
+                control, array_size);
+        for(int i = 0; i < left_over; ++i) {
             threads[i]->join();
             delete threads[i];
         }
@@ -381,71 +331,31 @@ void test_timings(std::size_t array_size, std::size_t sample) {
         // iterate array of funct pointeres to sort functions with lambda
         for(int j = 0; j < FUNC_SIZE; ++j) {
             // test sorting functions with lambda
-            results1[j] += test_sort_func1(
-                fn_arr1[j], arrays[j], array_size, names[j * 2],
-                [](const auto &a, const auto &b) { return a < b; }, false);
-        }
-
-        // iterate array of funct pointeres to sort functions WITHOUT lambda
-        for(int j = 0; j < FUNC_SIZE; ++j) {
-            // test merge and quick w/o comparison pointers with arr1
-            results2[j] +=
-                test_sort_func2(fn_arr2[j], arrays[j + 6], array_size,
-                                names[j * 2 + 1], sort::less, false);
+            results1[j] += test_sort_func(fn_arr1[j], arrays[j], array_size,
+                                          names[j], sort::compare<int>, verify);
         }
 
         // time std::sort() with lambda
         chrono_timer.start();
-        std::sort(arrays[FUNC_SIZE * 2], arrays[FUNC_SIZE * 2] + array_size,
+        std::sort(arrays[TOTAL_SIZE - 1], arrays[TOTAL_SIZE - 1] + array_size,
                   [](const auto &a, const auto &b) { return a < b; });
         chrono_timer.stop();
-        std_results[0].name = names[FUNC_SIZE * 2];
-        std_results[0].timings += chrono_timer.seconds();
-
-        // time std::sort() WITHOUT lambda
-        chrono_timer.start();
-        std::sort(arrays[FUNC_SIZE * 2 + 1],
-                  arrays[FUNC_SIZE * 2 + 1] + array_size);
-        chrono_timer.stop();
-        std_results[1].name = names[FUNC_SIZE * 2 + 1];
-        std_results[1].timings += chrono_timer.seconds();
+        results1[TOTAL_SIZE - 1].name = names[TOTAL_SIZE - 1];
+        results1[TOTAL_SIZE - 1].timings += chrono_timer.seconds();
     }
 
     // calculate average for std_results --> std::sort()
-    for(int i = 0; i < 2; ++i) std_results[i].timings /= sample;
-
-    // find % diff of std::sort and std::sort with lambda
-    std_results[0].stl_diff =
-        (std_results[0].timings - std_results[1].timings) /
-        std_results[1].timings * 100;
+    results1[TOTAL_SIZE - 1].timings /= sample;
 
     // calculate average for results1 and find % diff to std::sort
     for(int i = 0; i < FUNC_SIZE; ++i) {
         results1[i].timings /= sample;
-        results1[i].stl_diff = (results1[i].timings - std_results[1].timings) /
-                               std_results[1].timings * 100;
+        results1[i].stl_diff =
+            (results1[i].timings - results1[TOTAL_SIZE - 1].timings) /
+            results1[TOTAL_SIZE - 1].timings * 100;
     }
 
-    // calculate average for results2 and find % diff to std::sort
-    for(int i = 0; i < FUNC_SIZE; ++i) {
-        results2[i].timings /= sample;
-        results2[i].stl_diff = (results2[i].timings - std_results[1].timings) /
-                               std_results[1].timings * 100;
-    }
-
-    // merge results1 and results2 to final results
-    for(int i = 0; i < FUNC_SIZE * 2; ++i) {
-        if(i % 2 == 0)
-            final_results[i] = results1[i / 2];
-        else
-            final_results[i] = results2[i / 2];
-    }
-
-    // merge std::sort results to final results
-    for(int i = 0; i < 2; ++i)
-        final_results[i + FUNC_SIZE * 2] = std_results[i];
-
-    print_data(headers, HEADER_SIZE, final_results, TOTAL_SIZE, false, true);
+    print_data(headers, HEADER_SIZE, results1, TOTAL_SIZE, false, true);
 
     // delete arrays
     delete[] control;
@@ -453,8 +363,8 @@ void test_timings(std::size_t array_size, std::size_t sample) {
 }
 
 template <typename F, typename T, typename C>
-SortData test_sort_func1(F *f, T *data, std::size_t size, std::string name,
-                         C cmp, bool verify) {
+SortData test_sort_func(F *f, T *data, std::size_t size, std::string name,
+                        C cmp, bool verify) {
     bool is_ctrl_sorted = true, is_rslt_sorted = false;
     timer::ChronoTimer chrono;
 
@@ -472,28 +382,8 @@ SortData test_sort_func1(F *f, T *data, std::size_t size, std::string name,
     return SortData(name, is_ctrl_sorted, is_rslt_sorted, chrono.seconds());
 }
 
-template <typename F, typename T>
-SortData test_sort_func2(F *f, T *data, std::size_t size, std::string name,
-                         bool cmp, bool verify) {
-    bool is_ctrl_sorted = true, is_rslt_sorted = false;
-    timer::ChronoTimer chrono;
-
-    // verify control data is not sorted
-    if(verify) is_ctrl_sorted = sort::verify<T>(data, size);
-
-    // start timings
-    chrono.start();
-    f(data, size, cmp);
-    chrono.stop();
-
-    // verify result data is sorted
-    if(verify) is_rslt_sorted = sort::verify<T>(data, size);
-
-    return SortData(name, is_ctrl_sorted, is_rslt_sorted, chrono.seconds());
-}
-
-template <typename F, typename T>
-void test_sorts_and_print(F *f, T *data, std::size_t size, bool cmp) {
+template <typename F, typename T, typename C>
+void test_sorts_and_print(F *f, T *data, std::size_t size, C cmp) {
     std::cout << "ARRAY SIZE: " << size << std::endl;
     std::cout << "\nCONTROL: ";
     sort::print_array<T>(data, size);

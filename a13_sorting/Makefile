@@ -1,4 +1,4 @@
-CXX             := clang
+CXX             := clang++
 DEBUG_LEVEL     := #-g
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
 OPT             := -O2
