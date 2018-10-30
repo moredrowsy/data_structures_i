@@ -72,7 +72,7 @@ void selection_sort(T *data, std::size_t size,
                     bool (*cmp)(T const &, T const &));
 
 template <typename T>
-void insertion_sort(T *data, std::size_t size);
+void insertion_sort(T *data, std::size_t size, bool cmp = less);
 
 template <typename T>
 void insertion_sort(T *data, std::size_t size,
@@ -97,7 +97,7 @@ template <typename T>
 void quick2_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &));
 
 template <typename T>
-void heap_sort(T *data, std::size_t size);
+void heap_sort(T *data, std::size_t size, bool cmp = less);
 
 template <typename T>
 void heap_sort(T *data, std::size_t size, bool (*cmp)(T const &, T const &));

@@ -79,6 +79,8 @@ int main(int argc, char *argv[]) {
     // PROCESS ARGUMENT FLAGS
     if(argc == 1) {
         simple_tests();
+        verify(sample_verify);
+        benchmark(sample_bench);
     } else {
         for(int i = 1; i < argc; ++i) {
             if(std::string(argv[i]) == "-a" ||
@@ -105,7 +107,7 @@ int main(int argc, char *argv[]) {
 }
 
 void simple_tests() {
-    const int FUNC_SIZE = 9, SIZE = 4, ARRAY_SZIE_1 = 20, ARRAY_SZIE_2 = 27;
+    const int FUNC_SIZE = 9, SIZE = 4, ARRAY_SIZE_1 = 20, ARRAY_SIZE_2 = 27;
     int *arrays[SIZE];
 
     std::string names[FUNC_SIZE] = {"BUBBLE", "SELECTION", "INSERTION",
@@ -123,26 +125,26 @@ void simple_tests() {
         &sort::heap_sort<int>,      &sort::intro_sort<int>,
         &sort::intro2_sort<int>};
 
-    arrays[0] = new int[ARRAY_SZIE_1];
-    arrays[1] = new int[ARRAY_SZIE_2];
-    arrays[2] = new int[ARRAY_SZIE_1];
-    arrays[3] = new int[ARRAY_SZIE_2];
+    arrays[0] = new int[ARRAY_SIZE_1];
+    arrays[1] = new int[ARRAY_SIZE_2];
+    arrays[2] = new int[ARRAY_SIZE_1];
+    arrays[3] = new int[ARRAY_SIZE_2];
 
     // populate arrays[0] and arrays[1] with random numbers as CONTROL
-    for(int i = 0; i < ARRAY_SZIE_1; ++i) arrays[0][i] = rand() % 10;
-    for(int i = 0; i < ARRAY_SZIE_2; ++i) arrays[1][i] = rand() % 10;
+    for(int i = 0; i < ARRAY_SIZE_1; ++i) arrays[0][i] = rand() % 10;
+    for(int i = 0; i < ARRAY_SIZE_2; ++i) arrays[1][i] = rand() % 10;
 
     for(int i = 0; i < FUNC_SIZE; ++i) {
         // copy control arrays to test arrays[2] and arrays[3]
-        sort::copy_array(arrays[2], arrays[0], ARRAY_SZIE_1);
-        sort::copy_array(arrays[3], arrays[1], ARRAY_SZIE_2);
+        sort::copy_array(arrays[2], arrays[0], ARRAY_SIZE_1);
+        sort::copy_array(arrays[3], arrays[1], ARRAY_SIZE_2);
 
         std::cout << std::string(80, '-') << std::endl;
         std::cout << "ALGORITHM: " << names[i] << std::endl;
         std::cout << std::string(80, '-') << std::endl;
-        test_sorts_and_print(fn_arr2[i], arrays[2], ARRAY_SZIE_1);
+        test_sorts_and_print(fn_arr2[i], arrays[2], ARRAY_SIZE_1);
         std::cout << std::endl;
-        test_sorts_and_print(fn_arr2[i], arrays[3], ARRAY_SZIE_2);
+        test_sorts_and_print(fn_arr2[i], arrays[3], ARRAY_SIZE_2);
 
         if(i != FUNC_SIZE - 1) std::cout << std::endl << std::endl;
     }
@@ -153,27 +155,27 @@ void simple_tests() {
 
 void verify(std::size_t sample) {
     const int SIZE = 12;
-    int ARRAY_SZIEs[SIZE] = {0,  1,  2,     3,     10,    11,
+    int ARRAY_SIZES[SIZE] = {0,  1,  2,     3,     10,    11,
                              50, 51, 10000, 10001, 50000, 50001};
 
     for(int i = 0; i < SIZE; ++i) {
         std::cout << "ARRAY SIZE: " << std::setw(11) << std::left
-                  << ARRAY_SZIEs[i] << "SAMPLE: " << sample << "\n";
+                  << ARRAY_SIZES[i] << "SAMPLE: " << sample << "\n";
         std::cout << std::string(80, '-') << std::endl;
-        test_sortedness(ARRAY_SZIEs[i], sample);
+        test_sortedness(ARRAY_SIZES[i], sample);
         if(i != SIZE - 1) std::cout << std::endl;
     }
 }
 
 void benchmark(std::size_t sample) {
     const int SIZE = 5;
-    int ARRAY_SZIEs[SIZE] = {10000, 50000, 100000, 1000000, 10000000};
+    int ARRAY_SIZES[SIZE] = {10000, 50000, 100000, 1000000, 10000000};
 
     for(int i = 0; i < SIZE; ++i) {
         std::cout << "ARRAY SIZE: " << std::setw(11) << std::left
-                  << ARRAY_SZIEs[i] << "SAMPLE: " << sample << "\n";
+                  << ARRAY_SIZES[i] << "SAMPLE: " << sample << "\n";
         std::cout << std::string(80, '-') << std::endl;
-        test_timings(ARRAY_SZIEs[i], sample);
+        test_timings(ARRAY_SIZES[i], sample);
         if(i != SIZE - 1) std::cout << std::endl;
     }
 }
@@ -199,7 +201,7 @@ void test_sortedness(std::size_t array_size, std::size_t sample) {
     // declare function pointer type for sorting normal
     typedef void (*fn_ptr2)(int *data, std::size_t size, bool cmp);
 
-    // array of function pointers to sorting with lambda
+    // array of function pointers for sorting with lambda
     fn_ptr1 fn_arr1[FUNC_SIZE] = {
         &sort::bubble_sort<int>,    &sort::selection_sort<int>,
         &sort::insertion_sort<int>, &sort::merge_sort<int>,
@@ -319,7 +321,7 @@ void test_timings(std::size_t array_size, std::size_t sample) {
     // declare function pointer type for sorting normal
     typedef void (*fn_ptr2)(int *data, std::size_t size, bool cmp);
 
-    // array of function pointers to sorting with lambda
+    // array of function pointers for sorting with lambda
     fn_ptr1 fn_arr1[FUNC_SIZE] = {
         &sort::merge_sort<int>,  &sort::quick_sort<int>,
         &sort::quick2_sort<int>, &sort::heap_sort<int>,
