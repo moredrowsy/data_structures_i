@@ -9,7 +9,8 @@ LIB             := ../lib
 OBJ             := ${LIB}/catch.o\
                    test_node.o test_list.o test_queue.o test_stack.o\
                    test_bst_node.o test_bst.o test_avl.o test_heap.o\
-                   test_pqueue.o  test_hash.o test_fstream_sort.o
+                   test_pqueue.o  test_hash.o test_fstream_sort.o\
+                   test_array_utils.o
 
 tests.out: ${OBJ}
 	$(CXX) -o $@ $^
@@ -119,6 +120,14 @@ test_fstream_sort.out: ${LIB}/catch.o test_fstream_sort.o
 
 test_fstream_sort.o: test_fstream_sort.cpp\
 	${INC}/fstream_sort.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+# test file_sort
+test_array_utils.out: ${LIB}/catch.o test_array_utils.o
+	$(CXX) -o $@ $^
+
+test_array_utils.o: test_array_utils.cpp\
+	${INC}/array_utils.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
