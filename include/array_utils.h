@@ -40,13 +40,17 @@ void insert_item(T* data, std::size_t i, std::size_t& size, const T& entry);
 template <typename T>
 void detach_item(T* data, std::size_t& size, T& entry);
 
-// delete item at index i and place it in entry
+// delete item @ index i
+template <typename T>
+void delete_item(T* data, std::size_t i, std::size_t& size);
+
+// delete item @ index i and place it in entry
 template <typename T>
 void delete_item(T* data, std::size_t i, std::size_t& size, T& entry);
 
-// append data2 to the right of data1
+// append src to right to dest
 template <typename T>
-void merge(T* data1, std::size_t& size1, T* data2, std::size_t& size2);
+void merge(T* dest, std::size_t& dest_size, T* src, std::size_t& src_size);
 
 // move n/2 elements from the right of data1 and move to data2
 // pre: size1 is entire array, data2 and size2 is empty
@@ -56,8 +60,8 @@ void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size);
 
 // copy *src into *dest
 template <typename T>
-void copy_array(T* dest, const T* src, std::size_t& dest_size,
-                std::size_t src_size);
+void copy_array(const T* src, std::size_t src_size, T* dest,
+                std::size_t& dest_size);
 
 // print array with given index position
 template <typename T>
@@ -164,6 +168,14 @@ void detach_item(T* data, std::size_t& size, T& entry) {
 }
 
 template <typename T>
+void delete_item(T* data, std::size_t i, std::size_t& size) {
+    if(i < size) {
+        while(++i < size) data[i - 1] = data[i];  // shift left
+        --size;
+    }
+}
+
+template <typename T>
 void delete_item(T* data, std::size_t i, std::size_t& size, T& entry) {
     if(i < size) {
         entry = data[i];                          // return T to caller
@@ -173,9 +185,9 @@ void delete_item(T* data, std::size_t i, std::size_t& size, T& entry) {
 }
 
 template <typename T>
-void merge(T* data1, std::size_t& size1, T* data2, std::size_t& size2) {
-    for(std::size_t i = 0; i < size2; ++i) data1[size1++] = data2[i];
-    size2 = 0;
+void merge(T* dest, std::size_t& dest_size, T* src, std::size_t& src_size) {
+    for(std::size_t i = 0; i < src_size; ++i) dest[dest_size++] = src[i];
+    src_size = 0;
 }
 
 template <typename T>
@@ -187,8 +199,8 @@ void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size) {
 }
 
 template <typename T>
-void copy_array(T* dest, const T* src, std::size_t& dest_size,
-                std::size_t src_size) {
+void copy_array(const T* src, std::size_t src_size, T* dest,
+                std::size_t& dest_size) {
     for(dest_size = 0; dest_size < src_size; ++dest_size)
         dest[dest_size] = src[dest_size];
 }
