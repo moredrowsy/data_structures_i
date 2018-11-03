@@ -71,6 +71,9 @@ template <typename T>
 bool is_gt(const T* data, std::size_t i, const T& item);  // item > all data[i]
 
 template <typename T>
+bool is_lt(const T* data, std::size_t i, const T& item);  // item < all data[i]
+
+template <typename T>
 bool is_le(const T* data, std::size_t i, const T& item);  // item <= all data[i]
 
 //-------------- std::Vector Extra operators: ---------------------
@@ -111,7 +114,9 @@ void ordered_insert(T* data, std::size_t& size, const T& entry) {
     std::size_t forward = 0;          // forward walker to insert @ index
     std::size_t backward = size + 1;  // backward walker to shift  right
 
-    if(entry > data[size - 1])  // if greater than last, insert after last
+    if(!size)
+        data[size] = entry;
+    else if(entry > data[size - 1])  // if greater than last, insert after last
         data[size] = entry;
     else {
         while(forward < size) {
@@ -225,12 +230,26 @@ void print_array(const T* data, std::size_t size, int pos) {
 
 template <typename T>
 bool is_gt(const T* data, std::size_t i, const T& item) {
-    return item > data[i];
+    for(std::size_t j = 0; j <= i; ++j)
+        if(item <= data[j]) return false;
+
+    return true;
+}
+
+template <typename T>
+bool is_lt(const T* data, std::size_t i, const T& item) {
+    for(std::size_t j = 0; j <= i; ++j)
+        if(item >= data[j]) return false;
+
+    return true;
 }
 
 template <typename T>
 bool is_le(const T* data, std::size_t i, const T& item) {
-    return item <= data[i];
+    for(std::size_t j = 0; j <= i; ++j)
+        if(item > data[j]) return false;
+
+    return true;
 }
 
 template <typename T>

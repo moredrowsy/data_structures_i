@@ -1,8 +1,9 @@
 #ifndef BTREE_H
 #define BTREE_H
 
-#include <iomanip>  // setw()
-#include "array_utils.h"
+#include <iomanip>        // setw()
+#include "array_utils.h"  // array utilities
+#include "sort.h"         // verify() sortedness
 
 namespace btree {
 
@@ -57,7 +58,7 @@ public:
     bool loose_insert(const T& entry);  // allows MAXIMUM+1 data in the root
     void fix_excess(std::size_t i);  // fix excess of data elements in child i
 
-    // remove element functions:
+    // remove element functions
     bool loose_remove(const T& entry);  // allows MINIMUM-1 data in the root
     void fix_shortage(std::size_t i);   // fix shortage of data in child i
 
@@ -148,39 +149,36 @@ void BTree<T>::print_tree(std::ostream& outs, int level, int index) const {
 
 template <typename T>
 bool BTree<T>::verify() {
-    bool is_good = true;
-
-    if(!is_leaf())
-        for(std::size_t i = 0; i < _child_count; ++i) {
-            is_good &= _subset[i]->verify();
-
-            // verify child count limits
-            if(_child_count > MAXIMUM + 1 || _child_count != _data_count + 1) {
-                is_good = false;
-                break;
-            }
-
-            // verify child's largest data is less than parent's data
-            if(i < _data_count &&
-               _data[i] < _subset[i]->_data[_subset[i]->_data_count - 1]) {
-                is_good = false;
-                break;
-            }
-        }
+    using namespace array_utils;
 
     // verify data count limits
-    if(is_good)
-        if(_data_count < MINIMUM || _data_count > MAXIMUM) is_good = false;
+    if(_data_count < MINIMUM || _data_count > MAXIMUM) return false;
 
     // verify data is sorted
-    if(is_good)
-        for(std::size_t i = 1; i < _data_count; ++i)
-            if(_data[i] < _data[i]) {
-                is_good = false;
-                break;
-            }
+    if(!sort::verify(_data, _data_count)) return false;
 
-    return is_good;
+    if(!is_leaf()) {
+        // verify child count limits
+        if(_child_count > MAXIMUM + 1 || _child_count != _data_count + 1)
+            return false;
+
+        for(std::size_t i = 0; i < _data_count; ++i) {
+            // verify data[i] is greater than all of subset[i]->data
+            if(!is_gt(_subset[i]->_data, _subset[i]->_data_count - 1, _data[i]))
+                return false;
+
+            // verify data[i] is less than or equal all of subset[i+1]->data
+            if(i + 1 < _child_count &&
+               !is_lt(_subset[i + 1]->_data, _subset[i + 1]->_data_count - 1,
+                      _data[i]))
+                return false;
+        }
+
+        for(std::size_t i = 0; i < _child_count; ++i)
+            if(!_subset[i]->verify()) return false;
+    }
+
+    return true;
 }
 
 template <typename T>
@@ -238,6 +236,7 @@ void BTree<T>::clear() {
     _data_count = 0;
 }
 
+// PRE: 'this' tree must be cleared before call copy tree
 template <typename T>
 void BTree<T>::copy(const BTree<T>& other) {
     if(!other.is_leaf())
@@ -345,13 +344,13 @@ bool BTree<T>::loose_remove(const T& entry) {
 template <typename T>
 void BTree<T>::fix_shortage(std::size_t i) {
     if(i + 1 < _child_count && _subset[i + 1]->_data_count > MINIMUM)
-        rotate_left(i);
+        rotate_left(i);  // when right has more than minimum
     else if(i > 0 && i < _child_count && _subset[i - 1]->_data_count > MINIMUM)
-        rotate_right(i);
-    else if(i + 1 < _child_count)  // if there is right child
-        merge_with_next_subset(i);
+        rotate_right(i);  // when left has more than minimum
+    else if(i + 1 < _child_count)
+        merge_with_next_subset(i);  // if there is right child
     else
-        merge_with_next_subset(i - 1);
+        merge_with_next_subset(i - 1);  // if there is left child
 }
 
 template <typename T>
