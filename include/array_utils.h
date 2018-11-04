@@ -230,15 +230,16 @@ void print_array(const T* data, std::size_t size, int pos) {
 
 template <typename T>
 bool is_gt(const T* data, std::size_t i, const T& item) {
-    for(std::size_t j = 0; j <= i; ++j)
+    for(std::size_t j = 0; j < i; ++j) {
         if(item <= data[j]) return false;
+    }
 
     return true;
 }
 
 template <typename T>
 bool is_lt(const T* data, std::size_t i, const T& item) {
-    for(std::size_t j = 0; j <= i; ++j)
+    for(std::size_t j = 0; j < i; ++j)
         if(item >= data[j]) return false;
 
     return true;
@@ -246,7 +247,7 @@ bool is_lt(const T* data, std::size_t i, const T& item) {
 
 template <typename T>
 bool is_le(const T* data, std::size_t i, const T& item) {
-    for(std::size_t j = 0; j <= i; ++j)
+    for(std::size_t j = 0; j < i; ++j)
         if(item > data[j]) return false;
 
     return true;

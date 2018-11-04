@@ -1,6 +1,7 @@
 #ifndef BTREE_H
 #define BTREE_H
 
+#include <cassert>        // assert()
 #include <iomanip>        // setw()
 #include "array_utils.h"  // array utilities
 #include "sort.h"         // verify() sortedness
@@ -56,22 +57,24 @@ public:
 
     // insert element functions
     bool loose_insert(const T& entry);  // allows MAXIMUM+1 data in the root
-    void fix_excess(std::size_t i);  // fix excess of data elements in child i
+    void fix_excess(std::size_t i);     // fix excess of data in child i
 
     // remove element functions
     bool loose_remove(const T& entry);  // allows MINIMUM-1 data in the root
     void fix_shortage(std::size_t i);   // fix shortage of data in child i
 
-    void remove_largest(T& entry);    // remove the largest child of tree->entry
-    void rotate_left(std::size_t i);  // transfer one data LEFT from child i
-    void rotate_right(std::size_t i);  // transfer one data RIGHT from child i
+    void remove_largest(T& entry);     // remove largest child of tree->entry
+    void rotate_left(std::size_t i);   // xfer one data from child i+1 to i
+    void rotate_right(std::size_t i);  // xfer one data from child i-1 to i
     void merge_with_next_subset(std::size_t i);  // merge subset i w/ subset i+1
+
+    bool verify_tree(int& depth, bool& has_stored_depth, int level = 0);
+    bool is_gt_subset(const BTree<T>* subtree, const T& item);
+    bool is_lt_subset(const BTree<T>* subtree, const T& item);
 };
 
 template <typename T>
-BTree<T>::BTree(bool dups) : _dups_ok(dups), _data_count(0), _child_count(0) {
-    for(std::size_t i = 0; i < MAXIMUM + 2; ++i) _subset[i] = nullptr;
-}
+BTree<T>::BTree(bool dups) : _dups_ok(dups), _data_count(0), _child_count(0) {}
 
 template <typename T>
 BTree<T>::~BTree() {
@@ -87,7 +90,6 @@ BTree<T>::BTree(const BTree<T>& src)
 template <typename T>
 BTree<T>& BTree<T>::operator=(const BTree<T>& rhs) {
     if(this != &rhs) {
-        _dups_ok = rhs._dups_ok;
         clear();
         copy(rhs);
     }
@@ -116,22 +118,18 @@ bool BTree<T>::empty() const {
 
 template <typename T>
 std::size_t BTree<T>::size() const {
-    std::size_t count = 0;
+    std::size_t count = _data_count;
+    for(std::size_t i = 0; i < _child_count; ++i) count += _subset[i]->size();
 
-    if(!is_leaf())
-        for(std::size_t i = 0; i < _child_count; ++i)
-            count += _subset[i]->size();
-
-    return count + _data_count;
+    return count;
 }
 
 template <typename T>
 void BTree<T>::print_tree(std::ostream& outs, int level, int index) const {
     int mid = (_child_count - 1) / 2;  // store midpoint
 
-    if(!is_leaf())  // recurse right of subtrees
-        for(int i = _child_count - 1; i > mid; --i)
-            _subset[i]->print_tree(outs, level + 1, i);
+    for(int i = _child_count - 1; i > mid; --i)
+        _subset[i]->print_tree(outs, level + 1, i);  // recurse right of mid
 
     // outstream data
     outs << std::setw(level * 15) << ' ' << index << " |";
@@ -142,43 +140,15 @@ void BTree<T>::print_tree(std::ostream& outs, int level, int index) const {
     }
     outs << "|\n";
 
-    if(!is_leaf())  // recurse left of subtrees
-        for(int i = mid; i >= 0; --i)
-            _subset[i]->print_tree(outs, level + 1, i);
+    for(int i = mid; i >= 0; --i)
+        _subset[i]->print_tree(outs, level + 1, i);  // recurse left of mid
 }
 
 template <typename T>
 bool BTree<T>::verify() {
-    using namespace array_utils;
-
-    // verify data count limits
-    if(_data_count < MINIMUM || _data_count > MAXIMUM) return false;
-
-    // verify data is sorted
-    if(!sort::verify(_data, _data_count)) return false;
-
-    if(!is_leaf()) {
-        // verify child count limits
-        if(_child_count > MAXIMUM + 1 || _child_count != _data_count + 1)
-            return false;
-
-        for(std::size_t i = 0; i < _data_count; ++i) {
-            // verify data[i] is greater than all of subset[i]->data
-            if(!is_gt(_subset[i]->_data, _subset[i]->_data_count - 1, _data[i]))
-                return false;
-
-            // verify data[i] is less than or equal all of subset[i+1]->data
-            if(i + 1 < _child_count &&
-               !is_lt(_subset[i + 1]->_data, _subset[i + 1]->_data_count - 1,
-                      _data[i]))
-                return false;
-        }
-
-        for(std::size_t i = 0; i < _child_count; ++i)
-            if(!_subset[i]->verify()) return false;
-    }
-
-    return true;
+    bool has_stored_depth = false;
+    int depth = 0;
+    return verify_tree(depth, has_stored_depth);
 }
 
 template <typename T>
@@ -186,7 +156,7 @@ bool BTree<T>::insert(const T& entry) {
     bool is_inserted = loose_insert(entry);
 
     if(_data_count > MAXIMUM) {
-        BTree<T>* new_node = new BTree<T>;  // to move all of 'this' to new node
+        BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer 'this' to new node
 
         // copy 'this' data/subset to new node's data/subset
         array_utils::copy_array(_data, _data_count, new_node->_data,
@@ -226,24 +196,32 @@ bool BTree<T>::remove(const T& entry) {
 
 template <typename T>
 void BTree<T>::clear() {
-    if(!is_leaf()) {  // recurse into subset
-        for(std::size_t i = 0; i < _child_count; ++i) {
-            _subset[i]->clear();
-            delete _subset[i];
-        }
-        _child_count = 0;  // must clear child to prevent double delete
+    for(std::size_t i = 0; i < _child_count; ++i) {
+        _subset[i]->clear();  // recurse into subset
+        delete _subset[i];
     }
+
+    _child_count = 0;  // must clear child to prevent double delete
     _data_count = 0;
 }
 
 // PRE: 'this' tree must be cleared before call copy tree
 template <typename T>
 void BTree<T>::copy(const BTree<T>& other) {
-    if(!other.is_leaf())
-        for(std::size_t i = 0; i < other._child_count; ++i)
-            copy(*other._subset[i]);
+    assert(this != &other);
+    assert(empty());
 
-    for(std::size_t i = 0; i < other._data_count; ++i) insert(other._data[i]);
+    // copy data
+    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
+    _child_count = other._child_count;
+    _dups_ok = other._dups_ok;
+
+    if(!other.is_leaf()) {  // copy subset
+        for(std::size_t i = 0; i < other._child_count; ++i) {
+            _subset[i] = new BTree<T>(other._dups_ok);
+            _subset[i]->copy(*other._subset[i]);
+        }
+    }
 }
 
 template <typename T>
@@ -297,12 +275,12 @@ bool BTree<T>::loose_insert(const T& entry) {
 
 template <typename T>
 void BTree<T>::fix_excess(std::size_t i) {
-    BTree<T>* new_node = new BTree<T>;  // to hold excess elements after mid
+    BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer excess data after mid
 
     // move elements after half of subset[i]'s data to new node's data
     array_utils::split(_subset[i]->_data, _subset[i]->_data_count,
                        new_node->_data, new_node->_data_count);
-    --_subset[i]->_data_count;  // exclude midpoint index
+    --_subset[i]->_data_count;  // exclude midpoint
 
     // copy half and after of subset[i]'s subset pointers to new node's subset
     array_utils::split(_subset[i]->_subset, _subset[i]->_child_count,
@@ -311,7 +289,7 @@ void BTree<T>::fix_excess(std::size_t i) {
     // insert new node after subset[i], which is @ i + 1
     array_utils::insert_item(_subset, i + 1, _child_count, new_node);
 
-    // insert mid back into current data
+    // insert mid back into data[i]; subset[i]'s data_count points to mid
     array_utils::insert_item(_data, i, _data_count,
                              _subset[i]->_data[_subset[i]->_data_count]);
 }
@@ -397,9 +375,12 @@ void BTree<T>::rotate_right(std::size_t i) {
                 _data[i - 1]);
 
     // transfer subset[i-1]'s last subset to front of subset[i]'s subset
-    BTree<T>* detach = nullptr;
-    detach_item(_subset[i - 1]->_subset, _subset[i - 1]->_child_count, detach);
-    insert_item(_subset[i]->_subset, 0, _subset[i]->_child_count, detach);
+    if(_subset[i - 1]->_child_count) {
+        BTree<T>* detach = nullptr;
+        detach_item(_subset[i - 1]->_subset, _subset[i - 1]->_child_count,
+                    detach);
+        insert_item(_subset[i]->_subset, 0, _subset[i]->_child_count, detach);
+    }
 }
 
 // PRE: only merge when one child is at most MIN! Otherwise you'll over fill
@@ -421,6 +402,67 @@ void BTree<T>::merge_with_next_subset(std::size_t i) {
     // deallocate empty subset[i+1] and remove subset[i+1] from subset
     delete _subset[i + 1];
     array_utils::delete_item(_subset, i + 1, _child_count);  // shift left
+}
+
+template <typename T>
+bool BTree<T>::verify_tree(int& depth, bool& has_stored_depth, int level) {
+    using namespace array_utils;
+
+    // verify data count limits
+    if(_data_count < MINIMUM || _data_count > MAXIMUM) return false;
+
+    // verify data is sorted
+    if(!sort::verify(_data, _data_count)) return false;
+
+    if(!is_leaf()) {
+        // verify child count limits
+        if(_child_count > MAXIMUM + 1 || _child_count != _data_count + 1)
+            return false;
+
+        for(std::size_t i = 0; i < _child_count; ++i) {
+            if(i + 1 < _child_count) {
+                // verify data[i] is greater than all of subset[i]
+                if(!is_gt_subset(_subset[i], _data[i])) return false;
+
+                // verify data[i] is less than all of subset[i+1]
+                if(!is_lt_subset(_subset[i + 1], _data[i])) return false;
+            }
+
+            if(!_subset[i]->verify_tree(depth, has_stored_depth, level + 1))
+                return false;
+        }
+    } else {
+        if(!has_stored_depth) {  // store child depth for the first time
+            depth = level;
+            has_stored_depth = true;
+        }
+
+        if(depth != level) return false;  // check child depth are all same
+    }
+
+    return true;
+}
+
+template <typename T>
+bool BTree<T>::is_gt_subset(const BTree<T>* subtree, const T& item) {
+    if(!array_utils::is_gt(subtree->_data, subtree->_data_count, item))
+        return false;
+
+    for(std::size_t i = 0; i < subtree->_child_count; ++i)
+        if(!is_gt_subset(subtree->_subset[i], item)) return false;
+
+    return true;
+}
+
+template <typename T>
+bool BTree<T>::is_lt_subset(const BTree<T>* subtree, const T& item) {
+    if(!array_utils::is_lt(subtree->_data, subtree->_data_count, item))
+        return false;
+
+    for(std::size_t i = 0; i < subtree->_child_count; ++i)
+        if(!is_lt_subset(subtree->_subset[i], item)) return false;
+
+    return true;
 }
 
 }  // namespace btree

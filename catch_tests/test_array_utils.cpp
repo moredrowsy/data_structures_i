@@ -615,36 +615,30 @@ SCENARIO("Array Utilities", "[array_utils]") {
         const int SIZE = 10;
         int array[SIZE] = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
         int search;
-        std::size_t i;
 
         search = -1;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_gt(array, i, search);
+        is_good = is_gt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 1;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_gt(array, i, search);
+        is_good = is_gt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 18;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_gt(array, i, search);
+        is_good = is_gt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 19;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_gt(array, i, search);
+        is_good = is_gt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 20;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_gt(array, i, search);
+        is_good = is_gt(array, SIZE, search);
         REQUIRE(is_good == true);
     }
 
@@ -653,36 +647,30 @@ SCENARIO("Array Utilities", "[array_utils]") {
         const int SIZE = 10;
         int array[SIZE] = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
         int search;
-        std::size_t i;
 
         search = -1;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_lt(array, i, search);
+        is_good = is_lt(array, SIZE, search);
         REQUIRE(is_good == true);
 
         search = 1;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_lt(array, i, search);
+        is_good = is_lt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 18;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_lt(array, i, search);
+        is_good = is_lt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 19;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_lt(array, i, search);
+        is_good = is_lt(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 20;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_lt(array, i, search);
+        is_good = is_lt(array, SIZE, search);
         REQUIRE(is_good == false);
     }
 
@@ -691,36 +679,30 @@ SCENARIO("Array Utilities", "[array_utils]") {
         const int SIZE = 10;
         int array[SIZE] = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
         int search;
-        std::size_t i;
 
         search = -1;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_le(array, i, search);
+        is_good = is_le(array, SIZE, search);
         REQUIRE(is_good == true);
 
         search = 1;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_le(array, i, search);
+        is_good = is_le(array, SIZE, search);
         REQUIRE(is_good == true);
 
         search = 18;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_le(array, i, search);
+        is_good = is_le(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 19;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_le(array, i, search);
+        is_good = is_le(array, SIZE, search);
         REQUIRE(is_good == false);
 
         search = 20;
-        i = SIZE - 1;
         is_good = false;
-        is_good = is_le(array, i, search);
+        is_good = is_le(array, SIZE, search);
         REQUIRE(is_good == false);
     }
 }
