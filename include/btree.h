@@ -216,12 +216,11 @@ void BTree<T>::copy(const BTree<T>& other) {
     _child_count = other._child_count;
     _dups_ok = other._dups_ok;
 
-    if(!other.is_leaf()) {  // copy subset
+    if(!other.is_leaf())  // copy subset
         for(std::size_t i = 0; i < other._child_count; ++i) {
             _subset[i] = new BTree<T>(other._dups_ok);
             _subset[i]->copy(*other._subset[i]);
         }
-    }
 }
 
 template <typename T>
@@ -335,8 +334,13 @@ template <typename T>
 void BTree<T>::remove_largest(T& entry) {
     if(is_leaf())
         array_utils::detach_item(_data, _data_count, entry);
-    else
+    else {
         _subset[_child_count - 1]->remove_largest(entry);
+
+        // fix child's shortage
+        if(_subset[_child_count - 1]->_data_count < MINIMUM)
+            fix_shortage(_child_count - 1);
+    }
 }
 
 // PRE: (i < child_count - 1) and subset[i+1]->data > MIN
@@ -387,7 +391,7 @@ void BTree<T>::rotate_right(std::size_t i) {
 // the array and get double free error when firing the destructor
 template <typename T>
 void BTree<T>::merge_with_next_subset(std::size_t i) {
-    // remove data[i] down to subset[i]'s data via append
+    // remove data[i] down to subset[i]'s data via attach
     T removed;
     array_utils::delete_item(_data, i, _data_count, removed);
     array_utils::attach_item(_subset[i]->_data, _subset[i]->_data_count,
@@ -409,7 +413,7 @@ bool BTree<T>::verify_tree(int& depth, bool& has_stored_depth, int level) {
     using namespace array_utils;
 
     // verify data count limits
-    if(_data_count < MINIMUM || _data_count > MAXIMUM) return false;
+    if(level && (_data_count < MINIMUM || _data_count > MAXIMUM)) return false;
 
     // verify data is sorted
     if(!sort::verify(_data, _data_count)) return false;
