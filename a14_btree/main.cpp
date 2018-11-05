@@ -1,4 +1,5 @@
-#include <cassert>                   //asseert()
+#include <cassert>                   // asseert()
+#include <cstdlib>                   // rand(), srand()
 #include <iomanip>                   // setw()
 #include <iostream>                  // stream objects
 #include <string>                    // string objects
@@ -8,10 +9,18 @@
 
 void test_btree_auto(int sample_size, int tree_size, bool report);
 bool test_btree_auto(int tree_size, bool report);
+bool test_btree_big_three();
+bool test_btree_insert();
+bool test_btree_remove();
 void test_btree_interactive();
 
 int main() {
-    // test_btree_interactive();
+    srand(0);
+
+    test_btree_interactive();
+    test_btree_big_three();
+    test_btree_insert();
+    test_btree_remove();
     test_btree_auto(100, 1000, false);
 
     return 0;
@@ -36,45 +45,39 @@ void test_btree_auto(int sample_size, int tree_size, bool report) {
 
     std::cout << std::string(80, '*') << std::endl
               << std::string(80, '*') << std::endl
-              << "             E N D     T E S T: " << sample_size
+              << "             E N D     T E S T : " << sample_size
               << " tests of " << tree_size
-              << " items: " << (verified ? "VERIFIED" : "VERIFICATION FAILED")
+              << " items : " << (verified ? "VERIFIED" : "VERIFICATION FAILED")
               << std::endl
               << std::string(80, '*') << std::endl
               << std::string(80, '*') << std::endl;
 }
 
 bool test_btree_auto(int tree_size, bool report) {
-    using namespace btree;
-
     const int MAX = 10000;
     assert(tree_size < MAX);
 
-    bool is_inserted = false, is_removed = false;
-    BTree<int> bt;
-    int test[MAX];
+    btree::BTree<int> bt;
     int original[MAX];
+    int test[MAX];
     int deleted[MAX];
-    int r_index;
+    int r;
 
-    std::size_t test_size = tree_size;
-    std::size_t original_size;
+    std::size_t original_size = tree_size;
+    std::size_t test_size = 0;
     std::size_t deleted_size = 0;
 
-    // populate test[]
-    for(int i = 0; i < tree_size; ++i) test[i] = i;
+    // populate original[]
+    for(std::size_t i = 0; i < original_size; ++i) original[i] = i;
 
-    // shuffle test[]
-    sort::shuffle(test, tree_size);
+    // shuffle original[]
+    sort::shuffle(original, original_size);
 
-    // copy test[] to original[]
-    array_utils::copy_array(test, tree_size, original, original_size);
+    // copy original[] to test[]
+    array_utils::copy_array(original, original_size, test, test_size);
 
     // populate BTree with test[] and assert items are inserted
-    for(std::size_t i = 0; i < test_size; ++i) {
-        is_inserted = bt.insert(test[i]);
-        assert(is_inserted);
-    }
+    for(std::size_t i = 0; i < test_size; ++i) bt.insert(test[i]);
 
     if(report)
         std::cout << std::string(80, '=') << std::endl
@@ -86,7 +89,7 @@ bool test_btree_auto(int tree_size, bool report) {
 
     for(int i = 0; i < tree_size; i++) {
         // pick item to delete
-        r_index = rand() % test_size;
+        r = rand() % test_size;
 
         if(report) {
             std::cout << std::string(80, '=') << std::endl << std::endl;
@@ -101,19 +104,17 @@ bool test_btree_auto(int tree_size, bool report) {
             array_utils::print_array(test, test_size);
             std::cout << " deleted: ";
             array_utils::print_array(deleted, deleted_size);
-            std::cout << "REMOVING: [" << test[r_index] << "]" << std::endl;
+            std::cout << "REMOVING: [" << test[r] << "]" << std::endl;
 
             std::cout << std::string(80, '=') << std::endl;
             std::cout << std::endl;
         }
 
         // remove item from BTree and assert is removed
-        is_removed = bt.remove(test[r_index]);
-        assert(is_removed);
+        bt.remove(test[r]);
 
         // remove deleted item from test[] and add to deleted[]
-        array_utils::delete_item(test, r_index, test_size,
-                                 deleted[deleted_size++]);
+        array_utils::delete_item(test, r, test_size, deleted[deleted_size++]);
 
         if(!bt.verify()) {
             std::cout << std::setw(6) << i << " I N V A L I D   T R E E"
@@ -144,6 +145,135 @@ bool test_btree_auto(int tree_size, bool report) {
 
         std::cout << std::string(80, '=') << std::endl;
         std::cout << " V A L I D    T R E E" << std::endl;
+    }
+
+    return true;
+}
+
+bool test_btree_big_three() {
+    const int MAX = 1000;
+    int set1[MAX], set2[MAX];
+    btree::BTree<int> bt1, bt2;
+
+    // populate set1 and set2
+    for(int i = 0; i < MAX; ++i) {
+        set1[i] = i;
+        set2[i] = 2 * i;
+    }
+
+    // insert set1 and set2 to bt1 and bt2 respectively
+    for(int i = 0; i < MAX; ++i) {
+        bt1.insert(set1[i]);
+        bt2.insert(set2[i]);
+    }
+
+    // test copy CTOR
+    btree::BTree<int> bt_test(bt1);
+
+    // verify bt_test contains set1
+    for(int i = 0; i < MAX; ++i)
+        if(!bt_test.contains(set1[i])) {
+            std::cout << "C O N T A I N S  [" << set1[i] << "]  F A I L E D"
+                      << std::endl;
+            return false;
+        }
+
+    // test assignment op
+    bt_test = bt2;
+
+    // verify bt_test contains set2
+    for(int i = 0; i < MAX; ++i)
+        if(!bt_test.contains(set2[i])) {
+            std::cout << "C O N T A I N S  [" << set2[i] << "]  F A I L E D"
+                      << std::endl;
+            return false;
+        }
+
+    return true;
+}
+
+bool test_btree_insert() {
+    const int MAX = 1000, sample_size = 100;
+    btree::BTree<int> bt;
+    int test[MAX];
+    int find;
+
+    std::size_t test_size = MAX;
+
+    // populate test[]
+    for(std::size_t i = 0; i < test_size; ++i) test[i] = i;
+
+    for(int i = 0; i < sample_size; ++i) {
+        // shuffle test[]
+        sort::shuffle(test, test_size);
+
+        // populate BTree with test[] and return false if fails
+        for(std::size_t i = 0; i < test_size; ++i)
+            if(!bt.insert(test[i]) || !bt.verify()) {
+                std::cout << "I N S E R T I O N  [" << i << "]  F A I L E D"
+                          << std::endl;
+                return false;
+            }
+
+        for(std::size_t i = 0; i < MAX; ++i) {
+            // remove last item from test[] to verify it is contained in BTree
+            find = test[--test_size];
+
+            if(!bt.contains(find)) {
+                std::cout << "C O N T A I N S  [" << find << "]  F A I L E D"
+                          << std::endl;
+                return false;
+            }
+        }
+
+        // reset BTree and test variables
+        bt.clear();
+        test_size = MAX;
+    }
+
+    return true;
+}
+
+bool test_btree_remove() {
+    const int MAX = 1000, sample_size = 2;
+    btree::BTree<int> bt;
+    int original[MAX];
+    int test[MAX];
+    int r;
+
+    std::size_t original_size = MAX;
+    std::size_t test_size = 0;
+
+    // populate test[]
+    for(std::size_t i = 0; i < original_size; ++i) original[i] = i;
+
+    for(int i = 0; i < sample_size; ++i) {
+        // copy original[] to test[]
+        array_utils::copy_array(original, original_size, test, test_size);
+
+        // shuffle test[]
+        sort::shuffle(test, test_size);
+
+        // populate BTree with test[]
+        for(std::size_t i = 0; i < test_size; ++i) bt.insert(test[i]);
+
+        for(std::size_t i = 0; i < original_size; ++i) {
+            // pick item to delete
+            r = rand() % test_size;
+
+            if(!bt.remove(test[r]) || !bt.verify()) {
+                std::cout << "i = " << i << std::endl;
+                std::cout << " R E M O V E  [" << test[r] << "]  F A I L E D"
+                          << std::endl;
+                return false;
+            }
+
+            // remove deleted item from test[]
+            array_utils::delete_item(test, r, test_size);
+        }
+
+        // reset BTree and test variables
+        bt.clear();
     }
 
     return true;
