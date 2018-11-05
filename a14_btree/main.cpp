@@ -151,6 +151,7 @@ bool test_btree_auto(int tree_size, bool report) {
 }
 
 bool test_btree_big_three() {
+    bool is_passed = true;
     const int MAX = 1000;
     int set1[MAX], set2[MAX];
     btree::BTree<int> bt1, bt2;
@@ -173,21 +174,26 @@ bool test_btree_big_three() {
     // verify bt_test contains set1 and BTree structure is valid
     for(int i = 0; i < MAX; ++i) {
         if(!bt_test.contains(set1[i]) || !bt_test.verify()) {
-            std::cout << "C O N T A I N S  [" << set1[i] << "]  F A I L E D"
-                      << std::endl;
-            return false;
+            is_passed = false;
+            break;
         }
+    }
 
-        // modify bt_test after verifying set1[i] exists
-        if(i < MAX / 2) bt_test.remove(set1[i]);
+    if(bt_test.size() != MAX) is_passed = false;
+
+    // modify bt_test
+    for(int i = 0; i < MAX / 2; ++i) {
+        if(!bt_test.remove(set1[i])) {
+            is_passed = false;
+            break;
+        }
     }
 
     // verify bt1 is not modified
     for(int i = 0; i < MAX; ++i)
         if(!bt1.contains(set1[i]) || !bt1.verify()) {
-            std::cout << "C O N T A I N S  [" << set1[i] << "]  F A I L E D"
-                      << std::endl;
-            return false;
+            is_passed = false;
+            break;
         }
 
     // test assignment op
@@ -197,27 +203,35 @@ bool test_btree_big_three() {
     for(int i = 0; i < MAX; ++i) {
         if(bt_test.contains(set1[i]) || !bt_test.contains(set2[i]) ||
            !bt_test.verify()) {
-            std::cout << "C O N T A I N S  [" << set2[i] << "]  F A I L E D"
-                      << std::endl;
-            return false;
+            is_passed = false;
+            break;
         }
+    }
 
-        // modify bt_test after verifying set2[i] exists
-        if(i < MAX / 2) bt_test.remove(set2[i]);
+    if(bt_test.size() != MAX) is_passed = false;
+
+    // modify bt_test
+    for(int i = 0; i < MAX / 2; ++i) {
+        if(!bt_test.remove(set2[i])) {
+            is_passed = false;
+            break;
+        }
     }
 
     // verify bt2 is not modified
     for(int i = 0; i < MAX; ++i)
         if(!bt2.contains(set2[i]) || !bt2.verify()) {
-            std::cout << "C O N T A I N S  [" << set2[i] << "]  F A I L E D"
-                      << std::endl;
-            return false;
+            is_passed = false;
+            break;
         }
 
-    return true;
+    if(!is_passed) std::cout << "B I G  T H R E E  F A I L E D" << std::endl;
+
+    return is_passed;
 }
 
 bool test_btree_insert() {
+    bool is_passed = true;
     const int MAX = 1000, sample_size = 100;
     btree::BTree<int> bt;
     int test[MAX];
@@ -235,9 +249,8 @@ bool test_btree_insert() {
         // populate BTree with test[] and return false if fails
         for(std::size_t i = 0; i < test_size; ++i)
             if(!bt.insert(test[i]) || !bt.verify()) {
-                std::cout << "I N S E R T I O N  [" << i << "]  F A I L E D"
-                          << std::endl;
-                return false;
+                is_passed = false;
+                break;
             }
 
         for(std::size_t i = 0; i < MAX; ++i) {
@@ -245,21 +258,25 @@ bool test_btree_insert() {
             find = test[--test_size];
 
             if(!bt.contains(find)) {
-                std::cout << "C O N T A I N S  [" << find << "]  F A I L E D"
-                          << std::endl;
-                return false;
+                is_passed = false;
+                break;
             }
         }
+
+        if(bt.size() != MAX) is_passed = false;
 
         // reset BTree and test variables
         bt.clear();
         test_size = MAX;
     }
 
-    return true;
+    if(!is_passed) std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
+
+    return is_passed;
 }
 
 bool test_btree_remove() {
+    bool is_passed = true;
     const int MAX = 1000, sample_size = 100;
     btree::BTree<int> bt;
     int original[MAX];
@@ -287,20 +304,20 @@ bool test_btree_remove() {
             r = rand() % test_size;
 
             if(!bt.remove(test[r]) || !bt.verify() || bt.contains(test[r])) {
-                std::cout << "R E M O V E  [" << test[r] << "]  F A I L E D"
-                          << std::endl;
-                return false;
+                is_passed = false;
+                break;
             }
 
             // remove deleted item from test[]
             array_utils::delete_item(test, r, test_size);
         }
 
-        // reset BTree and test variables
-        bt.clear();
+        if(bt.size()) is_passed = false;
     }
 
-    return true;
+    if(!is_passed) std::cout << "R E M O V E D  F A I L E D" << std::endl;
+
+    return is_passed;
 }
 
 void test_btree_interactive() {

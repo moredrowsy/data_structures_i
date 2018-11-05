@@ -36,11 +36,11 @@ public:
     bool verify();
 
     // MUTATORS
-    bool insert(const T& entry);
-    bool remove(const T& entry);
-
     void clear();                      // clear data and delete all linked nodes
     void copy(const BTree<T>& other);  // make unique copy from source
+
+    bool insert(const T& entry);
+    bool remove(const T& entry);
 
     T& get(const T& entry);   // return a reference to entry in the tree
     T* find(const T& entry);  // return ptr to T; else nullptr
@@ -56,6 +56,7 @@ public:
     static const std::size_t MAXIMUM = 2 * MINIMUM;
 
     bool _dups_ok;                   // true if duplicate keys may be inserted
+    std::size_t _size;               // count of all elements
     std::size_t _data_count;         // number of data elements
     T _data[MAXIMUM + 1];            // holds the keys
     std::size_t _child_count;        // number of children
@@ -95,7 +96,8 @@ public:
  *  none
  ******************************************************************************/
 template <typename T>
-BTree<T>::BTree(bool dups) : _dups_ok(dups), _data_count(0), _child_count(0) {}
+BTree<T>::BTree(bool dups)
+    : _dups_ok(dups), _size(0), _data_count(0), _child_count(0) {}
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -130,7 +132,7 @@ BTree<T>::~BTree() {
  ******************************************************************************/
 template <typename T>
 BTree<T>::BTree(const BTree<T>& src)
-    : _dups_ok(src._dups_ok), _data_count(0), _child_count(0) {
+    : _dups_ok(src._dups_ok), _size(0), _data_count(0), _child_count(0) {
     copy(src);
 }
 
@@ -199,7 +201,7 @@ bool BTree<T>::contains(const T& entry) const {
  ******************************************************************************/
 template <typename T>
 bool BTree<T>::empty() const {
-    return _data_count == 0;
+    return _size == 0;
 }
 
 /*******************************************************************************
@@ -217,10 +219,7 @@ bool BTree<T>::empty() const {
  ******************************************************************************/
 template <typename T>
 std::size_t BTree<T>::size() const {
-    std::size_t count = _data_count;
-    for(std::size_t i = 0; i < _child_count; ++i) count += _subset[i]->size();
-
-    return count;
+    return _size;
 }
 
 /*******************************************************************************
@@ -280,84 +279,6 @@ bool BTree<T>::verify() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Insert entry int BTree.
- *  Internally, it first calls loose_insert to insert entry. When returning
- *  from loose_insert, static parent might over MAXIMUM limit. If so, then
- *  transfer all current data/subset to new_node as the only child so that
- *  fix_excess can then fix this child, which was formally the parent.
- *
- * PRE-CONDITIONS:
- *  const T& entry: entry item to be inserted
- *
- * POST-CONDITIONS:
- *  T entry inserted
- *
- * RETURN:
- *  bool
- ******************************************************************************/
-template <typename T>
-bool BTree<T>::insert(const T& entry) {
-    bool is_inserted = loose_insert(entry);
-
-    if(is_inserted && _data_count > MAXIMUM) {
-        BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer 'this' to new node
-
-        // transfer 'this' data/subset to new node's data/subset
-        array_utils::copy_array(_data, _data_count, new_node->_data,
-                                new_node->_data_count);
-        array_utils::copy_array(_subset, _child_count, new_node->_subset,
-                                new_node->_child_count);
-
-        _data_count = 0;        // clear data
-        _child_count = 1;       // clear child except 1
-        _subset[0] = new_node;  // point only child to new node
-
-        fix_excess(0);  // fix 'this' only child (new node) excess
-    }
-
-    return is_inserted;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Remove entry int BTree.
- *  Internally, it first calls loose_remove to insert entry. When returning
- *  from loose_remove, static parent be might under MINIMUM limit with only
- *  ONE child. If so, then store parent to a temporary pointer. Then, transfer
- *  all of the child's data/subset to parent. Finally, deallocate the temporary
- *  pointer.
- *
- * PRE-CONDITIONS:
- *  const T& entry: entry item to be removed
- *
- * POST-CONDITIONS:
- *  T entry removed
- *
- * RETURN:
- *  bool
- ******************************************************************************/
-template <typename T>
-bool BTree<T>::remove(const T& entry) {
-    bool is_removed = loose_remove(entry);
-
-    if(is_removed && _data_count == 0 && _child_count == 1) {
-        BTree<T>* pop = _subset[0];  // hold only child
-
-        // copy all of only child's data/subset back to 'this'
-        array_utils::copy_array(_subset[0]->_data, _subset[0]->_data_count,
-                                _data, _data_count);
-        array_utils::copy_array(_subset[0]->_subset, _subset[0]->_child_count,
-                                _subset, _child_count);
-
-        pop->_child_count = 0;  // clear child count to prevent double delete
-        delete pop;
-    }
-
-    return is_removed;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Deallocates all heap BTrees and clear data/subset counts.
  *
  * PRE-CONDITIONS:
@@ -376,8 +297,9 @@ void BTree<T>::clear() {
         delete _subset[i];
     }
 
-    _child_count = 0;  // must clear child to prevent double delete
+    _size = 0;
     _data_count = 0;
+    _child_count = 0;  // must clear child to prevent double delete
 }
 
 /*******************************************************************************
@@ -399,16 +321,106 @@ void BTree<T>::copy(const BTree<T>& other) {
     assert(this != &other);
     assert(empty());
 
-    // copy data
-    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
-    _child_count = other._child_count;
+    // copy states
     _dups_ok = other._dups_ok;
+    _size = other._size;
+    _child_count = other._child_count;
+    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
 
     // copy subset
     for(std::size_t i = 0; i < other._child_count; ++i) {
         _subset[i] = new BTree<T>(other._dups_ok);
         _subset[i]->copy(*other._subset[i]);
     }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Insert entry int BTree.
+ *  Internally, it first calls loose_insert to insert entry. When returning
+ *  from loose_insert, static parent might over MAXIMUM limit. If so, then
+ *  transfer all current data/subset to new_node as the only child so that
+ *  fix_excess can then fix this child, which was formally the parent.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: entry item to be inserted
+ *
+ * POST-CONDITIONS:
+ *  T entry inserted
+ *  _size inc if successful
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool BTree<T>::insert(const T& entry) {
+    using namespace array_utils;
+
+    if(loose_insert(entry)) {
+        if(_data_count > MAXIMUM) {
+            BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer 'this' to new
+
+            // transfer 'this' data/subset to new node's data/subset
+            copy_array(_data, _data_count, new_node->_data,
+                       new_node->_data_count);
+            copy_array(_subset, _child_count, new_node->_subset,
+                       new_node->_child_count);
+
+            _data_count = 0;        // clear data
+            _child_count = 1;       // clear child except 1
+            _subset[0] = new_node;  // point only child to new node
+
+            fix_excess(0);  // fix 'this' only child (new node) excess
+        }
+        ++_size;
+
+        return true;
+    } else
+        return false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Remove entry int BTree.
+ *  Internally, it first calls loose_remove to insert entry. When returning
+ *  from loose_remove, static parent be might under MINIMUM limit with only
+ *  ONE child. If so, then store parent to a temporary pointer. Then, transfer
+ *  all of the child's data/subset to parent. Finally, deallocate the temporary
+ *  pointer.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: entry item to be removed
+ *
+ * POST-CONDITIONS:
+ *  T entry removed
+ *  _size dec if successful
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool BTree<T>::remove(const T& entry) {
+    using namespace array_utils;
+
+    if(loose_remove(entry)) {
+        if(_data_count == 0 && _child_count == 1) {
+            BTree<T>* pop = _subset[0];  // hold child
+
+            // copy all of only child's data/subset back to 'this'
+            copy_array(_subset[0]->_data, _subset[0]->_data_count, _data,
+                       _data_count);
+            copy_array(_subset[0]->_subset, _subset[0]->_child_count, _subset,
+                       _child_count);
+
+            pop->_child_count =
+                0;  // clear child count to prevent double delete
+            delete pop;
+        }
+        --_size;
+
+        return true;
+    } else
+        return false;
 }
 
 /*******************************************************************************
