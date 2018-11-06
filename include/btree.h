@@ -4,7 +4,7 @@
  * CLASS       : CS008
  * HEADER      : btree
  * DESCRIPTION : This header provides a templated self-balancing BTree class,
- *      that allows for more than two children.
+ *      that allows for more than two children per node.
  ******************************************************************************/
 #ifndef BTREE_H
 #define BTREE_H
@@ -38,12 +38,10 @@ public:
     // MUTATORS
     void clear();                      // clear data and delete all linked nodes
     void copy(const BTree<T>& other);  // make unique copy from source
-
+    T& get(const T& entry);            // return a ref to entry in the tree
+    T* find(const T& entry);           // return ptr to T; else nullptr
     bool insert(const T& entry);
     bool remove(const T& entry);
-
-    T& get(const T& entry);   // return a reference to entry in the tree
-    T* find(const T& entry);  // return ptr to T; else nullptr
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BTree<T>& bt) {
@@ -51,7 +49,7 @@ public:
         return outs;
     }
 
-    // private:
+private:
     static const std::size_t MINIMUM = 1;
     static const std::size_t MAXIMUM = 2 * MINIMUM;
 
@@ -336,6 +334,58 @@ void BTree<T>::copy(const BTree<T>& other) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Returns the entry contained in the BTree. If the entry is invalid, throws
+ *  invalid argument exception.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: must be contained in the BTree
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T&
+ ******************************************************************************/
+template <typename T>
+T& BTree<T>::get(const T& entry) {
+    T* found = find(entry);
+
+    if(found)
+        return *found;
+    else
+        throw std::invalid_argument("BTree::get() - invalid entry");
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the pointer to entry contained in the BTree. If the entry is not
+ *  found, then nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: item to find
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T*
+ ******************************************************************************/
+template <typename T>
+T* BTree<T>::find(const T& entry) {
+    // find index of T that's greater or qual to entry
+    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < _data[i]));
+
+    if(is_found)
+        return &_data[i];
+    else if(is_leaf())
+        return nullptr;
+    else
+        return _subset[i]->find(entry);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Insert entry int BTree.
  *  Internally, it first calls loose_insert to insert entry. When returning
  *  from loose_insert, static parent might over MAXIMUM limit. If so, then
@@ -412,8 +462,7 @@ bool BTree<T>::remove(const T& entry) {
             copy_array(_subset[0]->_subset, _subset[0]->_child_count, _subset,
                        _child_count);
 
-            pop->_child_count =
-                0;  // clear child count to prevent double delete
+            pop->_child_count = 0;  // prevent double delete
             delete pop;
         }
         --_size;
@@ -421,58 +470,6 @@ bool BTree<T>::remove(const T& entry) {
         return true;
     } else
         return false;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Returns the entry contained in the BTree. If the entry is invalid, throws
- *  invalid argument exception.
- *
- * PRE-CONDITIONS:
- *  const T& entry: must be contained in the BTree
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  T&
- ******************************************************************************/
-template <typename T>
-T& BTree<T>::get(const T& entry) {
-    T* found = find(entry);
-
-    if(found)
-        return *found;
-    else
-        throw std::invalid_argument("BTree::get() - invalid entry");
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Returns the pointer to entry contained in the BTree. If the entry is not
- *  found, then nullptr.
- *
- * PRE-CONDITIONS:
- *  const T& entry: item to find
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  T*
- ******************************************************************************/
-template <typename T>
-T* BTree<T>::find(const T& entry) {
-    // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
-
-    if(is_found)
-        return &_data[i];
-    else if(is_leaf())
-        return nullptr;
-    else
-        return _subset[i]->find(entry);
 }
 
 /*******************************************************************************
