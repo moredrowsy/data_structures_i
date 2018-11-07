@@ -19,6 +19,9 @@ std::ostream& operator<<(std::ostream& outs, const std::vector<T>& list);
 template <typename T>
 std::vector<T>& operator+=(std::vector<T>& list, const T& item);
 
+template <typename T, typename U>
+std::vector<T>& operator+=(std::vector<T>& list, const U& item);
+
 // add two vectors
 template <typename T>
 std::vector<T> operator+(const std::vector<T>& lhs, const std::vector<T>& rhs);
@@ -65,6 +68,27 @@ std::ostream& operator<<(std::ostream& outs, const std::vector<T>& list) {
  ******************************************************************************/
 template <typename T>
 std::vector<T>& operator+=(std::vector<T>& list, const T& item) {
+    list.push_back(item);
+    return list;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Adds type U item to type T vector, which will rely on implicit conversion
+ *  of U to T.
+ *
+ * PRE-CONDITIONS:
+ *  std::vector<T>& list: vector
+ *  const T& item       : item to add
+ *
+ * POST-CONDITIONS:
+ *  item added and vector increases in size
+ *
+ * RETURN:
+ *  std::vector<T>&
+ ******************************************************************************/
+template <typename T, typename U>
+std::vector<T>& operator+=(std::vector<T>& list, const U& item) {
     list.push_back(item);
     return list;
 }

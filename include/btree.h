@@ -30,10 +30,10 @@ public:
     // ACCESSORS
     bool contains(const T& entry) const;
     bool empty() const;
-    std::size_t size() const;
     void print(std::ostream& outs = std::cout, bool debug = false,
                int level = 0, int index = 0) const;
-    bool verify();
+    std::size_t size() const;
+    bool verify() const;
 
     // MUTATORS
     void clear();                      // clear data and delete all linked nodes
@@ -61,6 +61,7 @@ private:
     BTree<T>* _subset[MAXIMUM + 2];  // subtrees
 
     bool is_leaf() const { return _child_count == 0; }  // true if leaf node
+    void update_size();
 
     // insert element functions
     bool loose_insert(const T& entry);  // allows MAXIMUM+1 data in the root
@@ -225,6 +226,7 @@ std::size_t BTree<T>::size() const {
  *
  * PRE-CONDITIONS:
  *  std::ostream& outs: ostream by ref
+ *  bool debug        : debug flag
  *  int level         : internal recursion depth. Don't touch.
  *  int index         : internal index of each BTree's data. Don't touch.
  *
@@ -239,8 +241,10 @@ void BTree<T>::print(std::ostream& outs, bool debug, int level,
                      int index) const {
     if(_data_count)
         for(int i = _data_count - 1; i >= 0; --i) {
-            if(_child_count && i + 1 < (int)_child_count)
+            if(_child_count)
                 _subset[i + 1]->print(outs, debug, level + 1, i + 1);
+
+            if(!level) index = i;  // assign static root index
 
             outs << std::setw(level * 15) << ' ';
             if(debug) outs << index << ' ';
@@ -264,7 +268,7 @@ void BTree<T>::print(std::ostream& outs, bool debug, int level,
  *  bool
  ******************************************************************************/
 template <typename T>
-bool BTree<T>::verify() {
+bool BTree<T>::verify() const {
     bool has_stored_height = false;
     int height = 0;
     return verify_tree(height, has_stored_height);
@@ -411,15 +415,16 @@ bool BTree<T>::insert(const T& entry) {
                        new_node->_data_count);
             copy_array(_subset, _child_count, new_node->_subset,
                        new_node->_child_count);
+            new_node->update_size();
 
-            _data_count = 0;        // clear data
+            _size = 0;
+            _data_count = 0;
             _child_count = 1;       // clear child except 1
             _subset[0] = new_node;  // point only child to new node
 
             fix_excess(0);  // fix 'this' only child (new node) excess
+            update_size();
         }
-        ++_size;
-
         return true;
     } else
         return false;
@@ -457,15 +462,33 @@ bool BTree<T>::remove(const T& entry) {
                        _data_count);
             copy_array(_subset[0]->_subset, _subset[0]->_child_count, _subset,
                        _child_count);
+            update_size();
 
             pop->_child_count = 0;  // prevent double delete
             delete pop;
         }
-        --_size;
-
         return true;
     } else
         return false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Update BTree's size.
+ *
+ * PRE-CONDITIONS:
+ *  _data_count and direct child's _size
+ *
+ * POST-CONDITIONS:
+ *  std::size_t _size: sum of _data_count and direct children's _size
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BTree<T>::update_size() {
+    _size = _data_count;
+    for(std::size_t i = 0; i < _child_count; ++i) _size += _subset[i]->_size;
 }
 
 /*******************************************************************************
@@ -497,13 +520,9 @@ bool BTree<T>::loose_insert(const T& entry) {
     if(is_found) {
         if(_dups_ok) {
             _data[i] += entry;  // append entry
-            --_size;
-            is_inserted = true;
-        } else {
-            _data[i] = entry;     // reassign entry
+        } else
             is_inserted = false;  // return false on same entry
-        }
-    } else if(is_leaf())  // not found @ leaf, insert data @ i
+    } else if(is_leaf())          // not found @ leaf, insert data @ i
         array_utils::insert_item(_data, i, _data_count, entry);
     else {
         is_inserted = _subset[i]->loose_insert(entry);  // not found, recurse
@@ -511,6 +530,7 @@ bool BTree<T>::loose_insert(const T& entry) {
         // fix child node's over limit
         if(_subset[i]->_data_count > MAXIMUM) fix_excess(i);
     }
+    update_size();
 
     return is_inserted;
 }
@@ -553,6 +573,9 @@ void BTree<T>::fix_excess(std::size_t i) {
     // insert mid back into data[i]; subset[i]'s data_count points to mid
     array_utils::insert_item(_data, i, _data_count,
                              _subset[i]->_data[_subset[i]->_data_count]);
+
+    new_node->update_size();
+    _subset[i]->update_size();
 }
 
 /*******************************************************************************
@@ -596,6 +619,7 @@ bool BTree<T>::loose_remove(const T& entry) {
         // fix child's shortage
         if(_subset[i]->_data_count < MINIMUM) fix_shortage(i);
     }
+    update_size();
 
     return is_removed;
 }
@@ -652,6 +676,7 @@ void BTree<T>::remove_largest(T& entry) {
         if(_subset[_child_count - 1]->_data_count < MINIMUM)
             fix_shortage(_child_count - 1);
     }
+    update_size();
 }
 
 /*******************************************************************************
@@ -689,6 +714,8 @@ void BTree<T>::rotate_left(std::size_t i) {
                     removed);
         attach_item(_subset[i]->_subset, _subset[i]->_child_count, removed);
     }
+    _subset[i]->update_size();
+    _subset[i + 1]->update_size();
 }
 
 /*******************************************************************************
@@ -726,6 +753,8 @@ void BTree<T>::rotate_right(std::size_t i) {
                     detach);
         insert_item(_subset[i]->_subset, 0, _subset[i]->_child_count, detach);
     }
+    _subset[i]->update_size();
+    _subset[i - 1]->update_size();
 }
 
 /*******************************************************************************
@@ -763,6 +792,8 @@ void BTree<T>::merge_with_next_subset(std::size_t i) {
     // deallocate empty subset[i+1] and remove subset[i+1] from subset
     delete _subset[i + 1];
     array_utils::delete_item(_subset, i + 1, _child_count);  // shift left
+
+    _subset[i]->update_size();
 }
 
 /*******************************************************************************
