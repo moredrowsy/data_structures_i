@@ -31,8 +31,8 @@ public:
     bool contains(const T& entry) const;
     bool empty() const;
     std::size_t size() const;
-    void print_tree(std::ostream& outs = std::cout, int level = 0,
-                    int index = 0) const;
+    void print(std::ostream& outs = std::cout, bool debug = false,
+               int level = 0, int index = 0) const;
     bool verify();
 
     // MUTATORS
@@ -45,7 +45,7 @@ public:
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BTree<T>& bt) {
-        bt.print_tree(outs);
+        bt.print(outs);
         return outs;
     }
 
@@ -153,7 +153,6 @@ BTree<T>& BTree<T>::operator=(const BTree<T>& rhs) {
         clear();
         copy(rhs);
     }
-
     return *this;
 }
 
@@ -236,22 +235,19 @@ std::size_t BTree<T>::size() const {
  *  none
  ******************************************************************************/
 template <typename T>
-void BTree<T>::print_tree(std::ostream& outs, int level, int index) const {
-    int mid = (_child_count - 1) / 2;  // store midpoint
+void BTree<T>::print(std::ostream& outs, bool debug, int level,
+                     int index) const {
+    if(_data_count)
+        for(int i = _data_count - 1; i >= 0; --i) {
+            if(_child_count && i + 1 < (int)_child_count)
+                _subset[i + 1]->print(outs, debug, level + 1, i + 1);
 
-    for(int i = _child_count - 1; i > mid; --i)
-        _subset[i]->print_tree(outs, level + 1, i);  // recurse right of mid
+            outs << std::setw(level * 15) << ' ';
+            if(debug) outs << index << ' ';
+            outs << '|' << _data[i] << "|\n";
 
-    // outstream data
-    outs << std::setw(level * 15) << ' ' << index << " |";
-    for(std::size_t i = 0; i < _data_count; ++i) {
-        outs << _data[i];
-        if(i != _data_count - 1) outs << ", ";
-    }
-    outs << "|\n";
-
-    for(int i = mid; i >= 0; --i)
-        _subset[i]->print_tree(outs, level + 1, i);  // recurse left of mid
+            if(_child_count && !i) _subset[i]->print(outs, debug, level + 1, i);
+        }
 }
 
 /*******************************************************************************
@@ -293,7 +289,6 @@ void BTree<T>::clear() {
         _subset[i]->clear();  // recurse into subset
         delete _subset[i];
     }
-
     _size = 0;
     _data_count = 0;
     _child_count = 0;  // must clear child to prevent double delete

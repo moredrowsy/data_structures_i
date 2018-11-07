@@ -1,8 +1,6 @@
 #ifndef BT_MAP_H
 #define BT_MAP_H
 
-#include "vector_utils.h"  // vector utilities, include first
-
 #include <vector>   // vector objects
 #include "btree.h"  // BTree class
 #include "pair.h"   // Pair struct
@@ -81,7 +79,7 @@ public:
 
     // Iterator find(const K& key);
     int count(const K& key);
-    // I have not writtent hese yet, but we will need them:
+    // I have not written these yet, but we will need them:
     //    int count(const K& key);
     //    lower_bound
     //    upper_bound

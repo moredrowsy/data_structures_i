@@ -1,6 +1,9 @@
 #ifndef PAIR_H
 #define PAIR_H
 
+#include <cassert>         // assert()
+#include "vector_utils.h"  // vector utilities
+
 namespace pair {
 
 template <typename K, typename V>
@@ -33,10 +36,12 @@ struct Pair {
     }
 
     friend Pair<K, V> operator+(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
+        assert(lhs.key == rhs.key);
         return Pair(lhs.key, lhs.value + rhs.value);
     }
 
     friend Pair<K, V>& operator+=(Pair<K, V>& lhs, const Pair<K, V>& rhs) {
+        assert(lhs.key == rhs.key);
         lhs.value += rhs.value;
         return lhs;
     }
@@ -76,12 +81,12 @@ struct MPair {
 
     friend MPair<K, V> operator+(const MPair<K, V>& lhs,
                                  const MPair<K, V>& rhs) {
-        std::vector<V> v = lhs;
-        for(const auto& a : rhs) v.push_back(a);
-        return v;
+        assert(lhs.key == rhs.key);
+        return MPair(lhs.key, lhs.value_list + rhs.value_list);
     }
 
     friend MPair<K, V>& operator+=(MPair<K, V>& lhs, const MPair<K, V>& rhs) {
+        assert(lhs.key == rhs.key);
         lhs.value_list += rhs.value_list;
         return lhs;
     }
