@@ -246,7 +246,6 @@ void BTree<T>::print_tree(std::ostream& outs, int level, int index) const {
     outs << std::setw(level * 15) << ' ' << index << " |";
     for(std::size_t i = 0; i < _data_count; ++i) {
         outs << _data[i];
-
         if(i != _data_count - 1) outs << ", ";
     }
     outs << "|\n";
@@ -334,8 +333,8 @@ void BTree<T>::copy(const BTree<T>& other) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Returns the entry contained in the BTree. If the entry is invalid, throws
- *  invalid argument exception.
+ *  Returns the entry contained in the BTree. If entry is not found, then
+ *  inserts the entry and return find by deref.
  *
  * PRE-CONDITIONS:
  *  const T& entry: must be contained in the BTree
@@ -352,8 +351,10 @@ T& BTree<T>::get(const T& entry) {
 
     if(found)
         return *found;
-    else
-        throw std::invalid_argument("BTree::get() - invalid entry");
+    else {
+        insert(entry);
+        return *find(entry);
+    }
 }
 
 /*******************************************************************************
@@ -498,9 +499,16 @@ bool BTree<T>::loose_insert(const T& entry) {
     bool is_found = (i < _data_count && !(entry < _data[i]));
     bool is_inserted = true;
 
-    if(is_found)
-        is_inserted = false;  // no dups, then false
-    else if(is_leaf())        // not found @ leaf, insert data @ i
+    if(is_found) {
+        if(_dups_ok) {
+            _data[i] += entry;  // append entry
+            --_size;
+            is_inserted = true;
+        } else {
+            _data[i] = entry;     // reassign entry
+            is_inserted = false;  // return false on same entry
+        }
+    } else if(is_leaf())  // not found @ leaf, insert data @ i
         array_utils::insert_item(_data, i, _data_count, entry);
     else {
         is_inserted = _subset[i]->loose_insert(entry);  // not found, recurse

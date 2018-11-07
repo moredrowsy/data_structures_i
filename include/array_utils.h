@@ -89,16 +89,6 @@ bool is_lt(const T* data, std::size_t size, const T& item);  // item < data
 template <typename T>
 bool is_le(const T* data, std::size_t size, const T& item);  // item <= data
 
-//-------------- std::Vector Extra operators: ---------------------
-
-// print std::vector list
-template <typename T>
-std::ostream& operator<<(std::ostream& outs, const std::vector<T>& list);
-
-// list.push_back add_me
-template <typename T>
-std::vector<T>& operator+=(std::vector<T>& list, const T& addme);
-
 /*******************************************************************************
  * DESCRIPTION:
  *  Returns the larger item.
@@ -563,46 +553,6 @@ bool is_le(const T* data, std::size_t size, const T& item) {
         if(item > data[j]) return false;
 
     return true;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Prints vector list
- *
- * PRE-CONDITIONS:
- *  std::ostream& outs        : ostream by ref
- *  const std::vector<T>& list: vector
- *
- * POST-CONDITIONS:
- *  prints
- *
- * RETURN:
- *  std::ostream&
- ******************************************************************************/
-template <typename T>
-std::ostream& operator<<(std::ostream& outs, const std::vector<T>& list) {
-    for(const auto& v : list) outs << v << ' ';
-    return outs;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Adds item to vector.
- *
- * PRE-CONDITIONS:
- *  const std::vector<T>& list: vector
- *  const T& addme            : item to add
- *
- * POST-CONDITIONS:
- *  item added and vector increases in size
- *
- * RETURN:
- *  std::vector<T>&
- ******************************************************************************/
-template <typename T>
-std::vector<T>& operator+=(std::vector<T>& list, const T& addme) {
-    list.push_back(addme);
-    return list;
 }
 
 }  // namespace array_utils
