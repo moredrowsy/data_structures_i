@@ -44,6 +44,8 @@ public:
     // operations
     // V* find(const K& key);
     bool contains(const Pair& target) const;
+    std::size_t count(const K& key) const;
+    void print_debug() const;
     bool verify() const;
 
     friend std::ostream& operator<<(std::ostream& outs, const Map<K, V>& map) {
@@ -82,6 +84,7 @@ public:
     // Iterator find(const K& key);
     bool contains(const K& key) const;
     std::size_t count(const K& key) const;
+    void print_debug() const;
     bool verify() const;
 
     friend std::ostream& operator<<(std::ostream& outs, const MMap<K, V>& map) {
@@ -292,6 +295,42 @@ V& Map<K, V>::get(const K& key) {
 template <typename K, typename V>
 bool Map<K, V>::contains(const Pair& target) const {
     return _map.contains(target);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the number of elements for given key.
+ *
+ * PRE-CONDITIONS:
+ *  const K& key: key to find Pair
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::size_t
+ ******************************************************************************/
+template <typename K, typename V>
+std::size_t Map<K, V>::count(const K& key) const {
+    return _map.find(MPair(key)) ? 1 : 0;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print MapBase with debug.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  void
+ ******************************************************************************/
+template <typename K, typename V>
+void Map<K, V>::print_debug() const {
+    _map.print(std::cout, true);
 }
 
 /*******************************************************************************
@@ -525,11 +564,29 @@ bool MMap<K, V>::contains(const K& key) const {
  *  none
  *
  * RETURN:
- *  bool
+ *  std::size_t
  ******************************************************************************/
 template <typename K, typename V>
 std::size_t MMap<K, V>::count(const K& key) const {
     return _mmap.get(MPair(key)).value_list.size();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print MMapBase with debug.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  void
+ ******************************************************************************/
+template <typename K, typename V>
+void MMap<K, V>::print_debug() const {
+    _mmap.print(std::cout, true);
 }
 
 /*******************************************************************************

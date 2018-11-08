@@ -28,7 +28,7 @@ struct Pair {
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const Pair<K, V>& p) {
-        return outs << p.key << ":" << p.value;
+        return outs << p.key << " : " << p.value;
     }
 
     friend bool operator==(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
@@ -49,7 +49,7 @@ struct Pair {
 
     friend Pair<K, V> operator+(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
         assert(lhs.key == rhs.key);
-        return Pair(lhs.key, lhs.value + rhs.value);
+        return Pair(lhs.key, rhs.value);
     }
 
     friend Pair<K, V>& operator+=(Pair<K, V>& lhs, const Pair<K, V>& rhs) {
@@ -72,7 +72,7 @@ struct MPair {
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const MPair<K, V>& mp) {
-        return outs << mp.key << ":" << mp.value_list;
+        return outs << mp.key << " : " << mp.value_list;
     }
 
     friend bool operator==(const MPair<K, V>& lhs, const MPair<K, V>& rhs) {
