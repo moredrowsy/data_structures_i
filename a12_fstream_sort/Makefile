@@ -1,8 +1,9 @@
-CXX             := g++
+CXX             := clang++
 DEBUG_LEVEL     := #-g
-OPTIMIZATIONS   := -O2
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
-CXXFLAGS        := $(DEBUG_LEVEL) $(OPTIMIZATIONS) $(EXTRA_CCFLAGS)
+OPT             := -O2
+CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS) $(OPT)
+LDFLAGS         := -lm -lstdc++
 
 INC             := ../include
 SRC             := ../src
@@ -13,7 +14,8 @@ main.out: $(OBJ)
 
 main.o: main.cpp\
 	${INC}/timer.h\
-	${INC}/fstream_sort.h
+	${INC}/fstream_sort.h\
+	${INC}/fstream_byte_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean
