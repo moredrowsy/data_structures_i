@@ -348,12 +348,12 @@ template <typename T>
 T& BTree<T>::get(const T& entry) {
     T* found = find(entry);
 
-    if(found)
-        return *found;
-    else {
+    if(!found) {
         insert(entry);
-        return *find(entry);
+        found = *find(entry);
     }
+
+    return *found;
 }
 
 /*******************************************************************************
