@@ -3,7 +3,7 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : fstream_sort
- * DESCRIPTION : This header defines a templated fstream sorting.
+ * DESCRIPTION : This header defines a templated file stream sorting.
  *      FStreamSort first takes in an istream object via operator extraction,
  *      where data are read and then dump their contents to FSHandler objects.
  *
@@ -34,7 +34,7 @@ enum { MAX_BLOCK = 250000, endl = 10, space = 32, tab = 9 };
 
 template <typename T>
 struct FSHandler {
-    // CONSTRUCTORS
+    // CONSTRUCTOR
     FSHandler(std::string name, T *buffer = nullptr, std::size_t size = 0,
               char delim = char(endl));
 
@@ -97,7 +97,7 @@ public:
 
 private:
     char _delim;
-    std::size_t _max_buf;  // maximum size for memory allocation
+    std::size_t _max_buf;  // maximum array size for memory allocation
     std::string _tname;    // temporary file prefix
     std::vector<std::shared_ptr<FSHandler<T>>> _fs_handlers;  // make temp files
 
@@ -106,17 +106,6 @@ private:
     std::ostream &_insertions(std::ostream &outs);     // write out-stream
     void _sort_and_dump(T *buffer, std::size_t size);  // dump to FSHandler
 };
-
-// public utility function to determine file size in BYTES
-std::ifstream::pos_type filesize(std::string fname);
-
-// public utility function to count data in file stream
-template <typename T>
-int count_file(std::string fname);
-
-// public utility function to verify a medium sized file is sorted
-template <typename T>
-bool verify_sorted_file(std::string fname);
 
 // ----- FSHandler IMPLEMENTATIONS -----
 
@@ -504,83 +493,6 @@ void FStreamSort<T>::_sort_and_dump(T *buffer, std::size_t size) {
 
     // pass buffer to FSHandler to create temp file
     _fs_handlers.emplace_back(new FSHandler<T>(name, buffer, size, _delim));
-}
-
-// ----- PUBLIC UTILITIES IMPLEMENTATIONS -----
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Reports file size in bytes.
- *
- * PRE-CONDITIONS:
- *  std::string fname: valid file name
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  std::ifstream::pos_type
- ******************************************************************************/
-std::ifstream::pos_type filesize(std::string fname) {
-    std::ifstream in(fname.c_str(), std::ios::ate | std::ios::binary);
-    return in.tellg();
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Reports the number of elements in file, delimited by valid whitespace
- *  characters.
- *
- * PRE-CONDITIONS:
- *  std::string fname: valid file name
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  int
- ******************************************************************************/
-template <typename T>
-int count_file(std::string fname) {
-    std::ifstream ins(fname.c_str(), std::ios::binary);
-
-    int count = 0;
-    T temp;
-    while(ins >> temp) ++count;
-
-    return count;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Verifies the data in file are sorted.
- *
- * PRE-CONDITIONS:
- *  std::string fname: valid file name
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  bool
- ******************************************************************************/
-template <typename T>
-bool verify_sorted_file(std::string fname) {
-    bool is_sorted = true;
-    std::ifstream ins(fname.c_str(), std::ios::binary);
-    T prev, current;
-
-    ins >> prev;
-    while(ins >> current) {
-        if(prev > current) {
-            is_sorted = false;
-            break;
-        }
-
-        prev = current;
-    }
-
-    return is_sorted;
 }
 
 }  // namespace fstream_sort
