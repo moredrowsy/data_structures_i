@@ -2,17 +2,19 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : stream_sort
+ * HEADER      : fstream_sort
  * DESCRIPTION : This header defines a templated fstream sorting.
  *      FStreamSort first takes in an istream object via operator extraction,
- *      where data are read and then dumps their contents to FSHandler objects.
+ *      where data are read and then dump their contents to FSHandler objects.
+ *
  *      FSHandler takes a buffer of data and write to temporary files. It's
  *      attribute, _data, holds the first data element of the buffer.
  *      Internally, it creates an ifstream object linked to the temp file and
- *      continuously reads its content into _data.
+ *      continuously reads its content to _data.
+ *
  *      FStreamSort's finally writes the output data via operator insertion.
  *      Internally, it cycles through  all of FSHandler objects, find the
- *      mininum value and write to the output file.
+ *      mininum value and then write the min value to the output file.
  ******************************************************************************/
 #ifndef FSTREAM_SORT_H
 #define FSTREAM_SORT_H
@@ -20,12 +22,11 @@
 #include <algorithm>  // sort()
 #include <cassert>    // assert()
 #include <cstdio>     // remove()
-#include <cstring>    // c_str()
 #include <fstream>    // ifstream, ofstream
 #include <iostream>   // stream objects
 #include <memory>     // shared_ptr
-#include <string>     // string objects
-#include <vector>     // vector objects
+#include <string>     // string, c_str()
+#include <vector>     // vector
 
 namespace fstream_sort {
 
@@ -42,10 +43,12 @@ struct FSHandler {
     FSHandler &operator=(FSHandler &&) = default;
     ~FSHandler();
 
-    // MUTATORS
+    // OPERATORS
     explicit operator bool();
     FSHandler<T> &operator>>(std::ostream &outs);
     FSHandler<T> &operator>>(T &data);
+
+    // MUTATORS
     void clear();
     bool set_data(T *buffer = nullptr, std::size_t size = 0,
                   char delim = char(endl));
@@ -78,7 +81,7 @@ public:
     ~FStreamSort();
 
     // MUTATORS
-    void cleanup();  // clean up all stream objects and temp files
+    void clear();  // clean up all stream objects and temp files
     void set_max_buffer(std::size_t size);  // change max buffer size
     void set_delim(short delim);            // change delimiter between data
     void set_temp_name(std::string tname);  // set temp output file prefix
@@ -99,52 +102,107 @@ private:
     std::vector<std::shared_ptr<FSHandler<T>>> _fs_handlers;  // make temp files
 
     // MUTATORS
-    std::istream &_extractions(std::istream &ins);  // read in-stream
-    std::ostream &_insertions(std::ostream &outs);  // write out-stream
-    // sort and dump data to FSHandler objects, which writes temp files
-    void _sort_and_dump(T *buffer, std::size_t size);
+    std::istream &_extractions(std::istream &ins);     // read in-stream
+    std::ostream &_insertions(std::ostream &outs);     // write out-stream
+    void _sort_and_dump(T *buffer, std::size_t size);  // dump to FSHandler
 };
 
-// public helper function to determine file size in BYTES
+// public utility function to determine file size in BYTES
 std::ifstream::pos_type filesize(std::string fname);
 
-// public helper function to count data in file stream
+// public utility function to count data in file stream
 template <typename T>
 int count_file(std::string fname);
 
-// public helper function to verify a medium sized file is sorted
-// for testing purposes
+// public utility function to verify a medium sized file is sorted
 template <typename T>
-bool validate_sorted_file(std::string fname);
+bool verify_sorted_file(std::string fname);
 
-// ----- FSHandler -----
+// ----- FSHandler IMPLEMENTATIONS -----
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Default constructor. Takes in data array, write to ofstream, open file with
+ *  ifstream, and extract first element to _data.
+ *
+ * PRE-CONDITIONS:
+ *  std::string name: file name to handle, must be unique
+ *  T *buffer       : array of data
+ *  std::size_t size: array size
+ *  char delim      : delimter for data
+ *
+ * POST-CONDITIONS:
+ *  T _data                : holds first from buffer
+ *  std::ifstream _ifstream: rest of data written to file associated w/ ifstream
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 FSHandler<T>::FSHandler(std::string name, T *buffer, std::size_t size,
                         char delim)
     : _delim(delim), _name(name), _ifstream(), _data() {
     if(buffer && size) {
-        _data = buffer[0];  // store first data element
-
-        // write the rest to temp file
+        // write data array to file
         std::ofstream outs(_name.c_str(), std::ios::binary | std::ios::trunc);
-        for(std::size_t i = 1; i < size; ++i) outs << buffer[i] << _delim;
+        for(std::size_t i = 0; i < size; ++i) outs << buffer[i] << _delim;
         outs.close();  // close ofstream writing
 
-        _ifstream.open(_name.c_str(), std::ios::binary);  // open ifs reading
+        _ifstream.open(_name.c_str(), std::ios::binary);  // open for reading
+        _ifstream >> _data;  // extract first data element
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Destructor calls clear() to close ifstream and remove associated file.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  file is removed from operating system
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 FSHandler<T>::~FSHandler() {
     clear();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Explicit bool conversion. Reports ifstream's state.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 FSHandler<T>::operator bool() {
     return _ifstream.good();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Extraction operator from FSHandler to ofstream.
+ *
+ * PRE-CONDITIONS:
+ *  std::ifstream _ifstream: good state
+ *
+ * POST-CONDITIONS:
+ *  std::ifstream _ifstream: good state/bad state
+ *  std::ostream      &outs: extracted data transferred
+ *
+ * RETURN:
+ *  FSHandler<T> &
+ ******************************************************************************/
 template <typename T>
 FSHandler<T> &FSHandler<T>::operator>>(std::ostream &outs) {
     if(_ifstream) {          // when ifstream is good
@@ -154,6 +212,20 @@ FSHandler<T> &FSHandler<T>::operator>>(std::ostream &outs) {
     return *this;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Extraction operator from FSHandler to T data.
+ *
+ * PRE-CONDITIONS:
+ *  std::ifstream _ifstream: good state
+ *
+ * POST-CONDITIONS:
+ *  std::ifstream _ifstream: good state/bad state
+ *  T                 &data: set to extracted data
+ *
+ * RETURN:
+ *  FSHandler<T> &
+ ******************************************************************************/
 template <typename T>
 FSHandler<T> &FSHandler<T>::operator>>(T &data) {
     if(_ifstream) {          // when ifstream is good
@@ -163,12 +235,42 @@ FSHandler<T> &FSHandler<T>::operator>>(T &data) {
     return *this;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Close ifstream and remove associated file.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  file is removed from operating system
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void FSHandler<T>::clear() {
     _ifstream.close();
     std::remove(_name.c_str());
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Takes in data array, write to ofstream, open file with ifstream, and
+ *  extract first element to _data.
+ *
+ * PRE-CONDITIONS:
+ *  T *buffer       : array of data
+ *  std::size_t size: array size
+ *  char delim      : delimter for data
+ *
+ * POST-CONDITIONS:
+ *  T _data                : holds first from buffer
+ *  std::ifstream _ifstream: rest of data written to file associated w/ ifstream
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
 bool FSHandler<T>::set_data(T *buffer, std::size_t size, char delim) {
     _delim = delim;
@@ -176,21 +278,35 @@ bool FSHandler<T>::set_data(T *buffer, std::size_t size, char delim) {
     std::remove(_name.c_str());
 
     if(buffer && size) {
-        _data = buffer[0];  // store first data element
-
-        // write the rest to temp file
+        // write data array to file
         std::ofstream outs(_name.c_str(), std::ios::binary | std::ios::trunc);
-        for(std::size_t i = 1; i < size; ++i) outs << buffer[i] << _delim;
+        for(std::size_t i = 0; i < size; ++i) outs << buffer[i] << _delim;
         outs.close();
-    }
 
-    _ifstream.open(_name.c_str(), std::ios::binary);  // open associated file
+        _ifstream.open(_name.c_str(), std::ios::binary);  // open for reading
+        _ifstream >> _data;  // extract first data element
+    }
 
     return _ifstream.good();
 }
 
-// ----- FStreamSort -----
+// ----- FStreamSort IMPLEMENTATIONS -----
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Default constructor.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t size : array size for buffer > 0
+ *  short delim      : specifies valid whitespace delimeter character
+ *  std::string tname: valid non-empty temporary file name prefix
+ *
+ * POST-CONDITIONS:
+ *  initializations
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 FStreamSort<T>::FStreamSort(std::size_t size, short delim, std::string tname)
     : _delim(delim), _max_buf(size), _tname(tname) {
@@ -199,40 +315,120 @@ FStreamSort<T>::FStreamSort(std::size_t size, short delim, std::string tname)
     assert(!_tname.empty());
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Destructor calls clear() to clear file handlers in the event that file
+ *  handlers did not parse all files.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  _fs_handlers: cleared
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 FStreamSort<T>::~FStreamSort() {
-    cleanup();
+    clear();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Empties file handlers
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  _fs_handlers: cleared
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
-void FStreamSort<T>::cleanup() {
+void FStreamSort<T>::clear() {
     _fs_handlers.clear();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set new array size for buffer.
+ *
+ * PRE-CONDITIONS:
+ *  std::size_t size: size > 0
+ *
+ * POST-CONDITIONS:
+ *  std::size_t _max_buf: new size
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void FStreamSort<T>::set_max_buffer(std::size_t size) {
     assert(size > 0);
     _max_buf = size;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set new character delimiter.
+ *
+ * PRE-CONDITIONS:
+ *  short delim: valid whitespace character in ASCII value
+ *
+ * POST-CONDITIONS:
+ *  char _delim: set to new whitespace char
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void FStreamSort<T>::set_delim(short delim) {
     assert(delim == endl || delim == space || delim == tab);
     _delim = char(delim);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set new temporary file name prefix.
+ *
+ * PRE-CONDITIONS:
+ *  std::string tname: prefix for temporary file name
+ *
+ * POST-CONDITIONS:
+ *  std::string tname: set to new prefix
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void FStreamSort<T>::set_temp_name(std::string tname) {
     assert(!tname.empty());
     _tname = tname;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Splits the ifstream data into sorted partitions and dump it to FSHandlers.
+ *  Internally, it extracts each data into an array (buffer), sorts it
+ *  and dump buffer to temporary files via FSHandler.
+ *
+ * PRE-CONDITIONS:
+ *  std::istream &ins: valid ifstream
+ *
+ * POST-CONDITIONS:
+ *  std::istream &ins: exhausted ifstream
+ *  _fs_handlers     : handlers hold sorted partitions via associated outfiles
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 std::istream &FStreamSort<T>::_extractions(std::istream &ins) {
     std::size_t i = 0;
-    T *buffer = nullptr;
-
-    buffer = new T[_max_buf];
+    T *buffer = new T[_max_buf];
 
     while(ins >> buffer[i++]) {         // inc i after read
         if(i == _max_buf) {             // when buffer is full
@@ -249,26 +445,56 @@ std::istream &FStreamSort<T>::_extractions(std::istream &ins) {
     return ins;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Merges sorted partitions to outstream.
+ *  Internally, each FSHandler holds the local min of sorted partition.
+ *  Then find global min of all FSHandlers. FSHandler with the global min
+ *  will be inserted to outstream, via it's insertion overload. FSHandler's
+ *  insertion overload will simultaneously grab the next local min of the
+ *  sorted partition, essentially popping the used global min from its data.
+ *
+ * PRE-CONDITIONS:
+ *  std::ostream &outs: valid outstream
+ *
+ * POST-CONDITIONS:
+ *  std::ostream &outs: data inserted
+ *  _fs_handlers     : exhausted FSHandlers erased from array
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 std::ostream &FStreamSort<T>::_insertions(std::ostream &outs) {
-    std::size_t min_index;
-
     while(_fs_handlers.size()) {  // loop until _fs_handlers are gone
-        min_index = 0;
+        auto min = std::min_element(_fs_handlers.begin(), _fs_handlers.end(),
+                                    [](auto &l, auto &r) { return *l < *r; });
 
-        for(std::size_t i = 1; i < _fs_handlers.size(); ++i)  // find min
-            if(_fs_handlers[i]->_data < _fs_handlers[min_index]->_data)
-                min_index = i;
+        outs << **min << _delim;  // deref iterator to deref pointer to min
 
-        outs << *_fs_handlers[min_index] << _delim;  // write data @ min index
-
-        if(!*_fs_handlers[min_index])  // erase exhausted FSHandler
-            _fs_handlers.erase(_fs_handlers.begin() + min_index);
+        if(!**min)  // erase exhausted FSHandler
+            _fs_handlers.erase(min);
     }
 
     return outs;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Sorts data array and dumps its content via FSHandler. This FSHandler is
+ *  then added to array of FSHandlers to keep record of all files associated
+ *  with dumped data.
+ *
+ * PRE-CONDITIONS:
+ *  T *buffer       : data array
+ *  std::size_t size: size of array
+ *
+ * POST-CONDITIONS:
+ *  _fs_handlers: buffer dumped to FSHandler and added to array of FSHandlers
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 template <typename T>
 void FStreamSort<T>::_sort_and_dump(T *buffer, std::size_t size) {
     // generate unique file name
@@ -280,13 +506,40 @@ void FStreamSort<T>::_sort_and_dump(T *buffer, std::size_t size) {
     _fs_handlers.emplace_back(new FSHandler<T>(name, buffer, size, _delim));
 }
 
-// ----- Misc public helpers -----
+// ----- PUBLIC UTILITIES IMPLEMENTATIONS -----
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Reports file size in bytes.
+ *
+ * PRE-CONDITIONS:
+ *  std::string fname: valid file name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::ifstream::pos_type
+ ******************************************************************************/
 std::ifstream::pos_type filesize(std::string fname) {
     std::ifstream in(fname.c_str(), std::ios::ate | std::ios::binary);
     return in.tellg();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Reports the number of elements in file, delimited by valid whitespace
+ *  characters.
+ *
+ * PRE-CONDITIONS:
+ *  std::string fname: valid file name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  int
+ ******************************************************************************/
 template <typename T>
 int count_file(std::string fname) {
     std::ifstream ins(fname.c_str(), std::ios::binary);
@@ -298,8 +551,21 @@ int count_file(std::string fname) {
     return count;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verifies the data in file are sorted.
+ *
+ * PRE-CONDITIONS:
+ *  std::string fname: valid file name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
 template <typename T>
-bool validate_sorted_file(std::string fname) {
+bool verify_sorted_file(std::string fname) {
     bool is_sorted = true;
     std::ifstream ins(fname.c_str(), std::ios::binary);
     T prev, current;

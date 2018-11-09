@@ -27,21 +27,26 @@ public:
     BTree(const BTree<T>& src);
     BTree<T>& operator=(const BTree<T>& rhs);
 
-    // ACCESSORS
-    bool contains(const T& entry) const;
-    bool empty() const;
-    void print(std::ostream& outs = std::cout, bool debug = false,
-               int level = 0, int index = 0) const;
+    // capacity
     std::size_t size() const;
-    bool verify() const;
+    bool empty() const;
 
-    // MUTATORS
-    void clear();                      // clear data and delete all linked nodes
-    void copy(const BTree<T>& other);  // make unique copy from source
-    T& get(const T& entry);            // return a ref to entry in the tree
-    T* find(const T& entry);           // return ptr to T; else nullptr
+    // element access
+    const T& get(const T& entry) const;  // return a ref to entry in the tree
+    T& get(const T& entry);              // return a ref to entry in the tree
+
+    // modifiers
     bool insert(const T& entry);
     bool remove(const T& entry);
+    void clear();                      // clear data and delete all linked nodes
+    void copy(const BTree<T>& other);  // make unique copy from source
+
+    // operations
+    T* find(const T& entry);  // return ptr to T; else nullptr
+    bool contains(const T& entry) const;
+    void print(std::ostream& outs = std::cout, bool debug = false,
+               int level = 0, int index = 0) const;
+    bool verify() const;
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BTree<T>& bt) {
@@ -159,29 +164,20 @@ BTree<T>& BTree<T>::operator=(const BTree<T>& rhs) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Checks if entry is contained in BTree.
+ *  Returns total items in BTree.
  *
  * PRE-CONDITIONS:
- *  const T& entry: target
+ *  none
  *
  * POST-CONDITIONS:
  *  none
  *
  * RETURN:
- *  bool
+ *  std::size_t
  ******************************************************************************/
 template <typename T>
-bool BTree<T>::contains(const T& entry) const {
-    // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
-
-    if(is_found)
-        return true;
-    else if(is_leaf())
-        return false;
-    else
-        return _subset[i]->contains(entry);  // recurse to find entry
+std::size_t BTree<T>::size() const {
+    return _size;
 }
 
 /*******************************************************************************
@@ -204,130 +200,26 @@ bool BTree<T>::empty() const {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Returns total items in BTree.
+ *  Returns const entry contained in the BTree. If the entry is invalid, throws
+ *  invalid argument exception.
  *
  * PRE-CONDITIONS:
- *  none
+ *  const T& entry: must be contained in the BTree
  *
  * POST-CONDITIONS:
  *  none
  *
  * RETURN:
- *  std::size_t
+ *  const T&
  ******************************************************************************/
 template <typename T>
-std::size_t BTree<T>::size() const {
-    return _size;
-}
+const T& BTree<T>::get(const T& entry) const {
+    T* found = find(entry);
 
-/*******************************************************************************
- * DESCRIPTION:
- *  Prints BTree in tree structure.
- *
- * PRE-CONDITIONS:
- *  std::ostream& outs: ostream by ref
- *  bool debug        : debug flag
- *  int level         : internal recursion depth. Don't touch.
- *  int index         : internal index of each BTree's data. Don't touch.
- *
- * POST-CONDITIONS:
- *  prints
- *
- * RETURN:
- *  none
- ******************************************************************************/
-template <typename T>
-void BTree<T>::print(std::ostream& outs, bool debug, int level,
-                     int index) const {
-    if(_data_count)
-        for(int i = _data_count - 1; i >= 0; --i) {
-            if(_child_count)
-                _subset[i + 1]->print(outs, debug, level + 1, i + 1);
-
-            if(!level) index = i;  // assign static root index
-
-            outs << std::setw(level * 15) << ' ';
-            if(debug) outs << index << ' ';
-            outs << '|' << _data[i] << "|\n";
-
-            if(_child_count && !i) _subset[i]->print(outs, debug, level + 1, i);
-        }
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Checks if the internal BTree's rules are valid.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  bool
- ******************************************************************************/
-template <typename T>
-bool BTree<T>::verify() const {
-    bool has_stored_height = false;
-    int height = 0;
-    return verify_tree(height, has_stored_height);
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Deallocates all heap BTrees and clear data/subset counts.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  empty
- *
- * RETURN:
- *  none
- ******************************************************************************/
-template <typename T>
-void BTree<T>::clear() {
-    for(std::size_t i = 0; i < _child_count; ++i) {
-        _subset[i]->clear();  // recurse into subset
-        delete _subset[i];
-    }
-    _size = 0;
-    _data_count = 0;
-    _child_count = 0;  // must clear child to prevent double delete
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Uniquely copies another BTree's into 'this'. REQUIREMENT: empty 'this'.
- *
- * PRE-CONDITIONS:
- *  const BTree<T>& other: source BTree to copy
- *  'this' BTree must be EMPTY/cleared before copying!
- *
- * POST-CONDITIONS:
- *  unique copy of other's states
- *
- * RETURN:
- *  none
- ******************************************************************************/
-template <typename T>
-void BTree<T>::copy(const BTree<T>& other) {
-    assert(this != &other);
-    assert(empty());
-
-    // copy states
-    _dups_ok = other._dups_ok;
-    _size = other._size;
-    _child_count = other._child_count;
-    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
-
-    // copy subset
-    for(std::size_t i = 0; i < other._child_count; ++i) {
-        _subset[i] = new BTree<T>(other._dups_ok);
-        _subset[i]->copy(*other._subset[i]);
-    }
+    if(found)
+        return *found;
+    else
+        throw std::invalid_argument("BTree::get() - invalid entry");
 }
 
 /*******************************************************************************
@@ -354,34 +246,6 @@ T& BTree<T>::get(const T& entry) {
     }
 
     return *found;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Returns the pointer to entry contained in the BTree. If the entry is not
- *  found, then nullptr.
- *
- * PRE-CONDITIONS:
- *  const T& entry: item to find
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  T*
- ******************************************************************************/
-template <typename T>
-T* BTree<T>::find(const T& entry) {
-    // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
-
-    if(is_found)
-        return &_data[i];
-    else if(is_leaf())
-        return nullptr;
-    else
-        return _subset[i]->find(entry);
 }
 
 /*******************************************************************************
@@ -470,6 +334,171 @@ bool BTree<T>::remove(const T& entry) {
         return true;
     } else
         return false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocates all heap BTrees and clear data/subset counts.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  empty
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BTree<T>::clear() {
+    for(std::size_t i = 0; i < _child_count; ++i) {
+        _subset[i]->clear();  // recurse into subset
+        delete _subset[i];
+    }
+    _size = 0;
+    _data_count = 0;
+    _child_count = 0;  // must clear child to prevent double delete
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Uniquely copies another BTree's into 'this'. REQUIREMENT: empty 'this'.
+ *
+ * PRE-CONDITIONS:
+ *  const BTree<T>& other: source BTree to copy
+ *  'this' BTree must be EMPTY/cleared before copying!
+ *
+ * POST-CONDITIONS:
+ *  unique copy of other's states
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BTree<T>::copy(const BTree<T>& other) {
+    assert(this != &other);
+    assert(empty());
+
+    // copy states
+    _dups_ok = other._dups_ok;
+    _size = other._size;
+    _child_count = other._child_count;
+    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
+
+    // copy subset
+    for(std::size_t i = 0; i < other._child_count; ++i) {
+        _subset[i] = new BTree<T>(other._dups_ok);
+        _subset[i]->copy(*other._subset[i]);
+    }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the pointer to entry contained in the BTree. If the entry is not
+ *  found, then nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: item to find
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T*
+ ******************************************************************************/
+template <typename T>
+T* BTree<T>::find(const T& entry) {
+    // find index of T that's greater or qual to entry
+    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < _data[i]));
+
+    if(is_found)
+        return &_data[i];
+    else if(is_leaf())
+        return nullptr;
+    else
+        return _subset[i]->find(entry);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if entry is contained in BTree.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool BTree<T>::contains(const T& entry) const {
+    // find index of T that's greater or qual to entry
+    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < _data[i]));
+
+    if(is_found)
+        return true;
+    else if(is_leaf())
+        return false;
+    else
+        return _subset[i]->contains(entry);  // recurse to find entry
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Prints BTree in tree structure.
+ *
+ * PRE-CONDITIONS:
+ *  std::ostream& outs: ostream by ref
+ *  bool debug        : debug flag
+ *  int level         : internal recursion depth. Don't touch.
+ *  int index         : internal index of each BTree's data. Don't touch.
+ *
+ * POST-CONDITIONS:
+ *  prints
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BTree<T>::print(std::ostream& outs, bool debug, int level,
+                     int index) const {
+    if(_data_count)
+        for(int i = _data_count - 1; i >= 0; --i) {
+            if(_child_count)
+                _subset[i + 1]->print(outs, debug, level + 1, i + 1);
+
+            if(!level) index = i;  // assign static root index
+
+            outs << std::setw(level * 15) << ' ';
+            if(debug) outs << index << ' ';
+            outs << '|' << _data[i] << "|\n";
+
+            if(_child_count && !i) _subset[i]->print(outs, debug, level + 1, i);
+        }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if the internal BTree's rules are valid.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool BTree<T>::verify() const {
+    bool has_stored_height = false;
+    int height = 0;
+    return verify_tree(height, has_stored_height);
 }
 
 /*******************************************************************************
