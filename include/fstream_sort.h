@@ -30,7 +30,7 @@
 
 namespace fstream_sort {
 
-enum { MAX_BLOCK = 250000, endl = 10, space = 32, tab = 9 };
+enum { MAX_BUFFER = 250000, endl = 10, space = 32, tab = 9 };
 
 template <typename T>
 struct FSHandler {
@@ -76,7 +76,7 @@ template <typename T>
 class FStreamSort {
 public:
     // CONSTRUCTOR & DESTRUCTOR
-    FStreamSort(std::size_t size = MAX_BLOCK, short delim = endl,
+    FStreamSort(std::size_t size = MAX_BUFFER, short delim = endl,
                 std::string tname = "__temp__");
     ~FStreamSort();
 

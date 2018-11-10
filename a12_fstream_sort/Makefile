@@ -10,7 +10,7 @@ SRC             := ../src
 OBJ             := main.o
 
 main.out: $(OBJ)
-	$(CXX) -o $@ $^
+	$(CXX) -flto -o $@ $^
 
 main.o: main.cpp\
 	${INC}/timer.h\
