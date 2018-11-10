@@ -479,7 +479,7 @@ std::ostream &FStreamSort<T>::_insertions(std::ostream &outs) {
  *  std::size_t size: size of array
  *
  * POST-CONDITIONS:
- *  _fs_handlers: buffer dumped to FSHandler and added to array of FSHandlers
+ *  _fs_handlers: added new FSHandler list of handlers
  *
  * RETURN:
  *  none
