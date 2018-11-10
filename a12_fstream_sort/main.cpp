@@ -22,10 +22,19 @@ double* test_fstream_times(std::size_t data_count = 2500000,
                            int sample_size = 10);
 
 int main() {
+    gen_string_records("records.txt", 1000000, 1024);
+
+    std::cout << "FileStream Sort via insertion/extraction op" << std::endl;
+    std::cout << std::string(80, '-') << std::endl;
     test_single_fstream_sort(250000, 64000);
-    // test_single_fstream_sort(256000000, 6400000);
+
+    std::cout << std::endl;
+
+    std::cout << "FileStream Sorting by BYTE" << std::endl;
+    std::cout << std::string(80, '-') << std::endl;
+    test_single_fstream_byte_sort(250000, 64000, 1025);
+
     // test_multiple_fstream_sort(10);
-    test_single_fstream_byte_sort(250000, 64000, 1024);
 
     return 0;
 }
@@ -139,13 +148,13 @@ void test_single_fstream_sort(int sample_size, int buffer_size) {
     using namespace fstream_utils;
 
     double in_time = 0, out_time = 0, gen_time = 0, gen_file_size = 0;
-    std::string in_file = "records_fs.txt", out_file = "records_fs_results.txt";
+    std::string in_file = "records.txt", out_file = "records_fs_results.txt";
     timer::ChronoTimer chrono;
 
-    chrono.start();
-    gen_string_records(in_file, sample_size);
-    chrono.stop();
-    gen_time = chrono.seconds();
+    // chrono.start();
+    // gen_string_records(in_file, sample_size);
+    // chrono.stop();
+    // gen_time = chrono.seconds();
 
     gen_file_size = filesize(in_file.c_str()) / 1000000.0;
 
@@ -193,14 +202,13 @@ void test_single_fstream_byte_sort(int sample_size, int buffer_size,
     using namespace fstream_utils;
 
     double in_time = 0, out_time = 0, gen_time = 0, gen_file_size = 0;
-    std::string in_file = "records_fsb.txt",
-                out_file = "records_fsb_results.txt";
+    std::string in_file = "records.txt", out_file = "records_fsb_results.txt";
     timer::ChronoTimer chrono;
 
-    chrono.start();
-    gen_string_records(in_file, sample_size, data_size);
-    chrono.stop();
-    gen_time = chrono.seconds();
+    // chrono.start();
+    // gen_string_records(in_file, sample_size, data_size);
+    // chrono.stop();
+    // gen_time = chrono.seconds();
 
     gen_file_size = filesize(in_file.c_str()) / 1000000.0;
 

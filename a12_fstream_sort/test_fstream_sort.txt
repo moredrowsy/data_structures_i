@@ -1,0 +1,45 @@
+TEST ON SSD
+
+FileStream Sort via insertion/extraction operators
+--------------------------------------------------------------------------------
+      Random file size : 1025 MB
+Random generation time : 0 sec
+       Extraction time : 12.9918 sec
+        Insertion time : 12.7705 sec
+      Count for infile : 1000000
+     Count for outfile : 1000000
+ Output file is sorted : true
+
+FileStream Sorting by BYTE
+--------------------------------------------------------------------------------
+      Random file size : 1025 MB
+Random generation time : 0 sec
+       Extraction time : 4.99279 sec
+        Insertion time : 5.40912 sec
+      Count for infile : 1000000
+     Count for outfile : 1000000
+ Output file is sorted : true
+
+
+TEST ON HDD @ 5400rpm
+
+FileStream Sort via insertion/extraction op
+--------------------------------------------------------------------------------
+      Random file size : 1025 MB
+Random generation time : 0 sec
+       Extraction time : 74.0721 sec
+        Insertion time : 74.726 sec
+      Count for infile : 1000000
+     Count for outfile : 1000000
+ Output file is sorted : true
+
+FileStream Sorting by BYTE
+--------------------------------------------------------------------------------
+      Random file size : 1025 MB
+Random generation time : 0 sec
+       Extraction time : 11.7654 sec
+        Insertion time : 11.1543 sec
+      Count for infile : 1000000
+     Count for outfile : 1000000
+ Output file is sorted : true
+ 

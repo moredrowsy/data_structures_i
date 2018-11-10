@@ -427,7 +427,7 @@ std::istream &FStreamSort<T>::_extractions(std::istream &ins) {
     }
 
     // dec i to reverse previous inc; sort and dump last buffer if has data
-    if(--i) _sort_and_dump(buffer, i);
+    if(i && --i) _sort_and_dump(buffer, i);
 
     delete[] buffer;
 
