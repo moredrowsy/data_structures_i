@@ -11,8 +11,8 @@
  *      EX: Data are 1024 bytes + '\n' delimeter, then byte_size is 1025.
  *          Data are 1024 bytes without delimter, then byte_size is 1024.
  *
- *      NOTE: byte_size == size of char strings (w/o '\0')
- *            max_block ==  size of array of char strings
+ *      NOTE: byte_size == size of char array (w/o NUL terminate)
+ *            max_block ==  size of array of char arrays
  *            buffer size == max_block * byte_size == size of temporary files
  ******************************************************************************/
 #ifndef FSTREAM_BYTE_SORT_H
@@ -21,7 +21,7 @@
 #include <algorithm>  // sort(), copy()
 #include <cassert>    // assert()
 #include <cstdio>     // remove()
-#include <cstring>    // strcmp()
+#include <cstring>    // strncmp()
 #include <fstream>    // ifstream, ofstream
 #include <iostream>   // stream objects
 #include <memory>     // shared_ptr
@@ -35,7 +35,7 @@ enum { BYTE_SIZE = 1024, BLOCK_SIZE = 10000, endl = 10, space = 32, tab = 9 };
 struct FSByteHandler {
     // CONSTRUCTORS
     FSByteHandler(std::string name, char **block = nullptr,
-                  std::size_t size = 0, std::size_t cstr_size = BYTE_SIZE + 1);
+                  std::size_t size = 0, std::size_t byte_size = BYTE_SIZE);
 
     // MOVE SEMANTICS for std::ifstream
     FSByteHandler(FSByteHandler &&) = default;
@@ -53,20 +53,18 @@ struct FSByteHandler {
     // FRIENDS
     friend std::ostream &operator<<(std::ostream &outs, FSByteHandler &f) {
         if(f._ifstream) {
-            outs.write(f._data, f._cstr_size - 1);  // size-1 exclude '\0'
-
-            f._ifstream.read(f._data, f._cstr_size - 1);
-            f._data[f._cstr_size - 1] = '\0';  // add '\0' for cstring
+            outs.write(f._data, f._byte_size);
+            f._ifstream.read(f._data, f._byte_size);
         }
         return outs;
     }
 
     friend bool operator<(const FSByteHandler &left,
                           const FSByteHandler &right) {
-        return std::strcmp(left._data, right._data) < 0;
+        return std::strncmp(left._data, right._data, left._byte_size) < 0;
     }
 
-    std::size_t _cstr_size;
+    std::size_t _byte_size;
     char *_data;
     std::string _name;
     std::ifstream _ifstream;
@@ -81,10 +79,10 @@ public:
     ~FStreamByteSort();
 
     // MUTATORS
-    void clear();  // clean up all stream objects and temp files
-    void set_byte_size(std::size_t size);   // block size of bytes
-    void set_max_block(std::size_t size);   // change max block size
-    void set_temp_name(std::string tname);  // set temp output file prefix
+    void clear();  // destroy up all handlers
+    void set_byte_size(std::size_t size);
+    void set_max_block(std::size_t size);
+    void set_temp_name(std::string tname);
 
     // FRIENDS
     friend std::istream &operator>>(std::istream &ins, FStreamByteSort &fs) {
@@ -96,60 +94,57 @@ public:
     }
 
 private:
-    std::size_t _byte_size;  // size of each data segment
-    std::size_t _max_block;  // maximum size for array of char strings
+    std::size_t _byte_size;  // size of char array
+    std::size_t _max_block;  // maximum size for array of char arrays
     std::string _tname;      // temporary file prefix
-    std::vector<std::shared_ptr<FSByteHandler>>
-        _fs_handlers;  // make temp files
+    std::vector<std::shared_ptr<FSByteHandler>> _fs_handlers;  // handlers list
 
     // MUTATORS
-    std::istream &_extractions(std::istream &ins);  // read in-stream
-    std::ostream &_insertions(std::ostream &outs);  // write out-stream
-    void _sort_and_dump(char **block,
-                        std::size_t size);  // dump to FSByteHandler
+    std::istream &_extractions(std::istream &ins);        // read in-stream
+    std::ostream &_insertions(std::ostream &outs);        // write out-stream
+    void _sort_and_dump(char **block, std::size_t size);  // dump to handler
 };
 
 // ----- FSByteHandler IMPLEMENTATIONS -----
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Default constructor. Takes in data array, write to ofstream, open file with
- *  ifstream, and extract first element to _data.
+ *  Default constructor. Takes in array of char arrays, write to ofstream,
+ *  open file with ifstream, and extract first element to _data.
  *
  * PRE-CONDITIONS:
  *  std::string name     : file name for output creation
- *  char **block         : array of char strings
+ *  char **block         : array of char arrays
  *  std::size_t size     : size of array
- *  std::size_t cstr_size: size of char strings (include '\0')
+ *  std::size_t byte_size: size of char array (w/o NUL terminate)
  *
  * POST-CONDITIONS:
- *  char* _data            : holds the first char string
+ *  char* _data            : holds the first char array
  *  std::ifstream _ifstream: rest of data written to file associated w/ ifstream
  *
  * RETURN:
  *  none
  ******************************************************************************/
 FSByteHandler::FSByteHandler(std::string name, char **block, std::size_t size,
-                             std::size_t cstr_size)
-    : _cstr_size(cstr_size),
-      _data(new char[_cstr_size]),
+                             std::size_t byte_size)
+    : _byte_size(byte_size),
+      _data(new char[_byte_size]),
       _name(name),
       _ifstream() {
-    if(block && size) {  // write the rest to temp file
-        char *buffer = new char[size * _cstr_size];
-        std::size_t count = 0;
+    if(block && size) {
+        char *buffer = new char[size * _byte_size];
+        std::size_t count = 0;  // buf offset
 
         std::ofstream outs(_name.c_str(), std::ios::binary | std::ios::trunc);
         for(std::size_t i = 0; i < size; ++i) {
-            std::copy(block[i], block[i] + _cstr_size - 1, buffer + count);
-            count += (_cstr_size - 1);  // size-1 exclude '\0'
+            std::copy(block[i], block[i] + _byte_size, buffer + count);
+            count += (_byte_size);  // update buf offset
         }
         outs.write(buffer, count);  // write entire buffer
         outs.close();               // close ofstream writing
 
         _ifstream.open(_name.c_str(), std::ios::binary);
-        _ifstream.read(_data, _cstr_size - 1);
-        _data[_cstr_size - 1] = '\0';  // add '\0' for cstring
+        _ifstream.read(_data, _byte_size);
 
         delete[] buffer;
     }
@@ -200,11 +195,9 @@ FSByteHandler::operator bool() { return _ifstream.good(); }
  *  FSByteHandler &
  ******************************************************************************/
 FSByteHandler &FSByteHandler::operator>>(std::ostream &outs) {
-    if(_ifstream) {                         // when ifstream is good
-        outs.write(_data, _cstr_size - 1);  // size-1 exclude '\0'
-
-        _ifstream.read(_data, _cstr_size - 1);
-        _data[_cstr_size - 1] = '\0';  // add '\0' for cstring
+    if(_ifstream) {
+        outs.write(_data, _byte_size);
+        _ifstream.read(_data, _byte_size);
     }
     return *this;
 }
@@ -224,11 +217,9 @@ FSByteHandler &FSByteHandler::operator>>(std::ostream &outs) {
  *  FSByteHandler &
  ******************************************************************************/
 FSByteHandler &FSByteHandler::operator>>(char *&data) {
-    if(_ifstream) {  // when ifstream is good
-        std::copy(_data, _data + _cstr_size - 1, data);  // size-1 exclude '\0'
-
-        _ifstream.read(_data, _cstr_size - 1);
-        _data[_cstr_size - 1] = '\0';  // add '\0' for cstring
+    if(_ifstream) {
+        std::copy(_data, _data + _byte_size, data);
+        _ifstream.read(_data, _byte_size);
     }
     return *this;
 }
@@ -260,7 +251,7 @@ void FSByteHandler::clear() {
  *
  * PRE-CONDITIONS:
  *  std::size_t byte_size  : size of bytes block, > 0
- *  std::size_t block_size : size of array of char strings
+ *  std::size_t block_size : size of array of char array
  *  std::string tname      : valid non-empty temporary file name prefix
  *
  * POST-CONDITIONS:
@@ -272,7 +263,7 @@ void FSByteHandler::clear() {
 FStreamByteSort::FStreamByteSort(std::size_t byte_size, std::size_t block_size,
                                  std::string tname)
     : _byte_size(byte_size), _max_block(block_size), _tname(tname) {
-    assert(byte_size > 0);
+    assert(_byte_size > 0);
     assert(_max_block > 0);
     assert(!_tname.empty());
 }
@@ -329,7 +320,7 @@ void FStreamByteSort::set_byte_size(std::size_t size) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Set new size for block (array of char strings).
+ *  Set new size for block (array of char array).
  *
  * PRE-CONDITIONS:
  *  std::size_t size: size > 0
@@ -381,12 +372,9 @@ void FStreamByteSort::set_temp_name(std::string tname) {
  *  none
  ******************************************************************************/
 std::istream &FStreamByteSort::_extractions(std::istream &ins) {
-    char **block = nullptr, *buffer = new char[_max_block * _byte_size];
+    char **block = new char *[_max_block];
+    char *buffer = new char[_max_block * _byte_size];
     std::size_t count, size;
-
-    block = new char *[_max_block];  // allocate block array
-    for(std::size_t i = 0; i < _max_block; ++i)
-        block[i] = new char[_byte_size + 1];  // allocate each char string
 
     while(ins) {
         ins.read(buffer, _max_block * _byte_size);  // read to one long buffer
@@ -394,15 +382,13 @@ std::istream &FStreamByteSort::_extractions(std::istream &ins) {
         count = 0;
 
         for(std::size_t i = 0; i < size; ++i) {  // convert buf to block array
-            std::copy(buffer + count, buffer + count + _byte_size, block[i]);
-            block[i][_byte_size] = '\0';  // add '0' for char string
-            count += _byte_size;
+            block[i] = &buffer[count];           // set block[i] to buff offset
+            count += _byte_size;                 // get next buff offset
         }
-        _sort_and_dump(block, size);
+        _sort_and_dump(block, size);  // sort and dump block to handler
     }
 
     // deallocate
-    for(std::size_t j = 0; j < _max_block; ++j) delete[] block[j];
     delete[] block;
     delete[] buffer;
 
@@ -429,17 +415,16 @@ std::istream &FStreamByteSort::_extractions(std::istream &ins) {
  *  none
  ******************************************************************************/
 std::ostream &FStreamByteSort::_insertions(std::ostream &outs) {
-    char *buffer = new char[_max_block * _byte_size],
-         *data = new char[_byte_size];
-    std::size_t count = 0;
+    char *buffer = new char[_max_block * _byte_size], *data = nullptr;
+    std::size_t count = 0;  // buf offset
 
     while(_fs_handlers.size()) {  // loop until _fs_handlers are gone
         auto min = std::min_element(_fs_handlers.begin(), _fs_handlers.end(),
                                     [](auto &l, auto &r) { return *l < *r; });
 
-        **min >> data;                                       // extract to data
-        std::copy(data, data + _byte_size, buffer + count);  // copy to buf
-        count += _byte_size;  // increase buffer count
+        data = buffer + count;  // offset buffer to data
+        **min >> data;          // extract to data
+        count += _byte_size;    // increase buffer count
 
         if(count == _max_block * _byte_size) {  // when buffer is full
             outs.write(buffer, count);          // write entire buffer
@@ -449,19 +434,16 @@ std::ostream &FStreamByteSort::_insertions(std::ostream &outs) {
         if(!**min)  // erase exhausted FSHandler
             _fs_handlers.erase(min);
     }
-
     if(count) outs.write(buffer, count);  // write remaining buffer
 
-    // deallocate
-    delete[] data;
-    delete[] buffer;
+    delete[] buffer;  // deallocate
 
     return outs;
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Sorts array of char strings and dumps its content via FSByteHandler.
+ *  Sorts array of char array and dumps its content via FSByteHandler.
  *  This FSByteHandler is then added to array of FSHandlers to keep record of
  *  all files associated with dumped data.
  *
@@ -479,13 +461,12 @@ void FStreamByteSort::_sort_and_dump(char **block, std::size_t size) {
     // generate unique file name
     std::string name = _tname + std::to_string(_fs_handlers.size());
 
-    std::sort(block, block + size, [](const char *a, const char *b) {
-        return std::strcmp(a, b) < 0;
+    std::sort(block, block + size, [this](const char *a, const char *b) {
+        return std::strncmp(a, b, this->_byte_size) < 0;
     });
 
     // pass block to FSByteHandler to create temp file
-    _fs_handlers.emplace_back(  // _byte_size + 1 includes '\0' for cstring
-        new FSByteHandler(name, block, size, _byte_size + 1));
+    _fs_handlers.emplace_back(new FSByteHandler(name, block, size, _byte_size));
 }
 
 }  // namespace fstream_byte_sort
