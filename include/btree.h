@@ -242,7 +242,7 @@ T& BTree<T>::get(const T& entry) {
 
     if(!found) {
         insert(entry);
-        found = *find(entry);
+        found = find(entry);
     }
 
     return *found;

@@ -1,0 +1,324 @@
+--------------------------------------------------------------------------------
+MAP and MMAP AUTO TESTS PASSED
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+INTERACTIVE TESTS: Map
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Yodh : Epsilon
+
+ 0 |Yodh : Epsilon|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Kaph : Alpha
+
+ 1 |Yodh : Epsilon|
+ 0 |Kaph : Alpha|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Sade : Pi
+
+               1 |Yodh : Epsilon|
+ 0 |Sade : Pi|
+               0 |Kaph : Alpha|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Yodh : Beta
+
+               1 |Yodh : Beta|
+ 0 |Sade : Pi|
+               0 |Kaph : Alpha|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Beth : Lambda
+
+               1 |Yodh : Beta|
+ 0 |Sade : Pi|
+               0 |Kaph : Alpha|
+               0 |Beth : Lambda|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Pe : Kappa
+
+               2 |Yodh : Beta|
+ 1 |Sade : Pi|
+               1 |Pe : Kappa|
+ 0 |Kaph : Alpha|
+               0 |Beth : Lambda|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Mem : Zeta
+
+               2 |Yodh : Beta|
+ 1 |Sade : Pi|
+               1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Kaph : Alpha|
+               0 |Beth : Lambda|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Daleth : Phi
+
+               2 |Yodh : Beta|
+ 1 |Sade : Pi|
+               1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Kaph : Alpha|
+               0 |Daleth : Phi|
+               0 |Beth : Lambda|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Sade : Gamma
+
+               2 |Yodh : Beta|
+ 1 |Sade : Gamma|
+               1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Kaph : Alpha|
+               0 |Daleth : Phi|
+               0 |Beth : Lambda|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Samekh : Psi
+
+               2 |Yodh : Beta|
+               2 |Samekh : Psi|
+ 1 |Sade : Gamma|
+               1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Kaph : Alpha|
+               0 |Daleth : Phi|
+               0 |Beth : Lambda|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Aleph : Zeta
+
+                              1 |Yodh : Beta|
+                              1 |Samekh : Psi|
+               1 |Sade : Gamma|
+                              0 |Pe : Kappa|
+                              0 |Mem : Zeta|
+ 0 |Kaph : Alpha|
+                              1 |Daleth : Phi|
+               0 |Beth : Lambda|
+                              0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: f Kaph
+>> Find: Kaph success.
+
+                              1 |Yodh : Beta|
+                              1 |Samekh : Psi|
+               1 |Sade : Gamma|
+                              0 |Pe : Kappa|
+                              0 |Mem : Zeta|
+ 0 |Kaph : Alpha|
+                              1 |Daleth : Phi|
+               0 |Beth : Lambda|
+                              0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Kaph
+>> Deletion: Kaph removed
+
+               2 |Yodh : Beta|
+               2 |Samekh : Psi|
+ 1 |Sade : Gamma|
+               1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Daleth : Phi|
+               0 |Beth : Lambda|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: f Kaph
+>> Find: Kaph failed. Does not exist
+
+               2 |Yodh : Beta|
+               2 |Samekh : Psi|
+ 1 |Sade : Gamma|
+               1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Daleth : Phi|
+               0 |Beth : Lambda|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: s
+>> Size: 8
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Sade
+>> Deletion: Sade removed
+
+               2 |Yodh : Beta|
+               2 |Samekh : Psi|
+ 1 |Pe : Kappa|
+               1 |Mem : Zeta|
+ 0 |Daleth : Phi|
+               0 |Beth : Lambda|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Pe
+>> Deletion: Pe removed
+
+               2 |Yodh : Beta|
+ 1 |Samekh : Psi|
+               1 |Mem : Zeta|
+ 0 |Daleth : Phi|
+               0 |Beth : Lambda|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Samekh
+>> Deletion: Samekh removed
+
+               2 |Yodh : Beta|
+ 1 |Mem : Zeta|
+               1 |Daleth : Phi|
+ 0 |Beth : Lambda|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Mem
+>> Deletion: Mem removed
+
+               1 |Yodh : Beta|
+               1 |Daleth : Phi|
+ 0 |Beth : Lambda|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Beth
+>> Deletion: Beth removed
+
+               1 |Yodh : Beta|
+ 0 |Daleth : Phi|
+               0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Daleth
+>> Deletion: Daleth removed
+
+ 1 |Yodh : Beta|
+ 0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: i Yodh NewValue
+>> Insert: Yodh : NewValue
+
+ 1 |Yodh : NewValue|
+ 0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Yodh
+>> Deletion: Yodh removed
+
+ 0 |Aleph : Zeta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Aleph
+>> Deletion: Aleph removed
+
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: s
+>> Size: 0
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: x
+
+--------------------------------------------------------------------------------
+INTERACTIVE TESTS: Multi-Map
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Pe : Beta
+
+ 0 |Pe : Beta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Res : Theta
+
+ 1 |Res : Theta|
+ 0 |Pe : Beta|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Aleph : Iota
+
+               1 |Res : Theta|
+ 0 |Pe : Beta|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Heth : Sigma
+
+               1 |Res : Theta|
+ 0 |Pe : Beta|
+               0 |Heth : Sigma|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: r
+>> Random insert: Daleth : Tau
+
+               2 |Res : Theta|
+ 1 |Pe : Beta|
+               1 |Heth : Sigma|
+ 0 |Daleth : Tau|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: i Pe NewValue
+>> Insert: Pe : NewValue
+
+               2 |Res : Theta|
+ 1 |Pe : Beta NewValue|
+               1 |Heth : Sigma|
+ 0 |Daleth : Tau|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: i Pe NewValue2
+>> Insert: Pe : NewValue2
+
+               2 |Res : Theta|
+ 1 |Pe : Beta NewValue NewValue2|
+               1 |Heth : Sigma|
+ 0 |Daleth : Tau|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: f Pe
+>> Find: Pe success.
+
+               2 |Res : Theta|
+ 1 |Pe : Beta NewValue NewValue2|
+               1 |Heth : Sigma|
+ 0 |Daleth : Tau|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Pe
+>> Deletion: Pe removed
+
+               1 |Res : Theta|
+               1 |Heth : Sigma|
+ 0 |Daleth : Tau|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: f Pe
+>> Find: Pe failed. Does not exist
+
+               1 |Res : Theta|
+               1 |Heth : Sigma|
+ 0 |Daleth : Tau|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Daleth
+>> Deletion: Daleth removed
+
+               1 |Res : Theta|
+ 0 |Heth : Sigma|
+               0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Heth
+>> Deletion: Heth removed
+
+ 1 |Res : Theta|
+ 0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Res
+>> Deletion: Res removed
+
+ 0 |Aleph : Iota|
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: d Aleph
+>> Deletion: Aleph removed
+
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: s
+>> Size: 0
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear     e[X]it: x

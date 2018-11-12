@@ -39,12 +39,16 @@ struct Pair {
         return lhs.key < rhs.key;
     }
 
+    friend bool operator<=(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
+        return lhs.key <= rhs.key;
+    }
+
     friend bool operator>(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
         return lhs.key > rhs.key;
     }
 
-    friend bool operator<=(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
-        return lhs.key <= rhs.key;
+    friend bool operator>=(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
+        return lhs.key >= rhs.key;
     }
 
     friend Pair<K, V> operator+(const Pair<K, V>& lhs, const Pair<K, V>& rhs) {
@@ -89,6 +93,10 @@ struct MPair {
 
     friend bool operator>(const MPair<K, V>& lhs, const MPair<K, V>& rhs) {
         return lhs.key > rhs.key;
+    }
+
+    friend bool operator>=(const MPair<K, V>& lhs, const MPair<K, V>& rhs) {
+        return lhs.key >= rhs.key;
     }
 
     friend MPair<K, V> operator+(const MPair<K, V>& lhs,

@@ -109,7 +109,8 @@ bool verify_sorted_file(std::string fname) {
  *  Verifies byte sized blocks are sorted in file.
  *
  * PRE-CONDITIONS:
- *  std::string fname: valid file name
+ *  std::string fname    : valid file name
+ *  std::size_t byte_size: size of byte blocks
  *
  * POST-CONDITIONS:
  *  none

@@ -2,14 +2,86 @@
 #include <string>               // string objects
 #include "../include/bt_map.h"  // BTree version of Map class
 
+bool test_map_and_mmap_auto();
 void test_map_interactive();
 void test_mmap_interactive();
 
 int main() {
+    bool is_passed = true;
+    for(int i = 0; i < 100; ++i) is_passed &= test_map_and_mmap_auto();
+
+    std::cout << std::string(80, '-') << std::endl
+              << "MAP and MMAP AUTO TESTS ";
+    if(is_passed)
+        std::cout << "PASSED" << std::endl;
+    else
+        std::cout << "FAILED" << std::endl;
+    std::cout << std::string(80, '-') << std::endl;
+
+    std::cout << std::endl;
     test_map_interactive();
+    std::cout << std::endl;
     test_mmap_interactive();
 
     return 0;
+}
+
+bool test_map_and_mmap_auto() {
+    using namespace bt_map;
+    using namespace pair;
+
+    const int MAX = 100;
+
+    Map<int, int> map;
+    MMap<int, int> mmap;
+    Pair<int, int> pairs[MAX];
+    MPair<int, int> mpairs[MAX];
+    int keys[MAX];
+    int values[MAX];
+
+    // populate keys/values
+    for(int i = 0; i < MAX; ++i) {
+        keys[i] = i;
+        values[i] = i;
+    }
+
+    // insert keys/values to map and mmap
+    for(int i = 0; i < MAX; ++i) {
+        map[keys[i]] = values[i];
+        mmap[keys[i]] += values[i];
+
+        if(!map.verify() || !mmap.verify()) {
+            std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
+            return false;
+        }
+
+        if(!map.contains(Pair<int, int>(keys[i], values[i])) ||
+           !mmap.contains(keys[i])) {
+            std::cout << "I N S E R T  C O N T A I N S  F A I L E D"
+                      << std::endl;
+            return false;
+        }
+    }
+
+    // remove keys from map and mmap
+    for(int i = 0; i < MAX; ++i) {
+        map.erase(keys[i]);
+        mmap.erase(keys[i]);
+
+        if(!map.verify() || !mmap.verify()) {
+            std::cout << "E R A S E  F A I L E D" << std::endl;
+            return false;
+        }
+
+        if(map.contains(Pair<int, int>(keys[i], values[i])) ||
+           mmap.contains(keys[i])) {
+            std::cout << "E R A S E D  C O N T A I N S  F A I L E D"
+                      << std::endl;
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void test_map_interactive() {
@@ -22,7 +94,7 @@ void test_map_interactive() {
 
     const std::size_t SIZE = 24;
     bt_map::Map<std::string, std::string> map;
-    bool is_inserted = false, is_found = false, is_removed = false;
+    bool is_found = false, is_removed = false;
     char c;
     std::string key, value;
 
@@ -92,16 +164,10 @@ void test_map_interactive() {
             case 'I':
             case 'i':
                 std::cin >> key >> value;
-                is_inserted = map.insert(key, value);
+                map[key] = value;
 
-                std::cout << ">> Insert: " << Pair(key, value);
-
-                if(is_inserted)
-                    std::cout << " success.";
-                else
-                    std::cout << " failed. Duplicate?";
-
-                std::cout << std::endl << std::endl;
+                std::cout << ">> Insert: " << Pair(key, value) << std::endl
+                          << std::endl;
                 map.print_debug();
                 std::cout << std::endl;
 
@@ -110,16 +176,11 @@ void test_map_interactive() {
             case 'r':
                 key = keys[rand() % SIZE];
                 value = values[rand() % SIZE];
-                is_inserted = map.insert(key, value);
+                map[key] = value;
 
-                std::cout << ">> Random insert: " << Pair(key, value);
-
-                if(is_inserted)
-                    std::cout << " success.";
-                else
-                    std::cout << " failed. Duplicate?";
-
-                std::cout << std::endl << std::endl;
+                std::cout << ">> Random insert: " << Pair(key, value)
+                          << std::endl
+                          << std::endl;
                 map.print_debug();
                 std::cout << std::endl;
 
@@ -145,7 +206,7 @@ void test_mmap_interactive() {
 
     const std::size_t SIZE = 24;
     bt_map::MMap<std::string, std::string> mmap;
-    bool is_inserted = false, is_found = false, is_removed = false;
+    bool is_found = false, is_removed = false;
     char c;
     std::string key, value;
 
@@ -215,16 +276,10 @@ void test_mmap_interactive() {
             case 'I':
             case 'i':
                 std::cin >> key >> value;
-                is_inserted = mmap.insert(key, value);
+                mmap[key] += value;
 
-                std::cout << ">> Insert: " << Pair(key, value);
-
-                if(is_inserted)
-                    std::cout << " success.";
-                else
-                    std::cout << " failed. Duplicate?";
-
-                std::cout << std::endl << std::endl;
+                std::cout << ">> Insert: " << Pair(key, value) << std::endl
+                          << std::endl;
                 mmap.print_debug();
                 std::cout << std::endl;
 
@@ -233,16 +288,11 @@ void test_mmap_interactive() {
             case 'r':
                 key = keys[rand() % SIZE];
                 value = values[rand() % SIZE];
-                is_inserted = mmap.insert(key, value);
+                mmap[key] += value;
 
-                std::cout << ">> Random insert: " << Pair(key, value);
-
-                if(is_inserted)
-                    std::cout << " success.";
-                else
-                    std::cout << " failed. Duplicate?";
-
-                std::cout << std::endl << std::endl;
+                std::cout << ">> Random insert: " << Pair(key, value)
+                          << std::endl
+                          << std::endl;
                 mmap.print_debug();
                 std::cout << std::endl;
 
