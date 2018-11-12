@@ -42,7 +42,7 @@ public:
     V& get(const K& key);
 
     // operations
-    // V* find(const K& key);
+    // Iterator find(const K& key); // iterator not implemented
     bool contains(const Pair& target) const;
     std::size_t count(const K& key) const;
     void print_debug() const;
@@ -81,7 +81,7 @@ public:
     std::vector<V>& get(const K& key);
 
     // operations
-    // Iterator find(const K& key);
+    // Iterator find(const K& key); // iterator not implemented
     bool contains(const K& key) const;
     std::size_t count(const K& key) const;
     void print_debug() const;

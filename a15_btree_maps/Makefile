@@ -13,6 +13,8 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
 main.o: main.cpp\
+	${INC}/sort.h\
+	${INC}/array_utils.h\
 	${INC}/btree.h\
 	${INC}/vector_utils.h\
 	${INC}/pair.h\

@@ -424,7 +424,7 @@ SCENARIO("Array Utilities", "[array_utils]") {
         WHEN("dest size 0") {
             dest_size = 0;
             src_size = 3;
-            merge(dest, dest_size, src, src_size);
+            merge(src, src_size, dest, dest_size);
 
             REQUIRE(dest_size == 3);
             REQUIRE(src_size == 0);
@@ -436,7 +436,7 @@ SCENARIO("Array Utilities", "[array_utils]") {
         WHEN("dest size 1") {
             dest_size = 1;
             src_size = 3;
-            merge(dest, dest_size, src, src_size);
+            merge(src, src_size, dest, dest_size);
 
             REQUIRE(dest_size == 4);
             REQUIRE(src_size == 0);
@@ -449,7 +449,7 @@ SCENARIO("Array Utilities", "[array_utils]") {
         WHEN("src size 0") {
             dest_size = 3;
             src_size = 0;
-            merge(dest, dest_size, src, src_size);
+            merge(src, src_size, dest, dest_size);
 
             REQUIRE(dest_size == 3);
             REQUIRE(src_size == 0);
@@ -471,25 +471,23 @@ SCENARIO("Array Utilities", "[array_utils]") {
                 int src[SIZE] = {100};
                 std::size_t src_size = 1;
 
-                merge(dest, dest_size, src, src_size);
+                split(src, src_size, dest, dest_size);
 
-                REQUIRE(src_size == 0);
-                REQUIRE(dest_size == 2);
+                REQUIRE(src_size == 1);
+                REQUIRE(dest_size == 1);
                 REQUIRE(dest[0] == 1);
-                REQUIRE(dest[1] == 100);
             }
 
             THEN("src array size 2") {
                 int src[SIZE] = {100, 200};
                 std::size_t src_size = 2;
 
-                merge(dest, dest_size, src, src_size);
+                split(src, src_size, dest, dest_size);
 
-                REQUIRE(src_size == 0);
-                REQUIRE(dest_size == 3);
+                REQUIRE(src_size == 1);
+                REQUIRE(dest_size == 2);
                 REQUIRE(dest[0] == 1);
-                REQUIRE(dest[1] == 100);
-                REQUIRE(dest[2] == 200);
+                REQUIRE(dest[1] == 200);
             }
         }
 
@@ -500,42 +498,51 @@ SCENARIO("Array Utilities", "[array_utils]") {
                 int src[SIZE] = {100};
                 std::size_t src_size = 1;
 
-                merge(dest, dest_size, src, src_size);
+                split(src, src_size, dest, dest_size);
 
-                REQUIRE(src_size == 0);
-                REQUIRE(dest_size == 3);
+                REQUIRE(src_size == 1);
+                REQUIRE(dest_size == 2);
                 REQUIRE(dest[0] == 1);
-                REQUIRE(dest[1] == 2);
-                REQUIRE(dest[2] == 100);
             }
 
             THEN("src array size 2") {
                 int src[SIZE] = {100, 200};
                 std::size_t src_size = 2;
 
-                merge(dest, dest_size, src, src_size);
+                split(src, src_size, dest, dest_size);
 
-                REQUIRE(src_size == 0);
-                REQUIRE(dest_size == 4);
+                REQUIRE(src_size == 1);
+                REQUIRE(dest_size == 3);
                 REQUIRE(dest[0] == 1);
                 REQUIRE(dest[1] == 2);
-                REQUIRE(dest[2] == 100);
-                REQUIRE(dest[3] == 200);
+                REQUIRE(dest[2] == 200);
             }
 
             THEN("src array size 3") {
                 int src[SIZE] = {100, 200, 300};
                 std::size_t src_size = 3;
 
-                merge(dest, dest_size, src, src_size);
+                split(src, src_size, dest, dest_size);
 
-                REQUIRE(src_size == 0);
-                REQUIRE(dest_size == 5);
+                REQUIRE(src_size == 2);
+                REQUIRE(dest_size == 3);
                 REQUIRE(dest[0] == 1);
                 REQUIRE(dest[1] == 2);
-                REQUIRE(dest[2] == 100);
-                REQUIRE(dest[3] == 200);
-                REQUIRE(dest[4] == 300);
+                REQUIRE(dest[2] == 300);
+            }
+
+            THEN("src array size 4") {
+                int src[SIZE] = {100, 200, 300, 400};
+                std::size_t src_size = 4;
+
+                split(src, src_size, dest, dest_size);
+
+                REQUIRE(src_size == 2);
+                REQUIRE(dest_size == 4);
+                REQUIRE(dest[0] == 1);
+                REQUIRE(dest[1] == 2);
+                REQUIRE(dest[2] == 300);
+                REQUIRE(dest[3] == 400);
             }
         }
     }

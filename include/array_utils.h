@@ -12,6 +12,7 @@
 #include <iomanip>   // setw()
 #include <iostream>  // stream objects
 #include <string>    // string objects
+#include <utility>   // move()
 #include <vector>    // vector objects
 
 namespace array_utils {
@@ -110,11 +111,11 @@ T& max(const T& a, const T& b) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Swap two items.
+ *  Swap two items via std::move
  *
  * PRE-CONDITIONS:
- *  const T& a: templated item by reference
- *  const T& b: templated item by reference
+ *  T& a: templated item by reference
+ *  T& b: templated item by reference
  *
  * POST-CONDITIONS:
  *  a and b are swapped.
@@ -124,9 +125,9 @@ T& max(const T& a, const T& b) {
  ******************************************************************************/
 template <typename T>
 void swap(T& a, T& b) {
-    T temp = a;
-    a = b;
-    b = temp;
+    T temp = std::move(a);
+    a = std::move(b);
+    b = std::move(temp);
 }
 
 /*******************************************************************************
@@ -189,8 +190,8 @@ void ordered_insert(T* data, std::size_t& size, const T& entry, bool replace) {
 
             if(entry < data[forward]) {
                 while(backward != forward) {
-                    data[backward] = data[backward - 1];  // shift right
-                    --backward;                           // walk backwards
+                    data[backward] = std::move(data[backward - 1]);  // shift ->
+                    --backward;  // walk backwards
                 }
                 data[forward] = entry;
                 break;
@@ -269,8 +270,8 @@ void insert_item(T* data, std::size_t i, std::size_t& size, const T& entry) {
     std::size_t walker = size;
 
     while(walker != i) {
-        data[walker] = data[walker - 1];  // shift right
-        --walker;                         // walker backwards
+        data[walker] = std::move(data[walker - 1]);  // shift right
+        --walker;                                    // walker backwards
     }
     data[walker] = entry;
 
@@ -295,7 +296,7 @@ void insert_item(T* data, std::size_t i, std::size_t& size, const T& entry) {
  ******************************************************************************/
 template <typename T>
 void detach_item(T* data, std::size_t& size, T& entry) {
-    if(size) entry = data[--size];
+    if(size) entry = std::move(data[--size]);
 }
 
 /*******************************************************************************
@@ -317,7 +318,7 @@ void detach_item(T* data, std::size_t& size, T& entry) {
 template <typename T>
 void delete_item(T* data, std::size_t i, std::size_t& size) {
     if(i < size) {
-        while(++i < size) data[i - 1] = data[i];  // shift left
+        while(++i < size) data[i - 1] = std::move(data[i]);  // shift left
         --size;
     }
 }
@@ -343,8 +344,8 @@ void delete_item(T* data, std::size_t i, std::size_t& size) {
 template <typename T>
 void delete_item(T* data, std::size_t i, std::size_t& size, T& entry) {
     if(i < size) {
-        entry = data[i];                          // return T to caller
-        while(++i < size) data[i - 1] = data[i];  // shift left
+        entry = data[i];                                     // return T
+        while(++i < size) data[i - 1] = std::move(data[i]);  // shift left
         --size;
     }
 }
@@ -370,7 +371,8 @@ void delete_item(T* data, std::size_t i, std::size_t& size, T& entry) {
  ******************************************************************************/
 template <typename T>
 void merge(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size) {
-    for(std::size_t i = 0; i < src_size; ++i) dest[dest_size++] = src[i];
+    for(std::size_t i = 0; i < src_size; ++i)
+        dest[dest_size++] = std::move(src[i]);
     src_size = 0;
 }
 
@@ -398,7 +400,7 @@ template <typename T>
 void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size) {
     std::size_t mid = (src_size + 1) / 2, walker = mid;
 
-    while(walker < src_size) dest[dest_size++] = src[walker++];
+    while(walker < src_size) dest[dest_size++] = std::move(src[walker++]);
     src_size = mid;
 }
 
@@ -428,7 +430,7 @@ void copy_array(const T* src, std::size_t src_size, T* dest,
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Shallow transfer data from source to destination.
+ *  Move data from source to destination.
  *
  * PRE-CONDITIONS:
  *  T* src                : source array
@@ -448,7 +450,7 @@ template <typename T>
 void transfer_array(T* src, std::size_t& src_size, T* dest,
                     std::size_t& dest_size) {
     for(dest_size = 0; dest_size < src_size; ++dest_size)
-        dest[dest_size] = src[dest_size];
+        dest[dest_size] = std::move(src[dest_size]);
     src_size = 0;
 }
 

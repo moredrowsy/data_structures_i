@@ -275,10 +275,10 @@ bool BTree<T>::insert(const T& entry) {
             BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer 'this' to new
 
             // transfer 'this' data/subset to new node's data/subset
-            copy_array(_data, _data_count, new_node->_data,
-                       new_node->_data_count);
-            copy_array(_subset, _child_count, new_node->_subset,
-                       new_node->_child_count);
+            transfer_array(_data, _data_count, new_node->_data,
+                           new_node->_data_count);
+            transfer_array(_subset, _child_count, new_node->_subset,
+                           new_node->_child_count);
             new_node->update_size();
 
             _size = 0;
@@ -321,11 +321,11 @@ bool BTree<T>::remove(const T& entry) {
         if(_data_count == 0 && _child_count == 1) {
             BTree<T>* pop = _subset[0];  // hold child
 
-            // copy all of only child's data/subset back to 'this'
-            copy_array(_subset[0]->_data, _subset[0]->_data_count, _data,
-                       _data_count);
-            copy_array(_subset[0]->_subset, _subset[0]->_child_count, _subset,
-                       _child_count);
+            // transfer only child's data/subset back to 'this'
+            transfer_array(_subset[0]->_data, _subset[0]->_data_count, _data,
+                           _data_count);
+            transfer_array(_subset[0]->_subset, _subset[0]->_child_count,
+                           _subset, _child_count);
             update_size();
 
             pop->_child_count = 0;  // prevent double delete

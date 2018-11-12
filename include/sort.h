@@ -14,6 +14,7 @@
 #include <cmath>    // log()
 #include <cstdlib>  // rand(), srand()
 #include <string>   // string objects
+#include <utility>  // move()
 
 namespace sort {
 
@@ -114,23 +115,23 @@ void intro2(T *data, std::size_t size, C cmp, std::size_t &limit,
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Swap two objects.
+ *  Swap two items via std::move
  *
  * PRE-CONDITIONS:
- *  T &left : left item
- *  T &right: right item
+ *  T& a: templated item by reference
+ *  T& b: templated item by reference
  *
  * POST-CONDITIONS:
- *  Items swapped.
+ *  a and b are swapped.
  *
  * RETURN:
  *  none
  ******************************************************************************/
 template <typename T>
 void swap(T &a, T &b) {
-    T temp = a;
-    a = b;
-    b = temp;
+    T temp = std::move(a);
+    a = std::move(b);
+    b = std::move(temp);
 }
 
 /*******************************************************************************
@@ -374,11 +375,11 @@ void insertion_sort(T *data, std::size_t size, C cmp) {
 
         // walker backwards and shift values until fixed is not less than prev
         while(j > 0 && cmp(fixed, data[j - 1])) {
-            data[j] = data[j - 1];
+            data[j] = std::move(data[j - 1]);
             --j;
         }
 
-        data[j] = fixed;  // restore fixed back to shifted position
+        data[j] = std::move(fixed);  // restore fixed back to shifted position
     }
 }
 
@@ -665,22 +666,22 @@ bool verify_greater(const T *data, std::size_t size) {
  ******************************************************************************/
 template <typename T, typename C>
 void merge(T *data, std::size_t size1, std::size_t size2, C cmp) {
-    std::size_t copied = 0, copied1 = 0, copied2 = 0;
+    std::size_t cpy = 0, cpy1 = 0, cpy2 = 0;
     T *buffer = new T[size1 + size2];  // temporary array
 
-    while((copied1 < size1) && (copied2 < size2)) {  // merge elements to buffer
-        if(cmp(data[copied1], (data + size1)[copied2]))
-            buffer[copied++] = data[copied1++];
+    while((cpy1 < size1) && (cpy2 < size2)) {  // merge elements to buffer
+        if(cmp(data[cpy1], (data + size1)[cpy2]))
+            buffer[cpy++] = std::move(data[cpy1++]);
         else
-            buffer[copied++] = (data + size1)[copied2++];
+            buffer[cpy++] = std::move((data + size1)[cpy2++]);
     }
 
     // copy untouched but already sorted half to buffer
-    while(copied1 < size1) buffer[copied++] = data[copied1++];
-    while(copied2 < size2) buffer[copied++] = (data + size1)[copied2++];
+    while(cpy1 < size1) buffer[cpy++] = std::move(data[cpy1++]);
+    while(cpy2 < size2) buffer[cpy++] = std::move((data + size1)[cpy2++]);
 
     // copy buffer back to data
-    for(std::size_t i = 0; i < copied; ++i) data[i] = buffer[i];
+    for(std::size_t i = 0; i < cpy; ++i) data[i] = std::move(buffer[i]);
 
     delete[] buffer;
 }
