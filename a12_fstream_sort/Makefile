@@ -14,8 +14,8 @@ main.out: $(OBJ)
 
 main.o: main.cpp\
 	${INC}/timer.h\
-	${INC}/fstream_sort.h\
-	${INC}/fstream_byte_sort.h
+	${INC}/fstream_handler.h\
+	${INC}/fstream_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

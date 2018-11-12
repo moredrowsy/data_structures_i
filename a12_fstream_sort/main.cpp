@@ -1,12 +1,10 @@
-#include <chrono>
-#include <fstream>                         // fstream objects
-#include <iomanip>                         // setw()
-#include <iostream>                        // stream objects
-#include <string>                          // c_str()
-#include "../include/fstream_byte_sort.h"  // FStreamByteSort class
-#include "../include/fstream_sort.h"       // FStreamSort class
-#include "../include/fstream_utils.h"      // file stream utilities
-#include "../include/timer.h"              // Timer class
+#include <fstream>                     // fstream objects
+#include <iomanip>                     // setw()
+#include <iostream>                    // stream objects
+#include <string>                      // c_str()
+#include "../include/fstream_sort.h"   // FStreamSort class
+#include "../include/fstream_utils.h"  // file stream utilities
+#include "../include/timer.h"          // Timer class
 
 void gen_rand_int_file(std::string fname, int sample_osize = 250000);
 void gen_string_records(std::string fname, int sample_osize = 250000,
@@ -198,8 +196,8 @@ void test_single_fstream_sort(int sample_size, int buffer_size) {
 
 void test_single_fstream_byte_sort(int sample_size, int buffer_size,
                                    std::size_t data_size) {
-    using namespace fstream_byte_sort;
     using namespace fstream_utils;
+    using namespace fstream_sort;
 
     double in_time = 0, out_time = 0, gen_time = 0, gen_file_size = 0;
     std::string in_file = "records.txt", out_file = "records_fsb_results.txt";
