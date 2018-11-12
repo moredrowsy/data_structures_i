@@ -10,10 +10,11 @@ SRC             := ../src
 OBJ             := main.o
 
 main.out: $(OBJ)
-	$(CXX) -flto -o $@ $^
+	$(CXX) -o $@ $^
 
 main.o: main.cpp\
 	${INC}/timer.h\
+	${INC}/fstream_utils.h\
 	${INC}/fstream_handler.h\
 	${INC}/fstream_sort.h
 	$(CXX) $(CXXFLAGS) -c $<
@@ -21,4 +22,4 @@ main.o: main.cpp\
 .PHONY: clean
 
 clean:
-	rm -f *.o *.out random_ints.txt results.txt
+	rm -f *.o *.out

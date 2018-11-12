@@ -41,7 +41,6 @@
 
 #include <algorithm>          // sort()
 #include <cassert>            // assert()
-#include <cstring>            // strncmp()
 #include <fstream>            // ifstream, ofstream
 #include <memory>             // shared_ptr
 #include <string>             // string, c_str()
@@ -480,8 +479,8 @@ std::istream &FStreamByteSort::_extractions(std::istream &ins) {
         count = 0;
 
         for(std::size_t i = 0; i < size; ++i) {  // convert buf to block array
-            block[i] = &buffer[count];           // set block[i] to buff offset
-            count += _byte_size;                 // get next buff offset
+            block[i] = &buffer[count];           // set block[i] to buf offset
+            count += _byte_size;                 // get next buf offset
         }
         _sort_and_dump(block, size);  // sort and dump block to handler
     }
@@ -562,7 +561,7 @@ void FStreamByteSort::_sort_and_dump(char **block, std::size_t size) {
     std::string name = _tname + std::to_string(_fs_handlers.size());
 
     std::sort(block, block + size, [this](const char *a, const char *b) {
-        return std::strncmp(a, b, this->_byte_size) < 0;
+        return std::memcmp(a, b, this->_byte_size) < 0;
     });
 
     // pass block to FSByteHandler to create temp file

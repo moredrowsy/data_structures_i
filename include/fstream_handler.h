@@ -21,11 +21,10 @@
 #ifndef FSTREAM_HANDLER_H
 #define FSTREAM_HANDLER_H
 
-#include <algorithm>  // copy()
-#include <cstdio>     // remove()
-#include <cstring>    // strncmp()
-#include <fstream>    // ifstream, ofstream
-#include <string>     // string, c_str()
+#include <cstdio>   // remove()
+#include <cstring>  // memcmp(), memcpy()
+#include <fstream>  // ifstream, ofstream
+#include <string>   // string, c_str()
 
 namespace fstream_handler {
 
@@ -101,7 +100,7 @@ public:
     }
 
     friend bool operator<(const FSByteHandler &l, const FSByteHandler &r) {
-        return std::strncmp(l._data, r._data, l._byte_size) < 0;
+        return std::memcmp(l._data, r._data, l._byte_size) < 0;
     }
 
 private:
@@ -175,7 +174,7 @@ FSHandler<T>::~FSHandler() {
  *  none
  *
  * RETURN:
- *  none
+ *  bool
  ******************************************************************************/
 template <typename T>
 FSHandler<T>::operator bool() {
@@ -312,7 +311,7 @@ FSByteHandler::FSByteHandler(std::string name, char **block, std::size_t size,
 
         std::ofstream outs(_name.c_str(), std::ios::binary | std::ios::trunc);
         for(std::size_t i = 0; i < size; ++i) {
-            std::copy(block[i], block[i] + _byte_size, buffer + count);
+            std::memcpy(buffer + count, block[i], byte_size);
             count += (_byte_size);  // update buf offset
         }
         outs.write(buffer, count);  // write entire buffer
@@ -351,7 +350,7 @@ FSByteHandler::~FSByteHandler() { clear(); }
  *  none
  *
  * RETURN:
- *  none
+ *  bool
  ******************************************************************************/
 FSByteHandler::operator bool() { return _file.good(); }
 
@@ -393,7 +392,7 @@ FSByteHandler &FSByteHandler::operator>>(std::ostream &outs) {
  ******************************************************************************/
 FSByteHandler &FSByteHandler::operator>>(char *&data) {
     if(_file) {
-        std::copy(_data, _data + _byte_size, data);
+        std::memcpy(data, _data, _byte_size);
         _file.read(_data, _byte_size);
     }
     return *this;

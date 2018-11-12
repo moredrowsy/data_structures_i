@@ -10,6 +10,7 @@
 #ifndef FSTREAM_UTILS_H
 #define FSTREAM_UTILS_H
 
+#include <cstring>  // memcmp(), memcpy()
 #include <fstream>  // ifstream, ofstream
 #include <string>   // string
 
@@ -25,6 +26,9 @@ int count_file(std::string fname);
 // verify a medium sized file is sorted
 template <typename T>
 bool verify_sorted_file(std::string fname);
+
+// verify byte sized blocks are sorted
+bool verify_sorted_byte_file(std::string fname, std::size_t byte_size);
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -94,9 +98,44 @@ bool verify_sorted_file(std::string fname) {
             is_sorted = false;
             break;
         }
-
         prev = current;
     }
+
+    return is_sorted;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verifies byte sized blocks are sorted in file.
+ *
+ * PRE-CONDITIONS:
+ *  std::string fname: valid file name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+bool verify_sorted_byte_file(std::string fname, std::size_t byte_size) {
+    bool is_sorted = true;
+    std::ifstream ins(fname.c_str(), std::ios::binary);
+    char *curr = new char[byte_size], *prev = new char[byte_size];
+
+    ins.read(curr, byte_size);  // read first value
+
+    while(ins) {
+        std::memcpy(prev, curr, byte_size);  // set prev to current
+        ins.read(curr, byte_size);           // set current to new data
+
+        if(std::memcmp(prev, curr, byte_size) > 0) {
+            is_sorted = false;
+            break;
+        }
+    }
+
+    delete[] curr;
+    delete[] prev;
 
     return is_sorted;
 }
