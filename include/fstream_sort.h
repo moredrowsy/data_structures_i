@@ -50,20 +50,20 @@
 namespace fstream_sort {
 
 enum { BLOCK_SIZE = 10000, BYTE_SIZE = fstream_handler::BYTE_SIZE };
-enum { endl = 10, space = 32, tab = 9 };
+enum : char { endl = '\n', space = ' ', tab = '\t' };
 
 template <typename T>
 class FStreamSort {
 public:
     // CONSTRUCTOR & DESTRUCTOR
-    FStreamSort(std::size_t size = BLOCK_SIZE, short delim = endl,
+    FStreamSort(std::size_t size = BLOCK_SIZE, char delim = endl,
                 std::string tname = "__temp__");
     ~FStreamSort();
 
     // MUTATORS
     void clear();  // clean up all stream objects and temp files
     void set_max_buffer(std::size_t size);  // change max buffer size
-    void set_delim(short delim);            // change delimiter between data
+    void set_delim(char delim);             // change delimiter between data
     void set_temp_name(std::string tname);  // set temp output file prefix
 
     // FRIENDS
@@ -140,7 +140,7 @@ private:
  *  none
  ******************************************************************************/
 template <typename T>
-FStreamSort<T>::FStreamSort(std::size_t size, short delim, std::string tname)
+FStreamSort<T>::FStreamSort(std::size_t size, char delim, std::string tname)
     : _delim(delim), _max_buf(size), _tname(tname) {
     assert(delim == endl || delim == space || delim == tab);
     assert(_max_buf > 0);
@@ -217,9 +217,9 @@ void FStreamSort<T>::set_max_buffer(std::size_t size) {
  *  none
  ******************************************************************************/
 template <typename T>
-void FStreamSort<T>::set_delim(short delim) {
+void FStreamSort<T>::set_delim(char delim) {
     assert(delim == endl || delim == space || delim == tab);
-    _delim = char(delim);
+    _delim = delim;
 }
 
 /*******************************************************************************

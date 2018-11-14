@@ -37,9 +37,9 @@ public:
             return lhs._ptr == rhs._ptr;
         }
 
-        friend Iterator operator++(Iterator &it, int u) {  // post-inc
+        friend Iterator operator++(Iterator &it, int _u) {  // post-inc
             List<T>::Iterator t = &it;
-            it._ptr = it._ptr._next;
+            ++it;
             return t;
         }
 

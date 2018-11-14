@@ -65,7 +65,8 @@ void merge(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size);
 // transfer n/2 elements from the right of src to dest
 // pre: src_size is entire array
 template <typename T>
-void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size);
+void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size,
+           bool after_mid = false);
 
 // copy *src into *dest
 template <typename T>
@@ -397,8 +398,10 @@ void merge(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size) {
  *  none
  ******************************************************************************/
 template <typename T>
-void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size) {
-    std::size_t mid = (src_size + 1) / 2, walker = mid;
+void split(T* src, std::size_t& src_size, T* dest, std::size_t& dest_size,
+           bool after_mid) {
+    std::size_t mid = after_mid ? (src_size + 1) / 2 : src_size / 2;
+    std::size_t walker = mid;
 
     while(walker < src_size) dest[dest_size++] = std::move(src[walker++]);
     src_size = mid;
