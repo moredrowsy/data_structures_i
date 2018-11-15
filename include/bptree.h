@@ -127,8 +127,9 @@ public:
     void fix_excess(std::size_t i);     // fix excess of data in child i
 
     // remove element functions
-    bool loose_remove(const T& entry);  // allows MINIMUM-1 data in the root
-    void fix_shortage(std::size_t i);   // fix shortage of data in child i
+    bool loose_remove(const T& entry);    // allows MINIMUM-1 data in the root
+    void fix_shortage(std::size_t i);     // fix shortage of data in child i
+    void remove_dup_key(const T& entry);  // remove duplicate key after delete
 
     void rotate_left(std::size_t i);   // xfer one data from child i+1 to i
     void rotate_right(std::size_t i);  // xfer one data from child i-1 to i
@@ -143,7 +144,7 @@ public:
 
     bool verify_tree(int& height, bool& has_stored_height, int level = 0) const;
     bool is_gt_subset(const BPTree<T>* subtree, const T& item) const;
-    bool is_lt_subset(const BPTree<T>* subtree, const T& item) const;
+    bool is_le_subset(const BPTree<T>* subtree, const T& item) const;
 };
 
 /*******************************************************************************
@@ -799,15 +800,13 @@ bool BPTree<T>::loose_remove(const T& entry) {
 
             // fix child's shortage
             if(_subset[i + 1]->_data_count < MINIMUM) fix_shortage(i + 1);
-
-            // replace duplicate key with subset[i+1]'s smallest
-            _subset[i + 1]->get_smallest(_data[i]);
-
+            remove_dup_key(entry);
         } else {
             is_removed = _subset[i]->loose_remove(entry);  // !found, recurse i
 
             // fix child's shortage
             if(_subset[i]->_data_count < MINIMUM) fix_shortage(i);
+            remove_dup_key(entry);
         }
     }
     update_size();
@@ -844,10 +843,50 @@ void BPTree<T>::fix_shortage(std::size_t i) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Searches for the duplicate key entry at data of i. If found, replaces data
+ *  of i with smallest entry of child i+1.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: duplicate key entry to remove
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BPTree<T>::remove_dup_key(const T& entry) {
+    // find index of T that's greater or qual to entry
+    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < _data[i]));
+
+    if(is_leaf()) {
+        if(is_found)  // found @ leaf, delete data @ i
+            array_utils::delete_item(_data, i, _data_count);
+        else
+            return;
+    } else {
+        if(is_found)
+            _subset[i + 1]->get_smallest(_data[i]);
+        else
+            _subset[i]->remove_dup_key(entry);
+    }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Rotates right child to destination child i: rotating [i+1] to [i]
  *  Internally, it attaches data @ i into child i's data. Then it transfers
  *  child i+1's front data to data @ i. Finally, if child i+1 has children,
  *  then transfer and attach child i+1's children to child i.
+ *  Algorithm:
+ *  1. Attach data @ i to back of child i's data
+ *  2. If child i+1 is !leaf, then transfer child i+1's front data to data @ i
+ *        and transfer child i+1's front subset to back of child i's subset.
+ *     else simply delete child i+1's front data and then add child i+1's front
+ *          data, which was previously child i+1's second data after delete, to
+ *          data @ i.
  *
  * PRE-CONDITIONS:
  *  std::size_t i: destintion child
@@ -891,9 +930,12 @@ void BPTree<T>::rotate_left(std::size_t i) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Rotates left child to destination child i: rotating [i-1] to [i]
- *  Internally, it insert data @ i-1 to front of child i's data. Then it
- *  transfers child i-1's last data to data @ i-1. Finally, if child i-1 has
- *  children, then transfer and insert child i-1's children to child i.
+ *  Algorithm:
+ *  1. Insert data @ i-1 to front of child i's data.
+ *  2. Detach child i-1's last data to data @ i-1.
+ *  3. If child i-1 is !leaf, then detach child i-1's last subset and
+ *     insert to child i's front subset;
+ *     else insert data @ i-1 to front of child i's data.
  *
  * PRE-CONDITIONS:
  *  std::size_t i: destintion child
@@ -935,8 +977,11 @@ void BPTree<T>::rotate_right(std::size_t i) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Merges/append the entire next child to destination child @ i.
- *  Internally, transfers and append data @ i to child i. Then appends entire
- *  data/subset of child i+1 to child i.
+ *  Algorithm:
+ *  1. If child i is leaf, then delete data[i];
+ *     else transfer and append data @ i to child i.
+ *  2. Appends entire data/subset of child i+1 to child i.
+ *  3. Update child i's next pointer and delete child i+1.
  *
  * PRE-CONDITIONS:
  *  std::size_t i: destintion child
@@ -1160,11 +1205,14 @@ bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
 
         for(std::size_t i = 0; i < _child_count; ++i) {
             if(i + 1 < _child_count) {
+                // verify that data[i] exists in one of the subset
+                if(!contains(_data[i])) return false;
+
                 // verify data[i] is greater than all of subset[i]
                 if(!is_gt_subset(_subset[i], _data[i])) return false;
 
                 // verify data[i] is less than all of subset[i+1]
-                if(!is_lt_subset(_subset[i + 1], _data[i])) return false;
+                if(!is_le_subset(_subset[i + 1], _data[i])) return false;
             }
 
             if(!_subset[i]->verify_tree(height, has_stored_height, level + 1))
@@ -1222,12 +1270,12 @@ bool BPTree<T>::is_gt_subset(const BPTree<T>* subtree, const T& item) const {
  *  bool
  ******************************************************************************/
 template <typename T>
-bool BPTree<T>::is_lt_subset(const BPTree<T>* subtree, const T& item) const {
-    if(!array_utils::is_lt(subtree->_data, subtree->_data_count, item))
+bool BPTree<T>::is_le_subset(const BPTree<T>* subtree, const T& item) const {
+    if(!array_utils::is_le(subtree->_data, subtree->_data_count, item))
         return false;
 
     for(std::size_t i = 0; i < subtree->_child_count; ++i)
-        if(!is_lt_subset(subtree->_subset[i], item)) return false;
+        if(!is_le_subset(subtree->_subset[i], item)) return false;
 
     return true;
 }
