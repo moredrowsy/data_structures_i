@@ -66,17 +66,19 @@ struct Pair {
 template <typename K, typename V>
 struct MPair {
     K key;
-    std::vector<V> value_list;
+    std::vector<V> values;
+    typename std::vector<V>::iterator value;
 
     // CONSTRUCTORS
-    MPair(const K& k = K()) : key(k) {}
-    MPair(const K& k, const V& v) : key(k) { value_list.push_back(v); }
+    MPair(const K& k = K()) : key(k), values(), value(values.begin()) {}
+    MPair(const K& k, const V& v)
+        : key(k), values({v}), value(values.begin()) {}
     MPair(const K& k, const std::vector<V>& vlist)
-        : key(k), value_list(vlist) {}
+        : key(k), values(vlist), value(values.begin()) {}
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const MPair<K, V>& mp) {
-        return outs << mp.key << " : " << mp.value_list;
+        return outs << mp.key << " : " << mp.values;
     }
 
     friend bool operator==(const MPair<K, V>& lhs, const MPair<K, V>& rhs) {
@@ -102,12 +104,13 @@ struct MPair {
     friend MPair<K, V> operator+(const MPair<K, V>& lhs,
                                  const MPair<K, V>& rhs) {
         assert(lhs.key == rhs.key);
-        return MPair(lhs.key, lhs.value_list + rhs.value_list);
+        return MPair(lhs.key, lhs.values + rhs.values);
     }
 
     friend MPair<K, V>& operator+=(MPair<K, V>& lhs, const MPair<K, V>& rhs) {
         assert(lhs.key == rhs.key);
-        lhs.value_list += rhs.value_list;  // on same key, lists are merged
+        lhs.values += rhs.values;  // on same key, lists are merged
+        lhs.value = lhs.values.begin();
         return lhs;
     }
 };

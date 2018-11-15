@@ -15,7 +15,9 @@ main.out: $(OBJ)
 main.o: main.cpp\
 	${INC}/array_utils.h\
 	${INC}/sort.h\
-	${INC}/bptree.h
+	${INC}/bptree.h\
+	${INC}/pair.h\
+	${INC}/bpt_map.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean

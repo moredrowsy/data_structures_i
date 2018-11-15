@@ -1,3 +1,4 @@
+#include <cstdlib>              // srand(), rand()
 #include <iostream>             // stream objects
 #include <string>               // string objects
 #include "../include/bt_map.h"  // BTree version of Map class
@@ -7,6 +8,12 @@ void test_map_interactive();
 void test_mmap_interactive();
 
 int main() {
+    test_map_interactive();
+    std::cout << std::endl;
+
+    test_mmap_interactive();
+    std::cout << std::endl;
+
     bool is_passed = true;
     for(int i = 0; i < 100; ++i) is_passed &= test_map_and_mmap_auto();
 
@@ -18,11 +25,6 @@ int main() {
         std::cout << "FAILED" << std::endl;
     std::cout << std::string(80, '-') << std::endl;
 
-    std::cout << std::endl;
-    test_map_interactive();
-    std::cout << std::endl;
-    test_mmap_interactive();
-
     return 0;
 }
 
@@ -30,12 +32,10 @@ bool test_map_and_mmap_auto() {
     using namespace bt_map;
     using namespace pair;
 
-    const int MAX = 100;
+    const int MAX = 1000;
 
     Map<int, int> map;
     MMap<int, int> mmap;
-    Pair<int, int> pairs[MAX];
-    MPair<int, int> mpairs[MAX];
     int keys[MAX];
     int values[MAX];
 
@@ -85,7 +85,7 @@ bool test_map_and_mmap_auto() {
 }
 
 void test_map_interactive() {
-    using namespace btree;
+    using namespace bt_map;
     typedef pair::Pair<std::string, std::string> Pair;
 
     std::cout << std::string(80, '-') << std::endl
@@ -93,7 +93,7 @@ void test_map_interactive() {
               << std::string(80, '-') << std::endl;
 
     const std::size_t SIZE = 24;
-    bt_map::Map<std::string, std::string> map;
+    Map<std::string, std::string> map;
     bool is_found = false, is_removed = false;
     char c;
     std::string key, value;
@@ -197,7 +197,7 @@ void test_map_interactive() {
 }
 
 void test_mmap_interactive() {
-    using namespace btree;
+    using namespace bt_map;
     typedef pair::MPair<std::string, std::string> Pair;
 
     std::cout << std::string(80, '-') << std::endl
@@ -205,7 +205,7 @@ void test_mmap_interactive() {
               << std::string(80, '-') << std::endl;
 
     const std::size_t SIZE = 24;
-    bt_map::MMap<std::string, std::string> mmap;
+    MMap<std::string, std::string> mmap;
     bool is_found = false, is_removed = false;
     char c;
     std::string key, value;

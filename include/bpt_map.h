@@ -21,6 +21,45 @@ class Map {
 public:
     typedef pair::Pair<K, V> Pair;
     typedef bptree::BPTree<Pair> MapBase;
+    typedef typename bptree::BPTree<Pair>::Iterator BPTPairIter;
+
+    class Iterator {
+    public:
+        friend class Map;
+
+        // CONSTRUCTOR
+        Iterator(BPTPairIter it = BPTPairIter(nullptr)) : _it(it) {}
+
+        bool is_null() { return !_it; }
+        explicit operator bool() { return (bool)_it; }
+
+        Pair& operator*() { return *_it; }    // member access
+        Pair* operator->() { return &*_it; }  // member access
+
+        Iterator& operator++() {  // pre-inc
+            ++_it;
+            return *this;
+        }
+
+        Iterator operator++(int _u) {  // post-inc
+            (void)_u;                  // suppress unused warning
+            Iterator it = *this;       // make temp
+            operator++();              // pre-inc
+            return it;                 // return previous state
+        }
+
+        // FRIENDS
+        friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
+            return lhs._it == rhs._it;
+        }
+
+        friend bool operator!=(const Iterator& lhs, const Iterator& rhs) {
+            return lhs._it != rhs._it;
+        }
+
+    private:
+        BPTPairIter _it;
+    };
 
     // CONSTRUCTOR
     Map() : _map(true) {}
@@ -30,6 +69,9 @@ public:
     bool empty() const;
 
     // element access
+    Iterator begin();
+    Iterator end();
+    Iterator find(const K& key);
     const V& operator[](const K& key) const;
     V& operator[](const K& key);
     const V& at(const K& key) const;
@@ -42,7 +84,6 @@ public:
     V& get(const K& key);
 
     // operations
-    // Iterator find(const K& key); // iterator not implemented
     bool contains(const Pair& target) const;
     std::size_t count(const K& key) const;
     void print_debug() const;
@@ -61,6 +102,50 @@ class MMap {
 public:
     typedef pair::MPair<K, V> MPair;
     typedef bptree::BPTree<MPair> MMapBase;
+    typedef typename bptree::BPTree<MPair>::Iterator BPTMPairIter;
+
+    class Iterator {
+    public:
+        friend class MMap;
+
+        // CONSTRUCTOR
+        Iterator(BPTMPairIter it = BPTMPairIter(nullptr)) : _it(it) {
+            if(_it) _it->value = _it->values.begin();
+        }
+
+        bool is_null() { return !_it; }
+        explicit operator bool() { return (bool)_it; }
+
+        MPair& operator*() { return *_it; }    // member access
+        MPair* operator->() { return &*_it; }  // member access
+
+        Iterator& operator++() {  // pre-inc
+            if(++_it->value == _it->values.end()) {
+                ++_it;
+                if(_it) _it->value = _it->values.begin();
+            }
+            return *this;
+        }
+
+        Iterator operator++(int _u) {  // post-inc
+            (void)_u;                  // suppress unused warning
+            Iterator it = *this;       // make temp
+            operator++();              // pre-inc
+            return it;                 // return previous state
+        }
+
+        // FRIENDS
+        friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
+            return lhs._it == rhs._it;
+        }
+
+        friend bool operator!=(const Iterator& lhs, const Iterator& rhs) {
+            return lhs._it != rhs._it;
+        }
+
+    private:
+        BPTMPairIter _it;
+    };
 
     MMap() : _mmap(true) {}
 
@@ -69,6 +154,9 @@ public:
     bool empty() const;
 
     // element access
+    Iterator begin();
+    Iterator end();
+    Iterator find(const K& key);
     const std::vector<V>& operator[](const K& key) const;
     std::vector<V>& operator[](const K& key);
     const std::vector<V>& at(const K& key) const;
@@ -81,7 +169,6 @@ public:
     std::vector<V>& get(const K& key);
 
     // operations
-    // Iterator find(const K& key); // iterator not implemented
     bool contains(const K& key) const;
     std::size_t count(const K& key) const;
     void print_debug() const;
@@ -131,6 +218,60 @@ std::size_t Map<K, V>::size() const {
 template <typename K, typename V>
 bool Map<K, V>::empty() const {
     return _map.empty();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to left most element in map.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::begin() {
+    return Map<K, V>::Iterator(_map.begin());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to end of map, which is nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::end() {
+    return Map<K, V>::Iterator(_map.end());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator that points to Pair that matches key.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points Pair that matches key
+ ******************************************************************************/
+template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::find(const K& key) {
+    return Map<K, V>::Iterator(_map.find(Pair(key)));
 }
 
 /*******************************************************************************
@@ -391,6 +532,60 @@ bool MMap<K, V>::empty() const {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Points to left most element in map.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  MMap<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::begin() {
+    return MMap<K, V>::Iterator(_mmap.begin());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to end of map, which is nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  MMap<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::end() {
+    return MMap<K, V>::Iterator(_mmap.end());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator that points to MPair that matches key.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  MMap<K, V>::Iterator: points MPair that matches key
+ ******************************************************************************/
+template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::find(const K& key) {
+    return MMap<K, V>::Iterator(_mmap.find(MPair(key)));
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Returns the reference value list at given key via subscript operator.
  *
  * PRE-CONDITIONS:
@@ -404,7 +599,7 @@ bool MMap<K, V>::empty() const {
  ******************************************************************************/
 template <typename K, typename V>
 const std::vector<V>& MMap<K, V>::operator[](const K& key) const {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -422,7 +617,7 @@ const std::vector<V>& MMap<K, V>::operator[](const K& key) const {
  ******************************************************************************/
 template <typename K, typename V>
 std::vector<V>& MMap<K, V>::operator[](const K& key) {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -440,7 +635,7 @@ std::vector<V>& MMap<K, V>::operator[](const K& key) {
  ******************************************************************************/
 template <typename K, typename V>
 const std::vector<V>& MMap<K, V>::at(const K& key) const {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -458,7 +653,7 @@ const std::vector<V>& MMap<K, V>::at(const K& key) const {
  ******************************************************************************/
 template <typename K, typename V>
 std::vector<V>& MMap<K, V>::at(const K& key) {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -532,7 +727,7 @@ void MMap<K, V>::clear() {
  ******************************************************************************/
 template <typename K, typename V>
 std::vector<V>& MMap<K, V>::get(const K& key) {
-    return _mmap.get(Pair(key)).value_list;
+    return _mmap.get(Pair(key)).values;
 }
 
 /*******************************************************************************
@@ -568,7 +763,7 @@ bool MMap<K, V>::contains(const K& key) const {
  ******************************************************************************/
 template <typename K, typename V>
 std::size_t MMap<K, V>::count(const K& key) const {
-    return _mmap.get(MPair(key)).value_list.size();
+    return _mmap.get(MPair(key)).values.size();
 }
 
 /*******************************************************************************

@@ -76,7 +76,7 @@ private:
 
     void copy(const BTree<T>& other);  // make unique copy from source
 
-    bool is_leaf() const { return _child_count == 0; }  // true if leaf node
+    inline bool is_leaf() const { return _child_count == 0; }  // check if leaf
     void update_size();
 
     // insert element functions

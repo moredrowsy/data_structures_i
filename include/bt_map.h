@@ -404,7 +404,7 @@ bool MMap<K, V>::empty() const {
  ******************************************************************************/
 template <typename K, typename V>
 const std::vector<V>& MMap<K, V>::operator[](const K& key) const {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -422,7 +422,7 @@ const std::vector<V>& MMap<K, V>::operator[](const K& key) const {
  ******************************************************************************/
 template <typename K, typename V>
 std::vector<V>& MMap<K, V>::operator[](const K& key) {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -440,7 +440,7 @@ std::vector<V>& MMap<K, V>::operator[](const K& key) {
  ******************************************************************************/
 template <typename K, typename V>
 const std::vector<V>& MMap<K, V>::at(const K& key) const {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -458,7 +458,7 @@ const std::vector<V>& MMap<K, V>::at(const K& key) const {
  ******************************************************************************/
 template <typename K, typename V>
 std::vector<V>& MMap<K, V>::at(const K& key) {
-    return _mmap.get(MPair(key)).value_list;
+    return _mmap.get(MPair(key)).values;
 }
 
 /*******************************************************************************
@@ -532,7 +532,7 @@ void MMap<K, V>::clear() {
  ******************************************************************************/
 template <typename K, typename V>
 std::vector<V>& MMap<K, V>::get(const K& key) {
-    return _mmap.get(Pair(key)).value_list;
+    return _mmap.get(Pair(key)).values;
 }
 
 /*******************************************************************************
@@ -568,7 +568,7 @@ bool MMap<K, V>::contains(const K& key) const {
  ******************************************************************************/
 template <typename K, typename V>
 std::size_t MMap<K, V>::count(const K& key) const {
-    return _mmap.get(MPair(key)).value_list.size();
+    return _mmap.get(MPair(key)).values.size();
 }
 
 /*******************************************************************************

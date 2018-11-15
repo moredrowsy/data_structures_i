@@ -25,22 +25,28 @@ public:
         friend class BPTree;
 
         // CONSTRUCTOR
-        Iterator(BPTree<T>* it = nullptr, std::size_t key_ptr = 0)
-            : _it(it), _key_ptr(key_ptr) {}
+        Iterator(BPTree<T>* it = nullptr, std::size_t index = 0)
+            : _it(it), _index(index) {}
 
         bool is_null() { return !_it; }
         explicit operator bool() { return _it; }
 
         T& operator*() {
-            if(_key_ptr >= _it->_data_count)
+            if(_index >= _it->_data_count)
                 throw std::out_of_range("BPTree::Iterator - range check");
-            return _it->_data[_key_ptr];
+            return _it->_data[_index];
+        }
+
+        T* operator->() {
+            if(_index >= _it->_data_count)
+                throw std::out_of_range("BPTree::Iterator - range check");
+            return &_it->_data[_index];
         }
 
         Iterator& operator++() {  // pre-inc
-            if(++_key_ptr == _it->_data_count) {
+            if(++_index == _it->_data_count) {
                 _it = _it->_next;
-                _key_ptr = 0;
+                _index = 0;
             }
             return *this;
         }
@@ -56,7 +62,7 @@ public:
 
         // FRIENDS
         friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
-            return lhs._it == rhs._it && lhs._key_ptr == rhs._key_ptr;
+            return lhs._it == rhs._it && lhs._index == rhs._index;
         }
 
         friend bool operator!=(const Iterator& lhs, const Iterator& rhs) {
@@ -65,7 +71,7 @@ public:
 
     private:
         BPTree<T>* _it;
-        std::size_t _key_ptr;
+        std::size_t _index;
     };
 
     // CONSTRUCTOR
@@ -119,7 +125,7 @@ public:
     void copy(const BPTree<T>& other);                    // wrapper to copy
     void copy(const BPTree<T>& other, BPTree<T>*& next);  // copy tree
 
-    bool is_leaf() const { return _child_count == 0; }  // true if leaf node
+    inline bool is_leaf() const { return _child_count == 0; }  // check if leaf
     void update_size();
 
     // insert element functions
@@ -457,7 +463,7 @@ bool BPTree<T>::remove(const T& entry) {
     using namespace array_utils;
 
     if(loose_remove(entry)) {
-        if(_data_count < 2 && _child_count == 1) {
+        if(_data_count <= 1 && _child_count == 1) {
             BPTree<T>* pop = _subset[0];  // hold child
 
             // transfer only child's data/subset back to 'this'
@@ -752,9 +758,12 @@ void BPTree<T>::fix_excess(std::size_t i) {
     // insert new node after subset[i], which is @ i + 1
     insert_item(_subset, i + 1, _child_count, new_node);
 
+    // get mid
+    T mid = is_after_mid ? _subset[i]->_data[_subset[i]->_data_count]
+                         : new_node->_data[0];
+
     // insert mid back into data[i]; subset[i]'s data_count points to mid
-    insert_item(_data, i, _data_count,
-                _subset[i]->_data[_subset[i]->_data_count]);
+    insert_item(_data, i, _data_count, std::move(mid));
 
     new_node->_next = _subset[i]->_next;  // update next pointers
     _subset[i]->_next = new_node;
@@ -806,7 +815,6 @@ bool BPTree<T>::loose_remove(const T& entry) {
 
             // fix child's shortage
             if(_subset[i]->_data_count < MINIMUM) fix_shortage(i);
-            remove_dup_key(entry);
         }
     }
     update_size();

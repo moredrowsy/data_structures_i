@@ -227,6 +227,8 @@ bool test_btree_big_three() {
 
     if(!is_passed) std::cout << "B I G  T H R E E  F A I L E D" << std::endl;
 
+    std::cout << "B-TREE TESTS: BIG THREE PASSED" << std::endl;
+
     return is_passed;
 }
 
@@ -272,6 +274,8 @@ bool test_btree_insert() {
 
     if(!is_passed) std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
 
+    std::cout << "B-TREE TESTS: INSERTIONS PASSED" << std::endl;
+
     return is_passed;
 }
 
@@ -316,6 +320,8 @@ bool test_btree_remove() {
     }
 
     if(!is_passed) std::cout << "R E M O V E D  F A I L E D" << std::endl;
+
+    std::cout << "B-TREE TESTS: REMOVALS PASSED" << std::endl;
 
     return is_passed;
 }
