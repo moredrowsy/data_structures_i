@@ -17,6 +17,8 @@ Projects for data structures using C++
 * Assignment 12 - Very large file sort - file stream partition, sort, and merge
 * Assignment 13 - Bubble, selection, insertion, merge, quick and heap sort
 * Assignment 14 - BTree
+* Assignment 15 - BTree's Map and Multi-Map
+* Assignment 16 - B+ Tree and B+ Tree's Map and Multi-Map
 * Exercise 01 - Car wash simulation using Queue
 * Exercise 02 - State machine to extract tokens via adjacency table
 * Exercise 03 - Recursive fractals

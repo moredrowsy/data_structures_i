@@ -5,6 +5,16 @@
  * HEADER      : btree
  * DESCRIPTION : This header provides a templated self-balancing BTree class,
  *      that allows for more than two children per node.
+ *
+ *      RULES:
+ *      1. Root can have 0 entries if no children, or at least 1 entry if it
+ *         has children. Every other node requires minimum entries.
+ *      2. Maximum entries is 2x minimum.
+ *      3. Entires are stored in partially filled arrays, in ascending order.
+ *      4. Number of children is 1 + number of entries.
+ *      5. Every nonleaf node is:
+ *         A) entry at i is greater than all entries in child i.
+ *         B) entry at i is less than all entires in child i+1.
  ******************************************************************************/
 #ifndef BTREE_H
 #define BTREE_H
@@ -38,8 +48,7 @@ public:
     // modifiers
     bool insert(const T& entry);
     bool remove(const T& entry);
-    void clear();                      // clear data and delete all linked nodes
-    void copy(const BTree<T>& other);  // make unique copy from source
+    void clear();  // clear data and delete all linked nodes
 
     // operations
     T* find(const T& entry);  // return ptr to T; else nullptr
@@ -64,6 +73,8 @@ private:
     T _data[MAXIMUM + 1];            // holds the keys
     std::size_t _child_count;        // number of children
     BTree<T>* _subset[MAXIMUM + 2];  // subtrees
+
+    void copy(const BTree<T>& other);  // make unique copy from source
 
     bool is_leaf() const { return _child_count == 0; }  // true if leaf node
     void update_size();
@@ -362,38 +373,6 @@ void BTree<T>::clear() {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Uniquely copies another BTree's into 'this'. REQUIREMENT: empty 'this'.
- *
- * PRE-CONDITIONS:
- *  const BTree<T>& other: source BTree to copy
- *  'this' BTree must be EMPTY/cleared before copying!
- *
- * POST-CONDITIONS:
- *  unique copy of other's states
- *
- * RETURN:
- *  none
- ******************************************************************************/
-template <typename T>
-void BTree<T>::copy(const BTree<T>& other) {
-    assert(this != &other);
-    assert(empty());
-
-    // copy states
-    _dups_ok = other._dups_ok;
-    _size = other._size;
-    _child_count = other._child_count;
-    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
-
-    // copy subset
-    for(std::size_t i = 0; i < other._child_count; ++i) {
-        _subset[i] = new BTree<T>(other._dups_ok);
-        _subset[i]->copy(*other._subset[i]);
-    }
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Returns the pointer to entry contained in the BTree. If the entry is not
  *  found, then nullptr.
  *
@@ -468,8 +447,7 @@ void BTree<T>::print(std::ostream& outs, bool debug, int level,
                      int index) const {
     if(_data_count)
         for(int i = _data_count - 1; i >= 0; --i) {
-            if(_child_count)
-                _subset[i + 1]->print(outs, debug, level + 1, i + 1);
+            if(!is_leaf()) _subset[i + 1]->print(outs, debug, level + 1, i + 1);
 
             if(!level) index = i;  // assign static root index
 
@@ -477,7 +455,7 @@ void BTree<T>::print(std::ostream& outs, bool debug, int level,
             if(debug) outs << index << ' ';
             outs << '|' << _data[i] << "|\n";
 
-            if(_child_count && !i) _subset[i]->print(outs, debug, level + 1, i);
+            if(!is_leaf() && !i) _subset[i]->print(outs, debug, level + 1, i);
         }
 }
 
@@ -499,6 +477,38 @@ bool BTree<T>::verify() const {
     bool has_stored_height = false;
     int height = 0;
     return verify_tree(height, has_stored_height);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Uniquely copies another BTree's into 'this'. REQUIREMENT: empty 'this'.
+ *
+ * PRE-CONDITIONS:
+ *  const BTree<T>& other: source BTree to copy
+ *  'this' BTree must be EMPTY/cleared before copying!
+ *
+ * POST-CONDITIONS:
+ *  unique copy of other's states
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BTree<T>::copy(const BTree<T>& other) {
+    assert(this != &other);
+    assert(empty());
+
+    // copy states
+    _dups_ok = other._dups_ok;
+    _size = other._size;
+    _child_count = other._child_count;
+    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
+
+    // copy subset
+    for(std::size_t i = 0; i < other._child_count; ++i) {
+        _subset[i] = new BTree<T>(other._dups_ok);
+        _subset[i]->copy(*other._subset[i]);
+    }
 }
 
 /*******************************************************************************
@@ -547,9 +557,9 @@ bool BTree<T>::loose_insert(const T& entry) {
     bool is_inserted = true;
 
     if(is_found) {
-        if(_dups_ok) {
+        if(_dups_ok)
             _data[i] += entry;  // append entry
-        } else
+        else
             is_inserted = false;  // return false on same entry
     } else if(is_leaf())          // not found @ leaf, insert data @ i
         array_utils::insert_item(_data, i, _data_count, entry);
@@ -737,7 +747,7 @@ void BTree<T>::rotate_left(std::size_t i) {
                 _data[i]);
 
     // if subest[i+1] has child, transfer to subset[i] via attach
-    if(_subset[i + 1]->_child_count) {
+    if(!_subset[i + 1]->is_leaf()) {
         BTree<T>* removed = nullptr;
         delete_item(_subset[i + 1]->_subset, 0, _subset[i + 1]->_child_count,
                     removed);
@@ -768,7 +778,7 @@ template <typename T>
 void BTree<T>::rotate_right(std::size_t i) {
     using namespace array_utils;
 
-    // transfer data[i-1] down to front of subset[i]->data via insert
+    // copy data[i-1] down to front of subset[i]->data via insert
     insert_item(_subset[i]->_data, 0, _subset[i]->_data_count, _data[i - 1]);
 
     // transfer subset[i-1]'s last data to replace data[i-1] via detach
@@ -776,7 +786,7 @@ void BTree<T>::rotate_right(std::size_t i) {
                 _data[i - 1]);
 
     // transfer subset[i-1]'s last subset to front of subset[i]'s subset
-    if(_subset[i - 1]->_child_count) {
+    if(!_subset[i - 1]->is_leaf()) {
         BTree<T>* detach = nullptr;
         detach_item(_subset[i - 1]->_subset, _subset[i - 1]->_child_count,
                     detach);

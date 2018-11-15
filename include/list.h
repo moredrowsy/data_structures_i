@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : list
+ * DESCRIPTION : This header provides a templated singly-linked list.
+ ******************************************************************************/
 #ifndef LIST_H
 #define LIST_H
 
@@ -17,15 +24,23 @@ public:
         Iterator(node::Node<T> *p = nullptr) : _ptr(p) {}
 
         // ACCESSORS
-        bool is_null() const { return _ptr == nullptr; }
-        operator bool() const { return _ptr != nullptr; }  // explicit bool conv
+        bool is_null() const { return !_ptr; }
+        operator bool() const { return _ptr; }  // explicit bool conv
 
         // MUTATORS
         T &operator*() { return _ptr->_item; }    // deference
         T *operator->() { return &_ptr->_item; }  // member access
-        Iterator &operator++() {                  // pre-inc
+
+        Iterator &operator++() {  // pre-inc
             _ptr = _ptr->_next;
             return *this;
+        }
+
+        Iterator &operator++(int _u) {  // post-inc
+            (void)_u;                   // suppress unused warning
+            Iterator it = *this;        // make temp
+            operator++();               // pre-inc
+            return it;                  // return previous state
         }
 
         // FRIENDS
@@ -35,12 +50,6 @@ public:
 
         friend bool operator==(const Iterator &lhs, const Iterator &rhs) {
             return lhs._ptr == rhs._ptr;
-        }
-
-        friend Iterator operator++(Iterator &it, int _u) {  // post-inc
-            List<T>::Iterator t = &it;
-            ++it;
-            return t;
         }
 
     private:

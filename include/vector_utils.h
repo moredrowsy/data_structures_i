@@ -45,9 +45,9 @@ std::vector<T>& operator+=(std::vector<T>& lhs, const std::vector<T>& rhs);
  ******************************************************************************/
 template <typename T>
 std::ostream& operator<<(std::ostream& outs, const std::vector<T>& list) {
-    for(std::size_t i = 0; i < list.size(); ++i) {
-        outs << list.at(i);
-        if(i != list.size() - 1) outs << ' ';
+    for(const auto& a : list) {
+        outs << a;
+        if(&a != &list.back()) outs << ' ';
     }
     return outs;
 }

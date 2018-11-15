@@ -28,18 +28,13 @@ public:
         Iterator(BPTree<T>* it = nullptr, std::size_t key_ptr = 0)
             : _it(it), _key_ptr(key_ptr) {}
 
+        bool is_null() { return !_it; }
         explicit operator bool() { return _it; }
 
         T& operator*() {
-            assert(_key_ptr < _it->_data_count);
+            if(_key_ptr >= _it->_data_count)
+                throw std::out_of_range("BPTree::Iterator - range check");
             return _it->_data[_key_ptr];
-        }
-
-        Iterator operator++(int _u) {        // post-inc
-            (void)_u;                        // suppress unused warning
-            BPTree<T>::Iterator it = *this;  // make temp
-            operator++();                    // pre-inc
-            return it;                       // return previous state
         }
 
         Iterator& operator++() {  // pre-inc
@@ -50,12 +45,18 @@ public:
             return *this;
         }
 
+        Iterator operator++(int _u) {  // post-inc
+            (void)_u;                  // suppress unused warning
+            Iterator it = *this;       // make temp
+            operator++();              // pre-inc
+            return it;                 // return previous state
+        }
+
         void print_Iterator() { std::cout << *_it; }
-        bool is_null() { return !_it; }
 
         // FRIENDS
         friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
-            return lhs._it == rhs._it;
+            return lhs._it == rhs._it && lhs._key_ptr == rhs._key_ptr;
         }
 
         friend bool operator!=(const Iterator& lhs, const Iterator& rhs) {
@@ -89,8 +90,7 @@ public:
     // modifiers
     bool insert(const T& entry);
     bool remove(const T& entry);
-    void clear();  // clear data and delete all linked nodes
-    void copy(const BPTree<T>& other);  // make unique copy from source
+    void clear();  // clear data and delete all nodes
 
     // misc
     bool contains(const T& entry) const;
@@ -100,11 +100,11 @@ public:
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BPTree<T>& bt) {
-        bt.print(outs);
+        bt.print(outs, true);
         return outs;
     }
 
-private:
+    // private:
     static const std::size_t MINIMUM = 1;
     static const std::size_t MAXIMUM = 2 * MINIMUM;
 
@@ -115,6 +115,9 @@ private:
     std::size_t _child_count;         // number of children
     BPTree<T>* _subset[MAXIMUM + 2];  // subtrees
     BPTree<T>* _next;                 // next sibling's subset
+
+    void copy(const BPTree<T>& other);                    // wrapper to copy
+    void copy(const BPTree<T>& other, BPTree<T>*& next);  // copy tree
 
     bool is_leaf() const { return _child_count == 0; }  // true if leaf node
     void update_size();
@@ -127,15 +130,16 @@ private:
     bool loose_remove(const T& entry);  // allows MINIMUM-1 data in the root
     void fix_shortage(std::size_t i);   // fix shortage of data in child i
 
-    void remove_largest(T& entry);     // remove largest child of tree->entry
     void rotate_left(std::size_t i);   // xfer one data from child i+1 to i
     void rotate_right(std::size_t i);  // xfer one data from child i-1 to i
     void merge_with_next_subset(std::size_t i);  // merge subset i w/ subset i+1
 
     BPTree<T>* get_smallest_node();
-    void get_smallest(T& entry);  // entry := leftmost leaf
-    void get_largest(T& entry);   // entry := rightmost leaf
-    T* find_ptr(const T& entry);  // return ptr to T; else nullptr
+    BPTree<T>* get_largest_node();
+    void get_smallest(T& entry);    // entry := leftmost leaf
+    void get_largest(T& entry);     // entry := rightmost leaf
+    void remove_largest(T& entry);  // remove largest child of tree->entry
+    T* find_ptr(const T& entry);    // return ptr to T; else nullptr
 
     bool verify_tree(int& height, bool& has_stored_height, int level = 0) const;
     bool is_gt_subset(const BPTree<T>* subtree, const T& item) const;
@@ -200,7 +204,7 @@ BPTree<T>::BPTree(const BPTree<T>& src)
       _size(0),
       _data_count(0),
       _child_count(0),
-      _next(src._next) {
+      _next(nullptr) {
     copy(src);
 }
 
@@ -264,7 +268,7 @@ bool BPTree<T>::empty() const {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Points to head.
+ *  Points to left most element in tree.
  *
  * PRE-CONDITIONS:
  *  none
@@ -273,16 +277,17 @@ bool BPTree<T>::empty() const {
  *  none
  *
  * RETURN:
- *  List<T>::Iterator: pointer to first element
+ *  BPTree<T>::Iterator: points to left most element
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::begin() {
-    return BPTree<T>::Iterator(get_smallest_node());
+    return size() ? BPTree<T>::Iterator(get_smallest_node())
+                  : BPTree<T>::Iterator(nullptr);
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Points after tail == nullptr.
+ *  Points to nullptr.
  *
  * PRE-CONDITIONS:
  *  none
@@ -291,11 +296,43 @@ typename BPTree<T>::Iterator BPTree<T>::begin() {
  *  none
  *
  * RETURN:
- *  List<T>::Iterator: iterator points to nullptr
+ *  BPTree<T>::Iterator: points to nullptr
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::end() {
     return BPTree<T>::Iterator(nullptr);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator to entry; else iterator points to nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
+    // find index of T that's greater or qual to entry
+    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < _data[i]));
+
+    if(is_leaf()) {
+        if(is_found)
+            return BPTree<T>::Iterator(this, i);
+        else
+            return BPTree<T>::Iterator(nullptr);
+    } else {                                     // @ !leaf
+        if(is_found)                             // when found
+            return _subset[i + 1]->find(entry);  // recurse i+1
+        else                                     // when !found
+            return _subset[i]->find(entry);      // recurse to find entry
+    }
 }
 
 /*******************************************************************************
@@ -419,7 +456,7 @@ bool BPTree<T>::remove(const T& entry) {
     using namespace array_utils;
 
     if(loose_remove(entry)) {
-        if(_data_count == 0 && _child_count == 1) {
+        if(_data_count < 2 && _child_count == 1) {
             BPTree<T>* pop = _subset[0];  // hold child
 
             // transfer only child's data/subset back to 'this'
@@ -459,71 +496,7 @@ void BPTree<T>::clear() {
     _size = 0;
     _data_count = 0;
     _child_count = 0;  // must clear child to prevent double delete
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Uniquely copies another BPTree's into 'this'. REQUIREMENT: empty 'this'.
- *
- * PRE-CONDITIONS:
- *  const BPTree<T>& other: source BPTree to copy
- *  'this' BPTree must be EMPTY/cleared before copying!
- *
- * POST-CONDITIONS:
- *  unique copy of other's states
- *
- * RETURN:
- *  none
- ******************************************************************************/
-template <typename T>
-void BPTree<T>::copy(const BPTree<T>& other) {
-    assert(this != &other);
-    assert(empty());
-
-    // copy states
-    _dups_ok = other._dups_ok;
-    _size = other._size;
-    _child_count = other._child_count;
-    _next = other._next;
-    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
-
-    // copy subset
-    for(std::size_t i = 0; i < other._child_count; ++i) {
-        _subset[i] = new BPTree<T>(other._dups_ok);
-        _subset[i]->copy(*other._subset[i]);
-    }
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Return iterator to entry; else iterator points to nullptr.
- *
- * PRE-CONDITIONS:
- *  const T& entry: target
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  bool
- ******************************************************************************/
-template <typename T>
-typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
-    // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
-
-    if(is_leaf()) {
-        if(is_found)
-            return BPTree<T>::Iterator(this, i);
-        else
-            return BPTree<T>::Iterator(nullptr);
-    } else {                                     // @ !leaf
-        if(is_found)                             // when found
-            return _subset[i + 1]->find(entry);  // recurse i+1
-        else                                     // when !found
-            return _subset[i]->find(entry);      // recurse to find entry
-    }
+    _next = nullptr;
 }
 
 /*******************************************************************************
@@ -579,8 +552,7 @@ void BPTree<T>::print(std::ostream& outs, bool debug, int level,
                       int index) const {
     if(_data_count)
         for(int i = _data_count - 1; i >= 0; --i) {
-            if(_child_count)
-                _subset[i + 1]->print(outs, debug, level + 1, i + 1);
+            if(!is_leaf()) _subset[i + 1]->print(outs, debug, level + 1, i + 1);
 
             if(!level) index = i;  // assign static root index
 
@@ -588,7 +560,7 @@ void BPTree<T>::print(std::ostream& outs, bool debug, int level,
             if(debug) outs << index << ' ';
             outs << '|' << _data[i] << "|\n";
 
-            if(_child_count && !i) _subset[i]->print(outs, debug, level + 1, i);
+            if(!is_leaf() && !i) _subset[i]->print(outs, debug, level + 1, i);
         }
 }
 
@@ -610,6 +582,66 @@ bool BPTree<T>::verify() const {
     bool has_stored_height = false;
     int height = 0;
     return verify_tree(height, has_stored_height);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Uniquely copies another BPTree's into 'this'. REQUIREMENT: empty 'this'.
+ *  This is a wrapper to call the copy() with tree pointer by ref to keep track
+ *  of leaf nodes.
+ *
+ * PRE-CONDITIONS:
+ *  const BPTree<T>& other: source BPTree to copy
+ *  'this' BPTree must be EMPTY/cleared before copying!
+ *
+ * POST-CONDITIONS:
+ *  unique copy of other's states
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BPTree<T>::copy(const BPTree<T>& other) {
+    assert(this != &other);
+    assert(empty());
+
+    BPTree<T>* next = nullptr;  // to keep track of leaf node by ref
+    copy(other, next);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Walkbackwards to uniquely copy another BPTree. Update every unique leaf's
+ *  _next to ref next (which will keep track of next unique leaf node).
+ *
+ * PRE-CONDITIONS:
+ *  const BPTree<T>& other: source BPTree to copy
+ *  BPTree<T>*& next = nullptr and keep track of next unique leaf node
+ *
+ * POST-CONDITIONS:
+ *  next := the next leaf node
+ *  unique copy of other's states
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BPTree<T>::copy(const BPTree<T>& other, BPTree<T>*& next) {
+    // copy states
+    _dups_ok = other._dups_ok;
+    _size = other._size;
+    _child_count = other._child_count;
+    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
+
+    if(is_leaf()) {    // when leaf
+        _next = next;  // assign this' _next to ref next
+        next = this;   // update ref next to this
+    } else {
+        for(int i = (int)_child_count - 1; i >= 0; --i) {  // when !leaf
+            _subset[i] = new BPTree<T>(other._dups_ok);    // copy backwards
+            _subset[i]->copy(*other._subset[i], next);
+        }
+    }
 }
 
 /*******************************************************************************
@@ -657,9 +689,9 @@ bool BPTree<T>::loose_insert(const T& entry) {
 
     if(is_leaf()) {
         if(is_found) {
-            if(_dups_ok) {
+            if(_dups_ok)
                 _data[i] += entry;  // append entry
-            } else
+            else
                 is_inserted = false;  // return false on same entry
         } else
             array_utils::insert_item(_data, i, _data_count, entry);
@@ -670,7 +702,7 @@ bool BPTree<T>::loose_insert(const T& entry) {
             // fix child node's over limit
             if(_subset[i + 1]->_data_count > MAXIMUM) fix_excess(i + 1);
         } else {
-            is_inserted = _subset[i]->loose_insert(entry);  // !found, recurse
+            is_inserted = _subset[i]->loose_insert(entry);  // !found, recurse i
 
             // fix child node's over limit
             if(_subset[i]->_data_count > MAXIMUM) fix_excess(i);
@@ -723,7 +755,9 @@ void BPTree<T>::fix_excess(std::size_t i) {
     insert_item(_data, i, _data_count,
                 _subset[i]->_data[_subset[i]->_data_count]);
 
+    new_node->_next = _subset[i]->_next;  // update next pointers
     _subset[i]->_next = new_node;
+
     new_node->update_size();
     _subset[i]->update_size();
 }
@@ -760,13 +794,21 @@ bool BPTree<T>::loose_remove(const T& entry) {
         else
             is_removed = false;  // not found @ leaf, then false
     } else {
-        if(is_found)
-            _subset[i]->remove_largest(_data[i]);
-        else
-            is_removed = _subset[i]->loose_remove(entry);  // not found, recurse
+        if(is_found) {
+            is_removed = _subset[i + 1]->loose_remove(entry);  // recurse i+1
 
-        // fix child's shortage
-        if(_subset[i]->_data_count < MINIMUM) fix_shortage(i);
+            // fix child's shortage
+            if(_subset[i + 1]->_data_count < MINIMUM) fix_shortage(i + 1);
+
+            // replace duplicate key with subset[i+1]'s smallest
+            _subset[i + 1]->get_smallest(_data[i]);
+
+        } else {
+            is_removed = _subset[i]->loose_remove(entry);  // !found, recurse i
+
+            // fix child's shortage
+            if(_subset[i]->_data_count < MINIMUM) fix_shortage(i);
+        }
     }
     update_size();
 
@@ -802,34 +844,6 @@ void BPTree<T>::fix_shortage(std::size_t i) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Recursively goes into BPTree and removes the largest item and calls
- *  fix_shortage on the way out of recursion.
- *
- * PRE-CONDITIONS:
- *  T& entry: entry to hold removed item
- *
- * POST-CONDITIONS:
- *  T& entry: set to removed item
- *
- * RETURN:
- *  none
- ******************************************************************************/
-template <typename T>
-void BPTree<T>::remove_largest(T& entry) {
-    if(is_leaf())
-        array_utils::detach_item(_data, _data_count, entry);
-    else {
-        _subset[_child_count - 1]->remove_largest(entry);
-
-        // fix child's shortage
-        if(_subset[_child_count - 1]->_data_count < MINIMUM)
-            fix_shortage(_child_count - 1);
-    }
-    update_size();
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Rotates right child to destination child i: rotating [i+1] to [i]
  *  Internally, it attaches data @ i into child i's data. Then it transfers
  *  child i+1's front data to data @ i. Finally, if child i+1 has children,
@@ -852,17 +866,24 @@ void BPTree<T>::rotate_left(std::size_t i) {
     // move data[i] down to subset[i]'s data via attach
     attach_item(_subset[i]->_data, _subset[i]->_data_count, _data[i]);
 
-    // move subset[i+1]'s front data to data[i] via delete
-    delete_item(_subset[i + 1]->_data, 0, _subset[i + 1]->_data_count,
-                _data[i]);
+    // if subset[i+1] has child, transfer to subset[i] via attach
+    if(!_subset[i + 1]->is_leaf()) {
+        // move subset[i+1]'s front data to data[i] via delete
+        delete_item(_subset[i + 1]->_data, 0, _subset[i + 1]->_data_count,
+                    _data[i]);
 
-    // if subest[i+1] has child, transfer to subset[i] via attach
-    if(_subset[i + 1]->_child_count) {
         BPTree<T>* removed = nullptr;
         delete_item(_subset[i + 1]->_subset, 0, _subset[i + 1]->_child_count,
                     removed);
         attach_item(_subset[i]->_subset, _subset[i]->_child_count, removed);
+    } else {
+        // simply delete subset[i+1]'s front data
+        delete_item(_subset[i + 1]->_data, 0, _subset[i + 1]->_data_count);
+
+        // move subset[i+1]'s front data (previously second front) to data[i]
+        _data[i] = _subset[i + 1]->_data[0];
     }
+
     _subset[i]->update_size();
     _subset[i + 1]->update_size();
 }
@@ -888,7 +909,7 @@ template <typename T>
 void BPTree<T>::rotate_right(std::size_t i) {
     using namespace array_utils;
 
-    // transfer data[i-1] down to front of subset[i]->data via insert
+    // copy data[i-1] down to front of subset[i]->data via insert
     insert_item(_subset[i]->_data, 0, _subset[i]->_data_count, _data[i - 1]);
 
     // transfer subset[i-1]'s last data to replace data[i-1] via detach
@@ -896,12 +917,17 @@ void BPTree<T>::rotate_right(std::size_t i) {
                 _data[i - 1]);
 
     // transfer subset[i-1]'s last subset to front of subset[i]'s subset
-    if(_subset[i - 1]->_child_count) {
+    if(!_subset[i - 1]->is_leaf()) {
         BPTree<T>* detach = nullptr;
         detach_item(_subset[i - 1]->_subset, _subset[i - 1]->_child_count,
                     detach);
         insert_item(_subset[i]->_subset, 0, _subset[i]->_child_count, detach);
+    } else {
+        // copy data[i-1] to subset[i]'s front data
+        insert_item(_subset[i]->_data, 0, _subset[i]->_data_count,
+                    _data[i - 1]);
     }
+
     _subset[i]->update_size();
     _subset[i - 1]->update_size();
 }
@@ -929,8 +955,10 @@ void BPTree<T>::merge_with_next_subset(std::size_t i) {
     // remove data[i] down to subset[i]'s data via attach
     T removed;
     array_utils::delete_item(_data, i, _data_count, removed);
-    array_utils::attach_item(_subset[i]->_data, _subset[i]->_data_count,
-                             removed);
+
+    if(!_subset[i]->is_leaf())
+        array_utils::attach_item(_subset[i]->_data, _subset[i]->_data_count,
+                                 removed);
 
     // move all subset[i+i]'s data and subset to subset[i]
     array_utils::merge(_subset[i + 1]->_data, _subset[i + 1]->_data_count,
@@ -938,36 +966,56 @@ void BPTree<T>::merge_with_next_subset(std::size_t i) {
     array_utils::merge(_subset[i + 1]->_subset, _subset[i + 1]->_child_count,
                        _subset[i]->_subset, _subset[i]->_child_count);
 
+    _subset[i]->_next = _subset[i + 1]->_next;  // update next pointer
+
     // deallocate empty subset[i+1] and remove subset[i+1] from subset
     delete _subset[i + 1];
     array_utils::delete_item(_subset, i + 1, _child_count);  // shift left
 
+    // _subset[i]->_next = _subset[i + 1];  // update next pointer
     _subset[i]->update_size();
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Return by reference the smallest item @ leaf node.
+ *  Return pointer to smallest item @ leaf node.
  *
  * PRE-CONDITIONS:
- *  T& entry: item to hold smallest
+ *  none
  *
  * POST-CONDITIONS:
- *  T& entry: set to smallest item in tree
+ *  none
  *
  * RETURN:
- *  by ref to entry
+ *  BPTree<T>*: pointer to smallest
  ******************************************************************************/
 template <typename T>
 BPTree<T>* BPTree<T>::get_smallest_node() {
-    BPTree<T>* smallest;
-
     if(is_leaf())
-        smallest = this;
+        return this;
     else
-        smallest = _subset[0]->get_smallest_node();
+        return _subset[0]->get_smallest_node();
+}
 
-    return smallest;
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return pointer to largest item @ leaf node.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>*: pointer to largest
+ ******************************************************************************/
+template <typename T>
+BPTree<T>* BPTree<T>::get_largest_node() {
+    if(is_leaf())
+        return this;
+    else
+        return _subset[_child_count - 1]->get_largest_node();
 }
 
 /*******************************************************************************
@@ -1014,6 +1062,34 @@ void BPTree<T>::get_largest(T& entry) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Recursively goes into BPTree and removes the largest item and calls
+ *  fix_shortage on the way out of recursion.
+ *
+ * PRE-CONDITIONS:
+ *  T& entry: entry to hold removed item
+ *
+ * POST-CONDITIONS:
+ *  T& entry: set to removed item
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BPTree<T>::remove_largest(T& entry) {
+    if(is_leaf())
+        array_utils::detach_item(_data, _data_count, entry);
+    else {
+        _subset[_child_count - 1]->remove_largest(entry);
+
+        // fix child's shortage
+        if(_subset[_child_count - 1]->_data_count < MINIMUM)
+            fix_shortage(_child_count - 1);
+    }
+    update_size();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Returns the pointer to entry contained in the BPTree. If the entry is not
  *  found, then nullptr.
  *
@@ -1032,12 +1108,17 @@ T* BPTree<T>::find_ptr(const T& entry) {
     std::size_t i = array_utils::first_ge(_data, _data_count, entry);
     bool is_found = (i < _data_count && !(entry < _data[i]));
 
-    if(is_found)
-        return &_data[i];
-    else if(is_leaf())
-        return nullptr;
-    else
-        return _subset[i]->find_ptr(entry);
+    if(is_leaf()) {
+        if(is_found)
+            return &_data[i];
+        else
+            return nullptr;
+    } else {                                         // @ !leaf
+        if(is_found)                                 // when found
+            return _subset[i + 1]->find_ptr(entry);  // recurse i+1
+        else                                         // when !found
+            return _subset[i]->find_ptr(entry);      // recurse to find entry
+    }
 }
 
 /*******************************************************************************
