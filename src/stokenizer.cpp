@@ -22,7 +22,6 @@ bool STokenizer::_made_table = false;
  ******************************************************************************/
 STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
     _buffer[0] = '\0';
-
     if(!_made_table) make_table(_table);
 }
 
@@ -43,7 +42,6 @@ STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
  ******************************************************************************/
 STokenizer::STokenizer(char str[]) : _buffer(), _buffer_size(0), _pos(0) {
     set_string(str);
-
     if(!_made_table) make_table(_table);
 }
 
@@ -64,7 +62,6 @@ STokenizer::STokenizer(char str[]) : _buffer(), _buffer_size(0), _pos(0) {
  ******************************************************************************/
 STokenizer::STokenizer(const char str[]) : _buffer(), _buffer_size(0), _pos(0) {
     set_string(str);
-
     if(!_made_table) make_table(_table);
 }
 
@@ -233,22 +230,21 @@ STokenizer& operator>>(STokenizer& s, token::Token& t) {
     std::string token;
 
     // process tokens one state at a time
-    if(s._pos > s._buffer_size) {  // bound check if call w/o more() or done()
+    if(s._pos > s._buffer_size)  // bound check if call w/o more() or done()
         t = token::Token();
-    } else if(s.get_token(state_machine::STATE_DOUBLE, token)) {
+    else if(s.get_token(state_machine::STATE_DOUBLE, token))
         t = token::Token(token, state_machine::STATE_DOUBLE);
-    } else if(s.get_token(state_machine::STATE_ALPHA, token)) {
+    else if(s.get_token(state_machine::STATE_ALPHA, token))
         t = token::Token(token, state_machine::STATE_ALPHA);
-    } else if(s.get_token(state_machine::STATE_SPACE, token)) {
+    else if(s.get_token(state_machine::STATE_SPACE, token))
         t = token::Token(token, state_machine::STATE_SPACE);
-    } else if(s.get_token(state_machine::STATE_PUNCT, token)) {
+    else if(s.get_token(state_machine::STATE_PUNCT, token))
         t = token::Token(token, state_machine::STATE_PUNCT);
-    } else {
-        if(s._pos == s._buffer_size) {  // create empty token on NUL char
+    else {
+        if(s._pos == s._buffer_size)  // create empty token on NUL char
             t = token::Token();
-        } else {  // create token for UNKNOWN char
+        else  // create token for UNKNOWN char
             t = token::Token(std::string(1, s._buffer[s._pos]));
-        }
 
         ++s._pos;  // when fail to get token, go to next position
     }

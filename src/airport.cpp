@@ -17,7 +17,6 @@ namespace airport {
  ******************************************************************************/
 double Averager::average() const {
     assert(_count > 0);
-
     return _sum / _count;
 }
 
@@ -169,9 +168,7 @@ void Airport::depart_plane() {
     assert(has_clearance());
 
     // start takeoff time when takeoff time is > 0
-    if(_takeoff_time > 0) {
-        _takeoff_countdown = _takeoff_time;
-    }
+    if(_takeoff_time > 0) _takeoff_countdown = _takeoff_time;
 }
 
 /*******************************************************************************
@@ -192,9 +189,7 @@ void Airport::land_plane() {
     assert(has_clearance());
 
     // start landing time when landing time is > 0
-    if(_landing_time > 0) {
-        _landing_countdown = _landing_time;
-    }
+    if(_landing_time > 0) _landing_countdown = _landing_time;
 }
 
 /*******************************************************************************

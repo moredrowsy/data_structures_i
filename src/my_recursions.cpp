@@ -87,12 +87,11 @@ void r3_permutation(std::string first, std::string second) {
     }
 
     // loop through all pos of first string
-    for(int i = first.size() - 1; i >= 0; --i) {
+    for(int i = first.size() - 1; i >= 0; --i)
         // recurse with first string's char erased at i pos and with second
         // inserted with erased char at front
         r3_permutation(std::string(first).erase(i, 1),
                        std::string(second).insert(0, 1, first[i]));
-    }
 }
 
 /*******************************************************************************
@@ -159,9 +158,7 @@ unsigned r4_i_box(std::string prefix, unsigned level) {
  *  none
  ******************************************************************************/
 double r5_sumover(unsigned level) {
-    if(!level) return 0;  // base: level is zero
-
-    return (1.0 / level) + r5_sumover(level - 1);  // return recurse sum
+    return level ? (1.0 / level) + r5_sumover(level - 1) : 0;
 }
 
 /*******************************************************************************

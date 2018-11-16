@@ -5,7 +5,6 @@ namespace washer {
 /* Implementation for class Averager */
 double Averager::average() const {
     assert(_count > 0);
-
     return _sum / _count;
 }
 
@@ -32,15 +31,11 @@ bool BoolSource::query() const { return rand() < _probability * RAND_MAX; }
 bool Washer::is_busy() const { return _wash_time_left > 0; }
 
 void Washer::one_second() {
-    if(is_busy()) {
-        _wash_time_left--;
-    }
+    if(is_busy()) _wash_time_left--;
 }
 
 void Washer::start_washing() {
-    if(!is_busy()) {
-        _wash_time_left = _seconds_per_wash;
-    }
+    if(!is_busy()) _wash_time_left = _seconds_per_wash;
 }
 
 }  // namespace washer

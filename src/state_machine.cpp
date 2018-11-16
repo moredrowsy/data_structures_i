@@ -16,11 +16,8 @@ namespace state_machine {
  *  none
  ******************************************************************************/
 void init_table(int _table[][MAX_COLUMNS]) {
-    for(int row = 0; row < MAX_ROWS; ++row) {
-        for(int col = 0; col < MAX_COLUMNS; ++col) {
-            _table[row][col] = -1;
-        }
-    }
+    for(int row = 0; row < MAX_ROWS; ++row)
+        for(int col = 0; col < MAX_COLUMNS; ++col) _table[row][col] = -1;
 }
 
 /*******************************************************************************
@@ -39,7 +36,6 @@ void init_table(int _table[][MAX_COLUMNS]) {
  ******************************************************************************/
 void mark_success(int _table[][MAX_COLUMNS], int state) {
     assert(state < MAX_ROWS);
-
     _table[state][0] = 1;
 }
 
@@ -59,7 +55,6 @@ void mark_success(int _table[][MAX_COLUMNS], int state) {
  ******************************************************************************/
 void mark_fail(int _table[][MAX_COLUMNS], int state) {
     assert(state < MAX_ROWS);
-
     _table[state][0] = 0;
 }
 
@@ -100,9 +95,7 @@ bool is_success(const int _table[][MAX_COLUMNS], int state) {
  ******************************************************************************/
 void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
                 int state) {
-    for(int col = from; col <= to; ++col) {
-        _table[row][col] = state;
-    }
+    for(int col = from; col <= to; ++col) _table[row][col] = state;
 }
 
 /*******************************************************************************
@@ -123,9 +116,8 @@ void mark_cells(int row, int _table[][MAX_COLUMNS], int from, int to,
  ******************************************************************************/
 void mark_cells(int row, int _table[][MAX_COLUMNS], const char columns[],
                 int state) {
-    for(int i = 0; columns[i] != '\0'; ++i) {
+    for(int i = 0; columns[i] != '\0'; ++i)
         _table[row][(int)columns[i]] = state;
-    }
 }
 
 /*******************************************************************************
@@ -287,26 +279,23 @@ void print_table(const int _table[][MAX_COLUMNS]) {
         for(int col = count; col < count + cols_per_row; ++col) {
             if(col < MAX_COLUMNS && (col < 32 || col > 126)) {
                 value_len = std::to_string(col).length();
-                if(value_len == 1) {
+                if(value_len == 1)
                     std::cout << "|  " << col << "  ";
-                } else if(value_len == 2) {
+                else if(value_len == 2)
                     std::cout << "|  " << col << " ";
-                } else if(value_len == 3) {
+                else if(value_len == 3)
                     std::cout << "| " << col << " ";
-                }
-            } else if(col < MAX_COLUMNS && col > 31 && col < 127) {
+
+            } else if(col < MAX_COLUMNS && col > 31 && col < 127)
                 std::cout << "| '" << static_cast<char>(col) << "' ";
-            }
         }
         std::cout << "|" << std::endl;
 
         // print bar
         std::cout << "--- -----";
-        for(int col = count; col < count + cols_per_row; ++col) {
-            if(col < MAX_COLUMNS) {
-                std::cout << " -----";
-            }
-        }
+        for(int col = count; col < count + cols_per_row; ++col)
+            if(col < MAX_COLUMNS) std::cout << " -----";
+
         std::cout << std::endl;
 
         // print values in array
@@ -316,24 +305,22 @@ void print_table(const int _table[][MAX_COLUMNS]) {
 
             // print column 0
             value_len = std::to_string(_table[row][0]).length();
-            if(value_len == 1) {
+            if(value_len == 1)
                 std::cout << "|  " << _table[row][0] << "  ";
-            } else if(value_len == 2) {
+            else if(value_len == 2)
                 std::cout << "|  " << _table[row][0] << " ";
-            } else if(value_len == 3) {
+            else if(value_len == 3)
                 std::cout << "| " << _table[row][0] << " ";
-            }
 
             for(int col = count; col < count + cols_per_row; ++col) {
                 if(col < MAX_COLUMNS) {
                     value_len = std::to_string(_table[row][col]).length();
-                    if(value_len == 1) {
+                    if(value_len == 1)
                         std::cout << "|  " << _table[row][col] << "  ";
-                    } else if(value_len == 2) {
+                    else if(value_len == 2)
                         std::cout << "|  " << _table[row][col] << " ";
-                    } else if(value_len == 3) {
+                    else if(value_len == 3)
                         std::cout << "| " << _table[row][col] << " ";
-                    }
                 }
             }
             std::cout << "|" << std::endl;
@@ -368,18 +355,16 @@ void show_string(const char s[], int _pos) {
     // print carat at pos when NOT pointint at NUL
     int index = 0;
     while(s[index] != '\0') {
-        if(index == _pos) {
+        if(index == _pos)
             std::cout << '^';
-        } else {
+        else
             std::cout << ' ';
-        }
+
         ++index;
     }
 
     // print carat behind string when pos is pointing at NUL
-    if(s[_pos] == '\0') {
-        std::cout << '^';
-    }
+    if(s[_pos] == '\0') std::cout << '^';
     std::cout << std::endl;
 
     assert(_pos <= index);  // assert _pos doesn't go past NUL
@@ -429,14 +414,10 @@ bool get_token(const int _table[][MAX_COLUMNS], const char input[], int &_pos,
     if(success) {
         // clear and create new token when success pos (default = -1)
         token.clear();
-        for(int i = original_pos; i < success_pos + 1; ++i) {
-            token += input[i];
-        }
-
+        for(int i = original_pos; i < success_pos + 1; ++i) token += input[i];
         _pos = success_pos + 1;  // return next position
-    } else {
+    } else
         _pos = original_pos;
-    }
 
     return success;
 }

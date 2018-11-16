@@ -111,7 +111,6 @@ token::Token FTokenizer::next_token() {
         _more = get_new_block();
         _stk >> t;
     }
-
     _block_pos += t.token_str().size();  // update block pos
 
     return t;

@@ -419,9 +419,8 @@ typename List<T>::Iterator List<T>::insert_before(const T &item,
         new_node = node::insert_head(_head, item);
         if(!_tail) _tail = new_node;
     } else {
-        while(walker->_next != marker._ptr) {  // find previous node
+        while(walker->_next != marker._ptr)  // find previous node
             walker = walker->_next;
-        }
 
         // insert after previous node to marker
         new_node = node::insert_after(_head, walker, item);
