@@ -26,11 +26,13 @@
 
 namespace btree {
 
+enum { MINIMUM = 1 };
+
 template <class T>
 class BTree {
 public:
     // CONSTRUCTOR
-    BTree(bool dups = false);
+    BTree(bool dups = false, std::size_t min = MINIMUM);
 
     // BIG THREE
     ~BTree();
@@ -64,27 +66,27 @@ public:
     }
 
 private:
-    static const std::size_t MINIMUM = 1;
-    static const std::size_t MAXIMUM = 2 * MINIMUM;
-
-    bool _dups_ok;                   // true if duplicate keys may be inserted
-    std::size_t _size;               // count of all elements
-    std::size_t _data_count;         // number of data elements
-    T _data[MAXIMUM + 1];            // holds the keys
-    std::size_t _child_count;        // number of children
-    BTree<T>* _subset[MAXIMUM + 2];  // subtrees
+    std::size_t _min;
+    std::size_t _max;
+    bool _dups_ok;             // true if duplicate keys may be inserted
+    std::size_t _size;         // count of all elements
+    std::size_t _data_count;   // number of data elements
+    T* _data;                  // holds the keys
+    std::size_t _child_count;  // number of children
+    BTree<T>** _subset;        // subtrees
 
     void copy(const BTree<T>& other);  // make unique copy from source
+    void deallocate();
 
     inline bool is_leaf() const { return _child_count == 0; }  // check if leaf
     void update_size();
 
     // insert element functions
-    bool loose_insert(const T& entry);  // allows MAXIMUM+1 data in the root
+    bool loose_insert(const T& entry);  // allows _max+1 data in the root
     void fix_excess(std::size_t i);     // fix excess of data in child i
 
     // remove element functions
-    bool loose_remove(const T& entry);  // allows MINIMUM-1 data in the root
+    bool loose_remove(const T& entry);  // allows _min-1 data in the root
     void fix_shortage(std::size_t i);   // fix shortage of data in child i
 
     void remove_largest(T& entry);     // remove largest child of tree->entry
@@ -111,8 +113,18 @@ private:
  *  none
  ******************************************************************************/
 template <typename T>
-BTree<T>::BTree(bool dups)
-    : _dups_ok(dups), _size(0), _data_count(0), _child_count(0) {}
+BTree<T>::BTree(bool dups, std::size_t min)
+    : _min(min),
+      _max(2 * _min),
+      _dups_ok(dups),
+      _size(0),
+      _data_count(0),
+      _data(nullptr),
+      _child_count(0),
+      _subset(nullptr) {
+    _data = new T[_max + 1];
+    _subset = new BTree<T>*[_max + 2];
+}
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -129,7 +141,7 @@ BTree<T>::BTree(bool dups)
  ******************************************************************************/
 template <typename T>
 BTree<T>::~BTree() {
-    clear();
+    deallocate();
 }
 
 /*******************************************************************************
@@ -147,7 +159,16 @@ BTree<T>::~BTree() {
  ******************************************************************************/
 template <typename T>
 BTree<T>::BTree(const BTree<T>& src)
-    : _dups_ok(src._dups_ok), _size(0), _data_count(0), _child_count(0) {
+    : _min(src._min),
+      _max(src._max),
+      _dups_ok(src._dups_ok),
+      _size(0),
+      _data_count(0),
+      _data(nullptr),
+      _child_count(0),
+      _subset(nullptr) {
+    _data = new T[_max + 1];
+    _subset = new BTree<T>*[_max + 2];
     copy(src);
 }
 
@@ -167,6 +188,8 @@ BTree<T>::BTree(const BTree<T>& src)
 template <typename T>
 BTree<T>& BTree<T>::operator=(const BTree<T>& rhs) {
     if(this != &rhs) {
+        _min = rhs._min;
+        _max = rhs._max;
         clear();
         copy(rhs);
     }
@@ -263,7 +286,7 @@ T& BTree<T>::get(const T& entry) {
  * DESCRIPTION:
  *  Insert entry int BTree.
  *  Internally, it first calls loose_insert to insert entry. When returning
- *  from loose_insert, static parent might over MAXIMUM limit. If so, then
+ *  from loose_insert, static parent might over _max limit. If so, then
  *  transfer all current data/subset to new_node as the only child so that
  *  fix_excess can then fix this child, which was formally the parent.
  *
@@ -282,7 +305,7 @@ bool BTree<T>::insert(const T& entry) {
     using namespace array_utils;
 
     if(loose_insert(entry)) {
-        if(_data_count > MAXIMUM) {
+        if(_data_count > _max) {
             BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer 'this' to new
 
             // transfer 'this' data/subset to new node's data/subset
@@ -309,7 +332,7 @@ bool BTree<T>::insert(const T& entry) {
  * DESCRIPTION:
  *  Remove entry int BTree.
  *  Internally, it first calls loose_remove to insert entry. When returning
- *  from loose_remove, static parent be might under MINIMUM limit with only
+ *  from loose_remove, static parent be might under _min limit with only
  *  ONE child. If so, then store parent to a temporary pointer. Then, transfer
  *  all of the child's data/subset to parent. Finally, deallocate the temporary
  *  pointer.
@@ -349,7 +372,8 @@ bool BTree<T>::remove(const T& entry) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Deallocates all heap BTrees and clear data/subset counts.
+ *  Deallocates all heap BTrees and clear data/subset counts. Reallocate data
+ *  and subset.
  *
  * PRE-CONDITIONS:
  *  none
@@ -362,13 +386,9 @@ bool BTree<T>::remove(const T& entry) {
  ******************************************************************************/
 template <typename T>
 void BTree<T>::clear() {
-    for(std::size_t i = 0; i < _child_count; ++i) {
-        _subset[i]->clear();  // recurse into subset
-        delete _subset[i];
-    }
-    _size = 0;
-    _data_count = 0;
-    _child_count = 0;  // must clear child to prevent double delete
+    deallocate();
+    _data = new T[_max + 1];
+    _subset = new BTree<T>*[_max + 2];
 }
 
 /*******************************************************************************
@@ -506,9 +526,38 @@ void BTree<T>::copy(const BTree<T>& other) {
 
     // copy subset
     for(std::size_t i = 0; i < other._child_count; ++i) {
-        _subset[i] = new BTree<T>(other._dups_ok);
+        _subset[i] = new BTree<T>(other._dups_ok, other._min);
         _subset[i]->copy(*other._subset[i]);
     }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocates all heap BTrees and clear data/subset counts.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  empty
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void BTree<T>::deallocate() {
+    for(std::size_t i = 0; i < _child_count; ++i) {
+        _subset[i]->clear();  // recurse into subset
+        delete _subset[i];
+    }
+    _size = 0;
+    _data_count = 0;
+    _child_count = 0;  // must clear child to prevent double delete
+
+    delete[] _data;
+    delete[] _subset;
+    _data = nullptr;    // set to nullptr to prevent double delete
+    _subset = nullptr;  // set to nullptr to prevent double delete
 }
 
 /*******************************************************************************
@@ -533,7 +582,7 @@ void BTree<T>::update_size() {
 /*******************************************************************************
  * DESCRIPTION:
  *  Inserts an entry item consistent with BTree rules except that root can be
- *  over MAXIMUM limit.
+ *  over _max limit.
  *  Internally, if entry exist, it returns false or deal with duplicate.
  *  If not found @ internal node, then recurse. If is not found @ leaf, then
  *  insert into data.
@@ -567,7 +616,7 @@ bool BTree<T>::loose_insert(const T& entry) {
         is_inserted = _subset[i]->loose_insert(entry);  // not found, recurse
 
         // fix child node's over limit
-        if(_subset[i]->_data_count > MAXIMUM) fix_excess(i);
+        if(_subset[i]->_data_count > _max) fix_excess(i);
     }
     update_size();
 
@@ -620,7 +669,7 @@ void BTree<T>::fix_excess(std::size_t i) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Removes an entry item consistent with BTree rules except that root can be
- *  under MINIMUM limit.
+ *  under _min limit.
  *  Internally, if entry does not exist, it returns false.
  *  If not found @ internal node, then recurse.
  *  If found @ leaf, then remove item from data. If is found @ internal node,
@@ -656,7 +705,7 @@ bool BTree<T>::loose_remove(const T& entry) {
             is_removed = _subset[i]->loose_remove(entry);  // not found, recurse
 
         // fix child's shortage
-        if(_subset[i]->_data_count < MINIMUM) fix_shortage(i);
+        if(_subset[i]->_data_count < _min) fix_shortage(i);
     }
     update_size();
 
@@ -680,9 +729,9 @@ bool BTree<T>::loose_remove(const T& entry) {
  ******************************************************************************/
 template <typename T>
 void BTree<T>::fix_shortage(std::size_t i) {
-    if(i + 1 < _child_count && _subset[i + 1]->_data_count > MINIMUM)
+    if(i + 1 < _child_count && _subset[i + 1]->_data_count > _min)
         rotate_left(i);  // when right has more than minimum
-    else if(i > 0 && i < _child_count && _subset[i - 1]->_data_count > MINIMUM)
+    else if(i > 0 && i < _child_count && _subset[i - 1]->_data_count > _min)
         rotate_right(i);  // when left has more than minimum
     else if(i + 1 < _child_count)
         merge_with_next_subset(i);  // if there is right child
@@ -712,7 +761,7 @@ void BTree<T>::remove_largest(T& entry) {
         _subset[_child_count - 1]->remove_largest(entry);
 
         // fix child's shortage
-        if(_subset[_child_count - 1]->_data_count < MINIMUM)
+        if(_subset[_child_count - 1]->_data_count < _min)
             fix_shortage(_child_count - 1);
     }
     update_size();
@@ -862,14 +911,14 @@ bool BTree<T>::verify_tree(int& height, bool& has_stored_height,
     using namespace array_utils;
 
     // verify data count limits
-    if(level && (_data_count < MINIMUM || _data_count > MAXIMUM)) return false;
+    if(level && (_data_count < _min || _data_count > _max)) return false;
 
     // verify data is sorted
     if(!sort::verify(_data, _data_count)) return false;
 
     if(!is_leaf()) {
         // verify child count limits
-        if(_child_count > MAXIMUM + 1 || _child_count != _data_count + 1)
+        if(_child_count > _max + 1 || _child_count != _data_count + 1)
             return false;
 
         for(std::size_t i = 0; i < _child_count; ++i) {
