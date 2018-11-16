@@ -13,7 +13,8 @@
 #include <iomanip>                  // io stream foratting
 #include <iostream>                 // io stream objects
 #include <string>                   // string objects
-#include "../include/stokenizer.h"  // state_machine, Token, STokenizer class
+#include "../include/stokenizer.h"  // state_machine, STokenizer class
+#include "../include/token.h"       // Token class
 
 // continuously extract tokens from char array
 void extract_tokens(const char s[]);
@@ -71,7 +72,7 @@ void extract_tokens(const char s[]) {
     using namespace stokenizer;
 
     STokenizer stk(s);
-    Token t;
+    token::Token t;
 
     std::cout << std::setw(10) << std::right << "TYPE"
               << " " << std::left << "TOKEN" << std::endl

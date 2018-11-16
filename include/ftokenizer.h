@@ -21,7 +21,8 @@
 #include <cassert>       // assertions
 #include <fstream>       // file stream objects
 #include <iostream>      // stream objects
-#include "stokenizer.h"  // state_machine funcs, STokenizer, Token classes
+#include "stokenizer.h"  // state_machine funcs, STokenizer
+#include "token.h"       // Token class
 
 namespace ftokenizer {
 
@@ -39,10 +40,10 @@ public:
     explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
-    stokenizer::Token next_token();
+    token::Token next_token();
 
     // FRIENDS
-    friend FTokenizer& operator>>(FTokenizer& f, stokenizer::Token& t);
+    friend FTokenizer& operator>>(FTokenizer& f, token::Token& t);
 
 private:
     bool get_new_block();         // gets the new block from the file

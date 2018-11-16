@@ -15,6 +15,7 @@ main.out: $(OBJ)
 main.o: main.cpp\
 	${INC}/array_utils.h\
 	${INC}/sort.h\
+	${INC}/vector_utils.h\
 	${INC}/bptree.h\
 	${INC}/pair.h\
 	${INC}/bpt_map.h

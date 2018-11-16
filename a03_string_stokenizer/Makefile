@@ -5,7 +5,7 @@ CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 
 INC             := ../include
 SRC             := ../src
-OBJ             := main.o state_machine.o stokenizer.o
+OBJ             := main.o state_machine.o token.o stokenizer.o
 
 main.out: $(OBJ)
 	$(CXX) -o $@ $^
@@ -15,6 +15,10 @@ main.o: main.cpp
 
 state_machine.o: ${SRC}/state_machine.cpp\
 	${INC}/state_machine.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+token.o: ${SRC}/token.cpp\
+	${INC}/token.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 stokenizer.o: ${SRC}/stokenizer.cpp\

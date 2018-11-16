@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "../include/stokenizer.h"
+#include "../include/token.h"
 
 namespace test_stokenizer {
 
@@ -21,7 +22,7 @@ void test_token() {
 
     std::cout << "test_token: ";
 
-    Token t1, t2("123456789", state_machine::STATE_DOUBLE),
+    token::Token t1, t2("123456789", state_machine::STATE_DOUBLE),
         t3(" ", state_machine::STATE_SPACE),
         t4("ABCabc", state_machine::STATE_ALPHA), t5("", 1000);
 
@@ -53,7 +54,7 @@ void test_stokenizer() {
 
     std::cout << "test_stokenizer: ";
     STokenizer stk;
-    Token t;
+    token::Token t;
     int i;
 
     // test default constructor

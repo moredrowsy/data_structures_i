@@ -3,15 +3,12 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : stokenizer
- * DESCRIPTION : This header declares class Token and STokenizer. Token
- *      represents a string and a type associated with that string. It
- *      facilitates the STokenizer for interaction and reporting the type of
- *      tokens. The STokenizer will receive an input/buffer string (via
- *      constructor or set_string) and returns a valid token (via the insertion
- *      operator) from its starting position by its internal state machine,
- *      which follows the rules set in the adjacency matrix. STokenizer also
- *      maintains position current position of the input string when extracting
- *      token.
+ * DESCRIPTION : This header declares class STokenizer. The STokenizer will
+ *      receive an input/buffer string (via constructor or set_string) and
+ *      returns a valid token (via the insertion operator) from its starting
+ *      position by its internal state machine, which follows the rules set in
+ *      the adjacency matrix. STokenizer also maintains position current
+ *      position of the input string when extracting token, from class Token.
  ******************************************************************************/
 #ifndef STOKENIZER_H
 #define STOKENIZER_H
@@ -20,29 +17,12 @@
 #include <iostream>         // stream objects
 #include <string>           // string objects
 #include "state_machine.h"  // state_machine functions
+#include "token.h"          // Token class
 
 namespace stokenizer {
 
 // GLOBAL CONSTANT
 const int MAX_BUFFER = 500;
-
-class Token {
-public:
-    // CONSTRUCTORS
-    Token(std::string str = "", int type = -1) : _token(str), _type(type) {}
-
-    // ACCESSORS
-    int type() const;                 // return type of token in integer
-    std::string type_string() const;  // return type of token in string
-    std::string token_str() const;    // return string of token
-
-    // FRIENDS
-    friend std::ostream& operator<<(std::ostream& outs, const Token& t);
-
-private:
-    std::string _token;  // token string
-    int _type;           // type of token
-};
 
 class STokenizer {
 public:
@@ -62,7 +42,7 @@ public:
 
     // FRIENDS
     // extract one token (very similar to the way cin >> works)
-    friend STokenizer& operator>>(STokenizer& s, Token& t);
+    friend STokenizer& operator>>(STokenizer& s, token::Token& t);
 
 private:
     // create table for all the tokens we will recognize

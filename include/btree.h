@@ -26,11 +26,11 @@
 
 namespace btree {
 
-enum { MINIMUM = 1 };
-
 template <class T>
 class BTree {
 public:
+    enum { MINIMUM = 1 };
+
     // CONSTRUCTOR
     BTree(bool dups = false, std::size_t min = MINIMUM);
 
@@ -66,14 +66,14 @@ public:
     }
 
 private:
-    std::size_t _min;
-    std::size_t _max;
+    std::size_t _min;          // minimum entries
+    std::size_t _max;          // 2x min entries
     bool _dups_ok;             // true if duplicate keys may be inserted
     std::size_t _size;         // count of all elements
     std::size_t _data_count;   // number of data elements
-    T* _data;                  // holds the keys
+    T* _data;                  // holds the keys -> _data[_max+1]
     std::size_t _child_count;  // number of children
-    BTree<T>** _subset;        // subtrees
+    BTree<T>** _subset;        // subtrees -> _subset[_max+2]
 
     void copy(const BTree<T>& other);  // make unique copy from source
     void deallocate();

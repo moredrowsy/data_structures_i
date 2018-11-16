@@ -102,8 +102,8 @@ FTokenizer::operator bool() const { return more(); }
  * RETURN:
  *  Token
  ******************************************************************************/
-stokenizer::Token FTokenizer::next_token() {
-    stokenizer::Token t;
+token::Token FTokenizer::next_token() {
+    token::Token t;
     _stk >> t;
 
     // get new block if stk token extraction fails and try stk extraction again
@@ -131,7 +131,7 @@ stokenizer::Token FTokenizer::next_token() {
  * RETURN:
  *  FTokenizer for extraction  chaining
  ******************************************************************************/
-FTokenizer &operator>>(FTokenizer &f, stokenizer::Token &t) {
+FTokenizer &operator>>(FTokenizer &f, token::Token &t) {
     t = f.next_token();
 
     return f;

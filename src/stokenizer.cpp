@@ -8,95 +8,6 @@ bool STokenizer::_made_table = false;
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Returns an integer corresponding to the string type, such as the
- *  state_machine's state constants.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  int of string type (or state constants in state_machine)
- ******************************************************************************/
-int Token::type() const { return _type; }
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Returns a readable string corresponding to the string type, such as the
- *  state_machine's state constants, for human interpretation.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  string type for human readable interpretation
- ******************************************************************************/
-std::string Token::type_string() const {
-    std::string type_string;
-
-    switch(_type) {
-        case state_machine::STATE_UNKNOWN:
-            type_string = "UNKNOWN";
-            break;
-        case state_machine::STATE_DOUBLE:
-            type_string = "DOUBLE";
-            break;
-        case state_machine::STATE_SPACE:
-            type_string = "SPACE";
-            break;
-        case state_machine::STATE_ALPHA:
-            type_string = "ALPHA";
-            break;
-        case state_machine::STATE_PUNCT:
-            type_string = "PUNCT";
-            break;
-        default:
-            type_string = "ERROR";
-    }
-
-    return type_string;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Returns the string value, such as the input buffer string from STokenizer.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  string
- ******************************************************************************/
-std::string Token::token_str() const { return _token; }
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Inserts a formatted Token's string value to the outstream.
- *
- * PRE-CONDITIONS:
- *  ostream& outs : out stream
- *  const Token& t: Token object with string value
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  ostream by reference
- ******************************************************************************/
-std::ostream& operator<<(std::ostream& outs, const Token& t) {
-    return outs << "|" + t.token_str() + "|";
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Default constructor initializes _buffer and _pos  to 0 and calls make_table
  *  to initialize all values in table to -1.
  *
@@ -318,25 +229,25 @@ bool STokenizer::get_token(int start_state, std::string& token) {
     return state_machine::get_token(_table, _buffer, _pos, start_state, token);
 }
 
-STokenizer& operator>>(STokenizer& s, Token& t) {
+STokenizer& operator>>(STokenizer& s, token::Token& t) {
     std::string token;
 
     // process tokens one state at a time
     if(s._pos > s._buffer_size) {  // bound check if call w/o more() or done()
-        t = Token();
+        t = token::Token();
     } else if(s.get_token(state_machine::STATE_DOUBLE, token)) {
-        t = Token(token, state_machine::STATE_DOUBLE);
+        t = token::Token(token, state_machine::STATE_DOUBLE);
     } else if(s.get_token(state_machine::STATE_ALPHA, token)) {
-        t = Token(token, state_machine::STATE_ALPHA);
+        t = token::Token(token, state_machine::STATE_ALPHA);
     } else if(s.get_token(state_machine::STATE_SPACE, token)) {
-        t = Token(token, state_machine::STATE_SPACE);
+        t = token::Token(token, state_machine::STATE_SPACE);
     } else if(s.get_token(state_machine::STATE_PUNCT, token)) {
-        t = Token(token, state_machine::STATE_PUNCT);
+        t = token::Token(token, state_machine::STATE_PUNCT);
     } else {
         if(s._pos == s._buffer_size) {  // create empty token on NUL char
-            t = Token();
+            t = token::Token();
         } else {  // create token for UNKNOWN char
-            t = Token(std::string(1, s._buffer[s._pos]));
+            t = token::Token(std::string(1, s._buffer[s._pos]));
         }
 
         ++s._pos;  // when fail to get token, go to next position

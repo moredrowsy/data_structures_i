@@ -6,7 +6,7 @@ CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 INC             := ../include
 SRC             := ../src
 OBJ             := test_all.o washer.o airport.o state_machine.o\
-                   stokenizer.o ftokenizer.o
+                   token.o stokenizer.o ftokenizer.o
 
 # tests for al files
 tests.out: $(OBJ)
@@ -88,9 +88,14 @@ state_machine.o: ${SRC}/state_machine.cpp\
 	${INC}/state_machine.h
 	$(CXX) $(CXXFLAGS) -c $<
 
+token.o: ${SRC}/token.cpp\
+	${INC}/token.h
+	$(CXX) $(CXXFLAGS) -c $<
+
 # test for stokenizer
 test_stokenizer.out: test_stokenizer.o\
 	state_machine.o\
+	token.o\
 	stokenizer.o
 	$(CXX) -o $@ $^
 
@@ -106,6 +111,7 @@ stokenizer.o: ${SRC}/stokenizer.cpp\
 # test for ftokenizer
 test_ftokenizer.out: test_ftokenizer.o\
 	state_machine.o\
+	token.o\
 	stokenizer.o\
     ftokenizer.o
 	$(CXX) -o $@ $^

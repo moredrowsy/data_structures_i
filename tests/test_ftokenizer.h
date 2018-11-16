@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include "../include/ftokenizer.h"
+#include "../include/token.h"
 
 namespace test_ftokenizer {
 
@@ -26,7 +27,7 @@ void test_ftokenizer() {
     // create FTokenizer with test_ftokenizer_file.txt
     int token_count = 0;
     FTokenizer ftk("test_ftokenizer_file.txt");
-    stokenizer::Token t;
+    token::Token t;
 
     while(ftk >> t) {
         ++token_count;

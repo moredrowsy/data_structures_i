@@ -12,6 +12,7 @@
 #include <iostream>                 // io stream objects
 #include <string>                   // string objects
 #include "../include/ftokenizer.h"  // Token, FTokenizer class
+#include "../include/token.h"       // Token class
 
 // continuously extract tokens from file
 void extract_file(char fname[]);
@@ -46,7 +47,7 @@ void extract_file(char fname[]) {
 
     int token_count = 0;
     FTokenizer ftk(fname);
-    stokenizer::Token t;
+    token::Token t;
 
     while(ftk >> t) {
         if(t.type_string() == "ALPHA") {
