@@ -3,9 +3,20 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : bpt_map
- * DESCRIPTION : This header provides a templated BPTree (B+ Tree) version
- *          of the Map/MMap class. The BTree is the base map with the
- *          Pair/MPair as the key/value structure.
+ * DESCRIPTION : This header provides a templated BPTree (B+Tree) version
+ *          of the Map/MMap class, along with Pair/MPair as the key/value(s)
+ *          structure.
+ *
+ *          Map uses BPTree as base with Pair. It does not allow duplicate keys
+ *          but allow value modification.
+ *          MMap uses BPTree as base with MPair. It does not allow duplicate
+ *          keys but allow duplicate values. The values are stored in
+ *          key/vector structure.
+ *
+ *          Map::Iterator returns Pair, with operator-> access to key/value.
+ *          MMap::Iterator returns MPair with operator-> access to key/value
+ *          or key/values. Increment of iterators for MMap::Iterator cycles
+ *          value per key and then increment to next key.
  ******************************************************************************/
 #ifndef BPT_MAP_H
 #define BPT_MAP_H
@@ -21,14 +32,14 @@ class Map {
 public:
     typedef pair::Pair<K, V> Pair;
     typedef bptree::BPTree<Pair> MapBase;
-    typedef typename bptree::BPTree<Pair>::Iterator BPTPairIter;
+    typedef typename bptree::BPTree<Pair>::Iterator MapBaseIter;
 
     class Iterator {
     public:
         friend class Map;
 
         // CONSTRUCTOR
-        Iterator(BPTPairIter it = BPTPairIter(nullptr)) : _it(it) {}
+        Iterator(MapBaseIter it = MapBaseIter(nullptr)) : _it(it) {}
 
         bool is_null() { return !_it; }
         explicit operator bool() { return (bool)_it; }
@@ -58,7 +69,7 @@ public:
         }
 
     private:
-        BPTPairIter _it;
+        MapBaseIter _it;
     };
 
     // CONSTRUCTOR
@@ -102,14 +113,15 @@ class MMap {
 public:
     typedef pair::MPair<K, V> MPair;
     typedef bptree::BPTree<MPair> MMapBase;
-    typedef typename bptree::BPTree<MPair>::Iterator BPTMPairIter;
+    typedef typename bptree::BPTree<MPair>::Iterator MMapBaseIter;
 
     class Iterator {
     public:
         friend class MMap;
 
         // CONSTRUCTOR
-        Iterator(BPTMPairIter it = BPTMPairIter(nullptr)) : _it(it) {
+        Iterator(MMapBaseIter it = MMapBaseIter(nullptr)) : _it(it) {
+            // Initialize MPair's vector iter to begin()
             if(_it) _it->value = _it->values.begin();
         }
 
@@ -120,9 +132,10 @@ public:
         MPair* operator->() { return &*_it; }  // member access
 
         Iterator& operator++() {  // pre-inc
-            if(++_it->value == _it->values.end()) {
-                ++_it;
-                if(_it) _it->value = _it->values.begin();
+            // _it->value is values' iter; inc values' iter and cmp to end()
+            if(++_it->value == _it->values.end()) {  // if end(), inc entire
+                ++_it;                               // B+Tree's iter
+                if(_it) _it->value = _it->values.begin();  // init values's iter
             }
             return *this;
         }
@@ -144,7 +157,7 @@ public:
         }
 
     private:
-        BPTMPairIter _it;
+        MMapBaseIter _it;
     };
 
     MMap() : _mmap(true) {}
@@ -681,7 +694,7 @@ bool MMap<K, V>::insert(const K& k, const V& v) {
  *
  * PRE-CONDITIONS:
  *  const K& k: key for MPair
- *  const V& v: value for Mpair
+ *  const V& v: value for MPair
  *
  * POST-CONDITIONS:
  *  none

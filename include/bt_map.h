@@ -3,9 +3,14 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : bt_map
- * DESCRIPTION : This header provides a templated BTree version of the Map/MMap
- *          class. The BTree is the base map with the Pair/MPair as the
- *          key/value structure.
+ * DESCRIPTION : This header provides a templated BTree (B-Tree) version
+ *          of the Map/MMap class, along with Pair/MPair as the key/value(s)
+ *          structure.
+ *          Map uses BTree as base with Pair. It does not allow duplicate keys
+ *          but allow value modification.
+ *          MMap uses BTree as base with MPair. It does not allow duplicate
+ *          keys but allow duplicate values. The values are stored in
+ *          key/vector structure.
  ******************************************************************************/
 #ifndef BT_MAP_H
 #define BT_MAP_H
@@ -486,7 +491,7 @@ bool MMap<K, V>::insert(const K& k, const V& v) {
  *
  * PRE-CONDITIONS:
  *  const K& k: key for MPair
- *  const V& v: value for Mpair
+ *  const V& v: value for MPair
  *
  * POST-CONDITIONS:
  *  none

@@ -58,7 +58,7 @@ struct Pair {
 
     friend Pair<K, V>& operator+=(Pair<K, V>& lhs, const Pair<K, V>& rhs) {
         assert(lhs.key == rhs.key);
-        lhs.value = rhs.value;  // on same key, lhs's value is set to rhs's
+        lhs.value = rhs.value;  // on same key, lhs value is set to rhs value
         return lhs;
     }
 };
@@ -110,7 +110,6 @@ struct MPair {
     friend MPair<K, V>& operator+=(MPair<K, V>& lhs, const MPair<K, V>& rhs) {
         assert(lhs.key == rhs.key);
         lhs.values += rhs.values;  // on same key, lists are merged
-        lhs.value = lhs.values.begin();
         return lhs;
     }
 };

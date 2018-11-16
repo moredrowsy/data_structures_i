@@ -6,6 +6,20 @@
  * DESCRIPTION : This header provides a templated self-balancing BPTree class,
  *      the B+ Tree, that allows for more than two children per node but with
  *      the real data only at the leaf nodes.
+ *
+ *      RULES:
+ *      1. Root can have 0 entries if no children, or at least 1 entry if it
+ *         has children. Every other node requires minimum entries.
+ *      2. Maximum entries is 2x minimum.
+ *      3. Key entries are stored in partially filled arrays, in ascending
+ *         order while real entires are stored only at leaves (leaf entries).
+ *      4. Number of children is 1 + number of key entries.
+ *      5. Every nonleaf node is:
+ *         A) entry at i is greater than all entries in child i.
+ *         B) entry at i is less than or equal to all entires in child i+1.
+ *      6. Every key entries require a corresponding leaf entry.
+ *         Therefore, there exist at MAX 1 key entry per leaf entry but not
+ *         every leaf entry require a key entry.
  ******************************************************************************/
 #ifndef BPTREE_H
 #define BPTREE_H
@@ -32,19 +46,27 @@ public:
         explicit operator bool() { return _it; }
 
         T& operator*() {
+            if(!_it)
+                throw std::invalid_argument("BPTree::Iterator - nullptr check");
+
             if(_index >= _it->_data_count)
                 throw std::out_of_range("BPTree::Iterator - range check");
+
             return _it->_data[_index];
         }
 
         T* operator->() {
+            if(!_it)
+                throw std::invalid_argument("BPTree::Iterator - nullptr check");
+
             if(_index >= _it->_data_count)
                 throw std::out_of_range("BPTree::Iterator - range check");
+
             return &_it->_data[_index];
         }
 
         Iterator& operator++() {  // pre-inc
-            if(++_index == _it->_data_count) {
+            if(_it && ++_index == _it->_data_count) {
                 _it = _it->_next;
                 _index = 0;
             }
