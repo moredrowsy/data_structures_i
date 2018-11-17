@@ -21,15 +21,16 @@
 
 namespace stokenizer {
 
-// GLOBAL CONSTANT
-const int MAX_BUFFER = 500;
+enum { MAX_BUFFER = 1000 };
 
 class STokenizer {
 public:
     // CONSTRUCTORS
-    STokenizer();
-    STokenizer(char str[]);        // cstring param assertion < MAX_BUFFER
-    STokenizer(const char str[]);  // cstring param assertion < MAX_BUFFER
+    STokenizer(std::size_t max_buf = MAX_BUFFER);
+    STokenizer(char str[], std::size_t max_buf = MAX_BUFFER);
+    STokenizer(const char str[], std::size_t max_buf = MAX_BUFFER);
+
+    ~STokenizer();
 
     // ACCESSORS
     bool done() const;               // true: there are no more tokens
@@ -53,9 +54,10 @@ private:
     //     one of the acceptable token types
     bool get_token(int start_state, std::string& token);
 
-    char _buffer[MAX_BUFFER];  // input string
-    int _buffer_size;          // input string size
-    int _pos;                  // current position in the string
+    char* _buffer;         // input string
+    std::size_t _max_buf;  // max buffer size
+    int _buffer_size;      // input string size
+    int _pos;              // current position in the string
     static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
     static bool _made_table;  // check if _table is initialized
 };

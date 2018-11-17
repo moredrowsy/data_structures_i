@@ -22,9 +22,9 @@ namespace chained_avl_hash {
 
 template <typename T>
 class ChainedAVLHash {
-public:
     enum { TABLE_SIZE = 811 };
 
+public:
     // CONSTRUCTORS
     ChainedAVLHash(std::size_t size = TABLE_SIZE);
 
@@ -53,7 +53,7 @@ public:
     }
 
 private:
-    std::size_t _TABLE_SIZE;     // capacity _data array
+    std::size_t _table_size;     // capacity _data array
     std::size_t _total_records;  // number of keys in the table
     avl::AVL<T>* _data;          // table of avl list of Records
 
@@ -64,7 +64,7 @@ private:
 /*******************************************************************************
  * DESCRIPTION:
  *  Constructor with default size argument to TABLE_SIZE. Dynamically allocate
- *  _data array with _TABLE_SIZE attribute.
+ *  _data array with _table_size attribute.
  *
  * PRE-CONDITIONS:
  *  none
@@ -77,9 +77,9 @@ private:
  ******************************************************************************/
 template <typename T>
 ChainedAVLHash<T>::ChainedAVLHash(std::size_t size)
-    : _TABLE_SIZE(size), _total_records(0), _data(nullptr) {
-    assert(_TABLE_SIZE > 0);
-    _data = new avl::AVL<T>[_TABLE_SIZE];
+    : _table_size(size), _total_records(0), _data(nullptr) {
+    assert(_table_size > 0);
+    _data = new avl::AVL<T>[_table_size];
 }
 
 /*******************************************************************************
@@ -115,11 +115,11 @@ ChainedAVLHash<T>::~ChainedAVLHash() {
  ******************************************************************************/
 template <typename T>
 ChainedAVLHash<T>::ChainedAVLHash(const ChainedAVLHash<T>& src)
-    : _TABLE_SIZE(src._TABLE_SIZE),
+    : _table_size(src._table_size),
       _total_records(src._total_records),
       _data(nullptr) {
-    _data = new avl::AVL<T>[_TABLE_SIZE];
-    for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = src._data[i];
+    _data = new avl::AVL<T>[_table_size];
+    for(std::size_t i = 0; i < _table_size; ++i) _data[i] = src._data[i];
 }
 
 /*******************************************************************************
@@ -139,11 +139,11 @@ template <typename T>
 ChainedAVLHash<T>& ChainedAVLHash<T>::operator=(const ChainedAVLHash<T>& rhs) {
     if(this != &rhs) {
         delete[] _data;
-        _TABLE_SIZE = rhs._TABLE_SIZE;
+        _table_size = rhs._table_size;
         _total_records = rhs._total_records;
 
-        _data = new avl::AVL<T>[_TABLE_SIZE];
-        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = rhs._data[i];
+        _data = new avl::AVL<T>[_table_size];
+        for(std::size_t i = 0; i < _table_size; ++i) _data[i] = rhs._data[i];
     }
 
     return *this;
@@ -164,7 +164,7 @@ ChainedAVLHash<T>& ChainedAVLHash<T>::operator=(const ChainedAVLHash<T>& rhs) {
  ******************************************************************************/
 template <typename T>
 std::size_t ChainedAVLHash<T>::capacity() const {
-    return _TABLE_SIZE;
+    return _table_size;
 }
 
 /*******************************************************************************
@@ -225,10 +225,10 @@ bool ChainedAVLHash<T>::find(int key, T& result) const {
  ******************************************************************************/
 template <typename T>
 std::ostream& ChainedAVLHash<T>::print(std::ostream& outs) const {
-    std::size_t size = std::to_string(_TABLE_SIZE).size();
+    std::size_t size = std::to_string(_table_size).size();
 
     outs << std::setfill('0');
-    for(std::size_t i = 0; i < _TABLE_SIZE; ++i) {
+    for(std::size_t i = 0; i < _table_size; ++i) {
         outs << "[" << std::setw(size) << std::right << i << "] ";
 
         _data[i].print_inorder();
@@ -255,7 +255,7 @@ std::ostream& ChainedAVLHash<T>::print(std::ostream& outs) const {
 template <typename T>
 void ChainedAVLHash<T>::clear() {
     if(_data)
-        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i].clear();
+        for(std::size_t i = 0; i < _table_size; ++i) _data[i].clear();
 
     _total_records = 0;
 }
@@ -323,7 +323,7 @@ bool ChainedAVLHash<T>::remove(int key) {
  ******************************************************************************/
 template <typename T>
 std::size_t ChainedAVLHash<T>::hash(int key) const {
-    return key % _TABLE_SIZE;
+    return key % _table_size;
 }
 
 }  // namespace chained_avl_hash

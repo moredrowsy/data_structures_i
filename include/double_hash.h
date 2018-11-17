@@ -23,9 +23,9 @@ namespace double_hash {
 
 template <typename T>
 class DoubleHash {
-public:
     enum { PREVIOUSLY_USED = -2, NEVER_USED = -1, TABLE_SIZE = 811 };
 
+public:
     // CONSTRUCTORS
     DoubleHash(std::size_t size = TABLE_SIZE);
 
@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    std::size_t _TABLE_SIZE;     // capacity _data array
+    std::size_t _table_size;     // capacity _data array
     std::size_t _collisions;     // number of entry collisions
     std::size_t _total_records;  // number of keys in the table
     T* _data;                    // table of Records
@@ -73,7 +73,7 @@ private:
 /*******************************************************************************
  * DESCRIPTION:
  *  Constructor with default size argument to TABLE_SIZE. Dynamically allocate
- *  _data array with _TABLE_SIZE attribute.
+ *  _data array with _table_size attribute.
  *
  * PRE-CONDITIONS:
  *  none
@@ -86,9 +86,9 @@ private:
  ******************************************************************************/
 template <typename T>
 DoubleHash<T>::DoubleHash(std::size_t size)
-    : _TABLE_SIZE(size), _collisions(0), _total_records(0), _data(nullptr) {
-    assert(_TABLE_SIZE > 0);
-    _data = new T[_TABLE_SIZE];
+    : _table_size(size), _collisions(0), _total_records(0), _data(nullptr) {
+    assert(_table_size > 0);
+    _data = new T[_table_size];
 }
 
 /*******************************************************************************
@@ -124,12 +124,12 @@ DoubleHash<T>::~DoubleHash() {
  ******************************************************************************/
 template <typename T>
 DoubleHash<T>::DoubleHash(const DoubleHash<T>& src)
-    : _TABLE_SIZE(src._TABLE_SIZE),
+    : _table_size(src._table_size),
       _collisions(src._collisions),
       _total_records(src._total_records),
       _data(nullptr) {
-    _data = new T[_TABLE_SIZE];
-    for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = src._data[i];
+    _data = new T[_table_size];
+    for(std::size_t i = 0; i < _table_size; ++i) _data[i] = src._data[i];
 }
 
 /*******************************************************************************
@@ -149,12 +149,12 @@ template <typename T>
 DoubleHash<T>& DoubleHash<T>::operator=(const DoubleHash<T>& rhs) {
     if(this != &rhs) {
         delete[] _data;
-        _TABLE_SIZE = rhs._TABLE_SIZE;
+        _table_size = rhs._table_size;
         _collisions = rhs._collisions;
         _total_records = rhs._total_records;
 
-        _data = new T[_TABLE_SIZE];
-        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = rhs._data[i];
+        _data = new T[_table_size];
+        for(std::size_t i = 0; i < _table_size; ++i) _data[i] = rhs._data[i];
     }
 
     return *this;
@@ -175,7 +175,7 @@ DoubleHash<T>& DoubleHash<T>::operator=(const DoubleHash<T>& rhs) {
  ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::capacity() const {
-    return _TABLE_SIZE;
+    return _table_size;
 }
 
 /*******************************************************************************
@@ -292,10 +292,10 @@ bool DoubleHash<T>::is_present(int key) const {
  ******************************************************************************/
 template <typename T>
 std::ostream& DoubleHash<T>::print(std::ostream& outs) const {
-    std::size_t size = std::to_string(_TABLE_SIZE).size();
+    std::size_t size = std::to_string(_table_size).size();
 
     outs << std::setfill('0');
-    for(std::size_t i = 0; i < _TABLE_SIZE; ++i) {
+    for(std::size_t i = 0; i < _table_size; ++i) {
         outs << "[" << std::setw(size) << std::right << i << "] ";
 
         if(_data[i]._key > NEVER_USED) {
@@ -330,7 +330,7 @@ std::ostream& DoubleHash<T>::print(std::ostream& outs) const {
 template <typename T>
 void DoubleHash<T>::clear() {
     if(_data)
-        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = T();
+        for(std::size_t i = 0; i < _table_size; ++i) _data[i] = T();
 
     _collisions = 0;
     _total_records = 0;
@@ -342,7 +342,7 @@ void DoubleHash<T>::clear() {
  *  have the same _key but different _value, then old entry is replaced.
  *
  * PRE-CONDITIONS:
- *  _total_records < _TABLE_SIZE
+ *  _total_records < _table_size
  *
  * POST-CONDITIONS:
  *  _collisions + 1 if entry's key is not hash value
@@ -360,7 +360,7 @@ bool DoubleHash<T>::insert(const T& entry) {
 
     if(!find_index(entry._key, i)) {  // <--- see find_index's notes!
         // EXIT and return false when hash key not found and FULL TABLE
-        if(_total_records >= _TABLE_SIZE) return false;
+        if(_total_records >= _table_size) return false;
 
         while(!is_vacant(i)) i = next_index(entry._key, i);
         ++_total_records;
@@ -406,7 +406,7 @@ bool DoubleHash<T>::remove(int key) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Convert key to index position via mod _TABLE_SIZE. Recommended _TABLE_SIZE
+ *  Convert key to index position via mod _table_size. Recommended _table_size
  *  should be 4k + 3 and prime number.
  *
  * PRE-CONDITIONS:
@@ -420,14 +420,14 @@ bool DoubleHash<T>::remove(int key) {
  ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::hash1(int key) const {
-    return key % _TABLE_SIZE;
+    return key % _table_size;
 }
 
 /*******************************************************************************
  * DESCRIPTION:
  *  Convert key to second hash value to add with original hash1 value.
- *  Hash2's value must be relatively prime to _TABLE_SIZE. In addition,
- *  _TABLE_SIZE and (_TABLE_SIZE - 2) must also be twin primes.
+ *  Hash2's value must be relatively prime to _table_size. In addition,
+ *  _table_size and (_table_size - 2) must also be twin primes.
  *
  * PRE-CONDITIONS:
  *  int key: >= 0
@@ -440,7 +440,7 @@ std::size_t DoubleHash<T>::hash1(int key) const {
  ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::hash2(int key) const {
-    return 1 + (key % (_TABLE_SIZE - 2));
+    return 1 + (key % (_table_size - 2));
 }
 
 /*******************************************************************************
@@ -467,7 +467,7 @@ bool DoubleHash<T>::find_index(int key, std::size_t& i) const {
     std::size_t count = 0;
     i = hash1(key);
 
-    while(count < _TABLE_SIZE && !never_used(i) && _data[i]._key != key) {
+    while(count < _table_size && !never_used(i) && _data[i]._key != key) {
         ++count;
         i = next_index(key, i);
     }
@@ -490,7 +490,7 @@ bool DoubleHash<T>::find_index(int key, std::size_t& i) const {
  ******************************************************************************/
 template <typename T>
 std::size_t DoubleHash<T>::next_index(int key, std::size_t i) const {
-    return (i + hash2(key)) % _TABLE_SIZE;
+    return (i + hash2(key)) % _table_size;
 }
 
 /*******************************************************************************

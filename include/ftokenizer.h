@@ -27,9 +27,9 @@
 namespace ftokenizer {
 
 class FTokenizer {
-public:
     enum { MAX_BLOCK = stokenizer::MAX_BUFFER };
 
+public:
     // CONSTRUCTORS
     FTokenizer(char* fname, std::size_t block_size = MAX_BLOCK);
 

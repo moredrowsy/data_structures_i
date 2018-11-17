@@ -23,9 +23,9 @@ namespace open_hash {
 
 template <typename T>
 class OpenHash {
-public:
     enum { PREVIOUSLY_USED = -2, NEVER_USED = -1, TABLE_SIZE = 811 };
 
+public:
     // CONSTRUCTORS
     OpenHash(std::size_t size = TABLE_SIZE);
 
@@ -55,7 +55,7 @@ public:
     }
 
 private:
-    std::size_t _TABLE_SIZE;     // capacity _data array
+    std::size_t _table_size;     // capacity _data array
     std::size_t _collisions;     // number of entry collisions
     std::size_t _total_records;  // number of keys in the table
     T* _data;                    // table of Records
@@ -71,7 +71,7 @@ private:
 /*******************************************************************************
  * DESCRIPTION:
  *  Constructor with default size argument to TABLE_SIZE. Dynamically allocate
- *  _data array with _TABLE_SIZE attribute.
+ *  _data array with _table_size attribute.
  *
  * PRE-CONDITIONS:
  *  none
@@ -84,9 +84,9 @@ private:
  ******************************************************************************/
 template <typename T>
 OpenHash<T>::OpenHash(std::size_t size)
-    : _TABLE_SIZE(size), _collisions(0), _total_records(0), _data(nullptr) {
-    assert(_TABLE_SIZE > 0);
-    _data = new T[_TABLE_SIZE];
+    : _table_size(size), _collisions(0), _total_records(0), _data(nullptr) {
+    assert(_table_size > 0);
+    _data = new T[_table_size];
 }
 
 /*******************************************************************************
@@ -122,12 +122,12 @@ OpenHash<T>::~OpenHash() {
  ******************************************************************************/
 template <typename T>
 OpenHash<T>::OpenHash(const OpenHash<T>& src)
-    : _TABLE_SIZE(src._TABLE_SIZE),
+    : _table_size(src._table_size),
       _collisions(src._collisions),
       _total_records(src._total_records),
       _data(nullptr) {
-    _data = new T[_TABLE_SIZE];
-    for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = src._data[i];
+    _data = new T[_table_size];
+    for(std::size_t i = 0; i < _table_size; ++i) _data[i] = src._data[i];
 }
 
 /*******************************************************************************
@@ -147,12 +147,12 @@ template <typename T>
 OpenHash<T>& OpenHash<T>::operator=(const OpenHash<T>& rhs) {
     if(this != &rhs) {
         delete[] _data;
-        _TABLE_SIZE = rhs._TABLE_SIZE;
+        _table_size = rhs._table_size;
         _collisions = rhs._collisions;
         _total_records = rhs._total_records;
 
-        _data = new T[_TABLE_SIZE];
-        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = rhs._data[i];
+        _data = new T[_table_size];
+        for(std::size_t i = 0; i < _table_size; ++i) _data[i] = rhs._data[i];
     }
 
     return *this;
@@ -173,7 +173,7 @@ OpenHash<T>& OpenHash<T>::operator=(const OpenHash<T>& rhs) {
  ******************************************************************************/
 template <typename T>
 std::size_t OpenHash<T>::capacity() const {
-    return _TABLE_SIZE;
+    return _table_size;
 }
 
 /*******************************************************************************
@@ -290,10 +290,10 @@ bool OpenHash<T>::is_present(int key) const {
  ******************************************************************************/
 template <typename T>
 std::ostream& OpenHash<T>::print(std::ostream& outs) const {
-    std::size_t size = std::to_string(_TABLE_SIZE).size();
+    std::size_t size = std::to_string(_table_size).size();
 
     outs << std::setfill('0');
-    for(std::size_t i = 0; i < _TABLE_SIZE; ++i) {
+    for(std::size_t i = 0; i < _table_size; ++i) {
         outs << "[" << std::setw(size) << std::right << i << "] ";
 
         if(_data[i]._key > NEVER_USED) {
@@ -328,7 +328,7 @@ std::ostream& OpenHash<T>::print(std::ostream& outs) const {
 template <typename T>
 void OpenHash<T>::clear() {
     if(_data)
-        for(std::size_t i = 0; i < _TABLE_SIZE; ++i) _data[i] = T();
+        for(std::size_t i = 0; i < _table_size; ++i) _data[i] = T();
 
     _collisions = 0;
     _total_records = 0;
@@ -339,7 +339,7 @@ void OpenHash<T>::clear() {
  *  Insert templated item into _data table via its _key
  *
  * PRE-CONDITIONS:
- *  _total_records < _TABLE_SIZE
+ *  _total_records < _table_size
  *
  * POST-CONDITIONS:
  *  _collisions + 1 if entry's key is not hash value
@@ -357,7 +357,7 @@ bool OpenHash<T>::insert(const T& entry) {
 
     if(!find_index(entry._key, i)) {  // <--- see find_index's notes!
         // EXIT and return false when hash key not found and FULL TABLE
-        if(_total_records >= _TABLE_SIZE) return false;
+        if(_total_records >= _table_size) return false;
 
         while(!is_vacant(i)) i = next_index(i);
         ++_total_records;
@@ -417,7 +417,7 @@ bool OpenHash<T>::remove(int key) {
  ******************************************************************************/
 template <typename T>
 std::size_t OpenHash<T>::hash(int key) const {
-    return key % _TABLE_SIZE;
+    return key % _table_size;
 }
 
 /*******************************************************************************
@@ -444,7 +444,7 @@ bool OpenHash<T>::find_index(int key, std::size_t& i) const {
     std::size_t count = 0;
     i = hash(key);
 
-    while(count < _TABLE_SIZE && !never_used(i) && _data[i]._key != key) {
+    while(count < _table_size && !never_used(i) && _data[i]._key != key) {
         ++count;
         i = next_index(i);
     }
@@ -467,7 +467,7 @@ bool OpenHash<T>::find_index(int key, std::size_t& i) const {
  ******************************************************************************/
 template <typename T>
 std::size_t OpenHash<T>::next_index(std::size_t i) const {
-    return ++i % _TABLE_SIZE;
+    return ++i % _table_size;
 }
 
 /*******************************************************************************

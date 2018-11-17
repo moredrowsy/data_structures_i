@@ -20,7 +20,10 @@ bool STokenizer::_made_table = false;
  * RETURN:
  *  none
  ******************************************************************************/
-STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
+STokenizer::STokenizer(std::size_t max_buf)
+    : _buffer(nullptr), _max_buf(max_buf), _buffer_size(0), _pos(0) {
+    _buffer = new char[_max_buf];
+
     _buffer[0] = '\0';
     if(!_made_table) make_table(_table);
 }
@@ -40,7 +43,10 @@ STokenizer::STokenizer() : _buffer(), _buffer_size(0), _pos(0) {
  * RETURN:
  *  none
  ******************************************************************************/
-STokenizer::STokenizer(char str[]) : _buffer(), _buffer_size(0), _pos(0) {
+STokenizer::STokenizer(char str[], std::size_t max_buf)
+    : _buffer(nullptr), _max_buf(max_buf), _buffer_size(0), _pos(0) {
+    _buffer = new char[_max_buf];
+
     set_string(str);
     if(!_made_table) make_table(_table);
 }
@@ -60,10 +66,28 @@ STokenizer::STokenizer(char str[]) : _buffer(), _buffer_size(0), _pos(0) {
  * RETURN:
  *  none
  ******************************************************************************/
-STokenizer::STokenizer(const char str[]) : _buffer(), _buffer_size(0), _pos(0) {
+STokenizer::STokenizer(const char str[], std::size_t max_buf)
+    : _buffer(nullptr), _max_buf(max_buf), _buffer_size(0), _pos(0) {
+    _buffer = new char[_max_buf];
+
     set_string(str);
     if(!_made_table) make_table(_table);
 }
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Destructor. Deallocate _buffer.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  char* _buffer: deallocated
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+STokenizer::~STokenizer() { delete[] _buffer; }
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -73,7 +97,7 @@ STokenizer::STokenizer(const char str[]) : _buffer(), _buffer_size(0), _pos(0) {
  *                to ensure done() only returns true once past NUL position.
  *
  * PRE-CONDITIONS:
- *  char _buffer[MAX_BUFFER]: cstring
+ *  char _buffer[_max_buf]: cstring
  *
  * POST-CONDITIONS:
  *  none
@@ -137,10 +161,9 @@ STokenizer::operator bool() const { return more(); }
  *  none
  ******************************************************************************/
 void STokenizer::set_string(char str[]) {
-    // copy string into buffer
-    int index = 0;
-    while(str[index] != '\0') {
-        assert(index < MAX_BUFFER - 1);
+    std::size_t index = 0;
+    while(str[index] != '\0') {  // copy string into buffer
+        assert(index < _max_buf - 1);
         _buffer[index] = str[index];
         ++index;
     }
@@ -166,10 +189,9 @@ void STokenizer::set_string(char str[]) {
  *  none
  ******************************************************************************/
 void STokenizer::set_string(const char str[]) {
-    // copy string into buffer
-    int index = 0;
-    while(str[index] != '\0') {
-        assert(index < MAX_BUFFER - 1);
+    std::size_t index = 0;
+    while(str[index] != '\0') {  // copy string into buffer
+        assert(index < _max_buf - 1);
         _buffer[index] = str[index];
         ++index;
     }

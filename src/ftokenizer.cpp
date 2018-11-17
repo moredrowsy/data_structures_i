@@ -17,7 +17,7 @@ namespace ftokenizer {
  ******************************************************************************/
 FTokenizer::FTokenizer(char *fname, std::size_t block_size)
     : _f(fname, std::ios::binary),
-      _stk(),
+      _stk(block_size),
       _pos(0),
       _block_pos(0),
       _block_size(block_size),
@@ -157,8 +157,8 @@ bool FTokenizer::get_new_block() {
     int gcount = _f.gcount() - 1;
 
     // rewind until non-truncation
-    while(block[gcount] != ' ' && block[gcount] != '\n' &&
-          block[gcount] != '\t' && gcount > -1)
+    while(gcount > -1 && block[gcount] != ' ' && block[gcount] != '\n' &&
+          block[gcount] != '\t')
         --gcount;  // (gcount < 1) if rewind before initial index
 
     if(gcount > 0) {  // when gcount is still valid from rewind
