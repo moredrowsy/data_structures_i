@@ -4,8 +4,8 @@
  * CLASS       : CS008
  * HEADER      : bpt_map
  * DESCRIPTION : This header provides a templated BPTree (B+Tree) version
- *          of the Map/MMap class, along with Pair/MPair as the key/value(s)
- *          structure.
+ *          of the Map/MMap class, along with Pair/MPair as the
+ *          const key/value(s) structure.
  *
  *          Map uses BPTree as base with Pair. It does not allow duplicate keys
  *          but allow value modification.
@@ -30,7 +30,7 @@ namespace bpt_map {
 template <typename K, typename V>
 class Map {
 public:
-    typedef pair::Pair<K, V> Pair;
+    typedef pair::Pair<const K, V> Pair;
     typedef bptree::BPTree<Pair> MapBase;
     typedef typename bptree::BPTree<Pair>::Iterator MapBaseIter;
 
@@ -73,7 +73,7 @@ public:
     };
 
     // CONSTRUCTOR
-    Map() : _map(true) {}
+    Map(std::size_t min = bptree::MINIMUM) : _map(true, min) {}
 
     // capacity
     std::size_t size() const;
@@ -83,6 +83,8 @@ public:
     Iterator begin();
     Iterator end();
     Iterator find(const K& key);
+    Pair& front();
+    Pair& back();
     const V& operator[](const K& key) const;
     V& operator[](const K& key);
     const V& at(const K& key) const;
@@ -111,7 +113,7 @@ private:
 template <typename K, typename V>
 class MMap {
 public:
-    typedef pair::MPair<K, V> MPair;
+    typedef pair::MPair<const K, V> MPair;
     typedef bptree::BPTree<MPair> MMapBase;
     typedef typename bptree::BPTree<MPair>::Iterator MMapBaseIter;
 
@@ -160,7 +162,7 @@ public:
         MMapBaseIter _it;
     };
 
-    MMap() : _mmap(true) {}
+    MMap(std::size_t min = bptree::MINIMUM) : _mmap(true, min) {}
 
     // capacity
     std::size_t size() const;
@@ -285,6 +287,42 @@ typename Map<K, V>::Iterator Map<K, V>::end() {
 template <typename K, typename V>
 typename Map<K, V>::Iterator Map<K, V>::find(const K& key) {
     return Map<K, V>::Iterator(_map.find(Pair(key)));
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to end of map, which is nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename Map<K, V>::Pair& Map<K, V>::front() {
+    return _map.front();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to end of map, which is nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename Map<K, V>::Pair& Map<K, V>::back() {
+    return _map.back();
 }
 
 /*******************************************************************************

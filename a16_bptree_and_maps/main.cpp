@@ -1,8 +1,10 @@
-#include <cstdlib>               // srand(), rand()
-#include <iostream>              // stream objects
-#include "../include/bpt_map.h"  // BPTree's Map/MMap class
-#include "../include/bptree.h"   // BPTree class
-#include "../include/pair.h"     // Pair/MPair class
+#include <cstdlib>                   // srand(), rand()
+#include <iostream>                  // stream objects
+#include "../include/array_utils.h"  // array utilities
+#include "../include/bpt_map.h"      // BPTree's Map/MMap class
+#include "../include/bptree.h"       // BPTree class
+#include "../include/pair.h"         // Pair/MPair class
+#include "../include/sort.h"         // shuffle()
 
 void test_bptree_auto(int sample_size, int tree_size, bool report);
 bool test_bptree_auto(int tree_size, bool report);
@@ -162,7 +164,7 @@ bool test_bptree_big_three() {
     bool is_passed = true;
     const int MAX = 1000;
     int set1[MAX], set2[MAX];
-    bptree::BPTree<int> bpt1, bpt2;
+    bptree::BPTree<int> bpt1(false, 2), bpt2(false, 2);
 
     // populate set1 and set2
     for(int i = 0; i < MAX; ++i) {
@@ -233,9 +235,10 @@ bool test_bptree_big_three() {
             break;
         }
 
-    if(!is_passed) std::cout << "B I G  T H R E E  F A I L E D" << std::endl;
-
-    std::cout << "B+TREE TESTS: BIG THREE PASSED" << std::endl;
+    if(!is_passed)
+        std::cout << "B I G  T H R E E  F A I L E D" << std::endl;
+    else
+        std::cout << "B+TREE TESTS: BIG THREE PASSED" << std::endl;
 
     return is_passed;
 }
@@ -243,7 +246,7 @@ bool test_bptree_big_three() {
 bool test_bptree_insert() {
     bool is_passed = true;
     const int MAX = 1000, sample_size = 100;
-    bptree::BPTree<int> bpt;
+    bptree::BPTree<int> bpt(false, 2);
     int test[MAX];
     int find;
 
@@ -280,9 +283,10 @@ bool test_bptree_insert() {
         test_size = MAX;
     }
 
-    if(!is_passed) std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
-
-    std::cout << "B+TREE TESTS: INSERTIONS PASSED" << std::endl;
+    if(!is_passed)
+        std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
+    else
+        std::cout << "B+TREE TESTS: INSERTIONS PASSED" << std::endl;
 
     return is_passed;
 }
@@ -290,7 +294,7 @@ bool test_bptree_insert() {
 bool test_bptree_remove() {
     bool is_passed = true;
     const int MAX = 1000, sample_size = 100;
-    bptree::BPTree<int> bpt;
+    bptree::BPTree<int> bpt(false, 2);
     int original[MAX];
     int test[MAX];
     int r;
@@ -311,6 +315,11 @@ bool test_bptree_remove() {
         // populate BPTree with test[]
         for(std::size_t i = 0; i < test_size; ++i) bpt.insert(test[i]);
 
+        if(!bpt.verify()) {
+            is_passed = false;
+            break;
+        }
+
         for(std::size_t i = 0; i < original_size; ++i) {
             // pick item to delete
             r = rand() % test_size;
@@ -325,11 +334,13 @@ bool test_bptree_remove() {
         }
 
         if(bpt.size()) is_passed = false;
+        bpt.clear();
     }
 
-    if(!is_passed) std::cout << "R E M O V E D  F A I L E D" << std::endl;
-
-    std::cout << "B+TREE TESTS: REMOVALS PASSED" << std::endl;
+    if(!is_passed)
+        std::cout << "R E M O V E D  F A I L E D" << std::endl;
+    else
+        std::cout << "B+TREE TESTS: REMOVALS PASSED" << std::endl;
 
     return is_passed;
 }
@@ -342,8 +353,8 @@ void test_bptree_interactive() {
               << std::string(80, '-') << std::endl;
 
     const unsigned MAX_RANGE = 100;
-    bool is_inserted = false, is_removed = false;
-    BPTree<int> bpt;
+    bool is_inserted = false, is_removed = false, is_print = false;
+    BPTree<int> bpt(false, 2);
     BPTree<int>::Iterator is_found, it;
     int key;
     char c;
@@ -351,25 +362,20 @@ void test_bptree_interactive() {
     srand(time(nullptr));
 
     do {
-        std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear"
+        std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear"
                      "     e[X]it: ";
         std::cin >> c;
 
         switch(c) {
             case 'X':
             case 'x':
+                is_print = false;
                 return;  // exit function
             case 'C':
             case 'c':
                 bpt.clear();
-                std::cout << ">> Clear: " << std::endl << bpt << std::endl;
-
-                std::cout << "Iterators: ";
-                it = bpt.begin();
-                while(it) std::cout << *it++ << ' ';
-                std::cout << std::endl;
-
-                std::cout << "Verify: " << bpt.verify() << std::endl;
+                std::cout << ">> Clear: " << std::endl;
+                is_print = true;
 
                 break;
             case 'D':
@@ -383,15 +389,8 @@ void test_bptree_interactive() {
                     std::cout << " removed";
                 else
                     std::cout << " does not exist";
-
-                std::cout << std::endl << bpt << std::endl;
-
-                std::cout << "Iterators: ";
-                it = bpt.begin();
-                while(it) std::cout << *it++ << ' ';
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << bpt.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'F':
@@ -405,15 +404,8 @@ void test_bptree_interactive() {
                     std::cout << *is_found << " success.";
                 else
                     std::cout << key << " failed. Does not exist";
-
-                std::cout << std::endl << bpt << std::endl;
-
-                std::cout << "Iterators: ";
-                it = bpt.begin();
-                while(it) std::cout << *it++ << ' ';
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << bpt.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'I':
@@ -427,15 +419,8 @@ void test_bptree_interactive() {
                     std::cout << " success.";
                 else
                     std::cout << " failed. Duplicate?";
-
-                std::cout << std::endl << bpt << std::endl;
-
-                std::cout << "Iterators: ";
-                it = bpt.begin();
-                while(it) std::cout << *it++ << ' ';
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << bpt.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'R':
@@ -449,24 +434,31 @@ void test_bptree_interactive() {
                     std::cout << " success.";
                 else
                     std::cout << " failed. Duplicate?";
-
-                std::cout << std::endl << bpt << std::endl;
-
-                std::cout << "Iterators: ";
-                it = bpt.begin();
-                while(it) std::cout << *it++ << ' ';
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << bpt.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'S':
             case 's':
                 std::cout << ">> Size: " << bpt.size() << std::endl
                           << std::endl;
+                is_print = false;
+
                 break;
             default:
                 std::cout << "Invalid Choice" << std::endl << std::endl;
+                is_print = false;
+        }
+
+        if(is_print) {
+            std::cout << std::endl << bpt << std::endl;
+
+            std::cout << "Iterators: ";
+            it = bpt.begin();
+            while(it) std::cout << *it++ << ' ';
+            std::cout << std::endl;
+
+            std::cout << "Verify: " << bpt.verify() << std::endl << std::endl;
         }
     } while(c != 'X' && c != 'x');
 }
@@ -498,7 +490,7 @@ bool test_map_and_mmap_auto() {
             return false;
         }
 
-        if(!map.contains(Pair<int, int>(keys[i], values[i])) ||
+        if(!map.contains(Pair<const int, int>(keys[i], values[i])) ||
            !mmap.contains(keys[i])) {
             std::cout << "I N S E R T  C O N T A I N S  F A I L E D"
                       << std::endl;
@@ -516,7 +508,7 @@ bool test_map_and_mmap_auto() {
             return false;
         }
 
-        if(map.contains(Pair<int, int>(keys[i], values[i])) ||
+        if(map.contains(Pair<const int, int>(keys[i], values[i])) ||
            mmap.contains(keys[i])) {
             std::cout << "E R A S E D  C O N T A I N S  F A I L E D"
                       << std::endl;
@@ -539,7 +531,8 @@ void test_map_interactive() {
 
     const std::size_t SIZE = 24;
     Map<std::string, std::string> map;
-    bool is_found = false, is_removed = false;
+    Map<std::string, std::string>::Iterator it;
+    bool is_found = false, is_removed = false, is_print = false;
     char c;
     std::string key, value;
 
@@ -558,20 +551,22 @@ void test_map_interactive() {
     srand(time(nullptr));
 
     do {
-        std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear"
+        std::cout << std::string(80, '-') << std::endl;
+        std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear"
                      "     e[X]it: ";
         std::cin >> c;
+        std::cout << std::string(80, '-') << std::endl;
 
         switch(c) {
             case 'X':
             case 'x':
+                is_print = false;
                 return;  // exit function
             case 'C':
             case 'c':
                 map.clear();
-                std::cout << ">> Clear: " << std::endl << map << std::endl;
-
-                std::cout << "Verify: " << map.verify() << std::endl;
+                std::cout << ">> Clear: " << std::endl;
+                is_print = true;
 
                 break;
             case 'D':
@@ -585,12 +580,8 @@ void test_map_interactive() {
                     std::cout << " removed";
                 else
                     std::cout << " does not exist";
-
-                std::cout << std::endl << std::endl;
-                map.print_debug();
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << map.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'F':
@@ -604,12 +595,8 @@ void test_map_interactive() {
                     std::cout << " success.";
                 else
                     std::cout << " failed. Does not exist";
-
-                std::cout << std::endl << std::endl;
-                map.print_debug();
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << map.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'I':
@@ -617,12 +604,8 @@ void test_map_interactive() {
                 std::cin >> key >> value;
                 map[key] = value;
 
-                std::cout << ">> Insert: " << Pair(key, value) << std::endl
-                          << std::endl;
-                map.print_debug();
-                std::cout << std::endl;
-
-                std::cout << "Verify: " << map.verify() << std::endl;
+                std::cout << ">> Insert: " << Pair(key, value) << std::endl;
+                is_print = true;
 
                 break;
             case 'R':
@@ -632,21 +615,32 @@ void test_map_interactive() {
                 map[key] = value;
 
                 std::cout << ">> Random insert: " << Pair(key, value)
-                          << std::endl
                           << std::endl;
-                map.print_debug();
-                std::cout << std::endl;
-
-                std::cout << "Verify: " << map.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'S':
             case 's':
-                std::cout << ">> Size: " << map.size() << std::endl
-                          << std::endl;
+                std::cout << ">> Size: " << map.size() << std::endl;
+                is_print = false;
+
                 break;
             default:
                 std::cout << "Invalid Choice" << std::endl << std::endl;
+                is_print = false;
+        }
+
+        if(is_print) {
+            std::cout << std::endl;
+            map.print_debug();
+            std::cout << std::endl;
+
+            std::cout << "Iterators: ";
+            it = map.begin();
+            while(it) std::cout << "<< " << *it++ << " >> ";
+            std::cout << std::endl;
+
+            std::cout << "Verify: " << map.verify() << std::endl << std::endl;
         }
     } while(c != 'X' && c != 'x');
 }
@@ -661,7 +655,8 @@ void test_mmap_interactive() {
 
     const std::size_t SIZE = 24;
     MMap<std::string, std::string> mmap;
-    bool is_found = false, is_removed = false;
+    MMap<std::string, std::string>::Iterator it;
+    bool is_found = false, is_removed = false, is_print = false;
     char c;
     std::string key, value;
 
@@ -680,20 +675,20 @@ void test_mmap_interactive() {
     srand(time(nullptr));
 
     do {
-        std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind  [C]lear"
+        std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear"
                      "     e[X]it: ";
         std::cin >> c;
 
         switch(c) {
             case 'X':
             case 'x':
+                is_print = false;
                 return;  // exit function
             case 'C':
             case 'c':
                 mmap.clear();
                 std::cout << ">> Clear: " << std::endl << mmap << std::endl;
-
-                std::cout << "Verify: " << mmap.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'D':
@@ -707,12 +702,8 @@ void test_mmap_interactive() {
                     std::cout << " removed";
                 else
                     std::cout << " does not exist";
-
-                std::cout << std::endl << std::endl;
-                mmap.print_debug();
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << mmap.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'F':
@@ -726,12 +717,8 @@ void test_mmap_interactive() {
                     std::cout << " success.";
                 else
                     std::cout << " failed. Does not exist";
-
-                std::cout << std::endl << std::endl;
-                mmap.print_debug();
                 std::cout << std::endl;
-
-                std::cout << "Verify: " << mmap.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'I':
@@ -739,12 +726,8 @@ void test_mmap_interactive() {
                 std::cin >> key >> value;
                 mmap[key] += value;
 
-                std::cout << ">> Insert: " << Pair(key, value) << std::endl
-                          << std::endl;
-                mmap.print_debug();
-                std::cout << std::endl;
-
-                std::cout << "Verify: " << mmap.verify() << std::endl;
+                std::cout << ">> Insert: " << Pair(key, value) << std::endl;
+                is_print = true;
 
                 break;
             case 'R':
@@ -754,21 +737,36 @@ void test_mmap_interactive() {
                 mmap[key] += value;
 
                 std::cout << ">> Random insert: " << Pair(key, value)
-                          << std::endl
                           << std::endl;
-                mmap.print_debug();
-                std::cout << std::endl;
-
-                std::cout << "Verify: " << mmap.verify() << std::endl;
+                is_print = true;
 
                 break;
             case 'S':
             case 's':
                 std::cout << ">> Size: " << mmap.size() << std::endl
                           << std::endl;
+                is_print = false;
+
                 break;
             default:
                 std::cout << "Invalid Choice" << std::endl << std::endl;
+                is_print = false;
+        }
+
+        if(is_print) {
+            std::cout << std::endl;
+            mmap.print_debug();
+            std::cout << std::endl;
+
+            std::cout << "Iterators: ";
+            it = mmap.begin();
+            while(it) {
+                std::cout << "<< " << it->key << " : " << *it->value << " >> ";
+                ++it;
+            }
+            std::cout << std::endl;
+
+            std::cout << "Verify: " << mmap.verify() << std::endl << std::endl;
         }
     } while(c != 'X' && c != 'x');
 }

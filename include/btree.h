@@ -25,12 +25,11 @@
 #include "sort.h"         // verify() sortedness
 
 namespace btree {
+enum { MINIMUM = 1 };
 
 template <class T>
 class BTree {
 public:
-    enum { MINIMUM = 1 };
-
     // CONSTRUCTOR
     BTree(bool dups = false, std::size_t min = MINIMUM);
 

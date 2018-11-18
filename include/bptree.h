@@ -5,7 +5,8 @@
  * HEADER      : bptree
  * DESCRIPTION : This header provides a templated self-balancing BPTree class,
  *      the B+ Tree, that allows for more than two children per node but with
- *      the real data only at the leaf nodes.
+ *      the real data only at the leaf nodes. The data is held in an array of
+ *      smart pointers.
  *
  *      RULES:
  *      1. Root can have 0 entries if no children, or at least 1 entry if it
@@ -24,18 +25,17 @@
 #ifndef BPTREE_H
 #define BPTREE_H
 
-#include <cassert>        // assert()
-#include <string>         // string objects
-#include "array_utils.h"  // array utilities
-#include "sort.h"         // verify() sortedness
+#include <cassert>            // assert()
+#include <memory>             // shared_ptr
+#include <string>             // string
+#include "smart_ptr_utils.h"  // array utilities
 
 namespace bptree {
+enum { MINIMUM = 1 };
 
 template <class T>
 class BPTree {
 public:
-    enum { MINIMUM = 1 };
-
     class Iterator {
     public:
         friend class BPTree;
@@ -54,7 +54,7 @@ public:
             if(_index >= _it->_data_count)
                 throw std::out_of_range("BPTree::Iterator - range check");
 
-            return _it->_data[_index];
+            return *_it->_data[_index];
         }
 
         T* operator->() {
@@ -64,7 +64,7 @@ public:
             if(_index >= _it->_data_count)
                 throw std::out_of_range("BPTree::Iterator - range check");
 
-            return &_it->_data[_index];
+            return &(*_it->_data[_index]);
         }
 
         Iterator& operator++() {  // pre-inc
@@ -114,6 +114,8 @@ public:
     Iterator begin();
     Iterator end();
     Iterator find(const T& entry);
+    T& front();
+    T& back();
     const T& get(const T& entry) const;  // return a ref to entry in the tree
     T& get(const T& entry);              // return a ref to entry in the tree
 
@@ -135,15 +137,15 @@ public:
     }
 
 private:
-    std::size_t _min;          // minimum entries
-    std::size_t _max;          // 2x min elements
-    bool _dups_ok;             // true if duplicate keys may be inserted
-    std::size_t _size;         // count of all elements
-    std::size_t _data_count;   // number of data elements
-    T* _data;                  // holds the keys -> _data[_max+1]
-    std::size_t _child_count;  // number of children
-    BPTree<T>** _subset;       // subtrees -> _subset[_max+2]
-    BPTree<T>* _next;          // next sibling's subset
+    std::size_t _min;           // minimum entries
+    std::size_t _max;           // 2x min elements
+    bool _dups_ok;              // true if duplicate keys may be inserted
+    std::size_t _size;          // count of all elements
+    std::size_t _data_count;    // number of data elements
+    std::shared_ptr<T>* _data;  // holds the keys -> _data[_max+1]
+    std::size_t _child_count;   // number of children
+    BPTree<T>** _subset;        // subtrees -> _subset[_max+2]
+    BPTree<T>* _next;           // next sibling's subset
 
     void copy(const BPTree<T>& other);                    // wrapper to copy
     void copy(const BPTree<T>& other, BPTree<T>*& next);  // copy tree
@@ -167,14 +169,16 @@ private:
 
     BPTree<T>* get_smallest_node();
     BPTree<T>* get_largest_node();
-    void get_smallest(T& entry);    // entry := leftmost leaf
-    void get_largest(T& entry);     // entry := rightmost leaf
-    void remove_largest(T& entry);  // remove largest child of tree->entry
-    T* find_ptr(const T& entry);    // return ptr to T; else nullptr
+    void get_smallest(std::shared_ptr<T>& entry);    // entry := leftmost leaf
+    void get_largest(std::shared_ptr<T>& entry);     // entry := rightmost leaf
+    void remove_largest(std::shared_ptr<T>& entry);  // remove largest child
+    T* find_ptr(const T& entry);  // return ptr to T; else nullptr
 
     bool verify_tree(int& height, bool& has_stored_height, int level = 0) const;
-    bool is_gt_subset(const BPTree<T>* subtree, const T& item) const;
-    bool is_le_subset(const BPTree<T>* subtree, const T& item) const;
+    bool is_gt_subset(const BPTree<T>* subtree,
+                      const std::shared_ptr<T>& item) const;
+    bool is_le_subset(const BPTree<T>* subtree,
+                      const std::shared_ptr<T>& item) const;
 };
 
 /*******************************************************************************
@@ -201,7 +205,7 @@ BPTree<T>::BPTree(bool dups, std::size_t min)
       _child_count(0),
       _subset(nullptr),
       _next(nullptr) {
-    _data = new T[_max + 1];
+    _data = new std::shared_ptr<T>[_max + 1];
     _subset = new BPTree<T>*[_max + 2];
 }
 
@@ -247,7 +251,7 @@ BPTree<T>::BPTree(const BPTree<T>& src)
       _child_count(0),
       _subset(nullptr),
       _next(nullptr) {
-    _data = new T[_max + 1];
+    _data = new std::shared_ptr<T>[_max + 1];
     _subset = new BPTree<T>*[_max + 2];
     copy(src);
 }
@@ -365,8 +369,8 @@ typename BPTree<T>::Iterator BPTree<T>::end() {
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
     // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
 
     if(is_leaf()) {
         if(is_found)
@@ -379,6 +383,43 @@ typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
         else                                     // when !found
             return _subset[i]->find(entry);      // recurse to find entry
     }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the first (leftmost) entry.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T&
+ ******************************************************************************/
+template <typename T>
+T& BPTree<T>::front() {
+    return *get_smallest_node()->_data[0];
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the last (rightmost) entry.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T&
+ ******************************************************************************/
+template <typename T>
+T& BPTree<T>::back() {
+    BPTree<T>* largest = get_largest_node();
+    return *largest->_data[largest->_data_count - 1];
 }
 
 /*******************************************************************************
@@ -451,7 +492,7 @@ T& BPTree<T>::get(const T& entry) {
  ******************************************************************************/
 template <typename T>
 bool BPTree<T>::insert(const T& entry) {
-    using namespace array_utils;
+    using namespace smart_ptr_utils;
 
     if(loose_insert(entry)) {
         if(_data_count > _max) {
@@ -498,7 +539,7 @@ bool BPTree<T>::insert(const T& entry) {
  ******************************************************************************/
 template <typename T>
 bool BPTree<T>::remove(const T& entry) {
-    using namespace array_utils;
+    using namespace smart_ptr_utils;
 
     if(loose_remove(entry)) {
         if(_data_count <= 1 && _child_count == 1) {
@@ -536,7 +577,7 @@ bool BPTree<T>::remove(const T& entry) {
 template <typename T>
 void BPTree<T>::clear() {
     deallocate();
-    _data = new T[_max + 1];
+    _data = new std::shared_ptr<T>[_max + 1];
     _subset = new BPTree<T>*[_max + 2];
 }
 
@@ -556,8 +597,8 @@ void BPTree<T>::clear() {
 template <typename T>
 bool BPTree<T>::contains(const T& entry) const {
     // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
 
     if(is_leaf()) {
         if(is_found)
@@ -599,7 +640,7 @@ void BPTree<T>::print(std::ostream& outs, bool debug, int level,
 
             outs << std::string(level * 15, ' ');
             if(debug) outs << index << ' ';
-            outs << '|' << _data[i] << "|\n";
+            outs << '|' << *_data[i] << "|\n";
 
             if(!is_leaf() && !i) _subset[i]->print(outs, debug, level + 1, i);
         }
@@ -672,7 +713,8 @@ void BPTree<T>::copy(const BPTree<T>& other, BPTree<T>*& next) {
     _dups_ok = other._dups_ok;
     _size = other._size;
     _child_count = other._child_count;
-    array_utils::copy_array(other._data, other._data_count, _data, _data_count);
+    smart_ptr_utils::copy_array(other._data, other._data_count, _data,
+                                _data_count);
 
     if(is_leaf()) {    // when leaf
         _next = next;  // assign this' _next to ref next
@@ -754,18 +796,20 @@ void BPTree<T>::update_size() {
 template <typename T>
 bool BPTree<T>::loose_insert(const T& entry) {
     // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
     bool is_inserted = true;
 
     if(is_leaf()) {
         if(is_found) {
             if(_dups_ok)
-                _data[i] += entry;  // append entry
+                *_data[i] += entry;  // append entry
             else
                 is_inserted = false;  // return false on same entry
-        } else
-            array_utils::insert_item(_data, i, _data_count, entry);
+        } else {
+            std::shared_ptr<T> new_entry(new T(entry));
+            smart_ptr_utils::insert_item(_data, i, _data_count, new_entry);
+        }
     } else {
         if(is_found) {
             is_inserted = _subset[i + 1]->loose_insert(entry);  // recurse i+1
@@ -805,7 +849,7 @@ bool BPTree<T>::loose_insert(const T& entry) {
  ******************************************************************************/
 template <typename T>
 void BPTree<T>::fix_excess(std::size_t i) {
-    using namespace array_utils;
+    using namespace smart_ptr_utils;
 
     bool is_after_mid = _subset[i]->is_leaf() ? false : true;  // after mid?
     BPTree<T>* new_node = new BPTree<T>(_dups_ok, _min);       // xfer excess
@@ -822,9 +866,9 @@ void BPTree<T>::fix_excess(std::size_t i) {
     // insert new node after subset[i], which is @ i + 1
     insert_item(_subset, i + 1, _child_count, new_node);
 
-    // get mid
-    T mid = is_after_mid ? _subset[i]->_data[_subset[i]->_data_count]
-                         : new_node->_data[0];
+    std::shared_ptr<T> mid;  // get mid
+    mid = is_after_mid ? _subset[i]->_data[_subset[i]->_data_count]
+                       : new_node->_data[0];
 
     // insert mid back into data[i]; subset[i]'s data_count points to mid
     insert_item(_data, i, _data_count, std::move(mid));
@@ -858,13 +902,13 @@ void BPTree<T>::fix_excess(std::size_t i) {
 template <typename T>
 bool BPTree<T>::loose_remove(const T& entry) {
     // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
     bool is_removed = true;
 
     if(is_leaf()) {
         if(is_found)  // found @ leaf, delete data @ i
-            array_utils::delete_item(_data, i, _data_count);
+            smart_ptr_utils::delete_item(_data, i, _data_count);
         else
             is_removed = false;  // not found @ leaf, then false
     } else {
@@ -930,12 +974,12 @@ void BPTree<T>::fix_shortage(std::size_t i) {
 template <typename T>
 void BPTree<T>::remove_dup_key(const T& entry) {
     // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
 
     if(is_leaf()) {
         if(is_found)  // found @ leaf, delete data @ i
-            array_utils::delete_item(_data, i, _data_count);
+            smart_ptr_utils::delete_item(_data, i, _data_count);
         else
             return;
     } else {
@@ -972,7 +1016,7 @@ void BPTree<T>::remove_dup_key(const T& entry) {
  ******************************************************************************/
 template <typename T>
 void BPTree<T>::rotate_left(std::size_t i) {
-    using namespace array_utils;
+    using namespace smart_ptr_utils;
 
     if(_subset[i + 1]->is_leaf()) {
         // move subset[i+1]'s front data to subset[i]'s back
@@ -1026,7 +1070,7 @@ void BPTree<T>::rotate_left(std::size_t i) {
  ******************************************************************************/
 template <typename T>
 void BPTree<T>::rotate_right(std::size_t i) {
-    using namespace array_utils;
+    using namespace smart_ptr_utils;
 
     if(_subset[i - 1]->is_leaf()) {
         // transfer subset[i-1]'s last data to replace data[i-1] via detach
@@ -1080,24 +1124,25 @@ void BPTree<T>::rotate_right(std::size_t i) {
 template <typename T>
 void BPTree<T>::merge_with_next_subset(std::size_t i) {
     // remove data[i] down to subset[i]'s data via attach
-    T removed;
-    array_utils::delete_item(_data, i, _data_count, removed);
+    std::shared_ptr<T> removed;
+    smart_ptr_utils::delete_item(_data, i, _data_count, removed);
 
     if(!_subset[i]->is_leaf())
-        array_utils::attach_item(_subset[i]->_data, _subset[i]->_data_count,
-                                 std::move(removed));
+        smart_ptr_utils::attach_item(_subset[i]->_data, _subset[i]->_data_count,
+                                     std::move(removed));
 
     // move all subset[i+i]'s data and subset to subset[i]
-    array_utils::merge(_subset[i + 1]->_data, _subset[i + 1]->_data_count,
-                       _subset[i]->_data, _subset[i]->_data_count);
-    array_utils::merge(_subset[i + 1]->_subset, _subset[i + 1]->_child_count,
-                       _subset[i]->_subset, _subset[i]->_child_count);
+    smart_ptr_utils::merge(_subset[i + 1]->_data, _subset[i + 1]->_data_count,
+                           _subset[i]->_data, _subset[i]->_data_count);
+    smart_ptr_utils::merge(_subset[i + 1]->_subset,
+                           _subset[i + 1]->_child_count, _subset[i]->_subset,
+                           _subset[i]->_child_count);
 
     _subset[i]->_next = _subset[i + 1]->_next;  // update next pointer
 
     // deallocate empty subset[i+1] and remove subset[i+1] from subset
     delete _subset[i + 1];
-    array_utils::delete_item(_subset, i + 1, _child_count);  // shift left
+    smart_ptr_utils::delete_item(_subset, i + 1, _child_count);  // shift left
 
     // _subset[i]->_next = _subset[i + 1];  // update next pointer
     _subset[i]->update_size();
@@ -1159,7 +1204,7 @@ BPTree<T>* BPTree<T>::get_largest_node() {
  *  by ref to entry
  ******************************************************************************/
 template <typename T>
-void BPTree<T>::get_smallest(T& entry) {
+void BPTree<T>::get_smallest(std::shared_ptr<T>& entry) {
     if(is_leaf())
         entry = _data[0];
     else
@@ -1180,7 +1225,7 @@ void BPTree<T>::get_smallest(T& entry) {
  *  by ref to entry
  ******************************************************************************/
 template <typename T>
-void BPTree<T>::get_largest(T& entry) {
+void BPTree<T>::get_largest(std::shared_ptr<T>& entry) {
     if(is_leaf())
         entry = _data[_data_count - 1];
     else
@@ -1202,9 +1247,9 @@ void BPTree<T>::get_largest(T& entry) {
  *  none
  ******************************************************************************/
 template <typename T>
-void BPTree<T>::remove_largest(T& entry) {
+void BPTree<T>::remove_largest(std::shared_ptr<T>& entry) {
     if(is_leaf())
-        array_utils::detach_item(_data, _data_count, entry);
+        smart_ptr_utils::detach_item(_data, _data_count, entry);
     else {
         _subset[_child_count - 1]->remove_largest(entry);
 
@@ -1232,12 +1277,12 @@ void BPTree<T>::remove_largest(T& entry) {
 template <typename T>
 T* BPTree<T>::find_ptr(const T& entry) {
     // find index of T that's greater or qual to entry
-    std::size_t i = array_utils::first_ge(_data, _data_count, entry);
-    bool is_found = (i < _data_count && !(entry < _data[i]));
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
 
     if(is_leaf()) {
         if(is_found)
-            return &_data[i];
+            return &(*_data[i]);
         else
             return nullptr;
     } else {                                         // @ !leaf
@@ -1272,16 +1317,16 @@ T* BPTree<T>::find_ptr(const T& entry) {
 template <typename T>
 bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
                             int level) const {
-    using namespace array_utils;
+    using namespace smart_ptr_utils;
 
     // verify data count limits
     if(level && (_data_count < _min || _data_count > _max)) return false;
 
     // verify data is sorted
-    if(!sort::verify(_data, _data_count)) return false;
+    if(!smart_ptr_utils::verify_less(_data, _data_count)) return false;
 
     // check if data has duplicates
-    if(array_utils::has_dups(_data, _data_count)) return false;
+    if(smart_ptr_utils::has_dups(_data, _data_count)) return false;
 
     if(!is_leaf()) {
         // verify child count limits
@@ -1291,7 +1336,7 @@ bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
         for(std::size_t i = 0; i < _child_count; ++i) {
             if(i + 1 < _child_count) {
                 // verify that data[i] exists in one of the subset
-                if(!contains(_data[i])) return false;
+                if(!contains(*_data[i])) return false;
 
                 // verify data[i] is greater than all of subset[i]
                 if(!is_gt_subset(_subset[i], _data[i])) return false;
@@ -1330,8 +1375,9 @@ bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
  *  bool
  ******************************************************************************/
 template <typename T>
-bool BPTree<T>::is_gt_subset(const BPTree<T>* subtree, const T& item) const {
-    if(!array_utils::is_gt(subtree->_data, subtree->_data_count, item))
+bool BPTree<T>::is_gt_subset(const BPTree<T>* subtree,
+                             const std::shared_ptr<T>& item) const {
+    if(!smart_ptr_utils::is_gt(subtree->_data, subtree->_data_count, item))
         return false;
 
     for(std::size_t i = 0; i < subtree->_child_count; ++i)
@@ -1355,8 +1401,9 @@ bool BPTree<T>::is_gt_subset(const BPTree<T>* subtree, const T& item) const {
  *  bool
  ******************************************************************************/
 template <typename T>
-bool BPTree<T>::is_le_subset(const BPTree<T>* subtree, const T& item) const {
-    if(!array_utils::is_le(subtree->_data, subtree->_data_count, item))
+bool BPTree<T>::is_le_subset(const BPTree<T>* subtree,
+                             const std::shared_ptr<T>& item) const {
+    if(!smart_ptr_utils::is_le(subtree->_data, subtree->_data_count, item))
         return false;
 
     for(std::size_t i = 0; i < subtree->_child_count; ++i)
