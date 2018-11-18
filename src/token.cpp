@@ -71,7 +71,37 @@ std::string Token::type_string() const {
  * RETURN:
  *  string
  ******************************************************************************/
-std::string Token::token_str() const { return _token; }
+std::string Token::string() const { return _token; }
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Changes string type.
+ *
+ * PRE-CONDITIONS:
+ *  int type: string type
+ *
+ * POST-CONDITIONS:
+ *  int _type: set to new type
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void Token::set_type(int type) { _type = type; }
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Changes token's string.
+ *
+ * PRE-CONDITIONS:
+ *  std::string str: new string
+ *
+ * POST-CONDITIONS:
+ *  std::string _token: set to new string
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void Token::set_string(std::string str) { _token = str; }
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -88,7 +118,43 @@ std::string Token::token_str() const { return _token; }
  *  ostream by reference
  ******************************************************************************/
 std::ostream& operator<<(std::ostream& outs, const Token& t) {
-    return outs << "|" + t.token_str() + "|";
+    return outs << "|" + t.string() + "|";
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Equality comparison
+ *
+ * PRE-CONDITIONS:
+ *  const Token lhs: left token
+ *  const Token rhs: right token
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+bool operator==(const Token lhs, const Token rhs) {
+    return lhs._type == rhs._type;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Inequality comparison
+ *
+ * PRE-CONDITIONS:
+ *  const Token lhs: left token
+ *  const Token rhs: right token
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+bool operator!=(const Token lhs, const Token rhs) {
+    return lhs._type != rhs._type;
 }
 
 }  // namespace token

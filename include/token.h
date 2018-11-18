@@ -22,12 +22,18 @@ public:
     Token(std::string str = "", int type = -1) : _token(str), _type(type) {}
 
     // ACCESSORS
-    int type() const;                 // return type of token in integer
-    std::string type_string() const;  // return type of token in string
-    std::string token_str() const;    // return string of token
+    int type() const;                         // return type of token in integer
+    virtual std::string type_string() const;  // return type of token in string
+    std::string string() const;               // return string of token
+
+    // MUTATORS
+    void set_type(int type);
+    void set_string(std::string str);
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const Token& t);
+    friend bool operator==(const Token lhs, const Token rhs);
+    friend bool operator!=(const Token lhs, const Token rhs);
 
 private:
     std::string _token;  // token string

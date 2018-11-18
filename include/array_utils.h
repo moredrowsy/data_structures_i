@@ -91,6 +91,9 @@ bool is_lt(const T* data, std::size_t size, const T& item);  // item < data
 template <typename T>
 bool is_le(const T* data, std::size_t size, const T& item);  // item <= data
 
+template <typename T>
+bool has_dups(const T* data, std::size_t size);  // check if has duplicates
+
 /*******************************************************************************
  * DESCRIPTION:
  *  Returns the larger item.
@@ -345,7 +348,7 @@ void delete_item(T* data, std::size_t i, std::size_t& size) {
 template <typename T>
 void delete_item(T* data, std::size_t i, std::size_t& size, T& entry) {
     if(i < size) {
-        entry = data[i];                                     // return T
+        entry = std::move(data[i]);                          // return T
         while(++i < size) data[i - 1] = std::move(data[i]);  // shift left
         --size;
     }
@@ -507,8 +510,8 @@ void print_array(const T* data, std::size_t size, int pos) {
  ******************************************************************************/
 template <typename T>
 bool is_gt(const T* data, std::size_t size, const T& item) {
-    for(std::size_t j = 0; j < size; ++j) {
-        if(item <= data[j]) return false;
+    for(std::size_t i = 0; i < size; ++i) {
+        if(item <= data[i]) return false;
     }
 
     return true;
@@ -531,8 +534,8 @@ bool is_gt(const T* data, std::size_t size, const T& item) {
  ******************************************************************************/
 template <typename T>
 bool is_lt(const T* data, std::size_t size, const T& item) {
-    for(std::size_t j = 0; j < size; ++j)
-        if(item >= data[j]) return false;
+    for(std::size_t i = 0; i < size; ++i)
+        if(item >= data[i]) return false;
 
     return true;
 }
@@ -554,10 +557,36 @@ bool is_lt(const T* data, std::size_t size, const T& item) {
  ******************************************************************************/
 template <typename T>
 bool is_le(const T* data, std::size_t size, const T& item) {
-    for(std::size_t j = 0; j < size; ++j)
-        if(item > data[j]) return false;
+    for(std::size_t i = 0; i < size; ++i)
+        if(item > data[i]) return false;
 
     return true;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Verify templated item is less than or equal to all values in data.
+ *
+ * PRE-CONDITIONS:
+ *  const T* data   : templated array
+ *  std::size_t size: array size
+ *  const T& item   : item to compare
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+bool has_dups(const T* data, std::size_t size) {
+    for(std::size_t i = 0; i < size; ++i) {
+        const T* fixed = data + i;
+
+        for(std::size_t j = i + 1; j < size; ++j)
+            if(data[j] == *fixed) return true;
+    }
+    return false;
 }
 
 }  // namespace array_utils

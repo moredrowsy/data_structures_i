@@ -54,7 +54,7 @@ void extract_file(char fname[]) {
             ++token_count;
             std::cout << std::setw(10) << std::left << token_count
                       << std::setw(3) << ":" << std::setw(25) << std::left
-                      << t.token_str() << t.type_string() << std::endl;
+                      << t.string() << t.type_string() << std::endl;
         }
     }
     std::cout << "Tokens Found: " << token_count << std::endl;

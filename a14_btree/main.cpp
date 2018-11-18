@@ -57,7 +57,7 @@ bool test_btree_auto(int tree_size, bool report) {
     const int MAX = 10000;
     assert(tree_size < MAX);
 
-    btree::BTree<int> bt;
+    btree::BTree<int> bt(false, 2);
     int original[MAX];
     int test[MAX];
     int deleted[MAX];
@@ -154,7 +154,7 @@ bool test_btree_big_three() {
     bool is_passed = true;
     const int MAX = 1000;
     int set1[MAX], set2[MAX];
-    btree::BTree<int> bt1, bt2;
+    btree::BTree<int> bt1(false, 2), bt2(false, 2);
 
     // populate set1 and set2
     for(int i = 0; i < MAX; ++i) {
@@ -225,17 +225,18 @@ bool test_btree_big_three() {
             break;
         }
 
-    if(!is_passed) std::cout << "B I G  T H R E E  F A I L E D" << std::endl;
-
-    std::cout << "B-TREE TESTS: BIG THREE PASSED" << std::endl;
+    if(!is_passed)
+        std::cout << "B I G  T H R E E  F A I L E D" << std::endl;
+    else
+        std::cout << "B-TREE TESTS: BIG THREE PASSED" << std::endl;
 
     return is_passed;
 }
 
 bool test_btree_insert() {
     bool is_passed = true;
-    const int MAX = 1000, sample_size = 100;
-    btree::BTree<int> bt;
+    const int MAX = 10, sample_size = 100;
+    btree::BTree<int> bt(false, 2);
     int test[MAX];
     int find;
 
@@ -251,6 +252,7 @@ bool test_btree_insert() {
         // populate BTree with test[] and return false if fails
         for(std::size_t i = 0; i < test_size; ++i)
             if(!bt.insert(test[i]) || !bt.verify()) {
+                std::cout << bt << std::endl;
                 is_passed = false;
                 break;
             }
@@ -272,9 +274,10 @@ bool test_btree_insert() {
         test_size = MAX;
     }
 
-    if(!is_passed) std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
-
-    std::cout << "B-TREE TESTS: INSERTIONS PASSED" << std::endl;
+    if(!is_passed)
+        std::cout << "I N S E R T I O N  F A I L E D" << std::endl;
+    else
+        std::cout << "B-TREE TESTS: INSERTIONS PASSED" << std::endl;
 
     return is_passed;
 }
@@ -282,7 +285,7 @@ bool test_btree_insert() {
 bool test_btree_remove() {
     bool is_passed = true;
     const int MAX = 1000, sample_size = 100;
-    btree::BTree<int> bt;
+    btree::BTree<int> bt(false, 2);
     int original[MAX];
     int test[MAX];
     int r;
@@ -317,11 +320,13 @@ bool test_btree_remove() {
         }
 
         if(bt.size()) is_passed = false;
+        bt.clear();
     }
 
-    if(!is_passed) std::cout << "R E M O V E D  F A I L E D" << std::endl;
-
-    std::cout << "B-TREE TESTS: REMOVALS PASSED" << std::endl;
+    if(!is_passed)
+        std::cout << "R E M O V E D  F A I L E D" << std::endl;
+    else
+        std::cout << "B-TREE TESTS: REMOVALS PASSED" << std::endl;
 
     return is_passed;
 }

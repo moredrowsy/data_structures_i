@@ -455,8 +455,7 @@ bool BPTree<T>::insert(const T& entry) {
 
     if(loose_insert(entry)) {
         if(_data_count > _max) {
-            BPTree<T>* new_node =
-                new BPTree<T>(_dups_ok);  // xfer 'this' to new
+            BPTree<T>* new_node = new BPTree<T>(_dups_ok, _min);  // xfer to new
 
             // transfer 'this' data/subset to new node's data/subset
             transfer_array(_data, _data_count, new_node->_data,
@@ -679,8 +678,8 @@ void BPTree<T>::copy(const BPTree<T>& other, BPTree<T>*& next) {
         _next = next;  // assign this' _next to ref next
         next = this;   // update ref next to this
     } else {
-        for(int i = (int)_child_count - 1; i >= 0; --i) {  // when !leaf
-            _subset[i] = new BPTree<T>(other._dups_ok);    // copy backwards
+        for(int i = (int)_child_count - 1; i >= 0; --i) {  // copy backwards
+            _subset[i] = new BPTree<T>(other._dups_ok, other._min);
             _subset[i]->copy(*other._subset[i], next);
         }
     }
@@ -809,7 +808,7 @@ void BPTree<T>::fix_excess(std::size_t i) {
     using namespace array_utils;
 
     bool is_after_mid = _subset[i]->is_leaf() ? false : true;  // after mid?
-    BPTree<T>* new_node = new BPTree<T>(_dups_ok);             // xfer excess
+    BPTree<T>* new_node = new BPTree<T>(_dups_ok, _min);       // xfer excess
 
     // move after half of subset[i]'s data to new node's data
     split(_subset[i]->_data, _subset[i]->_data_count, new_node->_data,
@@ -975,25 +974,30 @@ template <typename T>
 void BPTree<T>::rotate_left(std::size_t i) {
     using namespace array_utils;
 
-    // move data[i] down to subset[i]'s data via attach
-    attach_item(_subset[i]->_data, _subset[i]->_data_count, _data[i]);
+    if(_subset[i + 1]->is_leaf()) {
+        // move subset[i+1]'s front data to subset[i]'s back
+        attach_item(_subset[i]->_data, _subset[i]->_data_count,
+                    std::move(_subset[i + 1]->_data[0]));
 
-    // if subset[i+1] has child, transfer to subset[i] via attach
-    if(!_subset[i + 1]->is_leaf()) {
-        // move subset[i+1]'s front data to data[i] via delete
-        delete_item(_subset[i + 1]->_data, 0, _subset[i + 1]->_data_count,
-                    _data[i]);
-
-        BPTree<T>* removed = nullptr;
-        delete_item(_subset[i + 1]->_subset, 0, _subset[i + 1]->_child_count,
-                    removed);
-        attach_item(_subset[i]->_subset, _subset[i]->_child_count, removed);
-    } else {
-        // simply delete subset[i+1]'s front data
+        // delete invalid front's data
         delete_item(_subset[i + 1]->_data, 0, _subset[i + 1]->_data_count);
 
         // move subset[i+1]'s front data (previously second front) to data[i]
         _data[i] = _subset[i + 1]->_data[0];
+    } else {
+        // move data[i] down to subset[i]'s data via attach
+        attach_item(_subset[i]->_data, _subset[i]->_data_count,
+                    std::move(_data[i]));
+
+        // move subset[i+1]'s front data to data[i] via delete
+        delete_item(_subset[i + 1]->_data, 0, _subset[i + 1]->_data_count,
+                    _data[i]);
+
+        // transfer to subset[i]'s front child to back of subset[i+1]'s children
+        BPTree<T>* removed = nullptr;
+        delete_item(_subset[i + 1]->_subset, 0, _subset[i + 1]->_child_count,
+                    removed);
+        attach_item(_subset[i]->_subset, _subset[i]->_child_count, removed);
     }
 
     _subset[i]->update_size();
@@ -1024,23 +1028,28 @@ template <typename T>
 void BPTree<T>::rotate_right(std::size_t i) {
     using namespace array_utils;
 
-    // copy data[i-1] down to front of subset[i]->data via insert
-    insert_item(_subset[i]->_data, 0, _subset[i]->_data_count, _data[i - 1]);
+    if(_subset[i - 1]->is_leaf()) {
+        // transfer subset[i-1]'s last data to replace data[i-1] via detach
+        detach_item(_subset[i - 1]->_data, _subset[i - 1]->_data_count,
+                    _data[i - 1]);
 
-    // transfer subset[i-1]'s last data to replace data[i-1] via detach
-    detach_item(_subset[i - 1]->_data, _subset[i - 1]->_data_count,
-                _data[i - 1]);
+        // copy data[i-1] down to front of subset[i]->data via insert
+        insert_item(_subset[i]->_data, 0, _subset[i]->_data_count,
+                    _data[i - 1]);
+    } else {
+        // copy data[i-1] down to front of subset[i]->data via insert
+        insert_item(_subset[i]->_data, 0, _subset[i]->_data_count,
+                    std::move(_data[i - 1]));
 
-    // transfer subset[i-1]'s last subset to front of subset[i]'s subset
-    if(!_subset[i - 1]->is_leaf()) {
+        // transfer subset[i-1]'s last data to replace data[i-1] via detach
+        detach_item(_subset[i - 1]->_data, _subset[i - 1]->_data_count,
+                    _data[i - 1]);
+
+        // transfer subset[i-1]'s last child to front of subset[i]'s children
         BPTree<T>* detach = nullptr;
         detach_item(_subset[i - 1]->_subset, _subset[i - 1]->_child_count,
                     detach);
         insert_item(_subset[i]->_subset, 0, _subset[i]->_child_count, detach);
-    } else {
-        // copy data[i-1] to subset[i]'s front data
-        insert_item(_subset[i]->_data, 0, _subset[i]->_data_count,
-                    _data[i - 1]);
     }
 
     _subset[i]->update_size();
@@ -1076,7 +1085,7 @@ void BPTree<T>::merge_with_next_subset(std::size_t i) {
 
     if(!_subset[i]->is_leaf())
         array_utils::attach_item(_subset[i]->_data, _subset[i]->_data_count,
-                                 removed);
+                                 std::move(removed));
 
     // move all subset[i+i]'s data and subset to subset[i]
     array_utils::merge(_subset[i + 1]->_data, _subset[i + 1]->_data_count,
@@ -1270,6 +1279,9 @@ bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
 
     // verify data is sorted
     if(!sort::verify(_data, _data_count)) return false;
+
+    // check if data has duplicates
+    if(array_utils::has_dups(_data, _data_count)) return false;
 
     if(!is_leaf()) {
         // verify child count limits

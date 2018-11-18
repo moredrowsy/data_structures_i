@@ -306,7 +306,7 @@ bool BTree<T>::insert(const T& entry) {
 
     if(loose_insert(entry)) {
         if(_data_count > _max) {
-            BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer 'this' to new
+            BTree<T>* new_node = new BTree<T>(_dups_ok, _min);  // xfer to new
 
             // transfer 'this' data/subset to new node's data/subset
             transfer_array(_data, _data_count, new_node->_data,
@@ -644,7 +644,7 @@ bool BTree<T>::loose_insert(const T& entry) {
  ******************************************************************************/
 template <typename T>
 void BTree<T>::fix_excess(std::size_t i) {
-    BTree<T>* new_node = new BTree<T>(_dups_ok);  // xfer excess after mid
+    BTree<T>* new_node = new BTree<T>(_dups_ok, _min);  // xfer excess after mid
 
     // move elements after half of subset[i]'s data to new node's data
     array_utils::split(_subset[i]->_data, _subset[i]->_data_count,
@@ -915,6 +915,9 @@ bool BTree<T>::verify_tree(int& height, bool& has_stored_height,
 
     // verify data is sorted
     if(!sort::verify(_data, _data_count)) return false;
+
+    // check if data has duplicates
+    if(array_utils::has_dups(_data, _data_count)) return false;
 
     if(!is_leaf()) {
         // verify child count limits
