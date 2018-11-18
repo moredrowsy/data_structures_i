@@ -106,7 +106,7 @@ bool has_dups(const T* data, std::size_t size);  // check if has duplicates
  *  none
  *
  * RETURN:
- *  T
+ *  T&
  ******************************************************************************/
 template <typename T>
 T& max(const T& a, const T& b) {
@@ -565,7 +565,7 @@ bool is_le(const T* data, std::size_t size, const T& item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Verify templated item is less than or equal to all values in data.
+ *  Verify that data has no duplicates.
  *
  * PRE-CONDITIONS:
  *  const T* data   : templated array

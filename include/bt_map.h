@@ -28,7 +28,7 @@ public:
     typedef btree::BTree<Pair> MapBase;
 
     // CONSTRUCTOR
-    Map() : _map(true) {}
+    Map(std::size_t min = btree::MINIMUM) : _map(true, min) {}
 
     // capacity
     std::size_t size() const;
@@ -67,7 +67,7 @@ public:
     typedef pair::MPair<K, V> MPair;
     typedef btree::BTree<MPair> MMapBase;
 
-    MMap() : _mmap(true) {}
+    MMap(std::size_t min = btree::MINIMUM) : _mmap(true, min) {}
 
     // capacity
     std::size_t size() const;

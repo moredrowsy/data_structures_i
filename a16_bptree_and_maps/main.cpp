@@ -530,7 +530,7 @@ void test_map_interactive() {
               << std::string(80, '-') << std::endl;
 
     const std::size_t SIZE = 24;
-    Map<std::string, std::string> map;
+    Map<std::string, std::string> map(2);
     Map<std::string, std::string>::Iterator it;
     bool is_found = false, is_removed = false, is_print = false;
     char c;
@@ -654,7 +654,7 @@ void test_mmap_interactive() {
               << std::string(80, '-') << std::endl;
 
     const std::size_t SIZE = 24;
-    MMap<std::string, std::string> mmap;
+    MMap<std::string, std::string> mmap(2);
     MMap<std::string, std::string>::Iterator it;
     bool is_found = false, is_removed = false, is_print = false;
     char c;
@@ -675,9 +675,11 @@ void test_mmap_interactive() {
     srand(time(nullptr));
 
     do {
+        std::cout << std::string(80, '-') << std::endl;
         std::cout << "[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear"
                      "     e[X]it: ";
         std::cin >> c;
+        std::cout << std::string(80, '-') << std::endl;
 
         switch(c) {
             case 'X':

@@ -28,7 +28,8 @@
 #include <cassert>            // assert()
 #include <memory>             // shared_ptr
 #include <string>             // string
-#include "smart_ptr_utils.h"  // array utilities
+#include "smart_ptr_utils.h"  // smart pointer utilities
+#include "sort.h"             // verify()
 
 namespace bptree {
 enum { MINIMUM = 1 };
@@ -173,6 +174,7 @@ private:
     void get_largest(std::shared_ptr<T>& entry);     // entry := rightmost leaf
     void remove_largest(std::shared_ptr<T>& entry);  // remove largest child
     T* find_ptr(const T& entry);  // return ptr to T; else nullptr
+    std::shared_ptr<T> find_shared_ptr(const T& entry);
 
     bool verify_tree(int& height, bool& has_stored_height, int level = 0) const;
     bool is_gt_subset(const BPTree<T>* subtree,
@@ -274,6 +276,7 @@ BPTree<T>& BPTree<T>::operator=(const BPTree<T>& rhs) {
     if(this != &rhs) {
         _min = rhs._min;
         _max = rhs._max;
+        _dups_ok = rhs._dups_ok;
         clear();
         copy(rhs);
     }
@@ -710,19 +713,23 @@ void BPTree<T>::copy(const BPTree<T>& other) {
 template <typename T>
 void BPTree<T>::copy(const BPTree<T>& other, BPTree<T>*& next) {
     // copy states
-    _dups_ok = other._dups_ok;
     _size = other._size;
+    _data_count = other._data_count;
     _child_count = other._child_count;
-    smart_ptr_utils::copy_array(other._data, other._data_count, _data,
-                                _data_count);
 
-    if(is_leaf()) {    // when leaf
+    if(is_leaf()) {  // when leaf
+        for(std::size_t i = 0; i < _data_count; ++i)
+            _data[i] = std::make_shared<T>(*other._data[i]);  // make new
+
         _next = next;  // assign this' _next to ref next
         next = this;   // update ref next to this
     } else {
         for(int i = (int)_child_count - 1; i >= 0; --i) {  // copy backwards
             _subset[i] = new BPTree<T>(other._dups_ok, other._min);
             _subset[i]->copy(*other._subset[i], next);
+
+            if(i < (int)_data_count)  // link inner node dup to leaf's ptr
+                _data[i] = _subset[i + 1]->find_shared_ptr(*other._data[i]);
         }
     }
 }
@@ -807,8 +814,9 @@ bool BPTree<T>::loose_insert(const T& entry) {
             else
                 is_inserted = false;  // return false on same entry
         } else {
-            std::shared_ptr<T> new_entry(new T(entry));
-            smart_ptr_utils::insert_item(_data, i, _data_count, new_entry);
+            std::shared_ptr<T> new_entry = std::make_shared<T>(entry);
+            smart_ptr_utils::insert_item(_data, i, _data_count,
+                                         std::move(new_entry));
         }
     } else {
         if(is_found) {
@@ -1262,7 +1270,7 @@ void BPTree<T>::remove_largest(std::shared_ptr<T>& entry) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Returns the pointer to entry contained in the BPTree. If the entry is not
+ *  Returns the pointer to entry contained in the tree. If the entry is not
  *  found, then nullptr.
  *
  * PRE-CONDITIONS:
@@ -1290,6 +1298,39 @@ T* BPTree<T>::find_ptr(const T& entry) {
             return _subset[i + 1]->find_ptr(entry);  // recurse i+1
         else                                         // when !found
             return _subset[i]->find_ptr(entry);      // recurse to find entry
+    }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns shared pointer to entry contained in the tree. If the entry is not
+ *  found, then shared pointer to nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: item to find
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  std::shared_ptr<T>
+ ******************************************************************************/
+template <typename T>
+std::shared_ptr<T> BPTree<T>::find_shared_ptr(const T& entry) {
+    // find index of T that's greater or qual to entry
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
+
+    if(is_leaf()) {
+        if(is_found)
+            return _data[i];
+        else
+            return std::shared_ptr<T>(nullptr);
+    } else {                                                // @ !leaf
+        if(is_found)                                        // when found
+            return _subset[i + 1]->find_shared_ptr(entry);  // recurse i+1
+        else                                                // when !found
+            return _subset[i]->find_shared_ptr(entry);      // recurse to find
     }
 }
 
@@ -1323,7 +1364,9 @@ bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
     if(level && (_data_count < _min || _data_count > _max)) return false;
 
     // verify data is sorted
-    if(!smart_ptr_utils::verify_less(_data, _data_count)) return false;
+    if(!sort::verify(_data, _data_count,
+                     [](const auto& l, const auto& r) { return *l < *r; }))
+        return false;
 
     // check if data has duplicates
     if(smart_ptr_utils::has_dups(_data, _data_count)) return false;
@@ -1365,8 +1408,8 @@ bool BPTree<T>::verify_tree(int& height, bool& has_stored_height,
  *  Checks recursively that item is greater than all of subset.
  *
  * PRE-CONDITIONS:
- *  const BPTree<T>* subtree: BPTree to recursively check
- *  const T& item          : item to compare
+ *  const BPTree<T>* subtree      : BPTree to recursively check
+ *  const std::shared_ptr<T>& item: item to compare
  *
  * POST-CONDITIONS:
  *  none
@@ -1391,8 +1434,8 @@ bool BPTree<T>::is_gt_subset(const BPTree<T>* subtree,
  *  Checks recursively that item is less than all of subset.
  *
  * PRE-CONDITIONS:
- *  const BPTree<T>* subtree: BPTree to recursively check
- *  const T& item          : item to compare
+ *  const BPTree<T>* subtree      : BPTree to recursively check
+ *  const std::shared_ptr<T>& item: item to compare
  *
  * POST-CONDITIONS:
  *  none

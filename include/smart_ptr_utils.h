@@ -86,9 +86,6 @@ template <typename T>
 void print_array(const T* data, std::size_t size, int pos = -1);
 
 template <typename T>
-bool verify_less(const T* data, std::size_t size);
-
-template <typename T>
 bool is_gt(const T* data, std::size_t size, const T& item);  // item > data
 
 template <typename T>
@@ -105,18 +102,18 @@ bool has_dups(const T* data, std::size_t size);  // check if has duplicates
  *  Returns the larger item.
  *
  * PRE-CONDITIONS:
- *  const T& a: templated item by reference
- *  const T& b: templated item by reference
+ *  const T& a: smart pointer
+ *  const T& b: smart pointer
  *
  * POST-CONDITIONS:
  *  none
  *
  * RETURN:
- *  T
+ *  T&
  ******************************************************************************/
 template <typename T>
 T& max(const T& a, const T& b) {
-    return *a < *b ? *b : *a;
+    return *a < *b ? b : a;
 }
 
 /*******************************************************************************
@@ -124,8 +121,8 @@ T& max(const T& a, const T& b) {
  *  Swap two items via std::move
  *
  * PRE-CONDITIONS:
- *  T& a: templated item by reference
- *  T& b: templated item by reference
+ *  T& a: smart pointer
+ *  T& b: smart pointer
  *
  * POST-CONDITIONS:
  *  a and b are swapped.
@@ -145,7 +142,7 @@ void swap(T& a, T& b) {
  *  Finds the index of the largest value in data.
  *
  * PRE-CONDITIONS:
- *  T* data         : templated array
+ *  T* data         : array of smart pointers
  *  std::size_t size: array size
  *
  * POST-CONDITIONS:
@@ -170,7 +167,7 @@ std::size_t index_of_max(T* data, std::size_t size) {
  *  replacing same item if flag is set.
  *
  * PRE-CONDITIONS:
- *  T* data          : templated array
+ *  T* data          : array of smart pointers
  *  std::size_t& size: size array + 1 MUST be valid for shifting values to right
  *  const T& entry   : entry item to be inserted
  *  bool replace     : allows replacing the same item.
@@ -217,11 +214,12 @@ void ordered_insert(T* data, std::size_t& size, const T& entry, bool replace) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Find the index of the first value that's greater than or equal to entry.
+ *  Compares dereferenced shared pointer.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
- *  const T& entry  : entry item to compare
+ *  const T& entry  : entry item to be inserted
  *
  * POST-CONDITIONS:
  *  none
@@ -242,7 +240,7 @@ std::size_t first_ge(const T* data, std::size_t size, const T& entry) {
  *  Find the index of the first value that's greater than or equal to entry.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
  *  const U& entry  : dereferenced entry item to compare
  *
@@ -265,7 +263,7 @@ std::size_t first_ge(const T* data, std::size_t size, const U& entry) {
  *  Inserts entry at the end of the array.
  *
  * PRE-CONDITIONS:
- *  T* data           : templated array
+ *  T* data           : array of smart pointers
  *  std::size_t & size: size + 1 MUST be valid for shifting values to right
  *  const T& entry    : entry item to be inserted
  *
@@ -286,7 +284,7 @@ void attach_item(T* data, std::size_t& size, const T& entry) {
  *  Inserts entry at position i into array.
  *
  * PRE-CONDITIONS:
- *  T* data          : templated array
+ *  T* data          : array of smart pointers
  *  std::size_t i    : position to insert
  *  std::size_t& size: size + 1 MUST be valid for shifting values to right
  *  const T& entry   : entry item to be inserted
@@ -316,7 +314,7 @@ void insert_item(T* data, std::size_t i, std::size_t& size, const T& entry) {
  *  Removes the last item in the array.
  *
  * PRE-CONDITIONS:
- *  T* data          : templated array
+ *  T* data          : array of smart pointers
  *  std::size_t& size: size array
  *  T& entry         : entry item to hold detached item
  *
@@ -337,7 +335,7 @@ void detach_item(T* data, std::size_t& size, T& entry) {
  *  Deletes an item at position i.
  *
  * PRE-CONDITIONS:
- *  T* data          : templated array
+ *  T* data          : array of smart pointers
  *  std::size_t i    : position to delete
  *  std::size_t& size: size array
  *
@@ -361,7 +359,7 @@ void delete_item(T* data, std::size_t i, std::size_t& size) {
  *  Deletes an item at position i.
  *
  * PRE-CONDITIONS:
- *  T* data          : templated array
+ *  T* data          : array of smart pointers
  *  std::size_t i    : position to delete
  *  std::size_t& size: size array
  *  T& entry         : entry item to hold deleted item
@@ -494,7 +492,7 @@ void transfer_array(T* src, std::size_t& src_size, T* dest,
  *  Prints array with carat pointed to i.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
  *  int pos         : position of carat
  *
@@ -524,40 +522,11 @@ void print_array(const T* data, std::size_t size, int pos) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Verify sortedness of the array, using specified relation order, cmp.
- *
- * PRE-CONDITIONS:
- *  T *data         : templated array
- *  std::size_t size: size of array
- *  bool (*cmp)     : comparision function
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  boolean
- ******************************************************************************/
-template <typename T>
-bool verify_less(const T* data, std::size_t size) {
-    bool is_sorted = true;
-
-    if(size)
-        while(--size) {
-            if(*data[size] < *data[size - 1]) {
-                is_sorted = false;
-                break;
-            }
-        }
-
-    return is_sorted;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Verify templated item is greater than all values in data.
+ *  Compares dereferenced shared pointer.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
  *  const T& item   : item to compare
  *
@@ -579,9 +548,10 @@ bool is_gt(const T* data, std::size_t size, const T& item) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Verify templated item is less than all values in data.
+ *  Compares dereferenced shared pointer.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
  *  const T& item   : item to compare
  *
@@ -602,9 +572,10 @@ bool is_lt(const T* data, std::size_t size, const T& item) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Verify templated item is less than or equal to all values in data.
+ *  Compares dereferenced shared pointer.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
  *  const T& item   : item to compare
  *
@@ -624,10 +595,10 @@ bool is_le(const T* data, std::size_t size, const T& item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Verify templated item is less than or equal to all values in data.
+ *  Verify that data has no duplicates. Compares dereferenced shared pointer.
  *
  * PRE-CONDITIONS:
- *  const T* data   : templated array of smart pointers
+ *  const T* data   : array of smart pointers
  *  std::size_t size: array size
  *  const T& item   : item to compare
  *
