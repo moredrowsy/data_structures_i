@@ -132,7 +132,6 @@ token::Token FTokenizer::next_token() {
  ******************************************************************************/
 FTokenizer &operator>>(FTokenizer &f, token::Token &t) {
     t = f.next_token();
-
     return f;
 }
 

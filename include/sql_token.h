@@ -1,7 +1,7 @@
 #ifndef SQL_TOKEN_H
 #define SQL_TOKEN_H
 
-#include "sql_consts.h"  // SQL constants
+#include "sql_states.h"  // SQL constants
 #include "token.h"       // Token class
 
 namespace sql {
@@ -28,6 +28,9 @@ public:
                 break;
             case ASTERISK:
                 type_string = "ASTERISK";
+                break;
+            case QUOTE:
+                type_string = "QUOTE";
                 break;
             case STRING:
                 type_string = "STRING";

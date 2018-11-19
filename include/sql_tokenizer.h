@@ -2,7 +2,8 @@
 #define SQLTOKENIZER_H
 
 #include <algorithm>     // transform()
-#include "sql_consts.h"  // SQL constants
+#include "bpt_map.h"     // MMap class
+#include "sql_states.h"  // SQL constants
 #include "sql_token.h"   // Token class
 #include "stokenizer.h"  // state_machine funcs, STokenizer
 
@@ -10,6 +11,7 @@ namespace sql {
 
 class SQLTokenizer {
     enum { MAX_BLOCK = stokenizer::MAX_BUFFER };
+    typedef bpt_map::MMap<std::string, std::string> Map;
 
 public:
     // CONSTRUCTORS
@@ -19,16 +21,27 @@ public:
     bool more() const;               // returns the current value of _more
     explicit operator bool() const;  // boolean conversion for extractor
 
+    // MUTATORS
+    void set_string(char* buffer);
+    bool get_query(Map& map);
+
     // FRIENDS
-    friend SQLTokenizer& operator>>(SQLTokenizer& f, token::Token& t);
+    friend SQLTokenizer& operator>>(SQLTokenizer& f, SQLToken& t);
 
 private:
+    static int _table[MAX_ROWS][MAX_COLS];
+    static bool _made_table;
+
     std::size_t _block_size;      // block size to grab from ifstream
     bool _more;                   // false if last token of the last block
-    token::Token _prev_token;     // previous token that was extracted
+    SQLToken _prev_token;         // previous token that was extracted
     stokenizer::STokenizer _stk;  // STokenizer obj to tokenize current block
 
-    token::Token parse();
+    void make_table(int _table[][MAX_COLS]);  // SQL's state table set up
+    void add_to_parse_tree(int command, int prev_state, int state, SQLToken& t,
+                           Map& map);
+
+    SQLToken next_token();
 };
 
 }  // namespace sql
