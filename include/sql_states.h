@@ -32,8 +32,12 @@ enum COLUMNS {
     MAX_COLS
 };
 
+enum PARSE_KEYS { COMMAND, FIELDS, TABLE, MAX_KEYS };
+
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLS]);
+
+void init_keys(std::string* _keys);
 
 // mark this state (row) with a 1 (success)
 void mark_success(int _table[][MAX_COLS], int state);

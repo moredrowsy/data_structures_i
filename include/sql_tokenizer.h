@@ -29,8 +29,9 @@ public:
     friend SQLTokenizer& operator>>(SQLTokenizer& f, SQLToken& t);
 
 private:
+    static bool _need_init;
     static int _table[MAX_ROWS][MAX_COLS];
-    static bool _made_table;
+    static std::string _keys[MAX_KEYS];
 
     std::size_t _block_size;      // block size to grab from ifstream
     bool _more;                   // false if last token of the last block
@@ -38,9 +39,7 @@ private:
     stokenizer::STokenizer _stk;  // STokenizer obj to tokenize current block
 
     void make_table(int _table[][MAX_COLS]);  // SQL's state table set up
-    void add_to_parse_tree(int command, int prev_state, int state, SQLToken& t,
-                           Map& map);
-
+    bool get_parse_key(int command, int prev_state, int state, int& key_code);
     SQLToken next_token();
 };
 

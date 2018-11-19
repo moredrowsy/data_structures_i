@@ -22,6 +22,26 @@ void init_table(int _table[][MAX_COLS]) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Initialize array of keys.
+ *
+ * PRE-CONDITIONS:
+ *  std::string *_keys
+ *  array size == MAX_KEYS
+ *
+ * POST-CONDITIONS:
+ *  All cells' value are -1.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void init_keys(std::string* _keys) {
+    _keys[COMMAND] = "COMMAND";
+    _keys[FIELDS] = "FIELDS";
+    _keys[TABLE] = "TABLE";
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Mark the cell in row 'state' at column 0 with 1 (as true)
  *
  * PRE-CONDITIONS:
