@@ -5,6 +5,7 @@ namespace sql {
 bool SQLTokenizer::_need_init = true;
 int SQLTokenizer::_table[MAX_ROWS][MAX_COLS];
 std::string SQLTokenizer::_keys[MAX_KEYS];
+std::string SQLTokenizer::_types[MAX_COLS];
 
 SQLTokenizer::SQLTokenizer(char *buffer, std::size_t block_size)
     : _block_size(block_size), _more(false), _stk(buffer, _block_size) {
@@ -20,24 +21,22 @@ void SQLTokenizer::set_string(char *buffer) { _stk.set_string(buffer); }
 
 bool SQLTokenizer::get_query(bpt_map::MMap<std::string, std::string> &map) {
     bool is_good = false;  // query's success
-    int state = STATE_COMMAND, prev_state;
-    int command, key_code;
+    int state = CMD_START;
+    int key_code;
 
-    SQLToken t = next_token();
-    command = t.type();
+    SQLToken t = next_token();  // get SQL Token from STokenizer
 
     while(_stk && t.type() > -1 && _table[state][t.type()] != -1) {
-        prev_state = state;
         state = _table[state][t.type()];
-        if(is_success(_table, state)) is_good = true;
+        if(is_success(_table, state)) is_good = true;  // log query success
 
-        if(get_parse_key(command, prev_state, state, key_code))
-            map[_keys[key_code]] += t.string();
+        if(get_parse_key(state, key_code))       // valid code?
+            map[_keys[key_code]] += t.string();  // add to map
 
-        t = next_token();
+        t = next_token();  // get next SQL Token
     }
 
-    if(!is_good) map.clear();
+    if(!is_good) map.clear();  // clear map if query fails
 
     return is_good;
 }
@@ -45,31 +44,23 @@ bool SQLTokenizer::get_query(bpt_map::MMap<std::string, std::string> &map) {
 void SQLTokenizer::make_table(int _table[][MAX_COLS]) {
     init_table(_table);
     init_keys(_keys);
-    mark_table_command(_table, STATE_COMMAND);
-    mark_table_select(_table, STATE_SELECT);
+    init_types(_types);
+    mark_table_command(_table, CMD_START);
+    mark_table_select(_table, CMD_SELECT);
     print_table(_table);
 
     _need_init = false;
 }
 
-bool SQLTokenizer::get_parse_key(int command, int prev_state, int state,
-                                 int &key_code) {
+bool SQLTokenizer::get_parse_key(int state, int &key_code) {
     bool is_valid = true;
-    if(prev_state == STATE_COMMAND)
+    if(state == CMD_SELECT)
         key_code = COMMAND;
-    else if(command == SELECT) {
-        // FIELDS
-        if((prev_state == SELECT_START) &&
-           (state == SELECT_STRING || state == SELECT_ASTERISK))
-            key_code = FIELDS;
-        else if(prev_state == SELECT_COMMA && state == SELECT_STRING)
-            key_code = FIELDS;
-        // TABLE
-        else if(prev_state == SELECT_FROM && state == SELECT_END)
-            key_code = TABLE;
-        else
-            is_valid = false;
-    } else
+    else if(state == SELECT_STRING || state == SELECT_ASTERISK)
+        key_code = FIELDS;
+    else if(state == SELECT_TABLE)
+        key_code = TABLE;
+    else
         is_valid = false;
 
     return is_valid;
@@ -84,18 +75,20 @@ SQLToken SQLTokenizer::next_token() {
     std::string cmp_str = t.string();
     std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
 
-    if(cmp_str == "SELECT") {
+    if(cmp_str == _types[SELECT]) {
         t.set_type(SELECT);
         t.set_string(std::move(cmp_str));
-    } else if(cmp_str == "FROM") {
+    } else if(cmp_str == _types[FROM]) {
         t.set_type(FROM);
         t.set_string(std::move(cmp_str));
-    } else if(cmp_str == ",")
+    } else if(cmp_str == _types[COMMA])
         t.set_type(COMMA);
-    else if(cmp_str == "*")
+    else if(cmp_str == _types[ASTERISK])
         t.set_type(ASTERISK);
-    else if(cmp_str == "'" || cmp_str == "\"")
-        t.set_type(QUOTE);
+    else if(cmp_str == _types[QUOTE_S])
+        t.set_type(QUOTE_S);
+    else if(cmp_str == _types[QUOTE_D])
+        t.set_type(QUOTE_D);
     else
         t.set_type(STRING);
 

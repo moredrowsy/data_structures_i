@@ -42,6 +42,31 @@ void init_keys(std::string* _keys) {
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Initialize array of SQL Token string types.
+ *
+ * PRE-CONDITIONS:
+ *  std::string *_types
+ *  array size == MAX_COLS
+ *
+ * POST-CONDITIONS:
+ *  All cells' value are -1.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void init_types(std::string* _types) {
+    _types[SUCCESS] = "";
+    _types[SELECT] = "SELECT";
+    _types[FROM] = "FROM";
+    _types[COMMA] = ",";
+    _types[ASTERISK] = "*";
+    _types[QUOTE_S] = "'";
+    _types[QUOTE_D] = "\"";
+    _types[STRING] = "";
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Mark the cell in row 'state' at column 0 with 1 (as true)
  *
  * PRE-CONDITIONS:
@@ -158,14 +183,44 @@ void mark_cell(int row, int _table[][MAX_COLS], int column, int state) {
     _table[row][column] = state;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells for STATE_COMMAND. This state is where it branches
+ *  off to different command states.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLS]: integer array
+ *  int state             : STATE_COMMAND
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with command states
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_table_command(int _table[][MAX_COLS], int state) {
     // MARK SUCCESS/FAILURE
     mark_fail(_table, state);
 
     // MARK GO TO STATE
-    mark_cell(state, _table, SELECT, STATE_SELECT);
+    mark_cell(state, _table, SELECT, CMD_SELECT);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells for CMD_SELECT. This is the pathway for the
+ *  SELECT command.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLS]: integer array
+ *  int state             : CMD_SELECT
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with states
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void mark_table_select(int _table[][MAX_COLS], int state) {
     // MARK SUCCESS/FAILURE
     // state [+0] ---> fail
@@ -178,7 +233,7 @@ void mark_table_select(int _table[][MAX_COLS], int state) {
     mark_fail(_table, SELECT_START);
     mark_fail(_table, SELECT_ASTERISK);
     mark_fail(_table, SELECT_FROM);
-    mark_success(_table, SELECT_END);
+    mark_success(_table, SELECT_TABLE);
     mark_fail(_table, SELECT_STRING);
     mark_fail(_table, SELECT_COMMA);
 
@@ -194,7 +249,7 @@ void mark_table_select(int _table[][MAX_COLS], int state) {
     mark_cell(state + 0, _table, ASTERISK, SELECT_ASTERISK);
     mark_cell(state + 0, _table, STRING, SELECT_STRING);
     mark_cell(state + 1, _table, FROM, SELECT_FROM);
-    mark_cell(state + 2, _table, STRING, SELECT_END);
+    mark_cell(state + 2, _table, STRING, SELECT_TABLE);
     mark_cell(state + 4, _table, FROM, SELECT_FROM);
     mark_cell(state + 4, _table, COMMA, SELECT_COMMA);
     mark_cell(state + 5, _table, STRING, SELECT_STRING);

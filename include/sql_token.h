@@ -1,6 +1,7 @@
 #ifndef SQL_TOKEN_H
 #define SQL_TOKEN_H
 
+#include <string>        // string
 #include "sql_states.h"  // SQL constants
 #include "token.h"       // Token class
 
@@ -29,8 +30,11 @@ public:
             case ASTERISK:
                 type_string = "ASTERISK";
                 break;
-            case QUOTE:
-                type_string = "QUOTE";
+            case QUOTE_S:
+                type_string = "QUOTE_S";
+                break;
+            case QUOTE_D:
+                type_string = "QUOTE_D";
                 break;
             case STRING:
                 type_string = "STRING";
