@@ -4,24 +4,6 @@ namespace sql {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Initialize the entire table with -1.
- *
- * PRE-CONDITIONS:
- *  int _table[][MAX_COLS]: adjacency table
- *
- * POST-CONDITIONS:
- *  All cells' value are -1.
- *
- * RETURN:
- *  none
- ******************************************************************************/
-void init_table(int _table[][MAX_COLS]) {
-    for(int row = 0; row < MAX_ROWS; ++row)
-        for(int col = 0; col < MAX_COLS; ++col) _table[row][col] = -1;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Initialize array of keys.
  *
  * PRE-CONDITIONS:
@@ -63,6 +45,24 @@ void init_types(std::string* _types) {
     _types[QUOTE_S] = "'";
     _types[QUOTE_D] = "\"";
     _types[STRING] = "";
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize the entire table with -1.
+ *
+ * PRE-CONDITIONS:
+ *  int _table[][MAX_COLS]: adjacency table
+ *
+ * POST-CONDITIONS:
+ *  All cells' value are -1.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void init_table(int _table[][MAX_COLS]) {
+    for(int row = 0; row < MAX_ROWS; ++row)
+        for(int col = 0; col < MAX_COLS; ++col) _table[row][col] = -1;
 }
 
 /*******************************************************************************
@@ -198,12 +198,12 @@ void mark_cell(int row, int _table[][MAX_COLS], int column, int state) {
  * RETURN:
  *  none
  ******************************************************************************/
-void mark_table_command(int _table[][MAX_COLS], int state) {
+void mark_table_command(int _table[][MAX_COLS]) {
     // MARK SUCCESS/FAILURE
-    mark_fail(_table, state);
+    mark_fail(_table, CMD_START);
 
     // MARK GO TO STATE
-    mark_cell(state, _table, SELECT, CMD_SELECT);
+    mark_cell(CMD_START, _table, SELECT, CMD_SELECT);
 }
 
 /*******************************************************************************
@@ -221,7 +221,7 @@ void mark_table_command(int _table[][MAX_COLS], int state) {
  * RETURN:
  *  none
  ******************************************************************************/
-void mark_table_select(int _table[][MAX_COLS], int state) {
+void mark_table_select(int _table[][MAX_COLS]) {
     // MARK SUCCESS/FAILURE
     // state [+0] ---> fail
     // state [+1] ---> fail
@@ -246,13 +246,13 @@ void mark_table_select(int _table[][MAX_COLS], int state) {
     // state [+5] --- FROM -----> [+3]
     // state [+5] --- COMMA ----> [+6]
     // state [+6] --- STRING ---> [+5]
-    mark_cell(state + 0, _table, ASTERISK, SELECT_ASTERISK);
-    mark_cell(state + 0, _table, STRING, SELECT_STRING);
-    mark_cell(state + 1, _table, FROM, SELECT_FROM);
-    mark_cell(state + 2, _table, STRING, SELECT_TABLE);
-    mark_cell(state + 4, _table, FROM, SELECT_FROM);
-    mark_cell(state + 4, _table, COMMA, SELECT_COMMA);
-    mark_cell(state + 5, _table, STRING, SELECT_STRING);
+    mark_cell(SELECT_START, _table, ASTERISK, SELECT_ASTERISK);
+    mark_cell(SELECT_START, _table, STRING, SELECT_STRING);
+    mark_cell(SELECT_ASTERISK, _table, FROM, SELECT_FROM);
+    mark_cell(SELECT_FROM, _table, STRING, SELECT_TABLE);
+    mark_cell(SELECT_STRING, _table, FROM, SELECT_FROM);
+    mark_cell(SELECT_STRING, _table, COMMA, SELECT_COMMA);
+    mark_cell(SELECT_COMMA, _table, STRING, SELECT_STRING);
 }
 
 /*******************************************************************************

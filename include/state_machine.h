@@ -21,15 +21,23 @@ namespace state_machine {
 const int MAX_COLUMNS = 256, MAX_ROWS = 50;
 const char ALPHA[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const char DIGIT[] = "0123456789";
-const char PUNCT[] = "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
 const char SPACE[] = " \n\r\t\v";
+const char COMMA[] = ",";
+const char STAR[] = "*";
+const char QUOTE_S[] = "'";
+const char QUOTE_D[] = "\"";
+const char PUNCT[] = "!\"#$%&\'()+-./:;<=>?@[\\]^_`{|}~";
 
 // WARNING: MAKE SURE EACH STATE DO NOT OVERLAP IN ROWS!!!
 const int STATE_UNKNOWN = -1;  // unknown state
-const int STATE_ALPHA = 10;    // allocate 10 rows
-const int STATE_DOUBLE = 20;   // allocate 10 rows
-const int STATE_SPACE = 30;    // allocate 10 rows
-const int STATE_PUNCT = 40;    // allocate 10 rows
+const int STATE_DOUBLE = 5;    // allocate 10 rows
+const int STATE_ALPHA = 20;    // allocate 2 rows
+const int STATE_SPACE = 32;    // allocate 2 rows
+const int STATE_COMMA = 22;    // allocate 2 rows
+const int STATE_STAR = 24;     // allocate 2 rows
+const int STATE_QUOTE_S = 26;  // allocate 2 rows
+const int STATE_QUOTE_D = 28;  // allocate 2 rows
+const int STATE_PUNCT = 30;    // allocate 2 rows
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);

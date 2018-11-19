@@ -14,9 +14,9 @@ enum SELECT_STATES {
     SELECT_START = CMD_SELECT + 0,
     SELECT_ASTERISK = CMD_SELECT + 1,
     SELECT_FROM = CMD_SELECT + 2,
+    SELECT_TABLE = CMD_SELECT + 3,
     SELECT_STRING = CMD_SELECT + 4,
-    SELECT_COMMA = CMD_SELECT + 5,
-    SELECT_TABLE = CMD_SELECT + 3
+    SELECT_COMMA = CMD_SELECT + 5
 };
 
 enum ROWS { MAX_ROWS = 50 };
@@ -31,17 +31,20 @@ enum COLUMNS {
     QUOTE_S,
     QUOTE_D,
     STRING,
+    SPACE,
     MAX_COLS
 };
 
 enum PARSE_KEYS { COMMAND, FIELDS, TABLE, MAX_KEYS };
 
-// fill all cells of the array with -1
-void init_table(int _table[][MAX_COLS]);
-
+// fill keys with SQL keys
 void init_keys(std::string* _keys);
 
+// fill types with SQL type strings
 void init_types(std::string* _types);
+
+// fill all cells of the array with -1
+void init_table(int _table[][MAX_COLS]);
 
 // mark this state (row) with a 1 (success)
 void mark_success(int _table[][MAX_COLS], int state);
@@ -63,10 +66,10 @@ void mark_cells(int row, int _table[][MAX_COLS], const int columns[],
 void mark_cell(int row, int _table[][MAX_COLS], int column, int state);
 
 // mark table for STATE_DOUBLE
-void mark_table_command(int _table[][MAX_COLS], int state);
+void mark_table_command(int _table[][MAX_COLS]);
 
 // mark table for STATE_DOUBLE
-void mark_table_select(int _table[][MAX_COLS], int state);
+void mark_table_select(int _table[][MAX_COLS]);
 
 void print_table(const int _table[][MAX_COLS]);
 
