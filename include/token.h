@@ -32,8 +32,10 @@ public:
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const Token& t);
-    friend bool operator==(const Token lhs, const Token rhs);
-    friend bool operator!=(const Token lhs, const Token rhs);
+    friend bool operator==(const Token& lhs, const Token& rhs);
+    friend bool operator!=(const Token& lhs, const Token& rhs);
+    friend Token& operator+=(Token& lhs, const Token& rhs);
+    friend Token& operator+(Token& lhs, const Token& rhs);
 
 private:
     std::string _token;  // token string

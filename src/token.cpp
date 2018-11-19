@@ -135,7 +135,7 @@ std::ostream& operator<<(std::ostream& outs, const Token& t) {
  * RETURN:
  *  bool
  ******************************************************************************/
-bool operator==(const Token lhs, const Token rhs) {
+bool operator==(const Token& lhs, const Token& rhs) {
     return lhs._type == rhs._type;
 }
 
@@ -153,8 +153,48 @@ bool operator==(const Token lhs, const Token rhs) {
  * RETURN:
  *  bool
  ******************************************************************************/
-bool operator!=(const Token lhs, const Token rhs) {
+bool operator!=(const Token& lhs, const Token& rhs) {
     return lhs._type != rhs._type;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Add two Tokens together with left hand side concatenating the right hand
+ *  side's string.
+ *
+ * PRE-CONDITIONS:
+ *  const Token lhs: left token
+ *  const Token rhs: right token
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+Token& operator+=(Token& lhs, const Token& rhs) {
+    lhs._token += rhs._token;
+    return lhs;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Add two Tokens together with left hand side concatenating the right hand
+ *  side's string.
+ *
+ * PRE-CONDITIONS:
+ *  const Token lhs: left token
+ *  const Token rhs: right token
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+Token& operator+(Token& lhs, const Token& rhs) {
+    lhs._token += rhs._token;
+    return lhs;
 }
 
 }  // namespace token
