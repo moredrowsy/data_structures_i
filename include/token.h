@@ -37,7 +37,7 @@ public:
     friend Token& operator+=(Token& lhs, const Token& rhs);
     friend Token& operator+(Token& lhs, const Token& rhs);
 
-private:
+    // private:
     std::string _token;  // token string
     int _type;           // type of token
 };

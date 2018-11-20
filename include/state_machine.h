@@ -19,26 +19,27 @@ namespace state_machine {
 
 // WARNING: MAKE SURE EACH STATE DO NOT OVERLAP IN ROWS!!!
 enum STATES {
-    STATE_ERROR = -1,  // unknown state
-    STATE_DOUBLE = 5,  // uses 10 rows
-    STATE_ALPHA = 20,  // uses 2 rows
-    STATE_SPACE = 25,  // uses 2 rows
-    STATE_COMMA = 30,  // uses 2 rows
-    STATE_STAR = 35,   // uses 2 rows
-    STATE_PUNCT = 40,  // uses 2 rows
-    STATE_IDENT = 44,
-    STATE_IDENTIFIER = 45,  // uses 2 rows
-    STATE_IN_QUOTE_S_IDENT = 49,
-    STATE_IN_QUOTE_D_IDENT = 55,
-    STATE_VALUE = 59,       // enclosed quote states
-    STATE_IN_QUOTE_S = 60,  // allocate 4 rows
-    STATE_IN_QUOTE_D = 65,  // allocate 4 rows
-    STATE_OP = 69,          // operator states
-    STATE_OP_SINGLE = 70,   // allocate 2 rows
-    STATE_LT = 75,          // allocate 3 rows
-    STATE_GT = 80,          // allocate 3 rows
-    STATE_EQUALITY = 85,    // allocate 3 rows
-    STATE_SIZE = 90         // end size
+    STATE_ERROR = -1,             // unknown state
+    STATE_DOUBLE = 5,             // uses 10 rows
+    STATE_ALPHA = 20,             // uses 2 rows
+    STATE_SPACE = 25,             // uses 2 rows
+    STATE_COMMA = 30,             // uses 2 rows
+    STATE_STAR = 35,              // uses 2 rows
+    STATE_PUNCT = 40,             // uses 2 rows
+    STATE_IDENT = 44,             // identifier states
+    STATE_IDENTIFIER = 45,        // uses 2 rows
+    STATE_IDENT_QUOTE = 49,       // ident in quotes
+    STATE_IN_QUOTE_S_IDENT = 50,  // uses 4 rows
+    STATE_IN_QUOTE_D_IDENT = 55,  // uses 4 rows
+    STATE_VALUE = 59,             // enclosed quote states
+    STATE_IN_QUOTE_S = 60,        // allocate 4 rows
+    STATE_IN_QUOTE_D = 65,        // allocate 4 rows
+    STATE_OP = 69,                // operator states
+    STATE_OP_SINGLE = 70,         // allocate 2 rows
+    STATE_LT = 75,                // allocate 3 rows
+    STATE_GT = 80,                // allocate 3 rows
+    STATE_EQUALITY = 85,          // allocate 3 rows
+    STATE_SIZE = 90               // end size
 };
 
 // GLOBAL CONSTANTS

@@ -63,6 +63,9 @@ std::string Token::type_string() const {
         case state_machine::STATE_IDENTIFIER:
             type_string = "IDENT";
             break;
+        case state_machine::STATE_IDENT_QUOTE:
+            type_string = "IDENT_QUOTE";
+            break;
         case state_machine::STATE_VALUE:
             type_string = "VALUE";
             break;

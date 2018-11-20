@@ -293,11 +293,11 @@ SQLTokenizer& operator>>(SQLTokenizer& s, token::Token& t) {
     else if(s.get_token(state_machine::STATE_IN_QUOTE_S_IDENT, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, state_machine::STATE_IDENT);
+        t = token::Token(token, state_machine::STATE_IDENT_QUOTE);
     } else if(s.get_token(state_machine::STATE_IN_QUOTE_D_IDENT, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, state_machine::STATE_IDENT);
+        t = token::Token(token, state_machine::STATE_IDENT_QUOTE);
     } else if(s.get_token(state_machine::STATE_IN_QUOTE_S, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);

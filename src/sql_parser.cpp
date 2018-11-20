@@ -47,6 +47,8 @@ void SQLParser::init() {
     init_types(_types);
     init_table(_table);
     mark_table_command(_table);
+    mark_table_create(_table);
+    mark_table_insert(_table);
     mark_table_select(_table);
     print_table(_table);
 
@@ -56,9 +58,21 @@ void SQLParser::init() {
 bool SQLParser::get_parse_key(int state, int &key_code) {
     bool is_valid = true;
 
-    if(state == CMD_SELECT)
+    // initial command codes
+    if(state == CMD_CREATE || state == CMD_INSERT || state == CMD_SELECT)
         key_code = COMMAND;
-    else if(state == SELECT_STRING || state == SELECT_ASTERISK)
+    // CREATE command codes
+    else if(state == CREATE_TABLE)
+        key_code = TABLE;
+    else if(state == CREATE_FIELDS)
+        key_code = FIELDS;
+    // INSERT command codes
+    else if(state == INSERT_TABLE)
+        key_code = TABLE;
+    else if(state == INSERT_VALUE)
+        key_code = VALUE_KEY;
+    // SELECT command codes
+    else if(state == SELECT_FIELDS || state == SELECT_ASTERISK)
         key_code = FIELDS;
     else if(state == SELECT_TABLE)
         key_code = TABLE;
@@ -69,30 +83,45 @@ bool SQLParser::get_parse_key(int state, int &key_code) {
 }
 
 token::Token SQLParser::next_token() {
-    // extract no SPACE tokens
-    token::Token t(" ", state_machine::STATE_SPACE);
+    // extract until non-whitespace token
+    token::Token t("", state_machine::STATE_SPACE);
     while(t.type() == state_machine::STATE_SPACE) _tokenizer >> t;
 
     // transform to comparison string with all caps
     std::string cmp_str = t.string();
     std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
 
-    if(cmp_str == _types[SELECT]) {
+    if(cmp_str == _types[CREATE]) {
+        t.set_type(CREATE);
+        t.set_string(std::move(cmp_str));
+    } else if(cmp_str == _types[SELECT]) {
         t.set_type(SELECT);
+        t.set_string(std::move(cmp_str));
+    } else if(cmp_str == _types[INSERT]) {
+        t.set_type(INSERT);
         t.set_string(std::move(cmp_str));
     } else if(cmp_str == _types[FROM]) {
         t.set_type(FROM);
+        t.set_string(std::move(cmp_str));
+    } else if(cmp_str == _types[INTO]) {
+        t.set_type(INTO);
+        t.set_string(std::move(cmp_str));
+    } else if(cmp_str == _types[VALUES]) {  // VALUES with a S
+        t.set_type(VALUES);
         t.set_string(std::move(cmp_str));
     } else if(t.type() == state_machine::STATE_COMMA)
         t.set_type(COMMA);
     else if(t.type() == state_machine::STATE_STAR)
         t.set_type(ASTERISK);
-    else if(t.type() == state_machine::STATE_IDENT)
+    else if(t.type() == state_machine::STATE_IDENT) {
         t.set_type(IDENT);
-    else if(t.type() == state_machine::STATE_VALUE)
-        t.set_type(VALUE);
+        t.set_string(std::move(cmp_str));
+    } else if(t.type() == state_machine::STATE_IDENT_QUOTE)
+        t.set_type(IDENT);
+    else if(t.type() == state_machine::STATE_OP)
+        t.set_type(OPERATOR);
     else
-        t.set_type(VALUE);
+        t.set_type(VALUE);  // VALUE w/o S
 
     return t;
 }
