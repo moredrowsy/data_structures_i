@@ -22,7 +22,7 @@ void init_keys(std::string* _keys) {
     _keys[R_FIELDS] = "R_FIELDS";
     _keys[R_OPS_KEY] = "R_OP";
     _keys[L_OPS_KEY] = "L_OP";
-    _keys[TABLE] = "TABLE";
+    _keys[TABLE_KEY] = "TABLE";
     _keys[VALUE_KEY] = "VALUES";
 }
 
@@ -45,10 +45,11 @@ void init_types(std::string* _types) {
     _types[CREATE] = "CREATE";
     _types[INSERT] = "INSERT";
     _types[SELECT] = "SELECT";
-    _types[FIELDS] = "FIELDS";
+    _types[TABLE] = "TABLES";
     _types[INTO] = "INTO";
     _types[FROM] = "FROM";
     _types[WHERE] = "WHERE";
+    _types[FIELDS] = "FIELDS";
     _types[VALUES] = "VALUES";
     _types[AND] = "AND";
     _types[OR] = "OR";
@@ -221,7 +222,7 @@ void mark_table_command(int _table[][MAX_COLS]) {
  *  CREATE command.
  *
  * PRE-CONDITIONS:
- *  REQUIRE ROWS: 4
+ *  REQUIRE ROWS: 6
  *  int _table[][MAX_COLS]: integer array
  *  int state             : CMD_CREATE
  *
@@ -236,9 +237,11 @@ void mark_table_create(int _table[][MAX_COLS]) {
     // state [+0] ---> fail
     // state [+1] ---> fail
     // state [+2] ---> fail
-    // state [+3] ---> success
-    // state [+4] ---> fail
+    // state [+3] ---> fail
+    // state [+4] ---> success
+    // state [+5] ---> fail
     mark_fail(_table, CREATE_START);
+    mark_fail(_table, CREATE_TABLE_KEY);
     mark_fail(_table, CREATE_TABLE);
     mark_fail(_table, CREATE_FIELDS_KEY);
     mark_success(_table, CREATE_FIELDS);
@@ -250,7 +253,8 @@ void mark_table_create(int _table[][MAX_COLS]) {
     // state [+1] --- IDENT ----> [+2]
     // state [+2] --- COMMA ----> [+3]
     // state [+3] --- IDENT ----> [+2]
-    mark_cell(CREATE_START, _table, IDENT, CREATE_TABLE);
+    mark_cell(CREATE_START, _table, IDENT, CREATE_TABLE_KEY);
+    mark_cell(CREATE_TABLE_KEY, _table, IDENT, CREATE_TABLE);
     mark_cell(CREATE_TABLE, _table, FIELDS, CREATE_FIELDS_KEY);
     mark_cell(CREATE_FIELDS_KEY, _table, IDENT, CREATE_FIELDS);
     mark_cell(CREATE_FIELDS, _table, COMMA, CREATE_COMMA);

@@ -25,7 +25,7 @@ std::string SQLParser::_types[MAX_COLS];
  ******************************************************************************/
 SQLParser::SQLParser(char *buffer, std::size_t max_buf)
     : _max_buf(max_buf), _more(false), _tokenizer(buffer, _max_buf) {
-    assert(_max_buf <= MAX_BLOCK);
+    assert(_max_buf <= MAX_BUFFER);
     if(_need_init) init();
 }
 
@@ -117,7 +117,6 @@ void SQLParser::init() {
     mark_table_create(_table);
     mark_table_insert(_table);
     mark_table_select(_table);
-    print_table(_table);
 
     _need_init = false;
 }
@@ -145,19 +144,19 @@ bool SQLParser::get_parse_key(int state, int &key_code) {
         key_code = COMMAND;
     // CREATE command codes
     else if(state == CREATE_TABLE)
-        key_code = TABLE;
+        key_code = TABLE_KEY;
     else if(state == CREATE_FIELDS)
         key_code = FIELDS_KEY;
     // INSERT command codes
     else if(state == INSERT_TABLE)
-        key_code = TABLE;
+        key_code = TABLE_KEY;
     else if(state == INSERT_VALUE)
         key_code = VALUE_KEY;
     // SELECT command codes
     else if(state == SELECT_FIELDS || state == SELECT_ASTERISK)
         key_code = FIELDS_KEY;
     else if(state == SELECT_TABLE)
-        key_code = TABLE;
+        key_code = TABLE_KEY;
     // SELECT command for relationship codes
     else if(state == SELECT_R_FIELDS)
         key_code = R_FIELDS;
@@ -225,8 +224,8 @@ void SQLParser::parse_token(token::Token &t) {
     } else if(cmp_str == _types[SELECT]) {
         t.set_type(SELECT);
         t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[FIELDS]) {
-        t.set_type(FIELDS);
+    } else if(cmp_str == _types[TABLE]) {
+        t.set_type(TABLE);
         t.set_string(std::move(cmp_str));
     } else if(cmp_str == _types[INTO]) {
         t.set_type(INTO);
@@ -236,6 +235,9 @@ void SQLParser::parse_token(token::Token &t) {
         t.set_string(std::move(cmp_str));
     } else if(cmp_str == _types[WHERE]) {
         t.set_type(WHERE);
+        t.set_string(std::move(cmp_str));
+    } else if(cmp_str == _types[FIELDS]) {
+        t.set_type(FIELDS);
         t.set_string(std::move(cmp_str));
     } else if(cmp_str == _types[VALUES]) {  // VALUES with a S
         t.set_type(VALUES);

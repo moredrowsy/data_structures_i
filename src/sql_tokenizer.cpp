@@ -161,16 +161,18 @@ SQLTokenizer::operator bool() const { return more(); }
  *  none
  ******************************************************************************/
 void SQLTokenizer::set_string(char str[]) {
-    std::size_t index = 0;
-    while(str[index] != '\0') {  // copy string into buffer
-        assert(index < _max_buf - 1);
-        _buffer[index] = str[index];
-        ++index;
-    }
+    if(str) {
+        std::size_t index = 0;
+        while(str[index] != '\0') {  // copy string into buffer
+            assert(index < _max_buf - 1);
+            _buffer[index] = str[index];
+            ++index;
+        }
 
-    _buffer[index] = '\0';  // NUL terminate cstring
-    _buffer_size = index;   // set buffer size
-    _pos = 0;               // reset cstring pos
+        _buffer[index] = '\0';  // NUL terminate cstring
+        _buffer_size = index;   // set buffer size
+        _pos = 0;               // reset cstring pos
+    }
 }
 
 /*******************************************************************************
@@ -189,16 +191,18 @@ void SQLTokenizer::set_string(char str[]) {
  *  none
  ******************************************************************************/
 void SQLTokenizer::set_string(const char str[]) {
-    std::size_t index = 0;
-    while(str[index] != '\0') {  // copy string into buffer
-        assert(index < _max_buf - 1);
-        _buffer[index] = str[index];
-        ++index;
-    }
+    if(str) {
+        std::size_t index = 0;
+        while(str[index] != '\0') {  // copy string into buffer
+            assert(index < _max_buf - 1);
+            _buffer[index] = str[index];
+            ++index;
+        }
 
-    _buffer[index] = '\0';  // NUL terminate cstring
-    _buffer_size = index;   // set buffer size
-    _pos = 0;               // reset cstring pos
+        _buffer[index] = '\0';  // NUL terminate cstring
+        _buffer_size = index;   // set buffer size
+        _pos = 0;               // reset cstring pos
+    }
 }
 
 /*******************************************************************************

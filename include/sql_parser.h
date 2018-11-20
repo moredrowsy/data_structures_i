@@ -11,12 +11,11 @@
 namespace sql {
 
 class SQLParser {
-    enum { MAX_BLOCK = MAX_BUFFER };
+public:
     typedef bpt_map::MMap<std::string, std::string> Map;
 
-public:
     // CONSTRUCTORS
-    SQLParser(char* buffer, std::size_t block_size = MAX_BLOCK);
+    SQLParser(char* buffer = nullptr, std::size_t block_size = MAX_BUFFER);
 
     // ACCESSORS
     explicit operator bool() const;  // boolean conversion for extractor

@@ -133,7 +133,7 @@ public:
 
     // FRIENDS
     friend std::ostream& operator<<(std::ostream& outs, const BPTree<T>& bt) {
-        bt.print(outs, true);
+        bt.print(outs);
         return outs;
     }
 

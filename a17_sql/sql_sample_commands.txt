@@ -1,0 +1,8 @@
+create table student fields last, first, major
+
+insert into student values Yang, Bo, "Computer Science"
+insert into student values Davis, John, Math
+insert into student values Johnson, "Mary Ann", "Biology"
+create table employee fields lname, fname, dept, year_hired
+insert into employee values Jackson, David, Finance, 2016
+insert into employee values Davidson, "Mary Alice", complaints, 2012
