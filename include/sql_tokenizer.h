@@ -1,50 +1,62 @@
-#ifndef SQLTOKENIZER_H
-#define SQLTOKENIZER_H
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sql_tokenizer
+ * DESCRIPTION : This header declares class SQLTokenizer. The SQLTokenizer will
+ *      receive an input/buffer string (via constructor or set_string) and
+ *      returns a valid token (via the insertion operator) from its starting
+ *      position by its internal state machine, which follows the rules set in
+ *      the adjacency matrix. SQLTokenizer also maintains position current
+ *      position of the input string when extracting token, from class Token.
+ ******************************************************************************/
+#ifndef STOKENIZER_H
+#define STOKENIZER_H
 
-#include <algorithm>     // transform()
-#include <string>        // string
-#include "bpt_map.h"     // MMap class
-#include "sql_states.h"  // SQL constants
-#include "sql_token.h"   // Token class
-#include "stokenizer.h"  // state_machine funcs, STokenizer
+#include <cassert>          // assertions
+#include <iostream>         // stream objects
+#include <string>           // string objects
+#include "state_machine.h"  // state_machine functions
+#include "token.h"          // Token class
 
 namespace sql {
 
-class SQLTokenizer {
-    enum { MAX_BLOCK = stokenizer::MAX_BUFFER };
-    typedef bpt_map::MMap<std::string, std::string> Map;
+enum { MAX_BUFFER = 1000 };
 
+class SQLTokenizer {
 public:
     // CONSTRUCTORS
-    SQLTokenizer(char* buffer, std::size_t block_size = MAX_BLOCK);
+    SQLTokenizer(std::size_t max_buf = MAX_BUFFER);
+    SQLTokenizer(char str[], std::size_t max_buf = MAX_BUFFER);
+    SQLTokenizer(const char str[], std::size_t max_buf = MAX_BUFFER);
+
+    ~SQLTokenizer();
 
     // ACCESSORS
-    bool more() const;               // returns the current value of _more
+    bool done() const;               // true: there are no more tokens
+    bool more() const;               // true: there are more tokens
     explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
-    void set_string(char* buffer);  // set new buffer for STokenizer
-    bool get_query(Map& map);       // parse query buffer to Map
+    void set_string(char str[]);        // set a new string as the input string
+    void set_string(const char str[]);  // set a new string as the input string
 
     // FRIENDS
-    friend SQLTokenizer& operator>>(SQLTokenizer& f, SQLToken& t);
+    friend SQLTokenizer& operator>>(SQLTokenizer& s, token::Token& t);
 
 private:
-    static bool _need_init;                 // need Class initializations?
-    static std::string _keys[MAX_KEYS];     // list of keys
-    static std::string _types[MAX_COLS];    // list of SQL token string types
-    static int _table[MAX_ROWS][MAX_COLS];  // adjacency table
+    static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
+    static bool _need_init;  // check if _table is initialized
 
-    std::size_t _block_size;      // block size to grab from ifstream
-    bool _more;                   // false if last token of the last block
-    SQLToken _prev_token;         // previous token that was extracted
-    stokenizer::STokenizer _stk;  // STokenizer obj to tokenize current block
+    char* _buffer;         // input string
+    std::size_t _max_buf;  // max buffer size
+    int _buffer_size;      // input string size
+    int _pos;              // current position in the string
 
-    void init();                                   // init static vars
-    bool get_parse_key(int state, int& key_code);  // get parse key
-    SQLToken next_token();                         // get SQL token
+    void make_table(int _table[][state_machine::MAX_COLUMNS]);
+    bool get_token(int start_state, std::string& token);
 };
 
 }  // namespace sql
 
-#endif  // SQLTOKENIZER_H
+#endif  // STOKENIZER_H

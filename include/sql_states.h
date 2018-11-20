@@ -8,7 +8,12 @@
 
 namespace sql {
 
-enum COMMANDS { CMD_START = 0, CMD_SELECT = 10 };
+enum COMMANDS {
+    CMD_START = 0,
+    CMD_CREATE = 10,
+    CMD_SELECT = 20,
+    CMD_SIZE = 30
+};
 
 enum SELECT_STATES {
     SELECT_START = CMD_SELECT + 0,
@@ -19,7 +24,7 @@ enum SELECT_STATES {
     SELECT_COMMA = CMD_SELECT + 5
 };
 
-enum ROWS { MAX_ROWS = 50 };
+enum ROWS { MAX_ROWS = CMD_SIZE };
 
 enum COLUMNS {
     ERROR = -1,
@@ -28,9 +33,8 @@ enum COLUMNS {
     FROM,
     COMMA,
     ASTERISK,
-    QUOTE_S,
-    QUOTE_D,
-    STRING,
+    IDENT,
+    VALUE,
     SPACE,
     MAX_COLS
 };

@@ -40,11 +40,6 @@ void init_types(std::string* _types) {
     _types[SUCCESS] = "";
     _types[SELECT] = "SELECT";
     _types[FROM] = "FROM";
-    _types[COMMA] = ",";
-    _types[ASTERISK] = "*";
-    _types[QUOTE_S] = "'";
-    _types[QUOTE_D] = "\"";
-    _types[STRING] = "";
 }
 
 /*******************************************************************************
@@ -212,6 +207,7 @@ void mark_table_command(int _table[][MAX_COLS]) {
  *  SELECT command.
  *
  * PRE-CONDITIONS:
+ *  REQUIRE ROWS: 7
  *  int _table[][MAX_COLS]: integer array
  *  int state             : CMD_SELECT
  *
@@ -226,10 +222,9 @@ void mark_table_select(int _table[][MAX_COLS]) {
     // state [+0] ---> fail
     // state [+1] ---> fail
     // state [+2] ---> fail
-    // state [+3] ---> fail
-    // state [+4] ---> success
+    // state [+3] ---> success
+    // state [+4] ---> fail
     // state [+5] ---> fail
-    // state [+6] ---> fail
     mark_fail(_table, SELECT_START);
     mark_fail(_table, SELECT_ASTERISK);
     mark_fail(_table, SELECT_FROM);
@@ -239,20 +234,20 @@ void mark_table_select(int _table[][MAX_COLS]) {
 
     // MARK CELLS
     // state [0] ---- SELECT ---> [+0] <-- COMMAND STATE
-    // state [+0] --- ASTERISK -> [+2]
-    // state [+1] --- STRING ---> [+5]
-    // state [+2] --- FROM -----> [+3]
-    // state [+3] --- STRING ---> [+4]
-    // state [+5] --- FROM -----> [+3]
-    // state [+5] --- COMMA ----> [+6]
-    // state [+6] --- STRING ---> [+5]
+    // state [+0] --- ASTERISK -> [+1]
+    // state [+1] --- STRING ---> [+4]
+    // state [+2] --- FROM -----> [+2]
+    // state [+3] --- STRING ---> [+3]
+    // state [+4] --- FROM -----> [+4]
+    // state [+4] --- COMMA ----> [+5]
+    // state [+5] --- STRING ---> [+4]
     mark_cell(SELECT_START, _table, ASTERISK, SELECT_ASTERISK);
-    mark_cell(SELECT_START, _table, STRING, SELECT_STRING);
+    mark_cell(SELECT_START, _table, IDENT, SELECT_STRING);
     mark_cell(SELECT_ASTERISK, _table, FROM, SELECT_FROM);
-    mark_cell(SELECT_FROM, _table, STRING, SELECT_TABLE);
+    mark_cell(SELECT_FROM, _table, IDENT, SELECT_TABLE);
     mark_cell(SELECT_STRING, _table, FROM, SELECT_FROM);
     mark_cell(SELECT_STRING, _table, COMMA, SELECT_COMMA);
-    mark_cell(SELECT_COMMA, _table, STRING, SELECT_STRING);
+    mark_cell(SELECT_COMMA, _table, IDENT, SELECT_STRING);
 }
 
 /*******************************************************************************

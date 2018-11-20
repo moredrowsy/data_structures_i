@@ -1,10 +1,9 @@
 #ifndef SQL_H
 #define SQL_H
 
-#include "bpt_map.h"        // B+Tree's Map/MMap class
-#include "sql_states.h"     // SQL constants
-#include "sql_token.h"      // SQLToken class
-#include "sql_tokenizer.h"  // SQLTokenizer class
+#include "bpt_map.h"     // B+Tree's Map/MMap class
+#include "sql_parser.h"  // SQLTokenizer class
+#include "sql_states.h"  // SQL constants
 
 namespace sql {
 

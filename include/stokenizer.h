@@ -46,6 +46,14 @@ public:
     friend STokenizer& operator>>(STokenizer& s, token::Token& t);
 
 private:
+    static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
+    static bool _need_init;  // check if _table is initialized
+
+    char* _buffer;         // input string
+    std::size_t _max_buf;  // max buffer size
+    int _buffer_size;      // input string size
+    int _pos;              // current position in the string
+
     // create table for all the tokens we will recognize
     //                      (e.g. doubles, words, etc.)
     void make_table(int _table[][state_machine::MAX_COLUMNS]);
@@ -53,13 +61,6 @@ private:
     // extract the longest string that match
     //     one of the acceptable token types
     bool get_token(int start_state, std::string& token);
-
-    char* _buffer;         // input string
-    std::size_t _max_buf;  // max buffer size
-    int _buffer_size;      // input string size
-    int _pos;              // current position in the string
-    static int _table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
-    static bool _made_table;  // check if _table is initialized
 };
 
 }  // namespace stokenizer

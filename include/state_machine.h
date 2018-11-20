@@ -17,27 +17,41 @@
 
 namespace state_machine {
 
+// WARNING: MAKE SURE EACH STATE DO NOT OVERLAP IN ROWS!!!
+enum STATES {
+    STATE_ERROR = -1,  // unknown state
+    STATE_DOUBLE = 5,  // uses 10 rows
+    STATE_ALPHA = 20,  // uses 2 rows
+    STATE_SPACE = 25,  // uses 2 rows
+    STATE_COMMA = 30,  // uses 2 rows
+    STATE_STAR = 35,   // uses 2 rows
+    STATE_PUNCT = 40,  // uses 2 rows
+    STATE_IDENT = 44,
+    STATE_IDENTIFIER = 45,  // uses 2 rows
+    STATE_IN_QUOTE_S_IDENT = 49,
+    STATE_IN_QUOTE_D_IDENT = 55,
+    STATE_VALUE = 59,       // enclosed quote states
+    STATE_IN_QUOTE_S = 60,  // allocate 4 rows
+    STATE_IN_QUOTE_D = 65,  // allocate 4 rows
+    STATE_OP = 69,          // operator states
+    STATE_OP_SINGLE = 70,   // allocate 2 rows
+    STATE_LT = 75,          // allocate 3 rows
+    STATE_GT = 80,          // allocate 3 rows
+    STATE_EQUALITY = 85,    // allocate 3 rows
+    STATE_SIZE = 90         // end size
+};
+
 // GLOBAL CONSTANTS
-const int MAX_COLUMNS = 256, MAX_ROWS = 50;
+const int MAX_COLUMNS = 256, MAX_ROWS = STATE_SIZE;
 const char ALPHA[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const char DIGIT[] = "0123456789";
 const char SPACE[] = " \n\r\t\v";
 const char COMMA[] = ",";
 const char STAR[] = "*";
-const char QUOTE_S[] = "'";
-const char QUOTE_D[] = "\"";
-const char PUNCT[] = "!\"#$%&\'()+-./:;<=>?@[\\]^_`{|}~";
-
-// WARNING: MAKE SURE EACH STATE DO NOT OVERLAP IN ROWS!!!
-const int STATE_UNKNOWN = -1;  // unknown state
-const int STATE_DOUBLE = 5;    // allocate 10 rows
-const int STATE_ALPHA = 20;    // allocate 2 rows
-const int STATE_SPACE = 32;    // allocate 2 rows
-const int STATE_COMMA = 22;    // allocate 2 rows
-const int STATE_STAR = 24;     // allocate 2 rows
-const int STATE_QUOTE_S = 26;  // allocate 2 rows
-const int STATE_QUOTE_D = 28;  // allocate 2 rows
-const int STATE_PUNCT = 30;    // allocate 2 rows
+const char PUNCT[] = "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
+const char QUOTE_S_IDENT[] = "!#$%&\'()*+,-./:;<=>?@[\\]^`{|}~";
+const char QUOTE_D_IDENT[] = "!\"#$%&()*+,-./:;<=>?@[\\]^`{|}~";
+const char OP_SINGLE[] = "=<>";
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);
@@ -66,8 +80,26 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state);
 void mark_table_generic(int _table[][MAX_COLUMNS], int state,
                         const char columns[]);
 
+void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
+                            const char columns[]);
+
+// mark table for two char relations
+void mark_table_duo_chars(int _table[][MAX_COLUMNS], int state, const char a,
+                          const char b);
+
+// mark table for enclosure by delimiters
+void mark_table_enclosed_delim(int _table[][MAX_COLUMNS], int state,
+                               const char delim);
+
+// mark table for enclosure by delimiters
+void mark_table_enclosed_delim_ident(int _table[][MAX_COLUMNS], int state,
+                                     const char delim);
+
 // mark table for STATE_DOUBLE
 void mark_table_double(int _table[][MAX_COLUMNS], int state);
+
+// mark table for STATE_IDENTIFIER
+void mark_table_identifier(int _table[][MAX_COLUMNS], int state);
 
 // this can realistically be used on a small table
 void print_table(const int _table[][MAX_COLUMNS]);

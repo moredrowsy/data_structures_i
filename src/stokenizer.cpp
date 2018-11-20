@@ -4,7 +4,7 @@ namespace stokenizer {
 
 // STATIC VARIABLES
 int STokenizer::_table[state_machine::MAX_ROWS][state_machine::MAX_COLUMNS];
-bool STokenizer::_made_table = false;
+bool STokenizer::_need_init = true;
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -25,7 +25,7 @@ STokenizer::STokenizer(std::size_t max_buf)
     _buffer = new char[_max_buf];
 
     _buffer[0] = '\0';
-    if(!_made_table) make_table(_table);
+    if(_need_init) make_table(_table);
 }
 
 /*******************************************************************************
@@ -48,7 +48,7 @@ STokenizer::STokenizer(char str[], std::size_t max_buf)
     _buffer = new char[_max_buf];
 
     set_string(str);
-    if(!_made_table) make_table(_table);
+    if(_need_init) make_table(_table);
 }
 
 /*******************************************************************************
@@ -71,7 +71,7 @@ STokenizer::STokenizer(const char str[], std::size_t max_buf)
     _buffer = new char[_max_buf];
 
     set_string(str);
-    if(!_made_table) make_table(_table);
+    if(_need_init) make_table(_table);
 }
 
 /*******************************************************************************
@@ -223,13 +223,9 @@ void STokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     mark_table_double(_table, STATE_DOUBLE);
     mark_table_generic(_table, STATE_ALPHA, ALPHA);
     mark_table_generic(_table, STATE_SPACE, SPACE);
-    mark_table_generic(_table, STATE_COMMA, COMMA);
-    mark_table_generic(_table, STATE_STAR, STAR);
-    mark_table_generic(_table, STATE_QUOTE_S, QUOTE_S);
-    mark_table_generic(_table, STATE_QUOTE_D, QUOTE_D);
     mark_table_generic(_table, STATE_PUNCT, PUNCT);
 
-    _made_table = true;  // disable further make_table() calls in CTOR
+    _need_init = false;  // disable further make_table() calls in CTOR
 }
 
 /*******************************************************************************
@@ -252,6 +248,22 @@ bool STokenizer::get_token(int start_state, std::string& token) {
     return state_machine::get_token(_table, _buffer, _pos, start_state, token);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Extraction operator calls get_token() on various states until a valid token
+ *  is found. If none is found, returns an empty Token with ID STATE_ERROR.
+ *
+ * PRE-CONDITIONS:
+ *  STokenizer& s  : tokenizer
+ *  token::Token& t: placeholder by ref
+ *
+ * POST-CONDITIONS:
+ *  STokenizer& s  : advances tokenizer's internal buffer position
+ *  token::Token& t: set to valid token/invalid empty token
+ *
+ * RETURN:
+ *  STokenizer& s
+ ******************************************************************************/
 STokenizer& operator>>(STokenizer& s, token::Token& t) {
     std::string token;
 
@@ -264,14 +276,6 @@ STokenizer& operator>>(STokenizer& s, token::Token& t) {
         t = token::Token(token, state_machine::STATE_ALPHA);
     else if(s.get_token(state_machine::STATE_SPACE, token))
         t = token::Token(token, state_machine::STATE_SPACE);
-    else if(s.get_token(state_machine::STATE_COMMA, token))
-        t = token::Token(token, state_machine::STATE_COMMA);
-    else if(s.get_token(state_machine::STATE_STAR, token))
-        t = token::Token(token, state_machine::STATE_STAR);
-    else if(s.get_token(state_machine::STATE_QUOTE_S, token))
-        t = token::Token(token, state_machine::STATE_QUOTE_S);
-    else if(s.get_token(state_machine::STATE_QUOTE_D, token))
-        t = token::Token(token, state_machine::STATE_QUOTE_D);
     else if(s.get_token(state_machine::STATE_PUNCT, token))
         t = token::Token(token, state_machine::STATE_PUNCT);
     else {

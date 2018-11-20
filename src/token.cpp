@@ -36,23 +36,59 @@ std::string Token::type_string() const {
     std::string type_string;
 
     switch(_type) {
-        case state_machine::STATE_UNKNOWN:
-            type_string = "UNKNOWN";
+        case state_machine::STATE_ERROR:
+            type_string = "ERROR";
             break;
         case state_machine::STATE_DOUBLE:
             type_string = "DOUBLE";
             break;
+        case state_machine::STATE_ALPHA:
+            type_string = "ALPHA";
+            break;
         case state_machine::STATE_SPACE:
             type_string = "SPACE";
             break;
-        case state_machine::STATE_ALPHA:
-            type_string = "ALPHA";
+        case state_machine::STATE_COMMA:
+            type_string = "COMMA";
+            break;
+        case state_machine::STATE_STAR:
+            type_string = "ASTERISK";
             break;
         case state_machine::STATE_PUNCT:
             type_string = "PUNCT";
             break;
+        case state_machine::STATE_IDENT:
+            type_string = "IDENT";
+            break;
+        case state_machine::STATE_IDENTIFIER:
+            type_string = "IDENT";
+            break;
+        case state_machine::STATE_VALUE:
+            type_string = "VALUE";
+            break;
+        case state_machine::STATE_IN_QUOTE_S:
+            type_string = "ENCLOSED_QUOTE_S";
+            break;
+        case state_machine::STATE_IN_QUOTE_D:
+            type_string = "ENCLOSED_QUOTE_D";
+            break;
+        case state_machine::STATE_OP:
+            type_string = "OPERATOR";
+            break;
+        case state_machine::STATE_OP_SINGLE:
+            type_string = "OPERATOR SINGLE";
+            break;
+        case state_machine::STATE_LT:
+            type_string = "OPERATOR LESS";
+            break;
+        case state_machine::STATE_GT:
+            type_string = "OPERATOR GREATER";
+            break;
+        case state_machine::STATE_EQUALITY:
+            type_string = "OPERATOR EQUALITY";
+            break;
         default:
-            type_string = "ERROR";
+            type_string = "UNKNOWN";
     }
 
     return type_string;
