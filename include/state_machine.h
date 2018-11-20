@@ -27,24 +27,15 @@ enum STATES {
     STATE_STAR = 35,              // uses 2 rows
     STATE_PUNCT = 40,             // uses 2 rows
     STATE_IDENT = 44,             // identifier states
-    STATE_IDENTIFIER = 45,        // uses 2 rows
+    STATE_IDENT_NORM = 45,        // uses 2 rows
     STATE_IDENT_QUOTE = 49,       // ident in quotes
     STATE_IN_QUOTE_S_IDENT = 50,  // uses 4 rows
     STATE_IN_QUOTE_D_IDENT = 55,  // uses 4 rows
     STATE_VALUE = 59,             // enclosed quote states
-    STATE_IN_QUOTE_S = 60,        // allocate 4 rows
-    STATE_IN_QUOTE_D = 65,        // allocate 4 rows
-    STATE_R_OP = 69,              // relational operator states
-    STATE_EQUAL = 70,             // allocate 2 rows
-    STATE_LESS = 75,              // allocate 2 rows
-    STATE_GREATER = 80,           // allocate 2 rows
-    STATE_EQUALITY = 85,          // allocate 3 rows
-    STATE_LT = 90,                // allocate 3 rows
-    STATE_GT = 95,                // allocate 3 rows
-    STATE_L_OP = 99,              // logical operator states
-    STATE_L_AND = 100,            // AND op
-    STATE_L_OR = 105,             // OR op
-    STATE_SIZE = 110              // end size
+    STATE_IN_QUOTE_S = 60,        // use 3 rows
+    STATE_IN_QUOTE_D = 65,        // use 3 rows
+    STATE_R_OP = 70,              // uses 3 rows - relational operator states
+    STATE_SIZE = 75               // end size
 };
 
 // GLOBAL CONSTANTS
@@ -54,9 +45,8 @@ const char DIGIT[] = "0123456789";
 const char SPACE[] = " \n\r\t\v";
 const char COMMA[] = ",";
 const char STAR[] = "*";
+const char R_OPS[] = "<=>";
 const char PUNCT[] = "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
-const char QUOTE_S_IDENT[] = "!#$%&\'()*+,-./:;<=>?@[\\]^`{|}~";
-const char QUOTE_D_IDENT[] = "!\"#$%&()*+,-./:;<=>?@[\\]^`{|}~";
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);
@@ -105,6 +95,8 @@ void mark_table_double(int _table[][MAX_COLUMNS], int state);
 
 // mark table for STATE_IDENTIFIER
 void mark_table_identifier(int _table[][MAX_COLUMNS], int state);
+
+void mark_table_r_ops(int _table[][MAX_COLUMNS], int state);
 
 // this can realistically be used on a small table
 void print_table(const int _table[][MAX_COLUMNS]);

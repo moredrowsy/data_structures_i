@@ -74,6 +74,15 @@ enum COLUMNS {
     MAX_COLS
 };
 
+enum RELATIONAL_OPS {
+    ASSIGN,
+    LESS,
+    LESS_THAN,
+    GREATER,
+    GREATER_THAN,
+    R_OPS_SIZE
+};
+
 enum PARSE_KEYS {
     COMMAND,
     FIELDS_KEY,
@@ -90,6 +99,9 @@ void init_keys(std::string* _keys);
 
 // fill types with SQL type strings
 void init_types(std::string* _types);
+
+// fill types with SQL type strings
+void init_r_ops(std::string* _r_ops);
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLS]);

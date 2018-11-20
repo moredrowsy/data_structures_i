@@ -157,7 +157,7 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state) {
  * PRE-CONDITIONS:
  *  ROWS REQUIRE: 2
  *  int _table[][MAX_COLUMNS]: integer array
- *  int state          : 0 to MAX_ROWS - 1
+ *  int state                : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -188,7 +188,7 @@ void mark_table_generic(int _table[][MAX_COLUMNS], int state,
  * PRE-CONDITIONS:
  *  ROWS REQUIRE: 2
  *  int _table[][MAX_COLUMNS]: integer array
- *  int state          : 0 to MAX_ROWS - 1
+ *  int state                : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -210,12 +210,12 @@ void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
 /*******************************************************************************
  * DESCRIPTION:
  *  Mark the table's cells with fail/success states and the adjacency values
- *  for searching for two character relationship tokens, such as "<=" or ">=".
+ *  for searching for two characters relationship tokens, such as "ab" or "cd".
  *
  * PRE-CONDITIONS:
  *  ROWS REQUIRE: 3
  *  int _table[][MAX_COLUMNS]: integer array
- *  int state          : 0 to MAX_ROWS - 1
+ *  int state                : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -243,7 +243,7 @@ void mark_table_duo_chars(int _table[][MAX_COLUMNS], int state, const char a,
  *  for searching for concatenated Tokens inside delimiter.
  *
  * PRE-CONDITIONS:
- *  ROWS REQUIRE: 4
+ *  ROWS REQUIRE: 3
  *  int _table[][MAX_COLUMNS]: integer array
  *  int state                : 0 to MAX_ROWS - 1
  *  const char delim         : delimiter char
@@ -320,7 +320,7 @@ void mark_table_enclosed_delim_ident(int _table[][MAX_COLUMNS], int state,
  * PRE-CONDITIONS:
  *  ROWS REQUIRE: 10
  *  int _table[][MAX_COLUMNS]: integer array
- *  int state          : 0 to MAX_ROWS - 1
+ *  int state                : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -398,7 +398,7 @@ void mark_table_double(int _table[][MAX_COLUMNS], int state) {
  * PRE-CONDITIONS:
  *  ROWS REQUIRE: 2
  *  int _table[][MAX_COLUMNS]: integer array
- *  int state          : 0 to MAX_ROWS - 1
+ *  int state                : 0 to MAX_ROWS - 1
  *
  * POST-CONDITIONS:
  *  Cells are marked with state
@@ -424,6 +424,37 @@ void mark_table_identifier(int _table[][MAX_COLUMNS], int state) {
     mark_cells(state + 1, _table, ALPHA, state + 1);
     mark_cells(state + 1, _table, DIGIT, state + 1);
     mark_cells(state + 1, _table, '_', '_', state + 1);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells with fail/success states and the adjacency values
+ *  for searching for relational operator tokens, such as "=" or "==".
+ *
+ * PRE-CONDITIONS:
+ *  ROWS REQUIRE: 3
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void mark_table_r_ops(int _table[][MAX_COLUMNS], int state) {
+    // MARK SUCCESS/FAILURE
+    // state [+0] ---> fail
+    // state [+1] ---> success
+    mark_fail(_table, state + 0);
+    mark_success(_table, state + 1);
+    mark_success(_table, state + 2);
+
+    // MARK CELLS
+    // state [+0] --- R_OPS ---> [+1]
+    // state [+1] --- '=' -----> [+2]
+    mark_cells(state + 0, _table, R_OPS, state + 1);
+    mark_cells(state + 1, _table, '=', '=', state + 2);
 }
 
 /*******************************************************************************

@@ -31,6 +31,7 @@ private:
     static bool _need_init;                 // need Class initializations?
     static std::string _keys[MAX_KEYS];     // list of keys
     static std::string _types[MAX_COLS];    // list of SQL token string types
+    static std::string _r_ops[R_OPS_SIZE];  // list of relation op
     static int _table[MAX_ROWS][MAX_COLS];  // adjacency table
 
     std::size_t _max_buf;      // block size to grab from ifstream
@@ -39,9 +40,11 @@ private:
     SQLTokenizer _tokenizer;   // STokenizer obj to tokenize current block
 
     void init();                                   // init static vars
-    bool get_parse_key(int state, int& key_code);  // get parse key
-    void parse_token(token::Token& t);
-    token::Token next_token();  // get SQL token
+    token::Token next_token();                     // get SQL token
+    void parse_token(token::Token& t);             // ID token to SQL types
+    int get_keyword(const std::string& cmp);       // get keyword id
+    void get_r_op_subtype(token::Token& t);        // get r_op id
+    bool get_parse_key(int state, int& key_code);  // get parse key for map
 };
 
 }  // namespace sql

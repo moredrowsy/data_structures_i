@@ -6,6 +6,7 @@ namespace sql {
 bool SQLParser::_need_init = true;
 int SQLParser::_table[MAX_ROWS][MAX_COLS];
 std::string SQLParser::_keys[MAX_KEYS];
+std::string SQLParser::_r_ops[R_OPS_SIZE];
 std::string SQLParser::_types[MAX_COLS];
 
 /*******************************************************************************
@@ -83,7 +84,7 @@ bool SQLParser::get_query(Map &map) {
 
     while(_tokenizer && t.type() > -1 && _table[state][t.type()] != -1) {
         state = _table[state][t.type()];
-        if(is_success(_table, state)) is_good = true;  // log query success
+        is_good = is_success(_table, state);  // log query success
 
         if(get_parse_key(state, key_code))       // if valid code
             map[_keys[key_code]] += t.string();  // add to map
@@ -112,6 +113,7 @@ bool SQLParser::get_query(Map &map) {
 void SQLParser::init() {
     init_keys(_keys);
     init_types(_types);
+    init_r_ops(_r_ops);
     init_table(_table);
     mark_table_command(_table);
     mark_table_create(_table);
@@ -119,6 +121,119 @@ void SQLParser::init() {
     mark_table_select(_table);
 
     _need_init = false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Get the next valid token and converts it to an SQL type token, which have
+ *  the type ID associated with the SQL adjacency table values.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  token::Token: token with SQL type id
+ ******************************************************************************/
+token::Token SQLParser::next_token() {
+    // extract until non-whitespace token
+    token::Token t("", state_machine::STATE_SPACE);
+    while(t.type() == state_machine::STATE_SPACE) _tokenizer >> t;
+
+    parse_token(t);
+
+    return t;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Parses token to SQL type token. SQL type tokens have Token's type that
+ *  corresponds to SQL adjacency table and sub type for specifics.
+ *
+ * PRE-CONDITIONS:
+ *  token::Token &t: extracted token from SQL Tokenizer
+ *
+ * POST-CONDITIONS:
+ *  token::Token &t: type and sub_type changed to SQL type IDs
+ *
+ * RETURN:
+ *  void
+ ******************************************************************************/
+void SQLParser::parse_token(token::Token &t) {
+    // transform to comparison string with all caps
+    std::string cmp_str = t.string();
+    std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
+
+    if(t.type() == state_machine::STATE_IDENT) {
+        // check if IDENT is a keyword
+        if(t.sub_type() == state_machine::STATE_IDENT_NORM) {
+            t.set_type(get_keyword(cmp_str));
+            t.set_string(std::move(cmp_str));
+        } else
+            t.set_type(IDENT);
+    } else if(t.type() == state_machine::STATE_COMMA)
+        t.set_type(COMMA);
+    else if(t.type() == state_machine::STATE_STAR)
+        t.set_type(ASTERISK);
+    else if(t.type() == state_machine::STATE_R_OP)
+        get_r_op_subtype(t);
+    else
+        t.set_type(VALUE);  // VALUE w/o S
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns a keyword type id (_types's col) if it finds a keyword in _types
+ *  array; else returns a default IDENT id.
+ *
+ * PRE-CONDITIONS:
+ *  token::Token &t: extracted token from SQL Tokenizer
+ *
+ * POST-CONDITIONS:
+ *  token::Token &t: type and sub_type changed to SQL type IDs
+ *
+ * RETURN:
+ *  void
+ ******************************************************************************/
+int SQLParser::get_keyword(const std::string &cmp) {
+    for(int col = 0; col < MAX_COLS; ++col)
+        if(cmp == _types[col]) {
+            if(col == AND || col == OR)
+                return L_OPS;  // return if key is logical operators
+            else
+                return col;
+        }
+    return IDENT;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set a relation op subtype id if it matches a value from the _r_operators
+ *  array, except for equality ("==") operator. If not found or is equality op,
+ *  then set to id VALUE.
+ *
+ * PRE-CONDITIONS:
+ *  token::Token &t: extracted token from SQL Tokenizer
+ *
+ * POST-CONDITIONS:
+ *  token::Token &t: type and sub_type changed to SQL type IDs
+ *
+ * RETURN:
+ *  void
+ ******************************************************************************/
+void SQLParser::get_r_op_subtype(token::Token &t) {
+    for(int type = 0; type < R_OPS_SIZE; ++type)
+        if(t.string() == _r_ops[type]) {
+            t.set_type(R_OPS);
+            t.set_sub_type(type);
+            return;
+        }
+    t.set_type(VALUE);
+    t.set_sub_type(VALUE);
+
+    return;
 }
 
 /*******************************************************************************
@@ -170,101 +285,6 @@ bool SQLParser::get_parse_key(int state, int &key_code) {
         is_valid = false;
 
     return is_valid;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Get the next valid token and converts it to an SQL type token, which have
- *  the type ID associated with the SQL adjacency table values.
- *
- * PRE-CONDITIONS:
- *  none
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  token::Token: token with SQL type id
- ******************************************************************************/
-token::Token SQLParser::next_token() {
-    // extract until non-whitespace token
-    token::Token t("", state_machine::STATE_SPACE);
-    while(t.type() == state_machine::STATE_SPACE) _tokenizer >> t;
-
-    parse_token(t);
-
-    return t;
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Parses token to SQL type token. SQL type tokens have Token's type that
- *  corresponds to SQL adjacency table and sub type for specifics.
- *
- * PRE-CONDITIONS:
- *  token::Token &t: extracted token from SQL Tokenizer
- *
- * POST-CONDITIONS:
- *  token::Token &t: type and sub_type changed to SQL type IDs
- *
- * RETURN:
- *  void
- ******************************************************************************/
-void SQLParser::parse_token(token::Token &t) {
-    // transform to comparison string with all caps
-    std::string cmp_str = t.string();
-    std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
-
-    if(cmp_str == _types[CREATE]) {
-        t.set_type(CREATE);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[INSERT]) {
-        t.set_type(INSERT);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[SELECT]) {
-        t.set_type(SELECT);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[TABLE]) {
-        t.set_type(TABLE);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[INTO]) {
-        t.set_type(INTO);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[FROM]) {
-        t.set_type(FROM);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[WHERE]) {
-        t.set_type(WHERE);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[FIELDS]) {
-        t.set_type(FIELDS);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[VALUES]) {  // VALUES with a S
-        t.set_type(VALUES);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[AND]) {
-        t.set_type(L_OPS);
-        t.set_sub_type(AND);
-        t.set_string(std::move(cmp_str));
-    } else if(cmp_str == _types[OR]) {
-        t.set_type(L_OPS);
-        t.set_sub_type(OR);
-        t.set_string(std::move(cmp_str));
-    } else if(t.type() == state_machine::STATE_COMMA)
-        t.set_type(COMMA);
-    else if(t.type() == state_machine::STATE_STAR)
-        t.set_type(ASTERISK);
-    else if(t.type() == state_machine::STATE_IDENT) {
-        t.set_type(IDENT);
-        t.set_string(std::move(cmp_str));
-    } else if(t.type() == state_machine::STATE_IDENT_QUOTE)
-        t.set_type(IDENT);
-    else if(t.type() == state_machine::STATE_R_OP)
-        t.set_type(R_OPS);
-    else if(t.type() == state_machine::STATE_L_OP)
-        t.set_type(L_OPS);
-    else
-        t.set_type(VALUE);  // VALUE w/o S
 }
 
 // TO DO

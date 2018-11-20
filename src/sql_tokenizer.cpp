@@ -225,7 +225,7 @@ void SQLTokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
 
     // mark table with adjacency values
     mark_table_double(_table, STATE_DOUBLE);
-    mark_table_identifier(_table, STATE_IDENTIFIER);
+    mark_table_identifier(_table, STATE_IDENT_NORM);
     mark_table_enclosed_delim(_table, STATE_IN_QUOTE_S, '\'');
     mark_table_enclosed_delim(_table, STATE_IN_QUOTE_D, '\"');
     mark_table_enclosed_delim_ident(_table, STATE_IN_QUOTE_S_IDENT, '\'');
@@ -234,12 +234,7 @@ void SQLTokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     mark_table_generic(_table, STATE_PUNCT, PUNCT);
     mark_table_single_char(_table, STATE_COMMA, ',');
     mark_table_single_char(_table, STATE_STAR, '*');
-    mark_table_single_char(_table, STATE_EQUAL, '=');
-    mark_table_single_char(_table, STATE_LESS, '<');
-    mark_table_single_char(_table, STATE_GREATER, '>');
-    mark_table_duo_chars(_table, STATE_LT, '>', '=');
-    mark_table_duo_chars(_table, STATE_GT, '<', '=');
-    mark_table_duo_chars(_table, STATE_EQUALITY, '=', '=');
+    mark_table_r_ops(_table, STATE_R_OP);
 
     _need_init = false;  // disable further make_table() calls in CTOR
 }
@@ -288,24 +283,16 @@ SQLTokenizer& operator>>(SQLTokenizer& s, token::Token& t) {
     // process tokens one state at a time
     if(s._pos > s._buffer_size)  // bound check if call w/o more() or done()
         t = token::Token();
-    else if(s.get_token(STATE_IDENTIFIER, token))
-        t = token::Token(token, STATE_IDENT);
-    else if(s.get_token(STATE_DOUBLE, token))
-        t = token::Token(token, STATE_DOUBLE);
-    else if(s.get_token(STATE_SPACE, token))
-        t = token::Token(token, STATE_SPACE);
-    else if(s.get_token(STATE_COMMA, token))
-        t = token::Token(token, STATE_COMMA);
-    else if(s.get_token(STATE_STAR, token))
-        t = token::Token(token, STATE_STAR);
+    else if(s.get_token(STATE_IDENT_NORM, token))
+        t = token::Token(token, STATE_IDENT, STATE_IDENT_NORM);
     else if(s.get_token(STATE_IN_QUOTE_S_IDENT, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, STATE_IDENT_QUOTE);
+        t = token::Token(token, STATE_IDENT, STATE_IDENT_QUOTE);
     } else if(s.get_token(STATE_IN_QUOTE_D_IDENT, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, STATE_IDENT_QUOTE);
+        t = token::Token(token, STATE_IDENT, STATE_IDENT_QUOTE);
     } else if(s.get_token(STATE_IN_QUOTE_S, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
@@ -314,18 +301,16 @@ SQLTokenizer& operator>>(SQLTokenizer& s, token::Token& t) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
         t = token::Token(token, STATE_VALUE);
-    } else if(s.get_token(STATE_LT, token))
-        t = token::Token(token, STATE_R_OP, STATE_LT);
-    else if(s.get_token(STATE_GT, token))
-        t = token::Token(token, STATE_R_OP, STATE_GT);
-    else if(s.get_token(STATE_EQUALITY, token))
-        t = token::Token(token, STATE_R_OP, STATE_EQUALITY);
-    else if(s.get_token(STATE_LESS, token))
-        t = token::Token(token, STATE_R_OP, STATE_LESS);
-    else if(s.get_token(STATE_EQUAL, token))
-        t = token::Token(token, STATE_R_OP, STATE_EQUAL);
-    else if(s.get_token(STATE_GREATER, token))
-        t = token::Token(token, STATE_R_OP, STATE_GREATER);
+    } else if(s.get_token(STATE_DOUBLE, token))
+        t = token::Token(token, STATE_DOUBLE);
+    else if(s.get_token(STATE_SPACE, token))
+        t = token::Token(token, STATE_SPACE);
+    else if(s.get_token(STATE_COMMA, token))
+        t = token::Token(token, STATE_COMMA);
+    else if(s.get_token(STATE_STAR, token))
+        t = token::Token(token, STATE_STAR);
+    else if(s.get_token(STATE_R_OP, token))
+        t = token::Token(token, STATE_R_OP);
     else if(s.get_token(STATE_PUNCT, token))
         t = token::Token(token, STATE_PUNCT);
     else {

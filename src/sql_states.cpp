@@ -4,7 +4,7 @@ namespace sql {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Initialize array of keys.
+ *  Initialize array of keys for map.
  *
  * PRE-CONDITIONS:
  *  std::string *_keys
@@ -53,6 +53,28 @@ void init_types(std::string* _types) {
     _types[VALUES] = "VALUES";
     _types[AND] = "AND";
     _types[OR] = "OR";
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize array of relational operator types.
+ *
+ * PRE-CONDITIONS:
+ *  std::string *_types
+ *  array size == MAX_COLS
+ *
+ * POST-CONDITIONS:
+ *  All cells' value are -1.
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void init_r_ops(std::string* _r_ops) {
+    _r_ops[ASSIGN] = "=";
+    _r_ops[LESS] = "<";
+    _r_ops[LESS_THAN] = "<=";
+    _r_ops[GREATER] = ">";
+    _r_ops[GREATER_THAN] = ">=";
 }
 
 /*******************************************************************************

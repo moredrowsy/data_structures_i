@@ -76,8 +76,8 @@ std::string Token::type_string() const {
         case state_machine::STATE_IDENT:
             type_string = "IDENT";
             break;
-        case state_machine::STATE_IDENTIFIER:
-            type_string = "IDENT";
+        case state_machine::STATE_IDENT_NORM:
+            type_string = "IDENT_NORM";
             break;
         case state_machine::STATE_IDENT_QUOTE:
             type_string = "IDENT_QUOTE";
@@ -93,30 +93,6 @@ std::string Token::type_string() const {
             break;
         case state_machine::STATE_R_OP:
             type_string = "RELATION OP";
-            break;
-        case state_machine::STATE_LESS:
-            type_string = "RELATION LESS";
-            break;
-        case state_machine::STATE_GREATER:
-            type_string = "RELATION GREATER";
-            break;
-        case state_machine::STATE_EQUALITY:
-            type_string = "RELATION EQUALITY";
-            break;
-        case state_machine::STATE_LT:
-            type_string = "RELATION LESS THAN";
-            break;
-        case state_machine::STATE_GT:
-            type_string = "RELATION GREATER THAN";
-            break;
-        case state_machine::STATE_L_OP:
-            type_string = "LOGICAL OP";
-            break;
-        case state_machine::STATE_L_AND:
-            type_string = "LOGICAL AND";
-            break;
-        case state_machine::STATE_L_OR:
-            type_string = "LOGICAL OR";
             break;
         default:
             type_string = "UNKNOWN";
