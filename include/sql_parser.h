@@ -19,7 +19,6 @@ public:
     SQLParser(char* buffer, std::size_t block_size = MAX_BLOCK);
 
     // ACCESSORS
-    bool more() const;               // returns the current value of _more
     explicit operator bool() const;  // boolean conversion for extractor
 
     // MUTATORS
@@ -35,14 +34,15 @@ private:
     static std::string _types[MAX_COLS];    // list of SQL token string types
     static int _table[MAX_ROWS][MAX_COLS];  // adjacency table
 
-    std::size_t _block_size;   // block size to grab from ifstream
+    std::size_t _max_buf;      // block size to grab from ifstream
     bool _more;                // false if last token of the last block
     token::Token _prev_token;  // previous token that was extracted
     SQLTokenizer _tokenizer;   // STokenizer obj to tokenize current block
 
     void init();                                   // init static vars
     bool get_parse_key(int state, int& key_code);  // get parse key
-    token::Token next_token();                     // get SQL token
+    void parse_token(token::Token& t);
+    token::Token next_token();  // get SQL token
 };
 
 }  // namespace sql

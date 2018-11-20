@@ -34,12 +34,17 @@ enum STATES {
     STATE_VALUE = 59,             // enclosed quote states
     STATE_IN_QUOTE_S = 60,        // allocate 4 rows
     STATE_IN_QUOTE_D = 65,        // allocate 4 rows
-    STATE_OP = 69,                // operator states
-    STATE_OP_SINGLE = 70,         // allocate 2 rows
-    STATE_LT = 75,                // allocate 3 rows
-    STATE_GT = 80,                // allocate 3 rows
+    STATE_R_OP = 69,              // relational operator states
+    STATE_EQUAL = 70,             // allocate 2 rows
+    STATE_LESS = 75,              // allocate 2 rows
+    STATE_GREATER = 80,           // allocate 2 rows
     STATE_EQUALITY = 85,          // allocate 3 rows
-    STATE_SIZE = 90               // end size
+    STATE_LT = 90,                // allocate 3 rows
+    STATE_GT = 95,                // allocate 3 rows
+    STATE_L_OP = 99,              // logical operator states
+    STATE_L_AND = 100,            // AND op
+    STATE_L_OR = 105,             // OR op
+    STATE_SIZE = 110              // end size
 };
 
 // GLOBAL CONSTANTS
@@ -52,7 +57,6 @@ const char STAR[] = "*";
 const char PUNCT[] = "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
 const char QUOTE_S_IDENT[] = "!#$%&\'()*+,-./:;<=>?@[\\]^`{|}~";
 const char QUOTE_D_IDENT[] = "!\"#$%&()*+,-./:;<=>?@[\\]^`{|}~";
-const char OP_SINGLE[] = "=<>";
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLUMNS]);
@@ -82,7 +86,7 @@ void mark_table_generic(int _table[][MAX_COLUMNS], int state,
                         const char columns[]);
 
 void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
-                            const char columns[]);
+                            const char character);
 
 // mark table for two char relations
 void mark_table_duo_chars(int _table[][MAX_COLUMNS], int state, const char a,

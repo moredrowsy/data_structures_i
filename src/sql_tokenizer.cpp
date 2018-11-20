@@ -228,9 +228,11 @@ void SQLTokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     mark_table_enclosed_delim_ident(_table, STATE_IN_QUOTE_D_IDENT, '\"');
     mark_table_generic(_table, STATE_SPACE, SPACE);
     mark_table_generic(_table, STATE_PUNCT, PUNCT);
-    mark_table_single_char(_table, STATE_COMMA, COMMA);
-    mark_table_single_char(_table, STATE_STAR, STAR);
-    mark_table_single_char(_table, STATE_OP_SINGLE, OP_SINGLE);
+    mark_table_single_char(_table, STATE_COMMA, ',');
+    mark_table_single_char(_table, STATE_STAR, '*');
+    mark_table_single_char(_table, STATE_EQUAL, '=');
+    mark_table_single_char(_table, STATE_LESS, '<');
+    mark_table_single_char(_table, STATE_GREATER, '>');
     mark_table_duo_chars(_table, STATE_LT, '>', '=');
     mark_table_duo_chars(_table, STATE_GT, '<', '=');
     mark_table_duo_chars(_table, STATE_EQUALITY, '=', '=');
@@ -275,47 +277,53 @@ bool SQLTokenizer::get_token(int start_state, std::string& token) {
  *  SQLTokenizer& s
  ******************************************************************************/
 SQLTokenizer& operator>>(SQLTokenizer& s, token::Token& t) {
+    using namespace state_machine;
+
     std::string token;
 
     // process tokens one state at a time
     if(s._pos > s._buffer_size)  // bound check if call w/o more() or done()
         t = token::Token();
-    else if(s.get_token(state_machine::STATE_IDENTIFIER, token))
-        t = token::Token(token, state_machine::STATE_IDENT);
-    else if(s.get_token(state_machine::STATE_DOUBLE, token))
-        t = token::Token(token, state_machine::STATE_DOUBLE);
-    else if(s.get_token(state_machine::STATE_SPACE, token))
-        t = token::Token(token, state_machine::STATE_SPACE);
-    else if(s.get_token(state_machine::STATE_COMMA, token))
-        t = token::Token(token, state_machine::STATE_COMMA);
-    else if(s.get_token(state_machine::STATE_STAR, token))
-        t = token::Token(token, state_machine::STATE_STAR);
-    else if(s.get_token(state_machine::STATE_IN_QUOTE_S_IDENT, token)) {
+    else if(s.get_token(STATE_IDENTIFIER, token))
+        t = token::Token(token, STATE_IDENT);
+    else if(s.get_token(STATE_DOUBLE, token))
+        t = token::Token(token, STATE_DOUBLE);
+    else if(s.get_token(STATE_SPACE, token))
+        t = token::Token(token, STATE_SPACE);
+    else if(s.get_token(STATE_COMMA, token))
+        t = token::Token(token, STATE_COMMA);
+    else if(s.get_token(STATE_STAR, token))
+        t = token::Token(token, STATE_STAR);
+    else if(s.get_token(STATE_IN_QUOTE_S_IDENT, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, state_machine::STATE_IDENT_QUOTE);
-    } else if(s.get_token(state_machine::STATE_IN_QUOTE_D_IDENT, token)) {
+        t = token::Token(token, STATE_IDENT_QUOTE);
+    } else if(s.get_token(STATE_IN_QUOTE_D_IDENT, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, state_machine::STATE_IDENT_QUOTE);
-    } else if(s.get_token(state_machine::STATE_IN_QUOTE_S, token)) {
+        t = token::Token(token, STATE_IDENT_QUOTE);
+    } else if(s.get_token(STATE_IN_QUOTE_S, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, state_machine::STATE_VALUE);
-    } else if(s.get_token(state_machine::STATE_IN_QUOTE_D, token)) {
+        t = token::Token(token, STATE_VALUE);
+    } else if(s.get_token(STATE_IN_QUOTE_D, token)) {
         token.pop_back();  // remove quote delimeters
         token.erase(0, 1);
-        t = token::Token(token, state_machine::STATE_VALUE);
-    } else if(s.get_token(state_machine::STATE_LT, token))
-        t = token::Token(token, state_machine::STATE_OP);
-    else if(s.get_token(state_machine::STATE_GT, token))
-        t = token::Token(token, state_machine::STATE_OP);
-    else if(s.get_token(state_machine::STATE_EQUALITY, token))
-        t = token::Token(token, state_machine::STATE_OP);
-    else if(s.get_token(state_machine::STATE_OP_SINGLE, token))
-        t = token::Token(token, state_machine::STATE_OP);
-    else if(s.get_token(state_machine::STATE_PUNCT, token))
-        t = token::Token(token, state_machine::STATE_PUNCT);
+        t = token::Token(token, STATE_VALUE);
+    } else if(s.get_token(STATE_LT, token))
+        t = token::Token(token, STATE_R_OP, STATE_LT);
+    else if(s.get_token(STATE_GT, token))
+        t = token::Token(token, STATE_R_OP, STATE_GT);
+    else if(s.get_token(STATE_EQUALITY, token))
+        t = token::Token(token, STATE_R_OP, STATE_EQUALITY);
+    else if(s.get_token(STATE_LESS, token))
+        t = token::Token(token, STATE_R_OP, STATE_LESS);
+    else if(s.get_token(STATE_EQUAL, token))
+        t = token::Token(token, STATE_R_OP, STATE_EQUAL);
+    else if(s.get_token(STATE_GREATER, token))
+        t = token::Token(token, STATE_R_OP, STATE_GREATER);
+    else if(s.get_token(STATE_PUNCT, token))
+        t = token::Token(token, STATE_PUNCT);
     else {
         if(s._pos == s._buffer_size)  // create empty token on NUL char
             t = token::Token();

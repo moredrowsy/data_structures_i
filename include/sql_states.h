@@ -10,17 +10,18 @@ namespace sql {
 
 enum COMMANDS {
     CMD_START = 0,
-    CMD_CREATE = 10,
-    CMD_INSERT = 20,
-    CMD_SELECT = 30,
-    CMD_SIZE = 40
+    CMD_CREATE = 10,  // uses 4 rows
+    CMD_INSERT = 20,  // uses 6 rows
+    CMD_SELECT = 30,  // uses 11 rows
+    CMD_SIZE = 45
 };
 
 enum CREATE_STATES {
     CREATE_START = CMD_CREATE + 0,
     CREATE_TABLE = CMD_CREATE + 1,
-    CREATE_FIELDS = CMD_CREATE + 2,
-    CREATE_COMMA = CMD_CREATE + 3
+    CREATE_FIELDS_KEY = CMD_CREATE + 2,
+    CREATE_FIELDS = CMD_CREATE + 3,
+    CREATE_COMMA = CMD_CREATE + 4
 };
 
 enum INSERT_STATES {
@@ -38,7 +39,12 @@ enum SELECT_STATES {
     SELECT_FROM = CMD_SELECT + 2,
     SELECT_TABLE = CMD_SELECT + 3,
     SELECT_FIELDS = CMD_SELECT + 4,
-    SELECT_COMMA = CMD_SELECT + 5
+    SELECT_COMMA = CMD_SELECT + 5,
+    SELECT_WHERE = CMD_SELECT + 6,
+    SELECT_R_FIELDS = CMD_SELECT + 7,
+    SELECT_R_OPS = CMD_SELECT + 8,
+    SELECT_VALUES = CMD_SELECT + 9,
+    SELECT_L_OPS = CMD_SELECT + 10
 };
 
 enum ROWS { MAX_ROWS = CMD_SIZE };
@@ -49,19 +55,33 @@ enum COLUMNS {
     CREATE,
     INSERT,
     SELECT,
-    FROM,
+    FIELDS,
     INTO,
+    FROM,
+    WHERE,
     VALUES,
     COMMA,
     ASTERISK,
     IDENT,
     VALUE,
-    OPERATOR,
+    R_OPS,
+    L_OPS,
+    AND,
+    OR,
     SPACE,
     MAX_COLS
 };
 
-enum PARSE_KEYS { COMMAND, FIELDS, TABLE, VALUE_KEY, MAX_KEYS };
+enum PARSE_KEYS {
+    COMMAND,
+    FIELDS_KEY,
+    R_FIELDS,
+    R_OPS_KEY,
+    L_OPS_KEY,
+    TABLE,
+    VALUE_KEY,
+    MAX_KEYS
+};
 
 // fill keys with SQL keys
 void init_keys(std::string* _keys);

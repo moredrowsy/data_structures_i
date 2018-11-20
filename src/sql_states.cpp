@@ -18,7 +18,10 @@ namespace sql {
  ******************************************************************************/
 void init_keys(std::string* _keys) {
     _keys[COMMAND] = "COMMAND";
-    _keys[FIELDS] = "FIELDS";
+    _keys[FIELDS_KEY] = "FIELDS";
+    _keys[R_FIELDS] = "R_FIELDS";
+    _keys[R_OPS_KEY] = "R_OP";
+    _keys[L_OPS_KEY] = "L_OP";
     _keys[TABLE] = "TABLE";
     _keys[VALUE_KEY] = "VALUES";
 }
@@ -42,9 +45,13 @@ void init_types(std::string* _types) {
     _types[CREATE] = "CREATE";
     _types[INSERT] = "INSERT";
     _types[SELECT] = "SELECT";
-    _types[FROM] = "FROM";
+    _types[FIELDS] = "FIELDS";
     _types[INTO] = "INTO";
+    _types[FROM] = "FROM";
+    _types[WHERE] = "WHERE";
     _types[VALUES] = "VALUES";
+    _types[AND] = "AND";
+    _types[OR] = "OR";
 }
 
 /*******************************************************************************
@@ -228,10 +235,12 @@ void mark_table_create(int _table[][MAX_COLS]) {
     // MARK SUCCESS/FAILURE
     // state [+0] ---> fail
     // state [+1] ---> fail
-    // state [+2] ---> success
-    // state [+3] ---> fail
+    // state [+2] ---> fail
+    // state [+3] ---> success
+    // state [+4] ---> fail
     mark_fail(_table, CREATE_START);
     mark_fail(_table, CREATE_TABLE);
+    mark_fail(_table, CREATE_FIELDS_KEY);
     mark_success(_table, CREATE_FIELDS);
     mark_fail(_table, CREATE_COMMA);
 
@@ -242,7 +251,8 @@ void mark_table_create(int _table[][MAX_COLS]) {
     // state [+2] --- COMMA ----> [+3]
     // state [+3] --- IDENT ----> [+2]
     mark_cell(CREATE_START, _table, IDENT, CREATE_TABLE);
-    mark_cell(CREATE_TABLE, _table, IDENT, CREATE_FIELDS);
+    mark_cell(CREATE_TABLE, _table, FIELDS, CREATE_FIELDS_KEY);
+    mark_cell(CREATE_FIELDS_KEY, _table, IDENT, CREATE_FIELDS);
     mark_cell(CREATE_FIELDS, _table, COMMA, CREATE_COMMA);
     mark_cell(CREATE_COMMA, _table, IDENT, CREATE_FIELDS);
 }
@@ -282,9 +292,12 @@ void mark_table_insert(int _table[][MAX_COLS]) {
     // state [0] ---- INSERT ---> [+0] <-- COMMAND STATE
     // state [+0] --- INTO -----> [+1]
     // state [+1] --- IDENT ----> [+2]
-    // state [+2] --- IDENT ----> [+3]
-    // state [+3] --- COMMA ----> [+4]
-    // state [+4] --- IDENT ----> [+3]
+    // state [+2] --- VALUES ---> [+3]
+    // state [+3] --- IDENT ----> [+4]
+    // state [+3] --- VALUE ----> [+4]
+    // state [+4] --- COMMA ----> [+5]
+    // state [+5] --- IDENT ----> [+4]
+    // state [+5] --- VALUE ----> [+4]
     mark_cell(INSERT_START, _table, INTO, INSERT_INTO);
     mark_cell(INSERT_INTO, _table, IDENT, INSERT_TABLE);
     mark_cell(INSERT_TABLE, _table, VALUES, INSERT_VALUES);
@@ -325,6 +338,11 @@ void mark_table_select(int _table[][MAX_COLS]) {
     mark_success(_table, SELECT_TABLE);
     mark_fail(_table, SELECT_FIELDS);
     mark_fail(_table, SELECT_COMMA);
+    mark_fail(_table, SELECT_WHERE);
+    mark_fail(_table, SELECT_R_FIELDS);
+    mark_fail(_table, SELECT_R_OPS);
+    mark_success(_table, SELECT_VALUES);
+    mark_fail(_table, SELECT_L_OPS);
 
     // MARK CELLS
     // state [0] ---- SELECT ---> [+0] <-- COMMAND STATE
@@ -342,6 +360,14 @@ void mark_table_select(int _table[][MAX_COLS]) {
     mark_cell(SELECT_FIELDS, _table, FROM, SELECT_FROM);
     mark_cell(SELECT_FIELDS, _table, COMMA, SELECT_COMMA);
     mark_cell(SELECT_COMMA, _table, IDENT, SELECT_FIELDS);
+
+    mark_cell(SELECT_TABLE, _table, WHERE, SELECT_WHERE);
+    mark_cell(SELECT_WHERE, _table, IDENT, SELECT_R_FIELDS);
+    mark_cell(SELECT_R_FIELDS, _table, R_OPS, SELECT_R_OPS);
+    mark_cell(SELECT_R_OPS, _table, IDENT, SELECT_VALUES);
+    mark_cell(SELECT_R_OPS, _table, VALUE, SELECT_VALUES);
+    mark_cell(SELECT_VALUES, _table, L_OPS, SELECT_L_OPS);
+    mark_cell(SELECT_L_OPS, _table, IDENT, SELECT_R_FIELDS);
 }
 
 /*******************************************************************************

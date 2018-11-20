@@ -20,6 +20,22 @@ int Token::type() const { return _type; }
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Returns an integer corresponding to the string sub type, such as the
+ *  state_machine's state constants.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  int of string type (or state constants in state_machine)
+ ******************************************************************************/
+int Token::sub_type() const { return _sub_type; }
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Returns a readable string corresponding to the string type, such as the
  *  state_machine's state constants, for human interpretation.
  *
@@ -75,20 +91,32 @@ std::string Token::type_string() const {
         case state_machine::STATE_IN_QUOTE_D:
             type_string = "ENCLOSED_QUOTE_D";
             break;
-        case state_machine::STATE_OP:
-            type_string = "OPERATOR";
+        case state_machine::STATE_R_OP:
+            type_string = "RELATION OP";
             break;
-        case state_machine::STATE_OP_SINGLE:
-            type_string = "OPERATOR SINGLE";
+        case state_machine::STATE_LESS:
+            type_string = "RELATION LESS";
             break;
-        case state_machine::STATE_LT:
-            type_string = "OPERATOR LESS";
-            break;
-        case state_machine::STATE_GT:
-            type_string = "OPERATOR GREATER";
+        case state_machine::STATE_GREATER:
+            type_string = "RELATION GREATER";
             break;
         case state_machine::STATE_EQUALITY:
-            type_string = "OPERATOR EQUALITY";
+            type_string = "RELATION EQUALITY";
+            break;
+        case state_machine::STATE_LT:
+            type_string = "RELATION LESS THAN";
+            break;
+        case state_machine::STATE_GT:
+            type_string = "RELATION GREATER THAN";
+            break;
+        case state_machine::STATE_L_OP:
+            type_string = "LOGICAL OP";
+            break;
+        case state_machine::STATE_L_AND:
+            type_string = "LOGICAL AND";
+            break;
+        case state_machine::STATE_L_OR:
+            type_string = "LOGICAL OR";
             break;
         default:
             type_string = "UNKNOWN";
@@ -126,6 +154,21 @@ std::string Token::string() const { return _token; }
  *  none
  ******************************************************************************/
 void Token::set_type(int type) { _type = type; }
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Changes string sub type.
+ *
+ * PRE-CONDITIONS:
+ *  int type: string type
+ *
+ * POST-CONDITIONS:
+ *  int _type: set to new type
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void Token::set_sub_type(int sub_type) { _sub_type = sub_type; }
 
 /*******************************************************************************
  * DESCRIPTION:

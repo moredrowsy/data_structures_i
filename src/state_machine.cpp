@@ -197,14 +197,14 @@ void mark_table_generic(int _table[][MAX_COLUMNS], int state,
  *  none
  ******************************************************************************/
 void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
-                            const char columns[]) {
+                            const char character) {
     // MARK SUCCESS/FAILURE
     mark_fail(_table, state + 0);
     mark_success(_table, state + 1);
 
     // MARK CELLS
     // state [+0] --- VALUES --> [+1]
-    mark_cells(state + 0, _table, columns, state + 1);
+    mark_cell(state + 0, _table, character, state + 1);
 }
 
 /*******************************************************************************

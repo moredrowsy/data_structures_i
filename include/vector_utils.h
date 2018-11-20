@@ -47,7 +47,7 @@ template <typename T>
 std::ostream& operator<<(std::ostream& outs, const std::vector<T>& list) {
     for(const auto& a : list) {
         outs << a;
-        if(&a != &list.back()) outs << ' ';
+        if(&a != &list.back()) outs << ", ";
     }
     return outs;
 }

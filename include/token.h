@@ -19,15 +19,20 @@ namespace token {
 class Token {
 public:
     // CONSTRUCTORS
-    Token(std::string str = "", int type = -1) : _token(str), _type(type) {}
+    Token(std::string str = "", int type = -1)
+        : _token(str), _type(type), _sub_type(_type) {}
+    Token(std::string str, int type, int sub_type)
+        : _token(str), _type(type), _sub_type(sub_type) {}
 
     // ACCESSORS
-    int type() const;                         // return type of token in integer
+    int type() const;                         // return type in INT
+    int sub_type() const;                     // return sub type in INT
     virtual std::string type_string() const;  // return type of token in string
     std::string string() const;               // return string of token
 
     // MUTATORS
     void set_type(int type);
+    void set_sub_type(int sub_type);
     void set_string(std::string str);
 
     // FRIENDS
@@ -40,6 +45,7 @@ public:
     // private:
     std::string _token;  // token string
     int _type;           // type of token
+    int _sub_type;       // sub type
 };
 
 }  // namespace token
