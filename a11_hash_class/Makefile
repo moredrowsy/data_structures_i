@@ -11,7 +11,7 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^
 
 main.o: main.cpp\
-	${INC}/record.h\
+	${INC}/hash_record.h\
 	${INC}/node.h\
 	${INC}/list.h\
 	${INC}/bst_node.h\

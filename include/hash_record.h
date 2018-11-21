@@ -2,7 +2,7 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : double_hash
+ * HEADER      : hash_record
  * DESCRIPTION : This header defines a templated Record structure with _key
  *      and _value pair. Comparison of Record type are by _key, not _value.
  *      Used by Hash type classes.
@@ -10,7 +10,7 @@
 #ifndef RECORD_H
 #define RECORD_H
 
-namespace record {
+namespace hash_record {
 
 template <typename T>
 struct Record {
@@ -51,6 +51,6 @@ struct Record {
     }
 };
 
-}  // namespace record
+}  // namespace hash_record
 
 #endif  // RECORD_H

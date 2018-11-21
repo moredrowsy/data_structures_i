@@ -7,10 +7,10 @@
 #include "../include/chained_avl_hash.h"   // BST AVL class
 #include "../include/chained_list_hash.h"  // List class
 #include "../include/double_hash.h"        // DoubleHash class
+#include "../include/hash_record.h"        // Record class
 #include "../include/open_hash.h"          // OpenHash Class
-#include "../include/record.h"             // Record class
 
-using Record = record::Record<int>;
+using Record = hash_record::Record<int>;
 using OpenHash = open_hash::OpenHash<Record>;
 using DoubleHash = double_hash::DoubleHash<Record>;
 using ChainedAVLHash = chained_avl_hash::ChainedAVLHash<Record>;
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
 template <typename O, typename L>
 double* test_random_hash(O* obj, const L* list, unsigned sample_size,
                          int iterations) {
-    using Record = record::Record<int>;
+    using Record = hash_record::Record<int>;
 
     bool is_found = false;
     const unsigned SEARCH_SIZE = iterations / 2;
@@ -295,7 +295,7 @@ void test_timing_hashes(unsigned table_size, unsigned iterations,
 
 template <typename O>
 void test_hash_table_interactive(O* obj, std::string name) {
-    using Record = record::Record<int>;
+    using Record = hash_record::Record<int>;
 
     std::cout << std::string(80, '-') << std::endl
               << "INTERACTIVE TESTS: " << name << std::endl

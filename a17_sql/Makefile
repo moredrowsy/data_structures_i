@@ -8,7 +8,7 @@ LDFLAGS         := -lm -lstdc++
 INC             := ../include
 SRC             := ../src
 OBJ             := main.o state_machine.o token.o sql_tokenizer.o sql_states.o\
-                   sql_parser.o sql_table.o sql.o
+                   sql_parser.o sql_record.o sql_table.o sql.o
 
 main.out: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
@@ -46,6 +46,10 @@ sql_states.o: ${SRC}/sql_states.cpp\
 
 sql_parser.o: ${SRC}/sql_parser.cpp\
 	${INC}/sql_parser.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+sql_record.o: ${SRC}/sql_record.cpp\
+	${INC}/sql_record.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 sql_table.o: ${SRC}/sql_table.cpp\
