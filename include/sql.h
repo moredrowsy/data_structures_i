@@ -33,6 +33,8 @@ private:
 
     // pre: table exists
     bool values_match_fields(const std::string& table_name);
+    bool fields_match_fields(const std::string& table_name);
+    bool is_valid_fields(const std::string& table_name);
     void print_specific(const std::string& table_name);
 };
 

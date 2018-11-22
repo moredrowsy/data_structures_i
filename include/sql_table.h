@@ -25,7 +25,9 @@ public:
     SQLTable(std::string table_name, const std::vector<std::string>& values);
 
     std::size_t field_count() const;
+    std::size_t size() const;
 
+    bool contains(const std::string& field_name);
     bool insert(const std::vector<std::string>& values);
     void print_all();
     void print_rec(long rec_pos, const std::vector<std::string>& field_names);

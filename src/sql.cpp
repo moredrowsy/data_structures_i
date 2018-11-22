@@ -90,10 +90,6 @@ void SQL::insert_table(const std::string &table_name, bool table_found) {
     if(table_found) {
         if(values_match_fields(table_name))
             _table_map[table_name].insert(_parse_tree["VALUES"]);
-        else
-            std::cout
-                << "Number of supplied values does not match table definition."
-                << std::endl;
     } else
         std::cout << "There object named '" << table_name
                   << "' is not in the database." << std::endl;
@@ -104,7 +100,7 @@ void SQL::select_table(const std::string &table_name, bool table_found) {
         if(_parse_tree["FIELDS"][0] == "*")
             _table_map[table_name].print_all();
         else {
-            print_specific(table_name);
+            if(is_valid_fields(table_name)) print_specific(table_name);
         }
     } else
         std::cout << "There object named '" << table_name
@@ -112,14 +108,52 @@ void SQL::select_table(const std::string &table_name, bool table_found) {
 }
 
 bool SQL::values_match_fields(const std::string &table_name) {
-    if(_parse_tree["VALUES"].size() != _table_map[table_name].field_count())
+    if(_parse_tree["VALUES"].size() != _table_map[table_name].field_count()) {
+        std::cout
+            << "Number of supplied values does not match table definition."
+            << std::endl;
         return false;
-    else
+    } else
         return true;
 }
 
+bool SQL::fields_match_fields(const std::string &table_name) {
+    std::size_t field_size = _parse_tree["FIELDS"].size();
+
+    for(std::size_t i = 0; i < field_size; ++i)
+        if(!_table_map[table_name].contains(_parse_tree["FIELDS"][i]))
+            return false;
+
+    return true;
+}
+
+bool SQL::is_valid_fields(const std::string &table_name) {
+    if(_parse_tree["FIELDS"].size() > _table_map[table_name].field_count()) {
+        std::cout
+            << "Number of supplied fields is larger than table definition."
+            << std::endl;
+        return false;
+    }
+
+    if(!fields_match_fields(table_name)) {
+        std::cout << "The value of field columns does not match table "
+                     "definition."
+                  << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
 void SQL::print_specific(const std::string &table_name) {
-    //
+    std::size_t rec_count = _table_map[table_name].size();
+
+    if(_parse_tree.contains("WHERE")) {
+        //
+    } else
+        for(std::size_t i = 0; i < rec_count; ++i)
+            _table_map[table_name].print_rec(i, _parse_tree["FIELDS"]);
 }
 
 }  // namespace sql

@@ -18,6 +18,12 @@ SQLTable::SQLTable(std::string table_name,
 
 std::size_t SQLTable::field_count() const { return _pos_to_fields.size(); }
 
+std::size_t SQLTable::size() const { return _rec_count; }
+
+bool SQLTable::contains(const std::string& field_name) {
+    return _field_to_pos.contains(field_name);
+}
+
 bool SQLTable::insert(const std::vector<std::string>& values) {
     std::string field_name;
 
