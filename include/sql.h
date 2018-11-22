@@ -15,12 +15,25 @@ public:
     typedef bpt_map::Map<std::string, SQLTable> TableMap;
 
     SQL() {}
-    SQL(char *fname);
+    SQL(char* fname);
+
+    void run();
 
 private:
     SQLParser _parser;
+    ParseTree _parse_tree;
     ParseMap _parse_map;
     TableMap _table_map;
+
+    bool get_query();
+    void query();
+    void create_table(const std::string& table_name, bool table_found);
+    void insert_table(const std::string& table_name, bool table_found);
+    void select_table(const std::string& table_name, bool table_found);
+
+    // pre: table exists
+    bool values_match_fields(const std::string& table_name);
+    void print_specific(const std::string& table_name);
 };
 
 }  // namespace sql

@@ -32,6 +32,7 @@
 #include <cstring>   // strncpy
 #include <fstream>   // file streams
 #include <iostream>  //stream
+#include <memory>    // memcpy
 #include <string>    // string
 #include <vector>    // vector
 
@@ -41,8 +42,11 @@ enum RECORD_SIZE { REC_COL = 10, REC_ROW = 5, REC_SIZE = REC_ROW * REC_COL };
 
 class SQLRecord {
 public:
-    SQLRecord(std::string fname);
+    SQLRecord(std::string fname = "");
+
     ~SQLRecord();
+    SQLRecord(const SQLRecord& src);
+    SQLRecord& operator=(const SQLRecord& rhs);
 
     void set_fname(std::string fname);  // set file name
     std::streamsize read(std::vector<std::string>& v, long rpos = 0);

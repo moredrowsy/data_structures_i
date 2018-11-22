@@ -75,7 +75,7 @@ void SQLParser::set_string(char *buffer) { _tokenizer.set_string(buffer); }
  * RETURN:
  *  bool
  ******************************************************************************/
-bool SQLParser::get_query(Map &map) {
+bool SQLParser::parse_query(Map &map) {
     bool is_good = false;  // query's success
     int state = CMD_START;
     int key_code;

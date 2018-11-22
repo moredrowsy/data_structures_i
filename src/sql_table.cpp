@@ -16,6 +16,8 @@ SQLTable::SQLTable(std::string table_name,
     init_table();
 }
 
+std::size_t SQLTable::field_count() const { return _pos_to_fields.size(); }
+
 bool SQLTable::insert(const std::vector<std::string>& values) {
     std::string field_name;
 

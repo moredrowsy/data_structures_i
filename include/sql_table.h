@@ -20,8 +20,11 @@ public:
     typedef bpt_map::MMap<std::string, long> IndexMap;
     typedef bpt_map::Map<std::string, IndexMap> FieldMap;
 
+    SQLTable() : _rec_count(0), _table_name() {}
     SQLTable(std::string table_name);
     SQLTable(std::string table_name, const std::vector<std::string>& values);
+
+    std::size_t field_count() const;
 
     bool insert(const std::vector<std::string>& values);
     void print_all();

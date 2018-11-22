@@ -22,7 +22,7 @@ public:
 
     // MUTATORS
     void set_string(char* buffer);  // set new buffer for STokenizer
-    bool get_query(Map& map);       // parse query buffer to Map
+    bool parse_query(Map& map);     // parse query buffer to Map
 
     // FRIENDS
     friend SQLParser& operator>>(SQLParser& f, token::Token& t);

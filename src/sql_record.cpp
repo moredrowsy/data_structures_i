@@ -2,8 +2,22 @@
 
 namespace sql {
 
-SQLRecord::SQLRecord(std::string fname) : _fname(fname) {
-    _data = new char[REC_ROW * REC_COL]();
+SQLRecord::SQLRecord(std::string fname) : _data(nullptr), _fname(fname) {
+    _data = new char[REC_SIZE]();
+}
+
+SQLRecord::SQLRecord(const SQLRecord& src)
+    : _data(nullptr), _fname(src._fname) {
+    _data = new char[REC_SIZE]();
+    std::memcpy(_data, src._data, REC_SIZE);
+}
+
+SQLRecord& SQLRecord::operator=(const SQLRecord& rhs) {
+    if(this != &rhs) {
+        _fname = rhs._fname;
+        std::memcpy(_data, rhs._data, REC_SIZE);
+    }
+    return *this;
 }
 
 SQLRecord::~SQLRecord() { delete[] _data; }
