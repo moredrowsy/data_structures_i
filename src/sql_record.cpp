@@ -8,33 +8,42 @@ SQLRecord::SQLRecord(std::string fname) : _fname(fname) {
 
 SQLRecord::~SQLRecord() { delete[] _data; }
 
-bool SQLRecord::set_fname(std::string fname) {
-    return (bool)std::ifstream(fname.c_str(), std::ios::binary);
-}
+void SQLRecord::set_fname(std::string fname) { _fname = fname; }
 
-std::streamsize SQLRecord::read(char* buffer, long rpos) {
+std::streamsize SQLRecord::read(std::vector<std::string>& v, long rpos) {
     std::fstream file(_fname.c_str(), std::ios::in | std::ios::binary);
-    file.seekg(rpos * REC_ROW * REC_COL);
-    file.read(buffer, REC_ROW * REC_COL);
+    file.seekg(rpos * REC_SIZE);
+    file.read(_data, REC_SIZE);
+    std::size_t size = file.gcount() / REC_COL;
+
+    for(std::size_t i = 0; i < size; ++i) v.emplace_back(_data + i * REC_COL);
 
     return file.gcount();
 }
 
-long SQLRecord::write(std::vector<std::string>& v, long rpos) {
+long SQLRecord::write(const std::vector<std::string>& v, long rpos) {
     assert(v.size() <= REC_ROW);
-    for(std::size_t i = 0; i < v.size(); ++i)
-        std::strncpy(_data + i * REC_COL, v[i].c_str(), REC_COL);
+    std::string value;
+    std::size_t size = v.size();
+    long original_pos;
+
+    for(std::size_t i = 0; i < size; ++i) {
+        value = v[i].substr(0, REC_COL - 1);
+        std::strncpy(_data + i * REC_COL, value.c_str(), REC_COL);
+    }
 
     std::fstream file(_fname.c_str(),
                       std::ios::in | std::ios::out | std::ios::binary);
+
     if(rpos < 0)
         file.seekp(0, file.end);  // if rpos is negative, append to file
     else                          // else seek to record position
-        file.seekp(rpos * REC_ROW * REC_COL);
+        file.seekp(rpos * REC_SIZE);
 
-    file.write(_data, REC_ROW * REC_COL);
+    original_pos = file.tellp();
+    file.write(_data, REC_SIZE);
 
-    return file.tellp() / (long)(REC_ROW * REC_COL);
+    return original_pos / REC_SIZE;
 }
 
 }  // namespace sql

@@ -97,6 +97,7 @@ public:
     V& get(const K& key);
 
     // operations
+    bool contains(const K& key) const;
     bool contains(const Pair& target) const;
     std::size_t count(const K& key) const;
     void print_debug() const;
@@ -474,6 +475,24 @@ V& Map<K, V>::get(const K& key) {
 /*******************************************************************************
  * DESCRIPTION:
  *  Checks if key is contained in Map.
+ *
+ * PRE-CONDITIONS:
+ *  const K& key: key to find Pair
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename K, typename V>
+bool Map<K, V>::contains(const K& key) const {
+    return _map.contains(Pair(key));
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if Pair is contained in Map.
  *
  * PRE-CONDITIONS:
  *  const Pair& target: the Pair to find
