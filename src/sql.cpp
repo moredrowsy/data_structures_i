@@ -24,20 +24,27 @@ SQL::SQL(char *fname) {
 
 void SQL::run() {
     char c;
+    std::string file_name;
 
     do {
-        std::cout << "[Q]uery    e[X]it: ";
+        std::cout << "[Q]uery  [L]oad_Commands    e[X]it: ";
         std::cin >> c;
 
         switch(c) {
             case 'X':
             case 'x':
                 return;  // exit function
+            case 'L':
+            case 'l':
+                std::cin >> file_name;
+                load_commands(file_name);
+
+                break;
             case 'Q':
             case 'q':
                 std::cin.ignore();
                 if(get_query())
-                    query();
+                    exec_query();
                 else
                     std::cout << "Invalid query." << std::endl;
                 _parse_tree.clear();
@@ -64,7 +71,18 @@ bool SQL::get_query() {
     return is_valid;
 }
 
-void SQL::query() {
+void SQL::load_commands(const std::string &file_name) {
+    char *buffer = new char[MAX_BUFFER];
+    std::ifstream file(file_name.c_str(), std::ios::binary);
+
+    while(file.getline(buffer, MAX_BUFFER)) {
+        _parser.set_string(buffer);
+        if(_parser.parse_query(_parse_tree)) exec_query();
+        _parse_tree.clear();
+    }
+}
+
+void SQL::exec_query() {
     std::string table_name = _parse_tree["TABLE"][0];
     bool table_found = _table_map.contains(table_name);
 
@@ -91,19 +109,20 @@ void SQL::insert_table(const std::string &table_name, bool table_found) {
         if(values_match_fields(table_name))
             _table_map[table_name].insert(_parse_tree["VALUES"]);
     } else
-        std::cout << "There object named '" << table_name
+        std::cout << "The object named '" << table_name
                   << "' is not in the database." << std::endl;
 }
 
 void SQL::select_table(const std::string &table_name, bool table_found) {
     if(table_found) {
+        std::cout << "\nTABLE: " << table_name << std::endl;
         if(_parse_tree["FIELDS"][0] == "*")
             _table_map[table_name].print_all();
         else {
             if(is_valid_fields(table_name)) print_specific(table_name);
         }
     } else
-        std::cout << "There object named '" << table_name
+        std::cout << "The object named '" << table_name
                   << "' is not in the database." << std::endl;
 }
 
@@ -146,14 +165,32 @@ bool SQL::is_valid_fields(const std::string &table_name) {
     return true;
 }
 
+void SQL::make_set(const std::string &field, const std::string op,
+                   set::Set<long> &result) {
+    if(op == "=") {
+        //
+    }
+}
+
 void SQL::print_specific(const std::string &table_name) {
     std::size_t rec_count = _table_map[table_name].size();
+    std::size_t rec_pos;
 
     if(_parse_tree.contains("WHERE")) {
         //
-    } else
+    } /* else
         for(std::size_t i = 0; i < rec_count; ++i)
-            _table_map[table_name].print_rec(i, _parse_tree["FIELDS"]);
+            _table_map[table_name].print_rec(i, _parse_tree["FIELDS"]); */
+    else {
+        _table_map[table_name].print_specific_header(_parse_tree["FIELDS"]);
+
+        auto field = _table_map[table_name].map()[_parse_tree["FIELDS"][0]];
+
+        for(auto it = field.begin(); it != field.end(); ++it) {
+            rec_pos = *it->value;
+            _table_map[table_name].print_rec(rec_pos, _parse_tree["FIELDS"]);
+        }
+    }
 }
 
 }  // namespace sql

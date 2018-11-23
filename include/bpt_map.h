@@ -59,6 +59,10 @@ public:
             return it;                 // return previous state
         }
 
+        void next_key() {
+            if(_it) _it.next_key();
+        }
+
         // FRIENDS
         friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
             return lhs._it == rhs._it;
@@ -148,6 +152,13 @@ public:
             Iterator it = *this;       // make temp
             operator++();              // pre-inc
             return it;                 // return previous state
+        }
+
+        void next_key() {
+            if(_it) {
+                _it.next_key();
+                _it->value = _it->values.begin();
+            }
         }
 
         // FRIENDS

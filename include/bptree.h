@@ -84,6 +84,12 @@ public:
         }
 
         void print_Iterator() { std::cout << *_it; }
+        void next_key() {
+            if(_it) {
+                _it = _it->_next;
+                _index = 0;
+            }
+        };
 
         // FRIENDS
         friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
@@ -173,7 +179,8 @@ private:
     void get_smallest(std::shared_ptr<T>& entry);    // entry := leftmost leaf
     void get_largest(std::shared_ptr<T>& entry);     // entry := rightmost leaf
     void remove_largest(std::shared_ptr<T>& entry);  // remove largest child
-    T* find_ptr(const T& entry);  // return ptr to T; else nullptr
+    const T* find_ptr(const T& entry) const;  // return ptr to T; else nullptr
+    T* find_ptr(const T& entry);              // return ptr to T; else nullptr
     std::shared_ptr<T> find_shared_ptr(const T& entry);
 
     bool verify_tree(int& height, bool& has_stored_height, int level = 0) const;
@@ -441,7 +448,7 @@ T& BPTree<T>::back() {
  ******************************************************************************/
 template <typename T>
 const T& BPTree<T>::get(const T& entry) const {
-    T* found = find_ptr(entry);
+    const T* found = find_ptr(entry);
 
     if(found)
         return *found;
@@ -1266,6 +1273,39 @@ void BPTree<T>::remove_largest(std::shared_ptr<T>& entry) {
             fix_shortage(_child_count - 1);
     }
     update_size();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the pointer to entry contained in the tree. If the entry is not
+ *  found, then nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: item to find
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  const T*
+ ******************************************************************************/
+template <typename T>
+const T* BPTree<T>::find_ptr(const T& entry) const {
+    // find index of T that's greater or qual to entry
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
+
+    if(is_leaf()) {
+        if(is_found)
+            return &(*_data[i]);
+        else
+            return nullptr;
+    } else {                                         // @ !leaf
+        if(is_found)                                 // when found
+            return _subset[i + 1]->find_ptr(entry);  // recurse i+1
+        else                                         // when !found
+            return _subset[i]->find_ptr(entry);      // recurse to find entry
+    }
 }
 
 /*******************************************************************************

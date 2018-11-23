@@ -1,16 +1,19 @@
 #ifndef SQL_TABLE_H
 #define SQL_TABLE_H
 
+#include <algorithm>     // transform()
 #include <iomanip>       // setw()
 #include <string>        // string
 #include <vector>        // vector
 #include "bpt_map.h"     // B+Tree's Map/MMap class
+#include "set.h"         // Set class
 #include "sql_record.h"  // SQLRecord class
 
 namespace sql {
 
 class SQLTable {
 public:
+    enum { PRINT_COL_WIDTH = 20 };
     // field pos to field name; ie: pos #1, "lName"; pos #2, "fName"
     typedef bpt_map::Map<int, std::string> FieldPosMap;
     // field name to field pos; ie: "fName", pos #2; "lName", pos #1
@@ -26,11 +29,28 @@ public:
 
     std::size_t field_count() const;
     std::size_t size() const;
+    const FieldMap& map() const;
 
-    bool contains(const std::string& field_name);
+    bool contains(const std::string& field_name) const;
     bool insert(const std::vector<std::string>& values);
-    void print_all();
-    void print_rec(long rec_pos, const std::vector<std::string>& field_names);
+
+    void make_equal_set(const std::string& field, const std::string& value,
+                        set::Set<long>& result);
+    void make_less_set(const std::string& field, const std::string& value,
+                       set::Set<long>& result);
+    void make_less_equal_set(const std::string& field, const std::string& value,
+                             set::Set<long>& result);
+    void make_greater_set(const std::string& field, const std::string& value,
+                          set::Set<long>& result);
+    void make_greater_equal_set(const std::string& field,
+                                const std::string& value,
+                                set::Set<long>& result);
+
+    void print_all(int width = PRINT_COL_WIDTH);
+    void print_rec(long rec_pos, const std::vector<std::string>& field_names,
+                   int width = PRINT_COL_WIDTH);
+    void print_specific_header(const std::vector<std::string>& field_names,
+                               int width = PRINT_COL_WIDTH);
 
 private:
     long _rec_count;
