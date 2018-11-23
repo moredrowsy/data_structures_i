@@ -42,7 +42,7 @@ public:
         friend class BPTree;
 
         // CONSTRUCTOR
-        Iterator(BPTree<T>* it = nullptr, std::size_t index = 0)
+        Iterator(const BPTree<T>* it = nullptr, std::size_t index = 0)
             : _it(it), _index(index) {}
 
         bool is_null() { return !_it; }
@@ -101,7 +101,7 @@ public:
         }
 
     private:
-        BPTree<T>* _it;
+        const BPTree<T>* _it;
         std::size_t _index;
     };
 
@@ -118,8 +118,11 @@ public:
     bool empty() const;
 
     // element access
+    Iterator begin() const;
     Iterator begin();
+    Iterator end() const;
     Iterator end();
+    Iterator find(const T& entry) const;
     Iterator find(const T& entry);
     T& front();
     T& back();
@@ -174,7 +177,9 @@ private:
     void rotate_right(std::size_t i);  // xfer one data from child i-1 to i
     void merge_with_next_subset(std::size_t i);  // merge subset i w/ subset i+1
 
+    const BPTree<T>* get_smallest_node() const;
     BPTree<T>* get_smallest_node();
+    const BPTree<T>* get_largest_node() const;
     BPTree<T>* get_largest_node();
     void get_smallest(std::shared_ptr<T>& entry);    // entry := leftmost leaf
     void get_largest(std::shared_ptr<T>& entry);     // entry := rightmost leaf
@@ -340,6 +345,25 @@ bool BPTree<T>::empty() const {
  *  BPTree<T>::Iterator: points to left most element
  ******************************************************************************/
 template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::begin() const {
+    return size() ? BPTree<T>::Iterator(get_smallest_node())
+                  : BPTree<T>::Iterator(nullptr);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to left most element in tree.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::begin() {
     return size() ? BPTree<T>::Iterator(get_smallest_node())
                   : BPTree<T>::Iterator(nullptr);
@@ -359,8 +383,58 @@ typename BPTree<T>::Iterator BPTree<T>::begin() {
  *  BPTree<T>::Iterator: points to nullptr
  ******************************************************************************/
 template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::end() const {
+    return BPTree<T>::Iterator(nullptr);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>::Iterator: points to nullptr
+ ******************************************************************************/
+template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::end() {
     return BPTree<T>::Iterator(nullptr);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator to entry; else iterator points to nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) const {
+    // find index of T that's greater or qual to entry
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
+
+    if(is_leaf()) {
+        if(is_found)
+            return BPTree<T>::Iterator(this, i);
+        else
+            return BPTree<T>::Iterator(nullptr);
+    } else {                                     // @ !leaf
+        if(is_found)                             // when found
+            return _subset[i + 1]->find(entry);  // recurse i+1
+        else                                     // when !found
+            return _subset[i]->find(entry);      // recurse to find entry
+    }
 }
 
 /*******************************************************************************
@@ -1177,11 +1251,53 @@ void BPTree<T>::merge_with_next_subset(std::size_t i) {
  *  BPTree<T>*: pointer to smallest
  ******************************************************************************/
 template <typename T>
+const BPTree<T>* BPTree<T>::get_smallest_node() const {
+    if(is_leaf())
+        return this;
+    else
+        return _subset[0]->get_smallest_node();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return pointer to smallest item @ leaf node.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>*: pointer to smallest
+ ******************************************************************************/
+template <typename T>
 BPTree<T>* BPTree<T>::get_smallest_node() {
     if(is_leaf())
         return this;
     else
         return _subset[0]->get_smallest_node();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return pointer to largest item @ leaf node.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>*: pointer to largest
+ ******************************************************************************/
+template <typename T>
+const BPTree<T>* BPTree<T>::get_largest_node() const {
+    if(is_leaf())
+        return this;
+    else
+        return _subset[_child_count - 1]->get_largest_node();
 }
 
 /*******************************************************************************

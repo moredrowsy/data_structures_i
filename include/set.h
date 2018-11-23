@@ -4,7 +4,8 @@
  * CLASS       : CS008
  * HEADER      : bpt_set
  * DESCRIPTION : This header provides a templated Set based on the B+Tree data
- *          structure.
+ *          structure. The templated item can not be modified but can be
+ *          removed.
  ******************************************************************************/
 #ifndef SET_H
 #define SET_H
@@ -65,9 +66,9 @@ public:
     bool empty() const;
 
     // element access
-    Iterator begin();
-    Iterator end();
-    Iterator find(const T& item);
+    Iterator begin() const;
+    Iterator end() const;
+    Iterator find(const T& item) const;
     const T& front();
     const T& back();
     const T& operator[](const T& item);
@@ -90,12 +91,12 @@ public:
         return outs << set._set;
     }
 
-    friend Set<T>& operator+=(Set<T>& lhs, Set<T>& rhs) {
+    friend Set<T>& operator+=(Set<T>& lhs, const Set<T>& rhs) {
         for(const auto& a : rhs) lhs.insert(a);
         return lhs;
     }
 
-    friend Set<T>& operator-=(Set<T>& lhs, Set<T>& rhs) {
+    friend Set<T>& operator-=(Set<T>& lhs, const Set<T>& rhs) {
         for(const auto& a : rhs) lhs.erase(a);
         return lhs;
     }
@@ -156,7 +157,7 @@ bool Set<T>::empty() const {
  *  Set<T>::Iterator: points to left most element
  ******************************************************************************/
 template <typename T>
-typename Set<T>::Iterator Set<T>::begin() {
+typename Set<T>::Iterator Set<T>::begin() const {
     return Set<T>::Iterator(_set.begin());
 }
 
@@ -174,7 +175,7 @@ typename Set<T>::Iterator Set<T>::begin() {
  *  Set<T>::Iterator: points to left most element
  ******************************************************************************/
 template <typename T>
-typename Set<T>::Iterator Set<T>::end() {
+typename Set<T>::Iterator Set<T>::end() const {
     return Set<T>::Iterator(_set.end());
 }
 
@@ -192,7 +193,7 @@ typename Set<T>::Iterator Set<T>::end() {
  *  Set<T>::Iterator: points T that matches item
  ******************************************************************************/
 template <typename T>
-typename Set<T>::Iterator Set<T>::find(const T& item) {
+typename Set<T>::Iterator Set<T>::find(const T& item) const {
     return Set<T>::Iterator(_set.find(item));
 }
 
