@@ -36,12 +36,14 @@ void SQL::run() {
                 return;  // exit function
             case 'L':
             case 'l':
+                std::cout << "Filename: ";
                 std::cin >> file_name;
                 load_commands(file_name);
 
                 break;
             case 'Q':
             case 'q':
+                std::cout << "Query: ";
                 std::cin.ignore();
                 if(get_query())
                     exec_query();
@@ -165,11 +167,50 @@ bool SQL::is_valid_fields(const std::string &table_name) {
     return true;
 }
 
-void SQL::make_set(const std::string &field, const std::string op,
-                   set::Set<long> &result) {
-    if(op == "=") {
-        //
+void SQL::make_infix_exp(const std::string &table_name,
+                         queue::Queue<set_ptr> &infix) {
+    std::size_t where_size = _parse_tree["WHERE"].size();
+    std::size_t l_op_size = _parse_tree["L_OP"].size();
+
+    std::cout << _parse_tree << std::endl;
+
+    for(std::size_t i = 0; i < where_size; ++i) {
+        set_ptr new_set = std::make_shared<set::Set<long>>();
+        infix.push(new_set);
+
+        if(_parse_tree["R_OP"][i] == "=")
+            _table_map[table_name].make_equal_set(_parse_tree["WHERE"][i],
+                                                  _parse_tree["VALUES"][i],
+                                                  *infix.back());
+        else if(_parse_tree["R_OP"][i] == "<")
+            _table_map[table_name].make_less_set(_parse_tree["WHERE"][i],
+                                                 _parse_tree["VALUES"][i],
+                                                 *infix.back());
+        else if(_parse_tree["R_OP"][i] == "<=")
+            _table_map[table_name].make_less_equal_set(_parse_tree["WHERE"][i],
+                                                       _parse_tree["VALUES"][i],
+                                                       *infix.back());
+        else if(_parse_tree["R_OP"][i] == ">")
+            _table_map[table_name].make_greater_set(_parse_tree["WHERE"][i],
+                                                    _parse_tree["VALUES"][i],
+                                                    *infix.back());
+        else if(_parse_tree["R_OP"][i] == ">=")
+            _table_map[table_name].make_greater_equal_set(
+                _parse_tree["WHERE"][i], _parse_tree["VALUES"][i],
+                *infix.back());
+
+        if(_parse_tree.contains("L_OP") && i < _parse_tree["L_OP"].size()) {
+            if(_parse_tree["L_OP"][i] == "AND")
+                infix.push(std::make_shared<set::Set<long>>(
+                    std::initializer_list<long>{SET_AND}));
+
+            if(_parse_tree["L_OP"][i] == "OR")
+                infix.push(std::make_shared<set::Set<long>>(
+                    std::initializer_list<long>{SET_OR}));
+        }
     }
+
+    while(!infix.empty()) std::cout << *infix.pop() << std::endl;
 }
 
 void SQL::print_specific(const std::string &table_name) {
@@ -177,11 +218,15 @@ void SQL::print_specific(const std::string &table_name) {
     std::size_t rec_pos;
 
     if(_parse_tree.contains("WHERE")) {
-        //
+        queue::Queue<set_ptr> infix;
+
+        make_infix_exp(table_name, infix);
+
     } /* else
         for(std::size_t i = 0; i < rec_count; ++i)
             _table_map[table_name].print_rec(i, _parse_tree["FIELDS"]); */
     else {
+        std::cout << "executing print specific" << std::endl;
         _table_map[table_name].print_specific_header(_parse_tree["FIELDS"]);
 
         auto field = _table_map[table_name].map()[_parse_tree["FIELDS"][0]];

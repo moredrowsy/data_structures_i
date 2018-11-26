@@ -26,7 +26,8 @@ public:
     Queue<T> &operator=(const Queue<T> &rhs);  // make deep copy
 
     // ACCESSORS
-    T front() const;     // return head's item
+    T &front() const;    // return head's item
+    T &back() const;     // return head's item
     bool empty() const;  // check boolean for head is nullptr
 
     // MUTATORS
@@ -109,7 +110,7 @@ Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Assert not empty. When not empty, return front's item.
+ *  Assert not empty. When not empty, return head's item.
  *
  * PRE-CONDITIONS:
  *  not empty
@@ -118,13 +119,33 @@ Queue<T> &Queue<T>::operator=(const Queue<T> &rhs) {
  *  none
  *
  * RETURN:
- *  T item from front
+ *  T& item from front
  ******************************************************************************/
 template <typename T>
-T Queue<T>::front() const {
+T &Queue<T>::front() const {
     assert(!empty());
 
     return _head->_item;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assert not empty. When not empty, return tail's item.
+ *
+ * PRE-CONDITIONS:
+ *  not empty
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  T& item from back
+ ******************************************************************************/
+template <typename T>
+T &Queue<T>::back() const {
+    assert(!empty());
+
+    return _tail->_item;
 }
 
 /*******************************************************************************

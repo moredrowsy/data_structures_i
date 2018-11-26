@@ -10,7 +10,8 @@
 #ifndef SET_H
 #define SET_H
 
-#include "bptree.h"  // BPTree class
+#include <initializer_list>  // initializer list
+#include "bptree.h"          // BPTree class
 
 namespace set {
 
@@ -60,6 +61,7 @@ public:
 
     // CONSTRUCTOR
     Set(std::size_t min = bptree::MINIMUM) : _set(false, min) {}
+    Set(const std::initializer_list<T>& l, std::size_t min = bptree::MINIMUM);
 
     // capacity
     std::size_t size() const;
@@ -106,6 +108,25 @@ private:
 };
 
 // ----- SET IMPLEMENTATIONS -----
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructs Set with on item.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+Set<T>::Set(const std::initializer_list<T>& l, std::size_t min)
+    : _set(false, min) {
+    for(const auto& a : l) _set.insert(a);
+}
 
 /*******************************************************************************
  * DESCRIPTION:

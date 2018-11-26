@@ -274,7 +274,7 @@ bool SQLParser::get_parse_key(int state, int &key_code) {
         key_code = TABLE_KEY;
     // SELECT command for relationship codes
     else if(state == SELECT_R_FIELDS)
-        key_code = R_FIELDS;
+        key_code = WHERE_KEY;
     else if(state == SELECT_R_OPS)
         key_code = R_OPS_KEY;
     else if(state == SELECT_VALUES)

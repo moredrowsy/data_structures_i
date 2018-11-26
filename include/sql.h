@@ -2,7 +2,10 @@
 #define SQL_H
 
 #include <fstream>       // ifstream
+#include <memory>        // shared_ptr
 #include "bpt_map.h"     // B+Tree's Map/MMap class
+#include "list.h"        // Queue class
+#include "queue.h"       // Queue class
 #include "set.h"         // Set class
 #include "sql_parser.h"  // SQLTokenizer class
 #include "sql_table.h"   // SQLTable class
@@ -17,6 +20,7 @@ public:
     typedef bpt_map::MMap<std::string, std::string> ParseTree;
     typedef bpt_map::Map<int, ParseTree> ParseMap;
     typedef bpt_map::Map<std::string, SQLTable> TableMap;
+    typedef std::shared_ptr<set::Set<long>> set_ptr;
 
     SQL() {}
     SQL(char* fname);
@@ -44,8 +48,8 @@ private:
     bool fields_match_fields(const std::string& table_name);
     bool is_valid_fields(const std::string& table_name);
 
-    void make_set(const std::string& field, const std::string op,
-                  set::Set<long>& result);
+    void make_infix_exp(const std::string& table_name,
+                        queue::Queue<set_ptr>& infix);
 
     void print_specific(const std::string& table_name);
 };

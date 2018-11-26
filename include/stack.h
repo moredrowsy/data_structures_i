@@ -26,7 +26,7 @@ public:
     Stack<T>& operator=(const Stack<T>& rhs);  // make deep copy
 
     // ACCESSORS
-    T top() const;       // return top's item
+    T& top() const;      // return top's item
     bool empty() const;  // check boolean for top is nullptr
 
     // MUTATORS
@@ -115,7 +115,7 @@ Stack<T>& Stack<T>::operator=(const Stack<T>& rhs) {
  *  T item from front
  ******************************************************************************/
 template <typename T>
-T Stack<T>::top() const {
+T& Stack<T>::top() const {
     assert(!empty());
 
     return _top->_item;

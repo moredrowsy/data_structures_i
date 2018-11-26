@@ -70,8 +70,8 @@ public:
     Iterator last_node() const;              //  iterator to tail
     Iterator search(const T &target) const;  //  search for target
     bool search(const T &target, Iterator &prev, Iterator &found) const;
-    T front() const;     //  head's item
-    T back() const;      //  tail's item
+    T &front() const;    //  head's item
+    T &back() const;     //  tail's item
     bool empty() const;  // check empty list
 
     // MUTATORS
@@ -301,10 +301,10 @@ bool List<T>::search(const T &target, Iterator &prev, Iterator &found) const {
  *  none
  *
  * RETURN:
- *  const T &item from front
+ *  T &item from front
  ******************************************************************************/
 template <typename T>
-T List<T>::front() const {
+T &List<T>::front() const {
     assert(!empty());
 
     return _head->_item;
@@ -321,10 +321,10 @@ T List<T>::front() const {
  *  none
  *
  * RETURN:
- *  const T &item from back
+ *  T &item from back
  ******************************************************************************/
 template <typename T>
-T List<T>::back() const {
+T &List<T>::back() const {
     assert(!empty());
 
     return _tail->_item;

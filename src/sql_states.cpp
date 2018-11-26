@@ -19,7 +19,7 @@ namespace sql {
 void init_keys(std::string* _keys) {
     _keys[COMMAND] = "COMMAND";
     _keys[FIELDS_KEY] = "FIELDS";
-    _keys[R_FIELDS] = "R_FIELDS";
+    _keys[WHERE_KEY] = "WHERE";
     _keys[R_OPS_KEY] = "R_OP";
     _keys[L_OPS_KEY] = "L_OP";
     _keys[TABLE_KEY] = "TABLE";

@@ -86,7 +86,7 @@ enum RELATIONAL_OPS {
 enum PARSE_KEYS {
     COMMAND,
     FIELDS_KEY,
-    R_FIELDS,
+    WHERE_KEY,
     R_OPS_KEY,
     L_OPS_KEY,
     TABLE_KEY,
