@@ -1,0 +1,545 @@
+--------------------------------------------------------------------------------
+INTERACTIVE TESTS: B+Tree
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 40 success.
+
+|40|
+
+Iterators: 40 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 30 success.
+
+|40|
+|30|
+
+Iterators: 30 40 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 61 success.
+
+               |61|
+               |40|
+|40|
+               |30|
+
+Iterators: 30 40 61 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 62 success.
+
+               |62|
+               |61|
+|61|
+               |40|
+|40|
+               |30|
+
+Iterators: 30 40 61 62 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 37 success.
+
+               |62|
+               |61|
+|61|
+               |40|
+|40|
+               |37|
+               |30|
+
+Iterators: 30 37 40 61 62 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 1 success.
+
+                              |62|
+                              |61|
+               |61|
+                              |40|
+|40|
+                              |37|
+                              |30|
+               |30|
+                              |1|
+
+Iterators: 1 30 37 40 61 62 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 53 success.
+
+                              |62|
+                              |61|
+               |61|
+                              |53|
+                              |40|
+|40|
+                              |37|
+                              |30|
+               |30|
+                              |1|
+
+Iterators: 1 30 37 40 53 61 62 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Random insert: 69 success.
+
+                              |69|
+                              |62|
+               |62|
+                              |61|
+               |61|
+                              |53|
+                              |40|
+|40|
+                              |37|
+                              |30|
+               |30|
+                              |1|
+
+Iterators: 1 30 37 40 53 61 62 69 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Deletion: 30 removed
+
+                              |69|
+                              |62|
+               |62|
+                              |61|
+               |61|
+                              |53|
+                              |40|
+|40|
+                              |37|
+               |37|
+                              |1|
+
+Iterators: 1 37 40 53 61 62 69 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Deletion: 61 removed
+
+                              |69|
+               |69|
+                              |62|
+               |62|
+                              |53|
+                              |40|
+|40|
+                              |37|
+               |37|
+                              |1|
+
+Iterators: 1 37 40 53 62 69 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Deletion: 40 removed
+
+                              |69|
+               |69|
+                              |62|
+               |62|
+                              |53|
+|53|
+                              |37|
+               |37|
+                              |1|
+
+Iterators: 1 37 53 62 69 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: >> Deletion: 69 removed
+
+                              |62|
+               |62|
+                              |53|
+|53|
+                              |37|
+               |37|
+                              |1|
+
+Iterators: 1 37 53 62 
+Verify: 1
+
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: x
+--------------------------------------------------------------------------------
+INTERACTIVE TESTS: Map
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Zayin : Pi
+
+0 |Zayin : Pi|
+
+Iterators: << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Sade : Theta
+
+1 |Zayin : Pi|
+0 |Sade : Theta|
+
+Iterators: << Sade : Theta >> << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Taw : Omicron
+
+               1 |Zayin : Pi|
+               1 |Taw : Omicron|
+0 |Taw : Omicron|
+               0 |Sade : Theta|
+
+Iterators: << Sade : Theta >> << Taw : Omicron >> << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Sade : Mu
+
+               1 |Zayin : Pi|
+               1 |Taw : Omicron|
+0 |Taw : Omicron|
+               0 |Sade : Mu|
+
+Iterators: << Sade : Mu >> << Taw : Omicron >> << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Nun : Rho
+
+               1 |Zayin : Pi|
+               1 |Taw : Omicron|
+0 |Taw : Omicron|
+               0 |Sade : Mu|
+               0 |Nun : Rho|
+
+Iterators: << Nun : Rho >> << Sade : Mu >> << Taw : Omicron >> << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Yodh : Zeta
+
+               2 |Zayin : Pi|
+               2 |Yodh : Zeta|
+1 |Yodh : Zeta|
+               1 |Taw : Omicron|
+0 |Taw : Omicron|
+               0 |Sade : Mu|
+               0 |Nun : Rho|
+
+Iterators: << Nun : Rho >> << Sade : Mu >> << Taw : Omicron >> << Yodh : Zeta >> << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Gimel : Omega
+
+                              1 |Zayin : Pi|
+                              1 |Yodh : Zeta|
+               1 |Yodh : Zeta|
+                              0 |Taw : Omicron|
+0 |Taw : Omicron|
+                              1 |Sade : Mu|
+                              1 |Nun : Rho|
+               0 |Nun : Rho|
+                              0 |Gimel : Omega|
+
+Iterators: << Gimel : Omega >> << Nun : Rho >> << Sade : Mu >> << Taw : Omicron >> << Yodh : Zeta >> << Zayin : Pi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Zayin : Tau
+
+                              1 |Zayin : Tau|
+                              1 |Yodh : Zeta|
+               1 |Yodh : Zeta|
+                              0 |Taw : Omicron|
+0 |Taw : Omicron|
+                              1 |Sade : Mu|
+                              1 |Nun : Rho|
+               0 |Nun : Rho|
+                              0 |Gimel : Omega|
+
+Iterators: << Gimel : Omega >> << Nun : Rho >> << Sade : Mu >> << Taw : Omicron >> << Yodh : Zeta >> << Zayin : Tau >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Insert: Taw : NewValue
+
+                              1 |Zayin : Tau|
+                              1 |Yodh : Zeta|
+               1 |Yodh : Zeta|
+                              0 |Taw : NewValue|
+0 |Taw : NewValue|
+                              1 |Sade : Mu|
+                              1 |Nun : Rho|
+               0 |Nun : Rho|
+                              0 |Gimel : Omega|
+
+Iterators: << Gimel : Omega >> << Nun : Rho >> << Sade : Mu >> << Taw : NewValue >> << Yodh : Zeta >> << Zayin : Tau >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Deletion: Taw removed
+
+                              1 |Zayin : Tau|
+               1 |Zayin : Tau|
+                              0 |Yodh : Zeta|
+0 |Yodh : Zeta|
+                              1 |Sade : Mu|
+                              1 |Nun : Rho|
+               0 |Nun : Rho|
+                              0 |Gimel : Omega|
+
+Iterators: << Gimel : Omega >> << Nun : Rho >> << Sade : Mu >> << Yodh : Zeta >> << Zayin : Tau >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Deletion: Nun removed
+
+                              1 |Zayin : Tau|
+               1 |Zayin : Tau|
+                              0 |Yodh : Zeta|
+0 |Yodh : Zeta|
+                              1 |Sade : Mu|
+               0 |Sade : Mu|
+                              0 |Gimel : Omega|
+
+Iterators: << Gimel : Omega >> << Sade : Mu >> << Yodh : Zeta >> << Zayin : Tau >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: x
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+INTERACTIVE TESTS: Multi-Map
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Lamedh : Chi
+
+0 |Lamedh : Chi|
+
+Iterators: << Lamedh : Chi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Sampi : Xi
+
+1 |Sampi : Xi|
+0 |Lamedh : Chi|
+
+Iterators: << Lamedh : Chi >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Kaph : Theta
+
+               1 |Sampi : Xi|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta|
+
+Iterators: << Kaph : Theta >> << Lamedh : Chi >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Kaph : Tau
+
+               1 |Sampi : Xi|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta, Tau|
+
+Iterators: << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Ayin : Sigma
+
+               1 |Sampi : Xi|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta, Tau|
+               0 |Ayin : Sigma|
+
+Iterators: << Ayin : Sigma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Mem : Theta
+
+               2 |Sampi : Xi|
+               2 |Mem : Theta|
+1 |Mem : Theta|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta, Tau|
+               0 |Ayin : Sigma|
+
+Iterators: << Ayin : Sigma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Mem : Theta >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Ayin : Gamma
+
+               2 |Sampi : Xi|
+               2 |Mem : Theta|
+1 |Mem : Theta|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta, Tau|
+               0 |Ayin : Sigma, Gamma|
+
+Iterators: << Ayin : Sigma >> << Ayin : Gamma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Mem : Theta >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Random insert: Pe : Gamma
+
+                              1 |Sampi : Xi|
+                              1 |Pe : Gamma|
+               1 |Pe : Gamma|
+                              0 |Mem : Theta|
+0 |Mem : Theta|
+                              1 |Lamedh : Chi|
+               0 |Lamedh : Chi|
+                              0 |Kaph : Theta, Tau|
+                              0 |Ayin : Sigma, Gamma|
+
+Iterators: << Ayin : Sigma >> << Ayin : Gamma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Mem : Theta >> << Pe : Gamma >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Insert: Mem : NewValue1
+
+                              1 |Sampi : Xi|
+                              1 |Pe : Gamma|
+               1 |Pe : Gamma|
+                              0 |Mem : Theta, NewValue1|
+0 |Mem : Theta, NewValue1|
+                              1 |Lamedh : Chi|
+               0 |Lamedh : Chi|
+                              0 |Kaph : Theta, Tau|
+                              0 |Ayin : Sigma, Gamma|
+
+Iterators: << Ayin : Sigma >> << Ayin : Gamma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Mem : Theta >> << Mem : NewValue1 >> << Pe : Gamma >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Insert: Mem : NewValue2
+
+                              1 |Sampi : Xi|
+                              1 |Pe : Gamma|
+               1 |Pe : Gamma|
+                              0 |Mem : Theta, NewValue1, NewValue2|
+0 |Mem : Theta, NewValue1, NewValue2|
+                              1 |Lamedh : Chi|
+               0 |Lamedh : Chi|
+                              0 |Kaph : Theta, Tau|
+                              0 |Ayin : Sigma, Gamma|
+
+Iterators: << Ayin : Sigma >> << Ayin : Gamma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Mem : Theta >> << Mem : NewValue1 >> << Mem : NewValue2 >> << Pe : Gamma >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Deletion: Mem removed
+
+                              1 |Sampi : Xi|
+               1 |Sampi : Xi|
+                              0 |Pe : Gamma|
+0 |Pe : Gamma|
+                              1 |Lamedh : Chi|
+               0 |Lamedh : Chi|
+                              0 |Kaph : Theta, Tau|
+                              0 |Ayin : Sigma, Gamma|
+
+Iterators: << Ayin : Sigma >> << Ayin : Gamma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Pe : Gamma >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Deletion: Pe removed
+
+               2 |Sampi : Xi|
+1 |Sampi : Xi|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta, Tau|
+               0 |Ayin : Sigma, Gamma|
+
+Iterators: << Ayin : Sigma >> << Ayin : Gamma >> << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: r
+--------------------------------------------------------------------------------
+>> Deletion: Ayin removed
+
+               2 |Sampi : Xi|
+1 |Sampi : Xi|
+               1 |Lamedh : Chi|
+0 |Lamedh : Chi|
+               0 |Kaph : Theta, Tau|
+
+Iterators: << Kaph : Theta >> << Kaph : Tau >> << Lamedh : Chi >> << Sampi : Xi >> 
+Verify: 1
+
+--------------------------------------------------------------------------------
+[S]ize()  [R]andom  [I]nsert  [D]elete  [F]ind [C]lear     e[X]it: x
+--------------------------------------------------------------------------------
+
+B+TREE TESTS: BIG THREE PASSED
+B+TREE TESTS: INSERTIONS PASSED
+B+TREE TESTS: REMOVALS PASSED
+
+********************************************************************************
+********************************************************************************
+             E N D     T E S T : 100 tests of 1000 items : VERIFIED
+********************************************************************************
+********************************************************************************
+
+MAP/MMAP TESTS: AUTO PASSED

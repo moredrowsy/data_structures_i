@@ -354,7 +354,7 @@ void test_bptree_interactive() {
 
     const unsigned MAX_RANGE = 100;
     bool is_inserted = false, is_removed = false, is_print = false;
-    BPTree<int> bpt(false, 2);
+    BPTree<int> bpt;
     BPTree<int>::Iterator is_found, it;
     int key;
     char c;
@@ -530,7 +530,7 @@ void test_map_interactive() {
               << std::string(80, '-') << std::endl;
 
     const std::size_t SIZE = 24;
-    Map<std::string, std::string> map(2);
+    Map<std::string, std::string> map;
     Map<std::string, std::string>::Iterator it;
     bool is_found = false, is_removed = false, is_print = false;
     char c;
@@ -654,7 +654,7 @@ void test_mmap_interactive() {
               << std::string(80, '-') << std::endl;
 
     const std::size_t SIZE = 24;
-    MMap<std::string, std::string> mmap(2);
+    MMap<std::string, std::string> mmap;
     MMap<std::string, std::string>::Iterator it;
     bool is_found = false, is_removed = false, is_print = false;
     char c;
