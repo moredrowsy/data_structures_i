@@ -31,6 +31,7 @@ public:
     bool empty() const;  // check boolean for head is nullptr
 
     // MUTATORS
+    void clear();
     void push(T item);  // add item behind tail
     T pop();            // remove head and return old head's item
 
@@ -60,7 +61,7 @@ private:
  ******************************************************************************/
 template <typename T>
 Queue<T>::~Queue() {
-    node::delete_all(_head);  // deallocates all nodes when not empty
+    clear();
 }
 
 /*******************************************************************************
@@ -164,6 +165,24 @@ T &Queue<T>::back() const {
 template <typename T>
 bool Queue<T>::empty() const {
     return node::empty(_head);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocate all nodes.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  Queue is empty
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void Queue<T>::clear() {
+    node::delete_all(_head);  // deallocates all nodes when not empty
 }
 
 /*******************************************************************************

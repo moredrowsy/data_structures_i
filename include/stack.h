@@ -30,6 +30,7 @@ public:
     bool empty() const;  // check boolean for top is nullptr
 
     // MUTATORS
+    void clear();
     void push(T item);  // add item at top
     T pop();            // remove top and return old top's item
 
@@ -58,7 +59,7 @@ private:
  ******************************************************************************/
 template <typename T>
 Stack<T>::~Stack() {
-    node::delete_all(_top);  // deallocates all nodes when not empty
+    clear();
 }
 
 /*******************************************************************************
@@ -137,6 +138,24 @@ T& Stack<T>::top() const {
 template <typename T>
 bool Stack<T>::empty() const {
     return node::empty(_top);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocate all nodes.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  Queue is empty
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void Stack<T>::clear() {
+    node::delete_all(_top);  // deallocates all nodes when not empty
 }
 
 /*******************************************************************************

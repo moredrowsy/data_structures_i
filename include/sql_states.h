@@ -44,7 +44,7 @@ enum SELECT_STATES {
     SELECT_WHERE,
     SELECT_R_FIELDS,
     SELECT_R_OPS,
-    SELECT_VALUES,
+    SELECT_VALUE,
     SELECT_L_OPS,
 };
 
@@ -74,23 +74,24 @@ enum COLUMNS {
     MAX_COLS
 };
 
-enum RELATIONAL_OPS {
-    ASSIGN,
-    LESS,
-    LESS_THAN,
-    GREATER,
-    GREATER_THAN,
-    R_OPS_SIZE
+enum OP_STRINGS {
+    STR_ASSIGN,
+    STR_LESS,
+    STR_LESS_THAN,
+    STR_GREATER,
+    STR_GREATER_THAN,
+    STR_OP_OR,
+    STR_OP_AND,
+    STR_OPS_SIZE
 };
 
 enum PARSE_KEYS {
-    COMMAND,
-    FIELDS_KEY,
-    WHERE_KEY,
-    R_OPS_KEY,
-    L_OPS_KEY,
-    TABLE_KEY,
-    VALUE_KEY,
+    KEY_COMMAND,
+    KEY_FIELDS,
+    KEY_R_FIELDS,
+    KEY_WHERE,
+    KEY_TABLE,
+    KEY_VALUES,
     MAX_KEYS
 };
 
@@ -101,7 +102,7 @@ void init_keys(std::string* _keys);
 void init_types(std::string* _types);
 
 // fill types with SQL type strings
-void init_r_ops(std::string* _r_ops);
+void init_ops(std::string* _ops);
 
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLS]);

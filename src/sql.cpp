@@ -2,22 +2,33 @@
 
 namespace sql {
 
+std::string SQL::_op_strings[STR_OPS_SIZE];
+bool SQL::need_init = true;
+
+SQL::SQL() {
+    if(need_init) init();
+}
+
 SQL::SQL(char *fname) {
     char *buffer = new char[MAX_BUFFER];
     int parse_counts = 0;
-    ParseTree parse_tree;
+
     std::ifstream fin(fname);
 
+    if(need_init) init();
+
+    // WIP NEED TO FIX
     while(fin.getline(buffer, MAX_BUFFER)) {
-        _parser.set_string(buffer);
-        if(_parser.parse_query(parse_tree)) {
-            _parse_map[parse_counts++] = parse_tree;
-            std::cout << buffer << std::endl;
-            std::cout << _parse_map[parse_counts - 1] << std::endl << std::endl;
-            parse_tree.clear();
+        _parser.set_string(buffer);  // set string for each line to parser
+        if(_parser.parse_query(_parse_tree, _infix)) {  // if the query is valid
+            _parse_map[parse_counts++] = _parse_tree;
+            // std::cout << buffer << std::endl;
+            // std::cout << _parse_map[parse_counts - 1] << std::endl <<
+            // std::endl;
+            _parse_tree.clear();
+            _infix.clear();
         }
     }
-    std::cout << _parse_map.size() << std::endl;
 
     delete[] buffer;
 }
@@ -50,6 +61,7 @@ void SQL::run() {
                 else
                     std::cout << "Invalid query." << std::endl;
                 _parse_tree.clear();
+                _infix.clear();
 
                 break;
 
@@ -64,31 +76,38 @@ bool SQL::get_query() {
     bool is_valid = false;
     char *buffer = new char[MAX_BUFFER];
 
-    std::cin.getline(buffer, MAX_BUFFER);
-    _parser.set_string(buffer);
-    is_valid = _parser.parse_query(_parse_tree);
+    std::cin.getline(buffer, MAX_BUFFER);                 // get one input line
+    _parser.set_string(buffer);                           // pass to parser
+    is_valid = _parser.parse_query(_parse_tree, _infix);  // parse input
 
     delete[] buffer;
 
     return is_valid;
 }
 
+void SQL::init() {
+    sql::init_ops(_op_strings);
+    need_init = false;
+}
+
 void SQL::load_commands(const std::string &file_name) {
     char *buffer = new char[MAX_BUFFER];
     std::ifstream file(file_name.c_str(), std::ios::binary);
 
-    while(file.getline(buffer, MAX_BUFFER)) {
-        _parser.set_string(buffer);
-        if(_parser.parse_query(_parse_tree)) exec_query();
-        _parse_tree.clear();
+    while(file.getline(buffer, MAX_BUFFER)) {  // get each line from file
+        _parser.set_string(buffer);            // pass to parser
+
+        // if parser passes good query, execute query
+        if(_parser.parse_query(_parse_tree, _infix)) exec_query();
+        _parse_tree.clear();  // reset parse tree
+        _infix.clear();       // reset infix
     }
 }
 
 void SQL::exec_query() {
     std::string table_name = _parse_tree["TABLE"][0];
+    std::string command = _parse_tree["COMMAND"][0];
     bool table_found = _table_map.contains(table_name);
-
-    // TO DO CHECK IF TABLE EXISTS
 
     if(_parse_tree["COMMAND"][0] == "CREATE")
         create_table(table_name, table_found);
@@ -108,7 +127,7 @@ void SQL::create_table(const std::string &table_name, bool table_found) {
 
 void SQL::insert_table(const std::string &table_name, bool table_found) {
     if(table_found) {
-        if(values_match_fields(table_name))
+        if(insert_values_match_fields_size(table_name))
             _table_map[table_name].insert(_parse_tree["VALUES"]);
     } else
         std::cout << "The object named '" << table_name
@@ -118,17 +137,24 @@ void SQL::insert_table(const std::string &table_name, bool table_found) {
 void SQL::select_table(const std::string &table_name, bool table_found) {
     if(table_found) {
         std::cout << "\nTABLE: " << table_name << std::endl;
-        if(_parse_tree["FIELDS"][0] == "*")
-            _table_map[table_name].print_all();
-        else {
-            if(is_valid_fields(table_name)) print_specific(table_name);
+
+        /***********************************************************************
+        // SELECT START IS BROKEN. SELECT STAR SHOULD STILL CHECK FOR WHERE
+        // CLAUSE!!!
+         **********************************************************************/
+        if(is_valid_fields(table_name)) {
+            SQLTable new_table("__temp__1");
+
+            _table_map[table_name].select(_parse_tree["FIELDS"], _infix,
+                                          new_table);
+            new_table.delete_table();
         }
     } else
         std::cout << "The object named '" << table_name
                   << "' is not in the database." << std::endl;
 }
 
-bool SQL::values_match_fields(const std::string &table_name) {
+bool SQL::insert_values_match_fields_size(const std::string &table_name) {
     if(_parse_tree["VALUES"].size() != _table_map[table_name].field_count()) {
         std::cout
             << "Number of supplied values does not match table definition."
@@ -136,16 +162,6 @@ bool SQL::values_match_fields(const std::string &table_name) {
         return false;
     } else
         return true;
-}
-
-bool SQL::fields_match_fields(const std::string &table_name) {
-    std::size_t field_size = _parse_tree["FIELDS"].size();
-
-    for(std::size_t i = 0; i < field_size; ++i)
-        if(!_table_map[table_name].contains(_parse_tree["FIELDS"][i]))
-            return false;
-
-    return true;
 }
 
 bool SQL::is_valid_fields(const std::string &table_name) {
@@ -156,86 +172,23 @@ bool SQL::is_valid_fields(const std::string &table_name) {
         return false;
     }
 
-    if(!fields_match_fields(table_name)) {
-        std::cout << "The value of field columns does not match table "
-                     "definition."
+    if(_parse_tree["FIELDS"][0] != "*" &&
+       !_table_map[table_name].is_match_fields(_parse_tree["FIELDS"])) {
+        std::cout << "The FIELD columns do not match table definition."
+                  << std::endl;
+
+        return false;
+    }
+
+    if(_parse_tree.contains("WHERE") &&
+       !_table_map[table_name].is_match_fields(_parse_tree["R_FIELDS"])) {
+        std::cout << "The field columns do not match table definition."
                   << std::endl;
 
         return false;
     }
 
     return true;
-}
-
-void SQL::make_infix_exp(const std::string &table_name,
-                         queue::Queue<set_ptr> &infix) {
-    std::size_t where_size = _parse_tree["WHERE"].size();
-    std::size_t l_op_size = _parse_tree["L_OP"].size();
-
-    std::cout << _parse_tree << std::endl;
-
-    for(std::size_t i = 0; i < where_size; ++i) {
-        set_ptr new_set = std::make_shared<set::Set<long>>();
-        infix.push(new_set);
-
-        if(_parse_tree["R_OP"][i] == "=")
-            _table_map[table_name].make_equal_set(_parse_tree["WHERE"][i],
-                                                  _parse_tree["VALUES"][i],
-                                                  *infix.back());
-        else if(_parse_tree["R_OP"][i] == "<")
-            _table_map[table_name].make_less_set(_parse_tree["WHERE"][i],
-                                                 _parse_tree["VALUES"][i],
-                                                 *infix.back());
-        else if(_parse_tree["R_OP"][i] == "<=")
-            _table_map[table_name].make_less_equal_set(_parse_tree["WHERE"][i],
-                                                       _parse_tree["VALUES"][i],
-                                                       *infix.back());
-        else if(_parse_tree["R_OP"][i] == ">")
-            _table_map[table_name].make_greater_set(_parse_tree["WHERE"][i],
-                                                    _parse_tree["VALUES"][i],
-                                                    *infix.back());
-        else if(_parse_tree["R_OP"][i] == ">=")
-            _table_map[table_name].make_greater_equal_set(
-                _parse_tree["WHERE"][i], _parse_tree["VALUES"][i],
-                *infix.back());
-
-        if(_parse_tree.contains("L_OP") && i < _parse_tree["L_OP"].size()) {
-            if(_parse_tree["L_OP"][i] == "AND")
-                infix.push(std::make_shared<set::Set<long>>(
-                    std::initializer_list<long>{SET_AND}));
-
-            if(_parse_tree["L_OP"][i] == "OR")
-                infix.push(std::make_shared<set::Set<long>>(
-                    std::initializer_list<long>{SET_OR}));
-        }
-    }
-
-    while(!infix.empty()) std::cout << *infix.pop() << std::endl;
-}
-
-void SQL::print_specific(const std::string &table_name) {
-    std::size_t rec_count = _table_map[table_name].size();
-    std::size_t rec_pos;
-
-    if(_parse_tree.contains("WHERE")) {
-        queue::Queue<set_ptr> infix;
-
-        make_infix_exp(table_name, infix);
-
-    } /* else
-        for(std::size_t i = 0; i < rec_count; ++i)
-            _table_map[table_name].print_rec(i, _parse_tree["FIELDS"]); */
-    else {
-        std::cout << "executing print specific" << std::endl;
-        _table_map[table_name].print_specific_header(_parse_tree["FIELDS"]);
-
-        auto field = _table_map[table_name].map()[_parse_tree["FIELDS"][0]];
-
-        for(auto it = field.begin(); it != field.end(); ++it) {
-            rec_pos = *it->value;
-            _table_map[table_name].print_rec(rec_pos, _parse_tree["FIELDS"]);
-        }
-    }
 }
 
 }  // namespace sql

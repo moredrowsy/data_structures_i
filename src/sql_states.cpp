@@ -17,13 +17,12 @@ namespace sql {
  *  none
  ******************************************************************************/
 void init_keys(std::string* _keys) {
-    _keys[COMMAND] = "COMMAND";
-    _keys[FIELDS_KEY] = "FIELDS";
-    _keys[WHERE_KEY] = "WHERE";
-    _keys[R_OPS_KEY] = "R_OP";
-    _keys[L_OPS_KEY] = "L_OP";
-    _keys[TABLE_KEY] = "TABLE";
-    _keys[VALUE_KEY] = "VALUES";
+    _keys[KEY_COMMAND] = "COMMAND";
+    _keys[KEY_FIELDS] = "FIELDS";
+    _keys[KEY_R_FIELDS] = "R_FIELDS";
+    _keys[KEY_WHERE] = "WHERE";
+    _keys[KEY_TABLE] = "TABLE";
+    _keys[KEY_VALUES] = "VALUES";
 }
 
 /*******************************************************************************
@@ -69,12 +68,14 @@ void init_types(std::string* _types) {
  * RETURN:
  *  none
  ******************************************************************************/
-void init_r_ops(std::string* _r_ops) {
-    _r_ops[ASSIGN] = "=";
-    _r_ops[LESS] = "<";
-    _r_ops[LESS_THAN] = "<=";
-    _r_ops[GREATER] = ">";
-    _r_ops[GREATER_THAN] = ">=";
+void init_ops(std::string* _ops) {
+    _ops[STR_ASSIGN] = "=";
+    _ops[STR_LESS] = "<";
+    _ops[STR_LESS_THAN] = "<=";
+    _ops[STR_GREATER] = ">";
+    _ops[STR_GREATER_THAN] = ">=";
+    _ops[STR_OP_OR] = "OR";
+    _ops[STR_OP_AND] = "AND";
 }
 
 /*******************************************************************************
@@ -367,7 +368,7 @@ void mark_table_select(int _table[][MAX_COLS]) {
     mark_fail(_table, SELECT_WHERE);
     mark_fail(_table, SELECT_R_FIELDS);
     mark_fail(_table, SELECT_R_OPS);
-    mark_success(_table, SELECT_VALUES);
+    mark_success(_table, SELECT_VALUE);
     mark_fail(_table, SELECT_L_OPS);
 
     // MARK CELLS
@@ -390,9 +391,9 @@ void mark_table_select(int _table[][MAX_COLS]) {
     mark_cell(SELECT_TABLE, _table, WHERE, SELECT_WHERE);
     mark_cell(SELECT_WHERE, _table, IDENT, SELECT_R_FIELDS);
     mark_cell(SELECT_R_FIELDS, _table, R_OPS, SELECT_R_OPS);
-    mark_cell(SELECT_R_OPS, _table, IDENT, SELECT_VALUES);
-    mark_cell(SELECT_R_OPS, _table, VALUE, SELECT_VALUES);
-    mark_cell(SELECT_VALUES, _table, L_OPS, SELECT_L_OPS);
+    mark_cell(SELECT_R_OPS, _table, IDENT, SELECT_VALUE);
+    mark_cell(SELECT_R_OPS, _table, VALUE, SELECT_VALUE);
+    mark_cell(SELECT_VALUE, _table, L_OPS, SELECT_L_OPS);
     mark_cell(SELECT_L_OPS, _table, IDENT, SELECT_R_FIELDS);
 }
 

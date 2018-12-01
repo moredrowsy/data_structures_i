@@ -1,39 +1,40 @@
 #ifndef SQL_H
 #define SQL_H
 
-#include <fstream>       // ifstream
-#include <memory>        // shared_ptr
-#include "bpt_map.h"     // B+Tree's Map/MMap class
-#include "list.h"        // Queue class
-#include "queue.h"       // Queue class
-#include "set.h"         // Set class
-#include "sql_parser.h"  // SQLTokenizer class
-#include "sql_table.h"   // SQLTable class
-#include "stack.h"       // Stack class
+#include <fstream>         // ifstream
+#include <memory>          // shared_ptr
+#include "bpt_map.h"       // B+Tree's Map/MMap class
+#include "list.h"          // Queue class
+#include "queue.h"         // Queue class
+#include "set.h"           // Set class
+#include "sql_parser.h"    // SQLTokenizer class
+#include "sql_states.h"    // SQL states
+#include "sql_table.h"     // SQLTable class
+#include "sql_typedefs.h"  // typedefs for SQL
+#include "stack.h"         // Stack class
 
 namespace sql {
 
-enum SET_CODE { SET_OR = -2, SET_AND = -1 };
-
 class SQL {
 public:
-    typedef bpt_map::MMap<std::string, std::string> ParseTree;
-    typedef bpt_map::Map<int, ParseTree> ParseMap;
     typedef bpt_map::Map<std::string, SQLTable> TableMap;
-    typedef std::shared_ptr<set::Set<long>> set_ptr;
 
-    SQL() {}
+    SQL();
     SQL(char* fname);
 
     void run();
 
-private:
+    // private:
+    static std::string _op_strings[STR_OPS_SIZE];
+    static bool need_init;
+
+    QueueTokens _infix;
     SQLParser _parser;
     ParseTree _parse_tree;
     ParseMap _parse_map;
     TableMap _table_map;
 
-    void init_error_codes();
+    void init();
 
     void load_commands(const std::string& file_name);  // load command from file
     bool get_query();   // get query and output a valid parse tree
@@ -44,14 +45,8 @@ private:
     void select_table(const std::string& table_name, bool table_found);
 
     // pre: table exists
-    bool values_match_fields(const std::string& table_name);
-    bool fields_match_fields(const std::string& table_name);
+    bool insert_values_match_fields_size(const std::string& table_name);
     bool is_valid_fields(const std::string& table_name);
-
-    void make_infix_exp(const std::string& table_name,
-                        queue::Queue<set_ptr>& infix);
-
-    void print_specific(const std::string& table_name);
 };
 
 }  // namespace sql

@@ -38,11 +38,7 @@
 
 namespace sql {
 
-enum RECORD_SIZE {
-    REC_COL = 1025,
-    REC_ROW = 101,
-    REC_SIZE = REC_ROW * REC_COL
-};
+enum RECORD_SIZE { REC_COL = 20, REC_ROW = 10, REC_SIZE = REC_ROW * REC_COL };
 
 class SQLRecord {
 public:

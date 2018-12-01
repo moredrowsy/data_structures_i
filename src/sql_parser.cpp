@@ -6,7 +6,7 @@ namespace sql {
 bool SQLParser::_need_init = true;
 int SQLParser::_table[MAX_ROWS][MAX_COLS];
 std::string SQLParser::_keys[MAX_KEYS];
-std::string SQLParser::_r_ops[R_OPS_SIZE];
+std::string SQLParser::_r_ops[STR_OPS_SIZE];
 std::string SQLParser::_types[MAX_COLS];
 
 /*******************************************************************************
@@ -63,19 +63,20 @@ void SQLParser::set_string(char *buffer) { _tokenizer.set_string(buffer); }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Parses the query and returns a valid map with SQL tokens; else if query is
- *  not valid, returns an empty map.
+ *  Parses the query and returns a valid ParseTree and QueueTokens (for infix
+ *  expression) with SQL tokens; else if query is not valid, returns an empty
+ *  ParseTree and QueueTokens.
  *
  * PRE-CONDITIONS:
- *  Map &map: multip map by ref
+ *  ParseTree &map: multip map by ref
  *
  * POST-CONDITIONS:
- *  Map &map: multip map populated with valid Tokens or else empty
+ *  ParseTree &map: multip map populated with valid Tokens or else empty
  *
  * RETURN:
  *  bool
  ******************************************************************************/
-bool SQLParser::parse_query(Map &map) {
+bool SQLParser::parse_query(ParseTree &tree, QueueTokens &infix) {
     bool is_good = false;  // query's success
     int state = CMD_START;
     int key_code;
@@ -86,13 +87,21 @@ bool SQLParser::parse_query(Map &map) {
         state = _table[state][t.type()];
         is_good = is_success(_table, state);  // log query success
 
-        if(get_parse_key(state, key_code))       // if valid code
-            map[_keys[key_code]] += t.string();  // add to map
+        if(get_parse_key(state, key_code)) {      // if valid code
+            tree[_keys[key_code]] += t.string();  // add to map
+
+            if(state == SELECT_R_FIELDS)
+                tree[_keys[KEY_R_FIELDS]] += t.string();
+
+            if(key_code == KEY_WHERE) {
+                infix.push(get_sql_token(t));
+            }
+        }
 
         t = next_token();  // get next SQL Token
     }
 
-    if(!is_good) map.clear();  // clear map if query fails
+    if(!is_good) tree.clear();  // clear map if query fails
 
     return is_good;
 }
@@ -113,7 +122,7 @@ bool SQLParser::parse_query(Map &map) {
 void SQLParser::init() {
     init_keys(_keys);
     init_types(_types);
-    init_r_ops(_r_ops);
+    init_ops(_r_ops);
     init_table(_table);
     mark_table_command(_table);
     mark_table_create(_table);
@@ -162,16 +171,11 @@ token::Token SQLParser::next_token() {
  *  void
  ******************************************************************************/
 void SQLParser::parse_token(token::Token &t) {
-    // transform to comparison string with all caps
-    std::string cmp_str = t.string();
-    std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
-
     if(t.type() == state_machine::STATE_IDENT) {
         // check if IDENT is a keyword
-        if(t.sub_type() == state_machine::STATE_IDENT_NORM) {
-            t.set_type(get_keyword(cmp_str));
-            t.set_string(std::move(cmp_str));
-        } else
+        if(t.sub_type() == state_machine::STATE_IDENT_NORM)
+            get_keyword(t);
+        else
             t.set_type(IDENT);
     } else if(t.type() == state_machine::STATE_COMMA)
         t.set_type(COMMA);
@@ -185,8 +189,9 @@ void SQLParser::parse_token(token::Token &t) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Returns a keyword type id (_types's col) if it finds a keyword in _types
- *  array; else returns a default IDENT id.
+ *  Find if the string is a keyword. If found, set Token type to keyword ID and
+ *  if L_OP type, also set subtype ID to distinguish what type of L_OP. If
+ *  keyword is not found, set to generic IDENT id.
  *
  * PRE-CONDITIONS:
  *  token::Token &t: extracted token from SQL Tokenizer
@@ -197,15 +202,25 @@ void SQLParser::parse_token(token::Token &t) {
  * RETURN:
  *  void
  ******************************************************************************/
-int SQLParser::get_keyword(const std::string &cmp) {
+void SQLParser::get_keyword(token::Token &t) {
+    bool keyword_found = false;
+    std::string cmp_str = t.string();
+    std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
+
     for(int col = 0; col < MAX_COLS; ++col)
-        if(cmp == _types[col]) {
+        if(cmp_str == _types[col]) {
+            keyword_found = true;
+            t.set_string(cmp_str);
+
             if(col == AND || col == OR)
-                return L_OPS;  // return if key is logical operators
+                t.set_type(L_OPS);
             else
-                return col;
+                t.set_type(col);
+
+            break;
         }
-    return IDENT;
+
+    if(!keyword_found) t.set_type(IDENT);
 }
 
 /*******************************************************************************
@@ -224,10 +239,9 @@ int SQLParser::get_keyword(const std::string &cmp) {
  *  void
  ******************************************************************************/
 void SQLParser::get_r_op_subtype(token::Token &t) {
-    for(int type = 0; type < R_OPS_SIZE; ++type)
+    for(int type = 0; type < STR_OPS_SIZE; ++type)
         if(t.string() == _r_ops[type]) {
             t.set_type(R_OPS);
-            t.set_sub_type(type);
             return;
         }
     t.set_type(VALUE);
@@ -254,37 +268,60 @@ void SQLParser::get_r_op_subtype(token::Token &t) {
 bool SQLParser::get_parse_key(int state, int &key_code) {
     bool is_valid = true;
 
-    // initial command codes
-    if(state == CMD_CREATE || state == CMD_INSERT || state == CMD_SELECT)
-        key_code = COMMAND;
-    // CREATE command codes
-    else if(state == CREATE_TABLE)
-        key_code = TABLE_KEY;
-    else if(state == CREATE_FIELDS)
-        key_code = FIELDS_KEY;
-    // INSERT command codes
-    else if(state == INSERT_TABLE)
-        key_code = TABLE_KEY;
-    else if(state == INSERT_VALUE)
-        key_code = VALUE_KEY;
-    // SELECT command codes
-    else if(state == SELECT_FIELDS || state == SELECT_ASTERISK)
-        key_code = FIELDS_KEY;
-    else if(state == SELECT_TABLE)
-        key_code = TABLE_KEY;
-    // SELECT command for relationship codes
-    else if(state == SELECT_R_FIELDS)
-        key_code = WHERE_KEY;
-    else if(state == SELECT_R_OPS)
-        key_code = R_OPS_KEY;
-    else if(state == SELECT_VALUES)
-        key_code = VALUE_KEY;
-    else if(state == SELECT_L_OPS)
-        key_code = L_OPS_KEY;
-    else
-        is_valid = false;
+    switch(state) {
+        case CMD_CREATE:
+        case CMD_INSERT:
+        case CMD_SELECT:
+            key_code = KEY_COMMAND;
+            break;
+        case CREATE_TABLE:
+        case INSERT_TABLE:
+        case SELECT_TABLE:
+            key_code = KEY_TABLE;
+            break;
+        case CREATE_FIELDS:
+        case SELECT_FIELDS:
+        case SELECT_ASTERISK:
+            key_code = KEY_FIELDS;
+            break;
+        case INSERT_VALUE:
+            key_code = KEY_VALUES;
+            break;
+        case SELECT_VALUE:
+        case SELECT_R_FIELDS:
+        case SELECT_R_OPS:
+        case SELECT_L_OPS:
+            key_code = KEY_WHERE;
+            break;
+        default:
+            is_valid = false;
+    }
 
     return is_valid;
+}
+
+token_ptr SQLParser::get_sql_token(token::Token &t) {
+    // std::cout << "type: " << t.type() << ", subtype: " << t.sub_type()
+    //           << ", string: " << t << std::endl;
+
+    if(t.type() == VALUE && t.sub_type() == state_machine::STATE_DOUBLE)
+        return std::make_shared<SQLToken>(t.string(), TOKEN_DOUBLE);
+    else if(t.string() == "=")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_R_OP, TOKEN_R_EQ);
+    else if(t.string() == "<")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_R_OP, TOKEN_R_L);
+    else if(t.string() == "<=")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_R_OP, TOKEN_R_LEQ);
+    else if(t.string() == ">")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_R_OP, TOKEN_R_G);
+    else if(t.string() == ">=")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_R_OP, TOKEN_R_GEQ);
+    else if(t.string() == "OR")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_OP_OR);
+    else if(t.string() == "AND")
+        return std::make_shared<SQLToken>(t.string(), TOKEN_OP_AND);
+    else
+        return std::make_shared<SQLToken>(t.string(), TOKEN_SET_STR);
 }
 
 // TO DO

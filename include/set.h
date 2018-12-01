@@ -80,6 +80,7 @@ public:
 
     bool insert(const T& item);
     bool erase(const T& item);
+    void intersect(const Set<T>& rhs, Set<T>& result);
     void clear();
     const T& get(const T& item);
 
@@ -324,6 +325,26 @@ bool Set<T>::insert(const T& item) {
 template <typename T>
 bool Set<T>::erase(const T& item) {
     return _set.remove(item);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Erase T from set.
+ *
+ * PRE-CONDITIONS:
+ *  const Set<T>& rhs: right hand side Set
+ *  Set<T>& result   : result Set
+ *
+ * POST-CONDITIONS:
+ *  Set<T>& result: populated with data if successful
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename T>
+void Set<T>::intersect(const Set<T>& rhs, Set<T>& result) {
+    for(const auto& a : rhs)
+        if(contains(a)) result.insert(a);
 }
 
 /*******************************************************************************
