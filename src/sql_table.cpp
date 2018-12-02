@@ -62,8 +62,7 @@ bool SQLTable::insert(const std::vector<std::string>& values) {
     for(std::size_t i = 0; i < values.size(); ++i) {
         if(values[i].empty())  // if the next value is empty string, stop
             break;
-        else {  // i + 1! position 0 reserved for if map record is deleted or
-                // not
+        else {
             field_name = _pos_to_fields[i];
             _map[field_name][values[i]] += pos;
         }
