@@ -99,9 +99,21 @@ public:
         return lhs;
     }
 
+    friend Set<T> operator+(Set<T>& lhs, const Set<T>& rhs) {
+        Set<T> temp = lhs;
+        for(const auto& a : rhs) temp.insert(a);
+        return temp;
+    }
+
     friend Set<T>& operator-=(Set<T>& lhs, const Set<T>& rhs) {
         for(const auto& a : rhs) lhs.erase(a);
         return lhs;
+    }
+
+    friend Set<T> operator-(Set<T>& lhs, const Set<T>& rhs) {
+        Set<T> temp = lhs;
+        for(const auto& a : rhs) temp.erase(a);
+        return temp;
     }
 
 private:

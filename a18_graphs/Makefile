@@ -13,6 +13,15 @@ main.out: $(OBJ)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
 main.o: main.cpp\
+	${INC}/smart_ptr_utils.h\
+	${INC}/sort.h\
+	${INC}/bptree.h\
+	${INC}/vector_utils.h\
+	${INC}/pair.h\
+	${INC}/bpt_map.h\
+	${INC}/node.h\
+	${INC}/queue.h\
+	${INC}/set.h\
 	${INC}/graph.h
 	$(CXX) $(CXXFLAGS) -c $<
 

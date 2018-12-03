@@ -1,128 +1,58 @@
+#include <algorithm>           // min_element()
 #include <iostream>            // stream
 #include <string>              // string
 #include "../include/graph.h"  // GraphMatrix class
 
 int main() {
-    // std::cout << "GraphMatrix\n";
-
-    // graph::GraphMatrix<std::string> g;
-
-    // g.add_vertex("Rosemead");
-    // g.add_vertex("Pasadena");
-    // g.add_vertex("Alhambra");
-    // g.add_vertex("El Monte");
-
-    // g.add_edge(0, 1);
-    // g.add_edge(0, 3);
-    // g.add_edge(1, 1);
-    // g.add_edge(1, 2);
-    // g.add_edge(3, 1);
-    // g.add_edge(3, 2);
-    // g.add_edge(3, 3);
-
-    // std::cout << "Adjacency matrix:\n";
-    // g.print_edges();
-
-    // std::cout << "Labels: ";
-    // g.print_labels();
-    // std::cout << std::endl;
-
-    // std::cout << "Neighbors:\n";
-    // for(std::size_t i = 0; i < g.size(); ++i) {
-    //     std::cout << i << ": ";
-
-    //     auto set = g.neighbors(i);
-    //     for(const auto& a : set) std::cout << g[a] << ' ';
-
-    //     std::cout << std::endl;
-    // }
-
-    // std::cout << "Other info:\n";
-    // std::cout << "size: " << g.size() << std::endl;
-    // std::cout << "is edge at 0, 1? " << g.is_edge(0, 1) << std::endl;
-    // std::cout << "is edge at 1, 0? " << g.is_edge(1, 0) << std::endl;
-
-    // std::cout << "\n\nGraphSet:\n";
-
-    // graph::GraphSet<std::string> g_set;
-
-    // g_set.add_vertex("Rosemead");
-    // g_set.add_vertex("Pasadena");
-    // g_set.add_vertex("Alhambra");
-    // g_set.add_vertex("El Monte");
-
-    // g_set.add_edge(0, 1);
-    // g_set.add_edge(0, 3);
-    // g_set.add_edge(1, 1);
-    // g_set.add_edge(1, 2);
-    // g_set.add_edge(3, 1);
-    // g_set.add_edge(3, 2);
-    // g_set.add_edge(3, 3);
-
-    // std::cout << "Neighbors:\n";
-
-    // for(std::size_t i = 0; i < g_set.size(); ++i) {
-    //     std::cout << i << ": ";
-
-    //     auto set = g_set.neighbors(i);
-    //     for(const auto& a : set) std::cout << g_set[a] << ' ';
-
-    //     std::cout << std::endl;
-    // }
-
-    // std::cout << "Other info:\n";
-    // std::cout << "size: " << g_set.size() << std::endl;
-    // std::cout << "is edge at 0, 1? " << g_set.is_edge(0, 1) << std::endl;
-    // std::cout << "is edge at 1, 0? " << g_set.is_edge(1, 0) << std::endl;
-
-    std::cout << "\n\nWeightedGraphMatrix:\n";
+    std::cout << "WeightedGraphMatrix:\n";
 
     graph::WeightedGraphMatrix<std::string, int> wg;
 
     wg.add_vertex("Rosemead");
     wg.add_vertex("Pasadena");
     wg.add_vertex("Alhambra");
-    wg.add_vertex("El Monte");
+    wg.add_vertex("Temple City");
+    wg.add_vertex("Los Angles");
+    wg.add_vertex("Arcadia");
 
     wg.add_edge(0, 1);
-    wg.add_weight(0, 1, 100);
-    wg.add_edge(0, 3);
-    wg.add_edge(1, 1);
+    wg.add_weight(0, 1, 2);
+    wg.add_edge(0, 5);
+    wg.add_weight(0, 5, 9);
     wg.add_edge(1, 2);
-    wg.add_edge(3, 1);
-    wg.add_edge(3, 2);
-    wg.add_edge(3, 3);
+    wg.add_weight(1, 2, 8);
+    wg.add_edge(1, 3);
+    wg.add_weight(1, 3, 15);
+    wg.add_edge(1, 5);
+    wg.add_weight(1, 5, 6);
+    wg.add_edge(2, 3);
+    wg.add_weight(2, 3, 1);
+    wg.add_edge(4, 2);
+    wg.add_weight(4, 2, 7);
+    wg.add_edge(5, 4);
+    wg.add_weight(5, 4, 3);
 
-    std::cout << "Adjacency matrix:\n";
-    wg.print_edges();
-
-    std::cout << "Labels: ";
+    std::cout << "\nLabels: ";
     wg.print_labels();
     std::cout << std::endl;
 
-    std::cout << "Neighbors:\n";
-    for(std::size_t i = 0; i < wg.size(); ++i) {
-        std::cout << i << ": ";
+    std::cout << "\nAdjacency matrix:\n";
+    wg.print_edges();
 
-        auto set = wg.neighbors(i);
-        for(const auto& a : set) std::cout << wg[a] << ' ';
+    std::cout << "\nWeights matrix:\n";
+    wg.print_weights();
 
-        std::cout << std::endl;
-    }
+    std::cout << "\nNeighbors:\n";
+    wg.print_neighbors();
 
-    std::cout << "Weights @ 0, 1: " << wg.weight(0, 1) << std::endl;
-    std::cout << "Weights @ 1, 1: " << wg.weight(1, 1) << std::endl;
+    std::cout << "\nHas paths?\n";
+    std::cout << "paths of (0, 3)? " << has_path(wg, 0, 3) << std::endl;
+    std::cout << "paths of (3, 0)? " << has_path(wg, 3, 0) << std::endl;
 
-    std::cout << "Other info:\n";
-    std::cout << "size: " << wg.size() << std::endl;
-    std::cout << "is edge at 0, 1? " << wg.is_edge(0, 1) << std::endl;
-    std::cout << "is edge at 1, 0? " << wg.is_edge(1, 0) << std::endl;
-
-    std::cout << "\nExec depth first:\n";
-    depth_first(graph::print_label<std::string>, wg, 0);
-
-    std::cout << "\nExec breath first:\n";
-    breadth_first(graph::print_label<std::string>, wg, 0);
+    std::cout << "\nDijkstra's Shortest Path:\n";
+    std::vector<int> distances, predecessor;
+    wg.get_dijkstra(0, distances, predecessor);
+    wg.print_paths(0, distances, predecessor);
 
     std::cout << "\n\nWeightedGraphSet:\n";
 
@@ -131,47 +61,46 @@ int main() {
     wg_set.add_vertex("Rosemead");
     wg_set.add_vertex("Pasadena");
     wg_set.add_vertex("Alhambra");
-    wg_set.add_vertex("El Monte");
+    wg_set.add_vertex("Temple City");
+    wg_set.add_vertex("Los Angles");
+    wg_set.add_vertex("Arcadia");
 
     wg_set.add_edge(0, 1);
-    wg_set.add_weight(0, 1, 100);
-    wg_set.add_edge(0, 3);
-    wg_set.add_edge(1, 1);
+    wg_set.add_weight(0, 1, 2);
+    wg_set.add_edge(0, 5);
+    wg_set.add_weight(0, 5, 9);
     wg_set.add_edge(1, 2);
-    wg_set.add_edge(3, 1);
-    wg_set.add_edge(3, 2);
-    wg_set.add_edge(3, 3);
+    wg_set.add_weight(1, 2, 8);
+    wg_set.add_edge(1, 3);
+    wg_set.add_weight(1, 3, 15);
+    wg_set.add_edge(1, 5);
+    wg_set.add_weight(1, 5, 6);
+    wg_set.add_edge(2, 3);
+    wg_set.add_weight(2, 3, 1);
+    wg_set.add_edge(4, 2);
+    wg_set.add_weight(4, 2, 7);
+    wg_set.add_edge(5, 4);
+    wg_set.add_weight(5, 4, 3);
 
-    std::cout << "Edges set:\n";
-    wg_set.print_edges();
-
-    std::cout << "Labels: ";
+    std::cout << "\nLabels: ";
     wg_set.print_labels();
     std::cout << std::endl;
 
-    std::cout << "Neighbors:\n";
-    for(std::size_t i = 0; i < wg_set.size(); ++i) {
-        std::cout << i << ": ";
+    std::cout << "\nWeights matrix:\n";
+    wg_set.print_weights();
 
-        auto set = wg_set.neighbors(i);
-        for(const auto& a : set) std::cout << wg_set[a] << ' ';
+    std::cout << "\nNeighbors:\n";
+    wg_set.print_neighbors();
 
-        std::cout << std::endl;
-    }
+    std::cout << "\nHas paths?\n";
+    std::cout << "paths of (0, 3)? " << has_path(wg_set, 0, 3) << std::endl;
+    std::cout << "paths of (3, 0)? " << has_path(wg_set, 3, 0) << std::endl;
 
-    std::cout << "Weights @ 0, 1: " << wg_set.weight(0, 1) << std::endl;
-    std::cout << "Weights @ 1, 1: " << wg_set.weight(1, 1) << std::endl;
-
-    std::cout << "Other info:\n";
-    std::cout << "size: " << wg_set.size() << std::endl;
-    std::cout << "is edge at 0, 1? " << wg_set.is_edge(0, 1) << std::endl;
-    std::cout << "is edge at 1, 0? " << wg_set.is_edge(1, 0) << std::endl;
-
-    std::cout << "\nExec depth first:\n";
-    depth_first(graph::print_label<std::string>, wg_set, 0);
-
-    std::cout << "\nExec breath first:\n";
-    breadth_first(graph::print_label<std::string>, wg_set, 0);
+    std::cout << "\nDijkstra's Shortest Path:\n";
+    distances.clear();
+    predecessor.clear();
+    wg_set.get_dijkstra(0, distances, predecessor);
+    wg_set.print_paths(0, distances, predecessor);
 
     return 0;
 }
