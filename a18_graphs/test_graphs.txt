@@ -1,4 +1,6 @@
-WeightedGraphMatrix:
+--------------------------------------------------------------------------------
+WeightedGraphMatrix
+--------------------------------------------------------------------------------
 
 Labels: Rosemead, Pasadena, Alhambra, Temple City, Los Angles, Arcadia
 
@@ -34,9 +36,47 @@ Dijkstra's Shortest Path:
 Distances: 0, 2, 10, 11, 11, 8
 Predecessor: -1, 0, 1, 2, 5, 1
 Paths:
-@ 0: 0
-@ 1: 1, 0
-@ 2: 2, 1, 0
-@ 3: 3, 2, 1, 0
-@ 4: 4, 5, 1, 0
-@ 5: 5, 1, 0
+To 0: 0
+To 1: 0 -> 1
+To 2: 0 -> 1 -> 2
+To 3: 0 -> 1 -> 2 -> 3
+To 4: 0 -> 1 -> 5 -> 4
+To 5: 0 -> 1 -> 5
+
+
+--------------------------------------------------------------------------------
+WeightedGraphSet
+--------------------------------------------------------------------------------
+
+Labels: Rosemead, Pasadena, Alhambra, Temple City, Los Angles, Arcadia
+
+Weights set:
+0 2 0 0 0 9 
+0 0 8 15 0 6 
+0 0 0 1 0 0 
+0 0 0 0 0 0 
+0 0 7 0 0 0 
+0 0 0 0 3 0 
+
+Neighbors:
+0: Pasadena, Arcadia
+1: Alhambra, Temple City, Arcadia
+2: Temple City
+3: 
+4: Alhambra
+5: Los Angles
+
+Has paths?
+paths of (0, 3)? 1
+paths of (3, 0)? 0
+
+Dijkstra's Shortest Path:
+Distances: 0, 2, 10, 11, 11, 8
+Predecessor: -1, 0, 1, 2, 5, 1
+Paths:
+To 0: 0
+To 1: 0 -> 1
+To 2: 0 -> 1 -> 2
+To 3: 0 -> 1 -> 2 -> 3
+To 4: 0 -> 1 -> 5 -> 4
+To 5: 0 -> 1 -> 5

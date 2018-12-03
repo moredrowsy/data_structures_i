@@ -6,6 +6,9 @@
  * DESCRIPTION : This header defines tempalted GraphMatrix, WeightedGraphMatrix,
  *          GraphSet, and WeightedGraphSet. The weighted version of the graphs
  *          have the Dijkstra's sortest distance and path methods.
+ *
+ *          REQUIREMENTS: Weights in weighted graphs must be signed because
+ *          negatives represent infinity during calculations.
  ******************************************************************************/
 #ifndef GRAPH_H
 #define GRAPH_H
@@ -86,13 +89,13 @@ public:
 
     // OTHER
     void print_weights();
-    void get_dijkstra(std::size_t start, std::vector<U> &distances,
-                      std::vector<U> &predecessor);
-    void print_paths(std::size_t start, std::vector<U> &distances,
-                     std::vector<U> &predecessor);
+    void calc_dijkstra_paths(std::size_t start);
+    void print_dijkstra_paths();
 
 private:
-    U **_weights;
+    U **_weights;                 // U must be signed
+    std::vector<U> _distances;    // dijkstra distances
+    std::vector<U> _predecessor;  // shortest path info
 
     void allocate(U **&weights, std::size_t capacity);
     void deallocate(U **&weights, std::size_t capacity);
@@ -145,13 +148,13 @@ public:
 
     // OTHER
     void print_weights();
-    void get_dijkstra(std::size_t start, std::vector<U> &distances,
-                      std::vector<U> &predecessor);
-    void print_paths(std::size_t start, std::vector<U> &distances,
-                     std::vector<U> &predecessor);
+    void calc_dijkstra_paths(std::size_t start);
+    void print_dijkstra_paths();
 
 private:
-    std::vector<bpt_map::Map<std::size_t, U>> _weights;
+    std::vector<bpt_map::Map<std::size_t, U>> _weights;  // U must be signed
+    std::vector<U> _distances;                           // dijkstra distances
+    std::vector<U> _predecessor;                         // shortest path info
 };
 
 // recursive depth first search; need to be called using a wrapper
@@ -186,13 +189,11 @@ std::size_t find_min_distance_index(const std::vector<U> &distances,
 
 // prints the dijkstra path with start and end vertex
 template <typename U>
-void print_path(std::vector<U> &predecessor, std::size_t start,
-                std::size_t vertex);
+void print_paths(std::vector<U> &predecessor, std::size_t vertex);
 
 // wrapper to print all shortest paths
 template <typename U>
-void print_shortest_path(std::size_t start, std::vector<U> &distances,
-                         std::vector<U> &predecessor);
+void print_all_paths(std::vector<U> &distances, std::vector<U> &predecessor);
 
 // print label; use to test depth/breath first functions
 template <typename T>
@@ -866,8 +867,6 @@ void WeightedGraphMatrix<T, U>::print_weights() {
  *
  * PRE-CONDITIONS:
  *  std::size_t start          : start vertext
- *  std::vector<U> &distances  : array of distances
- *  std::vector<U> &predecessor: array for shortest path info
  *
  * POST-CONDITIONS:
  *  none
@@ -876,10 +875,10 @@ void WeightedGraphMatrix<T, U>::print_weights() {
  *  none
  ******************************************************************************/
 template <typename T, typename U>
-void WeightedGraphMatrix<T, U>::get_dijkstra(std::size_t start,
-                                             std::vector<U> &distances,
-                                             std::vector<U> &predecessor) {
-    dijkstra_shortest(*this, start, distances, predecessor);
+void WeightedGraphMatrix<T, U>::calc_dijkstra_paths(std::size_t start) {
+    _distances.clear();
+    _predecessor.clear();
+    dijkstra_shortest(*this, start, _distances, _predecessor);
 }
 
 /*******************************************************************************
@@ -887,9 +886,7 @@ void WeightedGraphMatrix<T, U>::get_dijkstra(std::size_t start,
  *  Prints distances and paths array along with the short paths.
  *
  * PRE-CONDITIONS:
- *  std::size_t start          : start vertex
- *  std::vector<U> &distances  : distances array
- *  std::vector<U> &predecessor: shortest path info array
+ *  none
  *
  * POST-CONDITIONS:
  *  none
@@ -898,14 +895,12 @@ void WeightedGraphMatrix<T, U>::get_dijkstra(std::size_t start,
  *  none
  ******************************************************************************/
 template <typename T, typename U>
-void WeightedGraphMatrix<T, U>::print_paths(std::size_t start,
-                                            std::vector<U> &distances,
-                                            std::vector<U> &predecessor) {
-    std::cout << "Distances: " << distances << std::endl;
-    std::cout << "Predecessor: " << predecessor << std::endl;
+void WeightedGraphMatrix<T, U>::print_dijkstra_paths() {
+    std::cout << "Distances: " << _distances << std::endl;
+    std::cout << "Predecessor: " << _predecessor << std::endl;
 
     std::cout << "Paths:" << std::endl;
-    print_shortest_path(start, distances, predecessor);
+    print_all_paths(_distances, _predecessor);
 }
 
 /*******************************************************************************
@@ -1371,8 +1366,6 @@ void WeightedGraphSet<T, U>::print_weights() {
  *
  * PRE-CONDITIONS:
  *  std::size_t start          : start vertext
- *  std::vector<U> &distances  : array of distances
- *  std::vector<U> &predecessor: array for shortest path info
  *
  * POST-CONDITIONS:
  *  none
@@ -1381,10 +1374,10 @@ void WeightedGraphSet<T, U>::print_weights() {
  *  none
  ******************************************************************************/
 template <typename T, typename U>
-void WeightedGraphSet<T, U>::get_dijkstra(std::size_t start,
-                                          std::vector<U> &distances,
-                                          std::vector<U> &predecessor) {
-    dijkstra_shortest(*this, start, distances, predecessor);
+void WeightedGraphSet<T, U>::calc_dijkstra_paths(std::size_t start) {
+    _distances.clear();
+    _predecessor.clear();
+    dijkstra_shortest(*this, start, _distances, _predecessor);
 }
 
 /*******************************************************************************
@@ -1392,9 +1385,7 @@ void WeightedGraphSet<T, U>::get_dijkstra(std::size_t start,
  *  Prints distances and paths array along with the short paths.
  *
  * PRE-CONDITIONS:
- *  std::size_t start          : start vertex
- *  std::vector<U> &distances  : distances array
- *  std::vector<U> &predecessor: shortest path info array
+ *  none
  *
  * POST-CONDITIONS:
  *  none
@@ -1403,14 +1394,12 @@ void WeightedGraphSet<T, U>::get_dijkstra(std::size_t start,
  *  none
  ******************************************************************************/
 template <typename T, typename U>
-void WeightedGraphSet<T, U>::print_paths(std::size_t start,
-                                         std::vector<U> &distances,
-                                         std::vector<U> &predecessor) {
-    std::cout << "Distances: " << distances << std::endl;
-    std::cout << "Predecessor: " << predecessor << std::endl;
+void WeightedGraphSet<T, U>::print_dijkstra_paths() {
+    std::cout << "Distances: " << _distances << std::endl;
+    std::cout << "Predecessor: " << _predecessor << std::endl;
 
     std::cout << "Paths:" << std::endl;
-    print_shortest_path(start, distances, predecessor);
+    print_all_paths(_distances, _predecessor);
 }
 
 // ----- TRAVERSAL IMPLEMENTATIONS -----
@@ -1683,12 +1672,11 @@ std::size_t find_min_distance_index(const std::vector<U> &distances,
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Prints the predecessor path @ start to vertex.
+ *  Prints the predecessor paths @ start to vertex.
  *
  * PRE-CONDITIONS:
- *  const std::vector<U> &distances       : distances array
- *  std::size_t size                      : size of array
- *  const set::Set<std::size_t> &unvisited: unvisited sets
+ *  std::vector<U> &predecessor: shortest paths info array
+ *  std::size_t vertex         : vertex to go in predecessor
  *
  * POST-CONDITIONS:
  *  none
@@ -1697,25 +1685,19 @@ std::size_t find_min_distance_index(const std::vector<U> &distances,
  *  std::size_t
  ******************************************************************************/
 template <typename U>
-void print_path(std::vector<U> &predecessor, std::size_t start,
-                std::size_t vertex) {
-    std::size_t vertex_on_path = vertex;  // last vertex on the path
-    std::cout << vertex_on_path;
-    if(vertex_on_path != start) std::cout << ", ";  // print the final vertex
-
-    while(vertex_on_path != start) {
-        vertex_on_path = predecessor[vertex_on_path];
-        std::cout << vertex_on_path;
-        if(vertex_on_path != start) std::cout << ", ";
-    }
+void print_paths(std::vector<U> &predecessor, std::size_t vertex) {
+    if(predecessor[vertex] >= 0) {                      // if path exists
+        print_paths(predecessor, predecessor[vertex]);  // then recurse
+        std::cout << " -> " << vertex;                  // print when coming out
+    } else                                              // if not exist
+        std::cout << vertex;                            // then just print
 }
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Prints all the paths from distances.
+ *  Prints all the paths from distances with predecessor info array.
  *
  * PRE-CONDITIONS:
- *  std::size_t start          : start vertex
  *  std::vector<U> &distances  : distances array
  *  std::vector<U> &predecessor: shortest path info array
  *
@@ -1726,11 +1708,10 @@ void print_path(std::vector<U> &predecessor, std::size_t start,
  *  std::size_t
  ******************************************************************************/
 template <typename U>
-void print_shortest_path(std::size_t start, std::vector<U> &distances,
-                         std::vector<U> &predecessor) {
+void print_all_paths(std::vector<U> &distances, std::vector<U> &predecessor) {
     for(std::size_t i = 0; i < distances.size(); ++i) {
-        std::cout << "@ " << i << ": ";
-        if(distances[i] > -1) print_path(predecessor, start, i);
+        std::cout << "To " << i << ": ";                    // if there is dist
+        if(distances[i] >= 0) print_paths(predecessor, i);  // then print
         std::cout << std::endl;
     }
 }

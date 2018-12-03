@@ -52,9 +52,8 @@ int main() {
     std::cout << "paths of (3, 0)? " << has_path(wg, 3, 0) << std::endl;
 
     std::cout << "\nDijkstra's Shortest Path:\n";
-    std::vector<int> distances, predecessor;
-    wg.get_dijkstra(0, distances, predecessor);
-    wg.print_paths(0, distances, predecessor);
+    wg.calc_dijkstra_paths(0);
+    wg.print_dijkstra_paths();
     std::cout << std::endl << std::endl;
 
     std::cout << std::string(80, '-') << std::endl;
@@ -102,10 +101,8 @@ int main() {
     std::cout << "paths of (3, 0)? " << has_path(wg_set, 3, 0) << std::endl;
 
     std::cout << "\nDijkstra's Shortest Path:\n";
-    distances.clear();
-    predecessor.clear();
-    wg_set.get_dijkstra(0, distances, predecessor);
-    wg_set.print_paths(0, distances, predecessor);
+    wg_set.calc_dijkstra_paths(0);
+    wg_set.print_dijkstra_paths();
 
     return 0;
 }
