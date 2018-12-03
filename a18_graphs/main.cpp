@@ -4,7 +4,9 @@
 #include "../include/graph.h"  // GraphMatrix class
 
 int main() {
-    std::cout << "WeightedGraphMatrix:\n";
+    std::cout << std::string(80, '-') << std::endl;
+    std::cout << "WeightedGraphMatrix" << std::endl;
+    std::cout << std::string(80, '-') << std::endl;
 
     graph::WeightedGraphMatrix<std::string, int> wg;
 
@@ -53,8 +55,11 @@ int main() {
     std::vector<int> distances, predecessor;
     wg.get_dijkstra(0, distances, predecessor);
     wg.print_paths(0, distances, predecessor);
+    std::cout << std::endl << std::endl;
 
-    std::cout << "\n\nWeightedGraphSet:\n";
+    std::cout << std::string(80, '-') << std::endl;
+    std::cout << "WeightedGraphSet" << std::endl;
+    std::cout << std::string(80, '-') << std::endl;
 
     graph::WeightedGraphSet<std::string, int> wg_set;
 
@@ -86,7 +91,7 @@ int main() {
     wg_set.print_labels();
     std::cout << std::endl;
 
-    std::cout << "\nWeights matrix:\n";
+    std::cout << "\nWeights set:\n";
     wg_set.print_weights();
 
     std::cout << "\nNeighbors:\n";

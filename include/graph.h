@@ -156,7 +156,7 @@ private:
 
 // recursive depth first search; need to be called using a wrapper
 template <typename F, typename G, typename S>
-void rec_dfs(F f, G &g, S v, bool *marked);
+void rec_dfs(F f, G &g, S v, set::Set<std::size_t> &visited);
 
 // performs depth first that calls rec_dfs
 template <typename F, typename G, typename S>
@@ -170,6 +170,10 @@ void breadth_first(F f, G &g, S start);
 template <typename G, typename S>
 bool has_path(G &g, S start, S end);
 
+// checks for path from start to end in graph
+template <typename G, typename S>
+void make_paths_set(G &g, S start, set::Set<std::size_t> &visited);
+
 // calculate the shortest distances and paths (via predecessor)
 template <typename G, typename S, typename U>
 void dijkstra_shortest(G &g, S start, std::vector<U> &distances,
@@ -178,7 +182,6 @@ void dijkstra_shortest(G &g, S start, std::vector<U> &distances,
 // find the min index for the distance array
 template <typename U>
 std::size_t find_min_distance_index(const std::vector<U> &distances,
-                                    std::size_t size,
                                     const set::Set<std::size_t> &unvisited);
 
 // prints the dijkstra path with start and end vertex
@@ -1429,14 +1432,15 @@ void WeightedGraphSet<T, U>::print_paths(std::size_t start,
  *  none
  ******************************************************************************/
 template <typename F, typename G, typename S>
-void rec_dfs(F f, G &g, S v, bool *marked) {
-    set::Set<std::size_t> connections = g.neighbors(v);
+void rec_dfs(F f, G &g, S v, set::Set<std::size_t> &visited) {
+    set::Set<std::size_t> neighbors = g.neighbors(v);
 
-    marked[v] = true;  // mark vertex v as visited
-    f(g[v]);           // process v
+    visited.insert(v);  // mark vertex v as visited
+    f(g[v]);            // process g[v]
 
-    for(const auto &a : connections)              // loop neighbors set
-        if(!marked[a]) rec_dfs(f, g, a, marked);  // recurse if not marked
+    for(const auto &vertex : neighbors)      // loop neighbors set
+        if(!visited.contains(vertex))        // if not visited
+            rec_dfs(f, g, vertex, visited);  // then recurse
 }
 
 /*******************************************************************************
@@ -1456,13 +1460,9 @@ void rec_dfs(F f, G &g, S v, bool *marked) {
  ******************************************************************************/
 template <typename F, typename G, typename S>
 void depth_first(F f, G &g, S start) {
-    bool *marked = new bool[g.size()];  // array of visited vertices
+    set::Set<std::size_t> visited;  // empty visited set
     assert(start < (S)g.size());
-
-    std::fill_n(marked, g.size(), false);  // init array to false
-    rec_dfs(f, g, start, marked);          // call rec_defs to process graph
-
-    delete[] marked;
+    rec_dfs(f, g, start, visited);  // call rec_defs to process graph
 }
 
 /*******************************************************************************
@@ -1484,30 +1484,26 @@ template <typename F, typename G, typename S>
 void breadth_first(F f, G &g, S start) {
     assert(start < (S)g.size());
 
-    bool *marked = new bool[g.size()];       // array of visited vertices
-    set::Set<std::size_t> connections;       // neighbors set
+    set::Set<std::size_t> visited;           // visited set
+    set::Set<std::size_t> neighbors;         // neighbors set
     queue::Queue<std::size_t> vertex_queue;  // traversal queue
 
-    std::fill_n(marked, g.size(), false);  // init marked to false
-    marked[start] = true;                  // mark visited
-    f(g[start]);                           // process label
-    vertex_queue.push(start);              // push vertex to queue for traversal
+    visited.insert(start);     // add start to visited
+    f(g[start]);               // process label
+    vertex_queue.push(start);  // push vertex to queue for traversal
 
-    do {
-        // pop queue to get vertex and get neighbor's set of vertex
-        connections = g.neighbors(vertex_queue.pop());
+    do {  // pop queue to get vertex and get neighbor's set of vertex
+        neighbors = g.neighbors(vertex_queue.pop());
 
-        // mark and process the unmarked neighbors, and place them in the queue.
-        for(const auto &a : connections) {  // loop neighbors set
-            if(!marked[a]) {                // if not marked
-                marked[a] = true;           // mark
-                f(g[a]);                    // then process label
-                vertex_queue.push(a);       // then push vertex to queue
+        // mark and process the unvisited neighbors; place them in the queue
+        for(const auto &a : neighbors) {  // loop neighbors set
+            if(!visited.contains(a)) {    // if not visited
+                visited.insert(a);        // add to visited
+                f(g[a]);                  // process label
+                vertex_queue.push(a);     // then push vertex to queue
             }
         }
     } while(!vertex_queue.empty());
-
-    delete[] marked;
 }
 
 /*******************************************************************************
@@ -1530,39 +1526,71 @@ bool has_path(G &g, S start, S end) {
     assert(start < (S)g.size());
 
     bool is_found = false;
-    bool *marked = new bool[g.size()];       // array of visited vertices
-    set::Set<std::size_t> connections;       // neighbors set
+    set::Set<std::size_t> visited;           // visited set
+    set::Set<std::size_t> neighbors;         // neighbors set
     queue::Queue<std::size_t> vertex_queue;  // traversal queue
 
-    if(start == end)
-        is_found = true;
-    else {
-        std::fill_n(marked, g.size(), false);  // init marked to false
-        marked[start] = true;                  // mark visited
-        vertex_queue.push(start);              // push vertex for traversal
+    visited.insert(start);     // add start to visited
+    vertex_queue.push(start);  // push vertex for traversal
 
-        do {
-            // pop queue to get vertex and get neighbor's set of vertices
-            connections = g.neighbors(vertex_queue.pop());
+    do {  // pop queue to get vertex and get neighbor's set of vertices
+        neighbors = g.neighbors(vertex_queue.pop());
 
-            // mark and process the unmarked neighbors; place them in the queue
-            for(const auto &a : connections) {  // loop neighbors set
-                if((S)a == end) {
-                    is_found = true;
-                    break;
-                }
+        if(visited.contains(end) || neighbors.contains(end)) {
+            is_found = true;
+            break;
+        }
 
-                if(!marked[a]) {           // if not marked
-                    marked[a] = true;      // mark
-                    vertex_queue.push(a);  // then push vertex to queue
-                }
+        // mark and process the unvisited neighbors; place them in the queue
+        for(const auto &a : neighbors) {  // loop neighbors set
+            if(!visited.contains(a)) {    // if not visited
+                visited.insert(a);        // add to visited
+                vertex_queue.push(a);     // then push vertex to queue
             }
-        } while(!vertex_queue.empty());
-    }
-
-    delete[] marked;
+        }
+    } while(!vertex_queue.empty());
 
     return is_found;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Make a set of visited vertices from start of graph. If vertex has been
+ *  visited, then path from start to vertex exists.
+ *
+ * PRE-CONDITIONS:
+ *  G &g                        : graph object
+ *  S start                     : start of graph of size type
+ *  set::Set<std::size_t> &paths: empty visited set paths
+ *
+ * POST-CONDITIONS:
+ *  set::Set<std::size_t> &paths: populated with visited vertices
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+template <typename G, typename S>
+void make_paths_set(G &g, S start, set::Set<std::size_t> &visited) {
+    assert(start < (S)g.size());
+
+    visited.clear();                         // visited paths set
+    set::Set<std::size_t> neighbors;         // neighbors set
+    queue::Queue<std::size_t> vertex_queue;  // traversal queue
+
+    visited.insert(start);     // add start to visited
+    vertex_queue.push(start);  // push vertex for traversal
+
+    do {  // pop queue to get vertex and get neighbor's set of vertices
+        neighbors = g.neighbors(vertex_queue.pop());
+
+        // mark and process the unvisited neighbors; place them in the queue
+        for(const auto &a : neighbors) {  // loop neighbors set
+            if(!visited.contains(a)) {    // if not visited
+                visited.insert(a);        // add to visited
+                vertex_queue.push(a);     // then push vertex to queue
+            }
+        }
+    } while(!vertex_queue.empty());
 }
 
 /*******************************************************************************
@@ -1585,30 +1613,29 @@ void dijkstra_shortest(G &g, S start, std::vector<U> &distances,
                        std::vector<U> &predecessor) {
     assert(start < (S)g.size());
 
-    std::size_t size = g.size();
-    std::size_t next;
-    set::Set<std::size_t> visited, unvisited;
-    U sum;
+    set::Set<std::size_t> unvisited;  // keep track of unvisited vertices
+    set::Set<std::size_t> paths;      // set of 'start has path to v'
+    std::size_t size = g.size();      // size of vertices
+    std::size_t next;                 // next vertex to look at
+    U sum;                            // sum of the weighted distances
 
-    // init distance and predecessor to -1
+    // init distance and predecessor to -1 and fill unvisited set
     for(std::size_t i = 0; i < size; ++i) {
         distances.emplace_back(-1);
         predecessor.emplace_back(-1);
+        unvisited.insert(i);
     }
-
-    // init unvisited set from 0 to size-1
-    for(std::size_t i = 0; i < size; ++i) unvisited.insert(i);
-    distances[start] = 0;  // init start to itself as 0 distance
+    make_paths_set(g, start, paths);  // get set of paths from start to v
+    distances[start] = 0;             // init start to itself as 0 distance
 
     for(std::size_t i = 1; i < size; ++i) {
         // find the unvisited index with minimum weights in distances
-        next = find_min_distance_index(distances, size, unvisited);
-        visited.insert(next);
-        unvisited.erase(next);
+        next = find_min_distance_index(distances, unvisited);
+        unvisited.erase(next);  // remove visited
 
-        if(has_path<G, S>(g, start, next))  // if path exist from start to next
-            for(const auto &vertex : unvisited) {
-                if(g.is_edge(next, vertex)) {  // if edge exist
+        if(paths.contains(next))                   // if next exists in paths
+            for(const auto &vertex : unvisited) {  // then loop unvisited
+                if(g.is_edge(next, vertex)) {      // if edge exist
                     sum = distances[next] + g.weight(next, vertex);
 
                     // if new sum is smaller or dist @ v is negative
@@ -1638,8 +1665,8 @@ void dijkstra_shortest(G &g, S start, std::vector<U> &distances,
  ******************************************************************************/
 template <typename U>
 std::size_t find_min_distance_index(const std::vector<U> &distances,
-                                    std::size_t size,
                                     const set::Set<std::size_t> &unvisited) {
+    std::size_t size = distances.size();
     std::size_t min_v = unvisited.empty() ? 0 : *unvisited.begin();
     assert(min_v < size);
 
@@ -1648,7 +1675,6 @@ std::size_t find_min_distance_index(const std::vector<U> &distances,
 
         if(distances[vertex] >= 0) {
             if(distances[min_v] < 0) min_v = vertex;
-
             if(distances[vertex] < distances[min_v]) min_v = vertex;
         }
     }
