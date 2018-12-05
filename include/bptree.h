@@ -97,7 +97,8 @@ public:
         }
 
         friend bool operator!=(const Iterator& lhs, const Iterator& rhs) {
-            return lhs._it != rhs._it;
+            return lhs._it == rhs._it ? lhs._index != rhs._index
+                                      : lhs._it != rhs._it;
         }
 
     private:
@@ -124,6 +125,10 @@ public:
     Iterator end();
     Iterator find(const T& entry) const;
     Iterator find(const T& entry);
+    Iterator lower_bound(const T& entry) const;
+    Iterator lower_bound(const T& entry);
+    Iterator upper_bound(const T& entry) const;
+    Iterator upper_bound(const T& entry);
     T& front();
     T& back();
     const T& get(const T& entry) const;  // return a ref to entry in the tree
@@ -416,7 +421,7 @@ typename BPTree<T>::Iterator BPTree<T>::end() {
  *  none
  *
  * RETURN:
- *  bool
+ *  BPTree<T>::Iterator
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) const {
@@ -448,7 +453,7 @@ typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) const {
  *  none
  *
  * RETURN:
- *  bool
+ *  BPTree<T>::Iterator
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
@@ -467,6 +472,110 @@ typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
         else                                     // when !found
             return _subset[i]->find(entry);      // recurse to find entry
     }
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is equivalent or greater than entry. In
+ *  other words, entry is less than or equal to the iterator.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>::Iterator
+ ******************************************************************************/
+template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::lower_bound(const T& entry) const {
+    BPTree<T>::Iterator found = begin();
+
+    while(found != end()) {
+        if(*found >= entry) break;
+        ++found;
+    }
+
+    return found;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is equivalent or greater than entry. In
+ *  other words, entry is less than or equal to the iterator.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>::Iterator
+ ******************************************************************************/
+template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::lower_bound(const T& entry) {
+    BPTree<T>::Iterator found = begin();
+
+    while(found != end()) {
+        if(*found >= entry) break;
+        ++found;
+    }
+
+    return found;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is greater than entry. In other words,
+ *  the iterator is one step beyond the entry.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>::Iterator
+ ******************************************************************************/
+template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::upper_bound(const T& entry) const {
+    BPTree<T>::Iterator found = begin();
+
+    while(found != end()) {
+        if(*found > entry) break;
+        ++found;
+    }
+
+    return found;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is greater than entry. In other words,
+ *  the iterator is one step beyond the entry.
+ *
+ * PRE-CONDITIONS:
+ *  const T& entry: target
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  BPTree<T>::Iterator
+ ******************************************************************************/
+template <typename T>
+typename BPTree<T>::Iterator BPTree<T>::upper_bound(const T& entry) {
+    BPTree<T>::Iterator found = begin();
+
+    while(found != end()) {
+        if(*found > entry) break;
+        ++found;
+    }
+
+    return found;
 }
 
 /*******************************************************************************
