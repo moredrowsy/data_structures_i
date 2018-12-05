@@ -87,6 +87,8 @@ public:
     Iterator begin();
     Iterator end();
     Iterator find(const K& key);
+    Iterator lower_bound(const K& key);
+    Iterator upper_bound(const K& key);
     Pair& front();
     Pair& back();
     const V& operator[](const K& key) const;
@@ -299,6 +301,16 @@ typename Map<K, V>::Iterator Map<K, V>::end() {
 template <typename K, typename V>
 typename Map<K, V>::Iterator Map<K, V>::find(const K& key) {
     return Map<K, V>::Iterator(_map.find(Pair(key)));
+}
+
+template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::lower_bound(const K& key) {
+    return Map<K, V>::Iterator(_map.lower_bound(Pair(key)));
+}
+
+template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::upper_bound(const K& key) {
+    return Map<K, V>::Iterator(_map.upper_bound(Pair(key)));
 }
 
 /*******************************************************************************
