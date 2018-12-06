@@ -129,7 +129,9 @@ public:
     Iterator lower_bound(const T& entry);
     Iterator upper_bound(const T& entry) const;
     Iterator upper_bound(const T& entry);
+    const T& front() const;
     T& front();
+    const T& back() const;
     T& back();
     const T& get(const T& entry) const;  // return a ref to entry in the tree
     T& get(const T& entry);              // return a ref to entry in the tree
@@ -608,11 +610,48 @@ typename BPTree<T>::Iterator BPTree<T>::upper_bound(const T& entry) {
  *  none
  *
  * RETURN:
+ *  const T&
+ ******************************************************************************/
+template <typename T>
+const T& BPTree<T>::front() const {
+    return *get_smallest_node()->_data[0];
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the first (leftmost) entry.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
  *  T&
  ******************************************************************************/
 template <typename T>
 T& BPTree<T>::front() {
     return *get_smallest_node()->_data[0];
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the last (rightmost) entry.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  const T&
+ ******************************************************************************/
+template <typename T>
+const T& BPTree<T>::back() const {
+    const BPTree<T>* largest = get_largest_node();
+    return *largest->_data[largest->_data_count - 1];
 }
 
 /*******************************************************************************

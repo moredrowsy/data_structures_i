@@ -121,8 +121,7 @@ bool SQLTable::select(const std::vector<std::string>& fields_list,
 
 void SQLTable::make_equal_set(const std::string& field,
                               const std::string& value, set_ptr& result) {
-    if(_map[field].contains(value))
-        for(const auto& a : _map[field][value]) result->insert(a);
+    if(_map[field].contains(value)) *result += _map[field][value];
 }
 
 void SQLTable::make_less_set(const std::string& field, const std::string& value,
@@ -131,7 +130,7 @@ void SQLTable::make_less_set(const std::string& field, const std::string& value,
     auto beg = _map[field].begin();
 
     while(beg != low) {
-        result->insert(*beg->value);
+        *result += beg->value;
         ++beg;
     }
 }
@@ -142,7 +141,7 @@ void SQLTable::make_less_eq_set(const std::string& field,
     auto beg = _map[field].begin();
 
     while(beg != upp) {
-        result->insert(*beg->value);
+        *result += beg->value;
         ++beg;
     }
 }
@@ -153,7 +152,7 @@ void SQLTable::make_greater_set(const std::string& field,
     auto end = _map[field].end();
 
     while(upp != end) {
-        result->insert(*upp->value);
+        *result += upp->value;
         ++upp;
     }
 }
@@ -164,7 +163,7 @@ void SQLTable::make_greater_eq_set(const std::string& field,
     auto end = _map[field].end();
 
     while(low != end) {
-        result->insert(*low->value);
+        *result += low->value;
         ++low;
     }
 }

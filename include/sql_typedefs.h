@@ -22,7 +22,7 @@ typedef bpt_map::Map<int, std::string> FieldPosMap;
 typedef bpt_map::Map<std::string, int> FiledNamesMap;
 
 // map chains
-typedef bpt_map::MMap<std::string, long> IndexMap;
+typedef bpt_map::Map<std::string, set::Set<long>> IndexMap;
 typedef bpt_map::Map<std::string, IndexMap> FieldMap;
 
 // conditional WHERE

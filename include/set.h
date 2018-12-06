@@ -71,8 +71,8 @@ public:
     Iterator begin() const;
     Iterator end() const;
     Iterator find(const T& item) const;
-    const T& front();
-    const T& back();
+    const T& front() const;
+    const T& back() const;
     const T& operator[](const T& item);
     const T& at(const T& item);
 
@@ -80,7 +80,7 @@ public:
 
     bool insert(const T& item);
     bool erase(const T& item);
-    void intersect(const Set<T>& rhs, Set<T>& result);
+    void intersect(const Set<T>& rhs, Set<T>& result) const;
     void clear();
     const T& get(const T& item);
 
@@ -99,9 +99,22 @@ public:
         return lhs;
     }
 
+    template <typename U>
+    friend Set<T>& operator+=(Set<T>& lhs, const U& rhs) {
+        lhs.insert(rhs);
+        return lhs;
+    }
+
     friend Set<T> operator+(Set<T>& lhs, const Set<T>& rhs) {
         Set<T> temp = lhs;
         for(const auto& a : rhs) temp.insert(a);
+        return temp;
+    }
+
+    template <typename U>
+    friend Set<T> operator+(const Set<T>& lhs, const U& rhs) {
+        Set<T> temp = lhs;
+        temp.insert(rhs);
         return temp;
     }
 
@@ -110,9 +123,22 @@ public:
         return lhs;
     }
 
+    template <typename U>
+    friend Set<T>& operator-=(Set<T>& lhs, const U& rhs) {
+        lhs.erase(rhs);
+        return lhs;
+    }
+
     friend Set<T> operator-(Set<T>& lhs, const Set<T>& rhs) {
         Set<T> temp = lhs;
         for(const auto& a : rhs) temp.erase(a);
+        return temp;
+    }
+
+    template <typename U>
+    friend Set<T> operator-(Set<T>& lhs, const U& rhs) {
+        Set<T> temp = lhs;
+        temp.erase(rhs);
         return temp;
     }
 
@@ -242,10 +268,10 @@ typename Set<T>::Iterator Set<T>::find(const T& item) const {
  *  none
  *
  * RETURN:
- *  Set<T>::Iterator: points to left most element
+ *  const T&: first element
  ******************************************************************************/
 template <typename T>
-const T& Set<T>::front() {
+const T& Set<T>::front() const {
     return _set.front();
 }
 
@@ -260,10 +286,10 @@ const T& Set<T>::front() {
  *  none
  *
  * RETURN:
- *  Set<T>::Iterator: points to left most element
+ *  const T&: last element
  ******************************************************************************/
 template <typename T>
-const T& Set<T>::back() {
+const T& Set<T>::back() const {
     return _set.back();
 }
 
@@ -341,7 +367,7 @@ bool Set<T>::erase(const T& item) {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Erase T from set.
+ *  Create a new set with elements common in 'this' and rhs.
  *
  * PRE-CONDITIONS:
  *  const Set<T>& rhs: right hand side Set
@@ -354,7 +380,7 @@ bool Set<T>::erase(const T& item) {
  *  none
  ******************************************************************************/
 template <typename T>
-void Set<T>::intersect(const Set<T>& rhs, Set<T>& result) {
+void Set<T>::intersect(const Set<T>& rhs, Set<T>& result) const {
     for(const auto& a : rhs)
         if(contains(a)) result.insert(a);
 }
