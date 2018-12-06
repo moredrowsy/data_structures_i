@@ -189,6 +189,7 @@ private:
     void get_smallest(std::shared_ptr<T>& entry);    // entry := leftmost leaf
     void get_largest(std::shared_ptr<T>& entry);     // entry := rightmost leaf
     void remove_largest(std::shared_ptr<T>& entry);  // remove largest child
+
     const T* find_ptr(const T& entry) const;  // return ptr to T; else nullptr
     T* find_ptr(const T& entry);              // return ptr to T; else nullptr
     std::shared_ptr<T> find_shared_ptr(const T& entry);
@@ -486,18 +487,30 @@ typename BPTree<T>::Iterator BPTree<T>::find(const T& entry) {
  *  none
  *
  * RETURN:
- *  BPTree<T>::Iterator
+ *  const BPTree<T>::Iterator
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::lower_bound(const T& entry) const {
-    BPTree<T>::Iterator found = begin();
+    // find index of T that's greater or qual to entry
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
 
-    while(found != end()) {
-        if(*found >= entry) break;
-        ++found;
+    if(is_leaf()) {
+        if(i < _data_count) {
+            if(is_found || entry < *_data[i])  // found or less than/equal
+                return BPTree<T>::Iterator(this, i);  // return this and i
+            else if(i + 1 < _data_count)  // if greater and next i in bounds
+                return BPTree<T>::Iterator(this, i + 1);  // return this w/ i+1
+            else                                          // if next i !bounds
+                return BPTree<T>::Iterator(this->_next, 0);  // return next
+        } else                                               // if not in _data
+            return BPTree<T>::Iterator(this->_next, 0);      // return next
+    } else {                                                 // @ !leaf
+        if(is_found)                                         // when found
+            return _subset[i + 1]->lower_bound(entry);       // recurse i+1
+        else                                                 // when !found
+            return _subset[i]->lower_bound(entry);           // recurse @ i
     }
-
-    return found;
 }
 
 /*******************************************************************************
@@ -516,14 +529,26 @@ typename BPTree<T>::Iterator BPTree<T>::lower_bound(const T& entry) const {
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::lower_bound(const T& entry) {
-    BPTree<T>::Iterator found = begin();
+    // find index of T that's greater or qual to entry
+    std::size_t i = smart_ptr_utils::first_ge(_data, _data_count, entry);
+    bool is_found = (i < _data_count && !(entry < *_data[i]));
 
-    while(found != end()) {
-        if(*found >= entry) break;
-        ++found;
+    if(is_leaf()) {
+        if(i < _data_count) {
+            if(is_found || entry < *_data[i])  // found or less than/equal
+                return BPTree<T>::Iterator(this, i);  // return this and i
+            else if(i + 1 < _data_count)  // if greater and next i in bounds
+                return BPTree<T>::Iterator(this, i + 1);  // return this w/ i+1
+            else                                          // if next i !bounds
+                return BPTree<T>::Iterator(this->_next, 0);  // return next
+        } else                                               // if not in _data
+            return BPTree<T>::Iterator(this->_next, 0);      // return next
+    } else {                                                 // @ !leaf
+        if(is_found)                                         // when found
+            return _subset[i + 1]->lower_bound(entry);       // recurse i+1
+        else                                                 // when !found
+            return _subset[i]->lower_bound(entry);           // recurse @ i
     }
-
-    return found;
 }
 
 /*******************************************************************************
@@ -538,18 +563,15 @@ typename BPTree<T>::Iterator BPTree<T>::lower_bound(const T& entry) {
  *  none
  *
  * RETURN:
- *  BPTree<T>::Iterator
+ *  const BPTree<T>::Iterator
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::upper_bound(const T& entry) const {
-    BPTree<T>::Iterator found = begin();
+    BPTree<T>::Iterator upper = lower_bound(entry);  // get lower bound
 
-    while(found != end()) {
-        if(*found > entry) break;
-        ++found;
-    }
+    if(upper && *upper == entry) ++upper;  // if equal to entry, increment
 
-    return found;
+    return upper;
 }
 
 /*******************************************************************************
@@ -568,14 +590,11 @@ typename BPTree<T>::Iterator BPTree<T>::upper_bound(const T& entry) const {
  ******************************************************************************/
 template <typename T>
 typename BPTree<T>::Iterator BPTree<T>::upper_bound(const T& entry) {
-    BPTree<T>::Iterator found = begin();
+    BPTree<T>::Iterator upper = lower_bound(entry);  // get lower bound
 
-    while(found != end()) {
-        if(*found > entry) break;
-        ++found;
-    }
+    if(upper && *upper == entry) ++upper;  // if equal to entry, increment
 
-    return found;
+    return upper;
 }
 
 /*******************************************************************************

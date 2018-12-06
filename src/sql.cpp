@@ -138,10 +138,6 @@ void SQL::select_table(const std::string &table_name, bool table_found) {
     if(table_found) {
         std::cout << "\nTABLE: " << table_name << std::endl;
 
-        /***********************************************************************
-        // SELECT START IS BROKEN. SELECT STAR SHOULD STILL CHECK FOR WHERE
-        // CLAUSE!!!
-         **********************************************************************/
         if(is_valid_fields(table_name)) {
             SQLTable new_table("__temp__1");
 

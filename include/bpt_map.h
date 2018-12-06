@@ -186,6 +186,8 @@ public:
     Iterator begin();
     Iterator end();
     Iterator find(const K& key);
+    Iterator lower_bound(const K& key);
+    Iterator upper_bound(const K& key);
     const std::vector<V>& operator[](const K& key) const;
     std::vector<V>& operator[](const K& key);
     const std::vector<V>& at(const K& key) const;
@@ -303,11 +305,39 @@ typename Map<K, V>::Iterator Map<K, V>::find(const K& key) {
     return Map<K, V>::Iterator(_map.find(Pair(key)));
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is equivalent or greater than key. In
+ *  other words, key is less than or equal to the iterator.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points Pair is greater than or equal to key
+ ******************************************************************************/
 template <typename K, typename V>
 typename Map<K, V>::Iterator Map<K, V>::lower_bound(const K& key) {
     return Map<K, V>::Iterator(_map.lower_bound(Pair(key)));
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is greater than key. In other words,
+ *  the iterator is one step beyond the key.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points Pair one after the key.
+ ******************************************************************************/
 template <typename K, typename V>
 typename Map<K, V>::Iterator Map<K, V>::upper_bound(const K& key) {
     return Map<K, V>::Iterator(_map.upper_bound(Pair(key)));
@@ -675,6 +705,44 @@ typename MMap<K, V>::Iterator MMap<K, V>::end() {
 template <typename K, typename V>
 typename MMap<K, V>::Iterator MMap<K, V>::find(const K& key) {
     return MMap<K, V>::Iterator(_mmap.find(MPair(key)));
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is equivalent or greater than key. In
+ *  other words, key is less than or equal to the iterator.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points Pair is greater than or equal to key
+ ******************************************************************************/
+template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::lower_bound(const K& key) {
+    return MMap<K, V>::Iterator(_mmap.lower_bound(MPair(key)));
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return iterator where the iterator is greater than key. In other words,
+ *  the iterator is one step beyond the key.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points Pair one after the key.
+ ******************************************************************************/
+template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::upper_bound(const K& key) {
+    return MMap<K, V>::Iterator(_mmap.upper_bound(MPair(key)));
 }
 
 /*******************************************************************************

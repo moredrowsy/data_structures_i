@@ -80,7 +80,7 @@ bool SQLTable::is_match_fields(const std::vector<std::string>& list) {
 
 bool SQLTable::select(const std::vector<std::string>& fields_list,
                       QueueTokens& infix, SQLTable& new_table) {
-    QueueTokens postfix;              // postfix from WHERE condition
+    QueueTokens postfix;              // postfix for WHERE condition
     set_ptr result;                   // final set result
     std::vector<std::string> fields;  // fields to copy to new_table
     std::vector<std::string> values;  // values read from record
@@ -123,62 +123,50 @@ void SQLTable::make_equal_set(const std::string& field,
                               const std::string& value, set_ptr& result) {
     if(_map[field].contains(value))
         for(const auto& a : _map[field][value]) result->insert(a);
-    else
-        result->insert(0);
 }
 
 void SQLTable::make_less_set(const std::string& field, const std::string& value,
                              set_ptr& result) {
-    auto found = _map[field].find(value);
+    auto low = _map[field].lower_bound(value);
+    auto beg = _map[field].begin();
 
-    if(found)
-        for(auto it = _map[field].begin(); it != _map[field].end(); ++it) {
-            if(it->key == found->key) break;  // break when key is the same
-            result->insert(*it->value);
-        }
-    else
-        result->insert(0);
+    while(beg != low) {
+        result->insert(*beg->value);
+        ++beg;
+    }
 }
 
 void SQLTable::make_less_eq_set(const std::string& field,
                                 const std::string& value, set_ptr& result) {
-    auto found = _map[field].find(value);
-    found.next_key();  // increment to next key
+    auto upp = _map[field].upper_bound(value);
+    auto beg = _map[field].begin();
 
-    if(found)
-        for(auto it = _map[field].begin(); it != _map[field].end(); ++it) {
-            if(it->key == found->key) break;  // break when 'next key' is same
-            result->insert(*it->value);
-        }
-    else
-        result->insert(0);
+    while(beg != upp) {
+        result->insert(*beg->value);
+        ++beg;
+    }
 }
 
 void SQLTable::make_greater_set(const std::string& field,
                                 const std::string& value, set_ptr& result) {
-    auto found = _map[field].find(value);
-    found.next_key();  // increment to next key
+    auto upp = _map[field].upper_bound(value);
+    auto end = _map[field].end();
 
-    if(found)
-        while(found) {
-            result->insert(*found->value);
-            ++found;
-        }
-    else
-        result->insert(0);
+    while(upp != end) {
+        result->insert(*upp->value);
+        ++upp;
+    }
 }
 
 void SQLTable::make_greater_eq_set(const std::string& field,
                                    const std::string& value, set_ptr& result) {
-    auto found = _map[field].find(value);
+    auto low = _map[field].lower_bound(value);
+    auto end = _map[field].end();
 
-    if(found)
-        while(found) {
-            result->insert(*found->value);
-            ++found;
-        }
-    else
-        result->insert(0);
+    while(low != end) {
+        result->insert(*low->value);
+        ++low;
+    }
 }
 
 void SQLTable::print(const std::vector<std::string>& field_names, int width) {
@@ -255,7 +243,7 @@ void SQLTable::init_fields() {
         for(std::size_t i = 0; i < size; ++i) {
             if(field_names[i].empty()) break;    // stop when empty
             _pos_to_fields[i] = field_names[i];  // map pos to field name
-            _field_to_pos[field_names[i]] += i;  // map field name to pos
+            _field_to_pos[field_names[i]] = i;   // map field name to pos
         }
     }
 }
