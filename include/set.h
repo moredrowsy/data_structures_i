@@ -77,12 +77,10 @@ public:
     const T& at(const T& item);
 
     // modifiers
-
     bool insert(const T& item);
     bool erase(const T& item);
     void intersect(const Set<T>& rhs, Set<T>& result) const;
     void clear();
-    const T& get(const T& item);
 
     // operations
     bool contains(const T& item) const;
@@ -401,24 +399,6 @@ void Set<T>::intersect(const Set<T>& rhs, Set<T>& result) const {
 template <typename T>
 void Set<T>::clear() {
     _set.clear();
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Returns the reference item at given item.
- *
- * PRE-CONDITIONS:
- *  const T& item: item to find T
- *
- * POST-CONDITIONS:
- *  none
- *
- * RETURN:
- *  T&
- ******************************************************************************/
-template <typename T>
-const T& Set<T>::get(const T& item) {
-    return _set.get(item);
 }
 
 /*******************************************************************************

@@ -31,11 +31,11 @@ public:
     friend SQLParser& operator>>(SQLParser& f, token::Token& t);
 
 private:
-    static bool _need_init;                   // need Class initializations?
-    static std::string _keys[MAX_KEYS];       // list of keys
-    static std::string _types[MAX_COLS];      // list of SQL token string types
-    static std::string _r_ops[STR_OPS_SIZE];  // list of relation op
-    static int _table[MAX_ROWS][MAX_COLS];    // adjacency table
+    static bool _need_init;                 // need Class initializations?
+    static int _table[MAX_ROWS][MAX_COLS];  // adjacency table
+    static ParseKey _keys;                  // map of parse keys
+    static TokenType _types;                // map of SQL token string types
+    static TokenType _subtypes;             // map of SQL token string subtypes
 
     std::size_t _max_buf;      // block size to grab from ifstream
     bool _more;                // false if last token of the last block
@@ -43,6 +43,9 @@ private:
     SQLTokenizer _tokenizer;   // STokenizer obj to tokenize current block
 
     void init();                                   // init static vars
+    void init_keys(ParseKey& keys);                // init keys for parse map
+    void init_types(TokenType& types);             // init map of columns
+    void init_subtypes(TokenType& subtypes);       // init map of subtypes
     token::Token next_token();                     // get SQL token
     void parse_token(token::Token& t);             // ID token to SQL types
     void get_keyword(token::Token& t);             // get keyword id

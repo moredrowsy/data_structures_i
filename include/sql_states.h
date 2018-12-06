@@ -95,15 +95,6 @@ enum PARSE_KEYS {
     MAX_KEYS
 };
 
-// fill keys with SQL keys
-void init_keys(std::string* _keys);
-
-// fill types with SQL type strings
-void init_types(std::string* _types);
-
-// fill types with SQL type strings
-void init_ops(std::string* _ops);
-
 // fill all cells of the array with -1
 void init_table(int _table[][MAX_COLS]);
 

@@ -12,6 +12,8 @@
 namespace sql {
 
 // ----- SQLParser -----
+typedef bpt_map::Map<std::string, std::size_t> TokenType;
+typedef bpt_map::Map<std::size_t, std::string> ParseKey;
 typedef bpt_map::MMap<std::string, std::string> ParseTree;
 
 // ----- SQLTable -----

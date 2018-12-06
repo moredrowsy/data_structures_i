@@ -4,82 +4,6 @@ namespace sql {
 
 /*******************************************************************************
  * DESCRIPTION:
- *  Initialize array of keys for map.
- *
- * PRE-CONDITIONS:
- *  std::string *_keys
- *  array size == MAX_KEYS
- *
- * POST-CONDITIONS:
- *  All cells' value are -1.
- *
- * RETURN:
- *  none
- ******************************************************************************/
-void init_keys(std::string* _keys) {
-    _keys[KEY_COMMAND] = "COMMAND";
-    _keys[KEY_FIELDS] = "FIELDS";
-    _keys[KEY_R_FIELDS] = "R_FIELDS";
-    _keys[KEY_WHERE] = "WHERE";
-    _keys[KEY_TABLE] = "TABLE";
-    _keys[KEY_VALUES] = "VALUES";
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Initialize array of SQL Token string types.
- *
- * PRE-CONDITIONS:
- *  std::string *_types
- *  array size == MAX_COLS
- *
- * POST-CONDITIONS:
- *  All cells' value are -1.
- *
- * RETURN:
- *  none
- ******************************************************************************/
-void init_types(std::string* _types) {
-    _types[SUCCESS] = "";
-    _types[CREATE] = "CREATE";
-    _types[INSERT] = "INSERT";
-    _types[SELECT] = "SELECT";
-    _types[TABLE] = "TABLES";
-    _types[INTO] = "INTO";
-    _types[FROM] = "FROM";
-    _types[WHERE] = "WHERE";
-    _types[FIELDS] = "FIELDS";
-    _types[VALUES] = "VALUES";
-    _types[AND] = "AND";
-    _types[OR] = "OR";
-}
-
-/*******************************************************************************
- * DESCRIPTION:
- *  Initialize array of relational operator types.
- *
- * PRE-CONDITIONS:
- *  std::string *_types
- *  array size == MAX_COLS
- *
- * POST-CONDITIONS:
- *  All cells' value are -1.
- *
- * RETURN:
- *  none
- ******************************************************************************/
-void init_ops(std::string* _ops) {
-    _ops[STR_ASSIGN] = "=";
-    _ops[STR_LESS] = "<";
-    _ops[STR_LESS_THAN] = "<=";
-    _ops[STR_GREATER] = ">";
-    _ops[STR_GREATER_THAN] = ">=";
-    _ops[STR_OP_OR] = "OR";
-    _ops[STR_OP_AND] = "AND";
-}
-
-/*******************************************************************************
- * DESCRIPTION:
  *  Initialize the entire table with -1.
  *
  * PRE-CONDITIONS:
@@ -276,7 +200,7 @@ void mark_table_create(int _table[][MAX_COLS]) {
     // state [+1] --- IDENT ----> [+2]
     // state [+2] --- COMMA ----> [+3]
     // state [+3] --- IDENT ----> [+2]
-    mark_cell(CREATE_START, _table, IDENT, CREATE_TABLE_KEY);
+    mark_cell(CREATE_START, _table, TABLE, CREATE_TABLE_KEY);
     mark_cell(CREATE_TABLE_KEY, _table, IDENT, CREATE_TABLE);
     mark_cell(CREATE_TABLE, _table, FIELDS, CREATE_FIELDS_KEY);
     mark_cell(CREATE_FIELDS_KEY, _table, IDENT, CREATE_FIELDS);

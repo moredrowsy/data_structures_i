@@ -25,16 +25,11 @@ public:
     void run();
 
     // private:
-    static std::string _op_strings[STR_OPS_SIZE];
-    static bool need_init;
-
     QueueTokens _infix;
     SQLParser _parser;
     ParseTree _parse_tree;
     ParseMap _parse_map;
     TableMap _table_map;
-
-    void init();
 
     void load_commands(const std::string& file_name);  // load command from file
     bool get_query();   // get query and output a valid parse tree

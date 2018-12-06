@@ -2,20 +2,13 @@
 
 namespace sql {
 
-std::string SQL::_op_strings[STR_OPS_SIZE];
-bool SQL::need_init = true;
-
-SQL::SQL() {
-    if(need_init) init();
-}
+SQL::SQL() {}
 
 SQL::SQL(char *fname) {
     char *buffer = new char[MAX_BUFFER];
     int parse_counts = 0;
 
     std::ifstream fin(fname);
-
-    if(need_init) init();
 
     // WIP NEED TO FIX
     while(fin.getline(buffer, MAX_BUFFER)) {
@@ -83,11 +76,6 @@ bool SQL::get_query() {
     delete[] buffer;
 
     return is_valid;
-}
-
-void SQL::init() {
-    sql::init_ops(_op_strings);
-    need_init = false;
 }
 
 void SQL::load_commands(const std::string &file_name) {

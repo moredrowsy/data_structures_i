@@ -5,9 +5,9 @@ namespace sql {
 // STATIC VARIABLES
 bool SQLParser::_need_init = true;
 int SQLParser::_table[MAX_ROWS][MAX_COLS];
-std::string SQLParser::_keys[MAX_KEYS];
-std::string SQLParser::_r_ops[STR_OPS_SIZE];
-std::string SQLParser::_types[MAX_COLS];
+ParseKey SQLParser::_keys;
+TokenType SQLParser::_types;
+TokenType SQLParser::_subtypes;
 
 /*******************************************************************************
  * DESCRIPTION:
@@ -122,7 +122,7 @@ bool SQLParser::parse_query(ParseTree &tree, QueueTokens &infix) {
 void SQLParser::init() {
     init_keys(_keys);
     init_types(_types);
-    init_ops(_r_ops);
+    init_subtypes(_subtypes);
     init_table(_table);
     mark_table_command(_table);
     mark_table_create(_table);
@@ -130,6 +130,80 @@ void SQLParser::init() {
     mark_table_select(_table);
 
     _need_init = false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initializes key type to parse map string keys.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void SQLParser::init_keys(ParseKey &keys) {
+    keys[KEY_COMMAND] = "COMMAND";
+    keys[KEY_FIELDS] = "FIELDS";
+    keys[KEY_R_FIELDS] = "R_FIELDS";
+    keys[KEY_WHERE] = "WHERE";
+    keys[KEY_TABLE] = "TABLE";
+    keys[KEY_VALUES] = "VALUES";
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initializes strings to respective columns for the SQL adjacency matrix.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void SQLParser::init_types(TokenType &types) {
+    types["CREATE"] = CREATE;
+    types["MAKE"] = CREATE;
+    types["INSERT"] = INSERT;
+    types["SELECT"] = SELECT;
+    types["TABLE"] = TABLE;
+    types["TABLES"] = TABLE;
+    types["INTO"] = INTO;
+    types["FROM"] = FROM;
+    types["WHERE"] = WHERE;
+    types["FIELDS"] = FIELDS;
+    types["VALUES"] = VALUES;
+    types["AND"] = AND;
+    types["OR"] = OR;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initializes operator strings to sub types.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void SQLParser::init_subtypes(TokenType &subtypes) {
+    subtypes["="] = STR_ASSIGN;
+    subtypes["<"] = STR_LESS;
+    subtypes["<="] = STR_LESS_THAN;
+    subtypes[">"] = STR_GREATER;
+    subtypes[">="] = STR_GREATER_THAN;
+    subtypes["AND"] = STR_OP_AND;
+    subtypes["OR"] = STR_OP_OR;
 }
 
 /*******************************************************************************
@@ -203,24 +277,14 @@ void SQLParser::parse_token(token::Token &t) {
  *  void
  ******************************************************************************/
 void SQLParser::get_keyword(token::Token &t) {
-    bool keyword_found = false;
     std::string cmp_str = t.string();
     std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
 
-    for(int col = 0; col < MAX_COLS; ++col)
-        if(cmp_str == _types[col]) {
-            keyword_found = true;
-            t.set_string(cmp_str);
-
-            if(col == AND || col == OR)
-                t.set_type(L_OPS);
-            else
-                t.set_type(col);
-
-            break;
-        }
-
-    if(!keyword_found) t.set_type(IDENT);
+    if(_types.contains(cmp_str)) {
+        t.set_string(cmp_str);
+        t.set_type(_types[cmp_str]);
+    } else
+        t.set_type(IDENT);
 }
 
 /*******************************************************************************
@@ -239,13 +303,13 @@ void SQLParser::get_keyword(token::Token &t) {
  *  void
  ******************************************************************************/
 void SQLParser::get_r_op_subtype(token::Token &t) {
-    for(int type = 0; type < STR_OPS_SIZE; ++type)
-        if(t.string() == _r_ops[type]) {
-            t.set_type(R_OPS);
-            return;
-        }
-    t.set_type(VALUE);
-    t.set_sub_type(VALUE);
+    if(_subtypes.contains(t.string())) {
+        t.set_type(R_OPS);
+        t.set_sub_type(_subtypes[t.string()]);
+    } else {
+        t.set_type(VALUE);
+        t.set_sub_type(VALUE);
+    }
 
     return;
 }
