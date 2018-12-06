@@ -173,14 +173,15 @@ void SQLParser::init_types(TokenType &types) {
     types["INSERT"] = INSERT;
     types["SELECT"] = SELECT;
     types["TABLE"] = TABLE;
-    types["TABLES"] = TABLE;
     types["INTO"] = INTO;
     types["FROM"] = FROM;
     types["WHERE"] = WHERE;
     types["FIELDS"] = FIELDS;
     types["VALUES"] = VALUES;
-    types["AND"] = AND;
-    types["OR"] = OR;
+    types["*"] = ASTERISK;
+    types[","] = COMMA;
+    types["AND"] = L_OPS;
+    types["OR"] = L_OPS;
 }
 
 /*******************************************************************************
@@ -248,15 +249,13 @@ void SQLParser::parse_token(token::Token &t) {
     if(t.type() == state_machine::STATE_IDENT) {
         // check if IDENT is a keyword
         if(t.sub_type() == state_machine::STATE_IDENT_NORM)
-            get_keyword(t);
+            get_keyword(t, IDENT);
         else
             t.set_type(IDENT);
-    } else if(t.type() == state_machine::STATE_COMMA)
-        t.set_type(COMMA);
-    else if(t.type() == state_machine::STATE_STAR)
-        t.set_type(ASTERISK);
+    } else if(t.type() == state_machine::STATE_PUNCT)
+        get_keyword(t, VALUE);
     else if(t.type() == state_machine::STATE_R_OP)
-        get_r_op_subtype(t);
+        get_r_op_subtype(t, VALUE);
     else
         t.set_type(VALUE);  // VALUE w/o S
 }
@@ -269,6 +268,7 @@ void SQLParser::parse_token(token::Token &t) {
  *
  * PRE-CONDITIONS:
  *  token::Token &t: extracted token from SQL Tokenizer
+ *  int default_id : default id to set if keyword not found
  *
  * POST-CONDITIONS:
  *  token::Token &t: type and sub_type changed to SQL type IDs
@@ -276,7 +276,7 @@ void SQLParser::parse_token(token::Token &t) {
  * RETURN:
  *  void
  ******************************************************************************/
-void SQLParser::get_keyword(token::Token &t) {
+void SQLParser::get_keyword(token::Token &t, int default_id) {
     std::string cmp_str = t.string();
     std::transform(cmp_str.begin(), cmp_str.end(), cmp_str.begin(), ::toupper);
 
@@ -284,7 +284,7 @@ void SQLParser::get_keyword(token::Token &t) {
         t.set_string(cmp_str);
         t.set_type(_types[cmp_str]);
     } else
-        t.set_type(IDENT);
+        t.set_type(default_id);
 }
 
 /*******************************************************************************
@@ -302,13 +302,13 @@ void SQLParser::get_keyword(token::Token &t) {
  * RETURN:
  *  void
  ******************************************************************************/
-void SQLParser::get_r_op_subtype(token::Token &t) {
+void SQLParser::get_r_op_subtype(token::Token &t, int default_id) {
     if(_subtypes.contains(t.string())) {
         t.set_type(R_OPS);
         t.set_sub_type(_subtypes[t.string()]);
     } else {
-        t.set_type(VALUE);
-        t.set_sub_type(VALUE);
+        t.set_type(default_id);
+        t.set_sub_type(default_id);
     }
 
     return;
@@ -365,9 +365,6 @@ bool SQLParser::get_parse_key(int state, int &key_code) {
 }
 
 token_ptr SQLParser::get_sql_token(token::Token &t) {
-    // std::cout << "type: " << t.type() << ", subtype: " << t.sub_type()
-    //           << ", string: " << t << std::endl;
-
     if(t.type() == VALUE && t.sub_type() == state_machine::STATE_DOUBLE)
         return std::make_shared<SQLToken>(t.string(), TOKEN_DOUBLE);
     else if(t.string() == "=")

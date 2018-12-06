@@ -23,19 +23,17 @@ enum STATES {
     STATE_DOUBLE = 5,             // uses 10 rows
     STATE_ALPHA = 20,             // uses 2 rows
     STATE_SPACE = 25,             // uses 2 rows
-    STATE_COMMA = 30,             // uses 2 rows
-    STATE_STAR = 35,              // uses 2 rows
-    STATE_PUNCT = 40,             // uses 2 rows
-    STATE_IDENT = 44,             // identifier states
-    STATE_IDENT_NORM = 45,        // uses 2 rows
-    STATE_IDENT_QUOTE = 49,       // ident in quotes
-    STATE_IN_QUOTE_S_IDENT = 50,  // uses 4 rows
-    STATE_IN_QUOTE_D_IDENT = 55,  // uses 4 rows
-    STATE_VALUE = 59,             // enclosed quote states
-    STATE_IN_QUOTE_S = 60,        // use 3 rows
-    STATE_IN_QUOTE_D = 65,        // use 3 rows
-    STATE_R_OP = 70,              // uses 3 rows - relational operator states
-    STATE_SIZE = 75               // end size
+    STATE_PUNCT = 30,             // uses 2 rows
+    STATE_IDENT = 34,             // identifier states
+    STATE_IDENT_NORM = 35,        // uses 2 rows
+    STATE_IDENT_QUOTE = 39,       // ident in quotes
+    STATE_IN_QUOTE_S_IDENT = 40,  // uses 4 rows
+    STATE_IN_QUOTE_D_IDENT = 45,  // uses 4 rows
+    STATE_VALUE = 49,             // enclosed quote states
+    STATE_IN_QUOTE_S = 50,        // use 3 rows
+    STATE_IN_QUOTE_D = 55,        // use 3 rows
+    STATE_R_OP = 60,              // uses 3 rows - relational operator states
+    STATE_SIZE = 65               // end size
 };
 
 // GLOBAL CONSTANTS

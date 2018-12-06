@@ -64,12 +64,6 @@ std::string Token::type_string() const {
         case state_machine::STATE_SPACE:
             type_string = "SPACE";
             break;
-        case state_machine::STATE_COMMA:
-            type_string = "COMMA";
-            break;
-        case state_machine::STATE_STAR:
-            type_string = "ASTERISK";
-            break;
         case state_machine::STATE_PUNCT:
             type_string = "PUNCT";
             break;

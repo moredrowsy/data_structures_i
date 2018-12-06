@@ -232,8 +232,6 @@ void SQLTokenizer::make_table(int _table[][state_machine::MAX_COLUMNS]) {
     mark_table_enclosed_delim_ident(_table, STATE_IN_QUOTE_D_IDENT, '\"');
     mark_table_generic(_table, STATE_SPACE, SPACE);
     mark_table_generic(_table, STATE_PUNCT, PUNCT);
-    mark_table_single_char(_table, STATE_COMMA, ',');
-    mark_table_single_char(_table, STATE_STAR, '*');
     mark_table_r_ops(_table, STATE_R_OP);
 
     _need_init = false;  // disable further make_table() calls in CTOR
@@ -305,10 +303,6 @@ SQLTokenizer& operator>>(SQLTokenizer& s, token::Token& t) {
         t = token::Token(token, STATE_DOUBLE);
     else if(s.get_token(STATE_SPACE, token))
         t = token::Token(token, STATE_SPACE);
-    else if(s.get_token(STATE_COMMA, token))
-        t = token::Token(token, STATE_COMMA);
-    else if(s.get_token(STATE_STAR, token))
-        t = token::Token(token, STATE_STAR);
     else if(s.get_token(STATE_R_OP, token))
         t = token::Token(token, STATE_R_OP);
     else if(s.get_token(STATE_PUNCT, token))

@@ -42,14 +42,14 @@ private:
     token::Token _prev_token;  // previous token that was extracted
     SQLTokenizer _tokenizer;   // STokenizer obj to tokenize current block
 
-    void init();                                   // init static vars
-    void init_keys(ParseKey& keys);                // init keys for parse map
-    void init_types(TokenType& types);             // init map of columns
-    void init_subtypes(TokenType& subtypes);       // init map of subtypes
-    token::Token next_token();                     // get SQL token
-    void parse_token(token::Token& t);             // ID token to SQL types
-    void get_keyword(token::Token& t);             // get keyword id
-    void get_r_op_subtype(token::Token& t);        // get r_op id
+    void init();                              // init static vars
+    void init_keys(ParseKey& keys);           // init keys for parse map
+    void init_types(TokenType& types);        // init map of columns
+    void init_subtypes(TokenType& subtypes);  // init map of subtypes
+    token::Token next_token();                // get SQL token
+    void parse_token(token::Token& t);        // ID token to SQL types
+    void get_keyword(token::Token& t, int default_id);       // get keyword id
+    void get_r_op_subtype(token::Token& t, int default_id);  // get r_op id
     bool get_parse_key(int state, int& key_code);  // get parse key for map
     token_ptr get_sql_token(token::Token& t);
 };
