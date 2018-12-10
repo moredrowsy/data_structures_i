@@ -33,7 +33,6 @@ typedef queue::Queue<token_ptr> QueueTokens;
 typedef stack::Stack<token_ptr> StackTokens;
 
 // ----- SQL -----
-typedef bpt_map::Map<int, ParseTree> ParseMap;
 typedef std::shared_ptr<set::Set<long>> set_ptr;
 
 }  // namespace sql

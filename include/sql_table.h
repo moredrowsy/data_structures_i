@@ -61,6 +61,8 @@ private:
     FieldPosMap _pos_to_fields;   // map field pos to field name
     FiledNamesMap _field_to_pos;  // map field name to pos
     std::string _table_name;      // table name
+    std::string _ext;             // file extension
+    std::string _fname;           // filename for table
     SQLRecord _record;            // read/write to table file
 
     void init_table();

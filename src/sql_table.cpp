@@ -3,32 +3,40 @@
 namespace sql {
 
 SQLTable::SQLTable(std::string table_name)
-    : _rec_count(0), _table_name(table_name + ".tbl"), _record(_table_name) {
+    : _rec_count(0),
+      _table_name(table_name),
+      _ext(".tbl"),
+      _fname(_table_name + _ext),
+      _record(_fname) {
     init_table();
 
     std::string old_name = _table_name;
 
     if(!_rec_count) {  // try to open with all caps
-        std::string temp = _table_name.substr(0, _table_name.size() - 4);
-        std::transform(temp.begin(), temp.end(), _table_name.begin(),
-                       ::toupper);
-        _record.set_fname(_table_name);
+        std::transform(_table_name.begin(), _table_name.end(),
+                       _table_name.begin(), ::toupper);
+        _fname = _table_name + _ext;
+        _record.set_fname(_fname);
         init_table();
     }
 
     if(!_rec_count) {  // create new table file if second try fails
         _table_name = old_name;
-        _record.set_fname(old_name);
-        std::ofstream file(old_name.c_str(),
-                           std::ios::binary | std::ios::trunc);
+        _fname = _table_name + _ext;
+        _record.set_fname(_fname);
+        std::ofstream file(_fname.c_str(), std::ios::binary | std::ios::trunc);
         file.close();
     }
 }
 
 SQLTable::SQLTable(std::string table_name,
                    const std::vector<std::string>& fields)
-    : _rec_count(0), _table_name(table_name + ".tbl"), _record(_table_name) {
-    std::ofstream file(_table_name.c_str(), std::ios::binary | std::ios::trunc);
+    : _rec_count(0),
+      _table_name(table_name),
+      _ext(".tbl"),
+      _fname(_table_name + _ext),
+      _record(_fname) {
+    std::ofstream file(_fname.c_str(), std::ios::binary | std::ios::trunc);
     file.close();
     _record.write(fields, _rec_count);
     init_table();
@@ -39,12 +47,13 @@ std::size_t SQLTable::field_count() const { return _pos_to_fields.size(); }
 std::size_t SQLTable::size() const { return _rec_count; }
 
 void SQLTable::delete_table() {
-    std::remove(_table_name.c_str());
+    std::remove(_fname.c_str());
     _rec_count = 0;
     _map.clear();
     _pos_to_fields.clear();
     _field_to_pos.clear();
     _table_name.clear();
+    _fname.clear();
     _record.set_fname("");
 }
 

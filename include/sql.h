@@ -21,17 +21,20 @@ public:
 
     SQL();
     SQL(char* fname);
+    ~SQL();
 
     void run();
 
-    // private:
-    QueueTokens _infix;
-    SQLParser _parser;
-    ParseTree _parse_tree;
-    ParseMap _parse_map;
-    TableMap _table_map;
-
     void load_commands(const std::string& file_name);  // load command from file
+    void load_session(const std::string& session);     // restore session
+    void save_session(const std::string& session);     // save session
+
+private:
+    QueueTokens _infix;     // curent infix expression
+    SQLParser _parser;      // SQL parser
+    ParseTree _parse_tree;  // parser tree
+    TableMap _table_map;    // map of tables
+
     bool get_query();   // get query and output a valid parse tree
     void exec_query();  // execute query but also do additional checks
 

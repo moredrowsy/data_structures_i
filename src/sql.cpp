@@ -5,33 +5,18 @@ namespace sql {
 SQL::SQL() {}
 
 SQL::SQL(char *fname) {
-    char *buffer = new char[MAX_BUFFER];
-    int parse_counts = 0;
-
-    std::ifstream fin(fname);
-
-    // WIP NEED TO FIX
-    while(fin.getline(buffer, MAX_BUFFER)) {
-        _parser.set_string(buffer);  // set string for each line to parser
-        if(_parser.parse_query(_parse_tree, _infix)) {  // if the query is valid
-            _parse_map[parse_counts++] = _parse_tree;
-            // std::cout << buffer << std::endl;
-            // std::cout << _parse_map[parse_counts - 1] << std::endl <<
-            // std::endl;
-            _parse_tree.clear();
-            _infix.clear();
-        }
-    }
-
-    delete[] buffer;
+    load_commands(fname);
+    std::cout << std::endl;
 }
+
+SQL::~SQL() { save_session("session"); }
 
 void SQL::run() {
     char c;
     std::string file_name;
 
     do {
-        std::cout << "[Q]uery  [L]oad_Commands    e[X]it: ";
+        std::cout << "[Q]uery  [L]oad_Commands  [R]estore_Session    e[X]it: ";
         std::cin >> c;
 
         switch(c) {
@@ -57,7 +42,11 @@ void SQL::run() {
                 _infix.clear();
 
                 break;
+            case 'R':
+            case 'r':
+                load_session("session");
 
+                break;
             default:
                 std::cout << "Invalid Choice" << std::endl;
         }
@@ -90,6 +79,17 @@ void SQL::load_commands(const std::string &file_name) {
         _parse_tree.clear();  // reset parse tree
         _infix.clear();       // reset infix
     }
+}
+
+void SQL::load_session(const std::string &session) {
+    std::ifstream file(session.c_str(), std::ios::binary);
+    std::string table_name;
+    while(file >> table_name) _table_map[table_name] = SQLTable(table_name);
+}
+
+void SQL::save_session(const std::string &session) {
+    std::ofstream file(session.c_str(), std::ios::binary | std::ios::trunc);
+    for(const auto &table : _table_map) file << table.key << "\n";
 }
 
 void SQL::exec_query() {
@@ -127,7 +127,7 @@ void SQL::select_table(const std::string &table_name, bool table_found) {
         std::cout << "\nTABLE: " << table_name << std::endl;
 
         if(is_valid_fields(table_name)) {
-            SQLTable new_table("__temp__1");
+            SQLTable new_table(table_name + "__temp__");
 
             _table_map[table_name].select(_parse_tree["FIELDS"], _infix,
                                           new_table);
