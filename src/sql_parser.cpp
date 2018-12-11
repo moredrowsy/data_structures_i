@@ -48,10 +48,26 @@ SQLParser::operator bool() const { return (bool)_tokenizer; }
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Explicit bool overload that checks if tokenizer's buffer still have tokens
+ *  to extract.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+const TokenType &SQLParser::types() const { return _types; }
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Set new buffer to tokenizer.
  *
  * PRE-CONDITIONS:
- *  char *buffer       : buffer input
+ *  char *buffer buffer input
  *
  * POST-CONDITIONS:
  *  SQLTokenizer _tokenizer: internal buffer changed
@@ -364,7 +380,20 @@ bool SQLParser::get_parse_key(int state, int &key_code) {
     return is_valid;
 }
 
-token_ptr SQLParser::get_sql_token(token::Token &t) {
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns a token ptr (pointer to SQLToken class).
+ *
+ * PRE-CONDITIONS:
+ *  const token::Token &t: Token object
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  token_ptr
+ ******************************************************************************/
+token_ptr SQLParser::get_sql_token(const token::Token &t) {
     if(t.type() == VALUE && t.sub_type() == state_machine::STATE_DOUBLE)
         return std::make_shared<SQLToken>(t.string(), TOKEN_DOUBLE);
     else if(t.string() == "=")
@@ -385,10 +414,23 @@ token_ptr SQLParser::get_sql_token(token::Token &t) {
         return std::make_shared<SQLToken>(t.string(), TOKEN_SET_STR);
 }
 
-// TO DO
-SQLParser &operator>>(SQLParser &f, token::Token &t) {
-    t = f.next_token();
-    return f;
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set new buffer to tokenizer.
+ *
+ * PRE-CONDITIONS:
+ *  SQLParser &f: parser
+ *  char *buffer: buffer input
+ *
+ * POST-CONDITIONS:
+ *  SQLTokenizer _tokenizer: internal buffer changed
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+SQLParser &operator<<(SQLParser &p, char *buffer) {
+    p._tokenizer.set_string(buffer);
+    return p;
 }
 
 }  // namespace sql

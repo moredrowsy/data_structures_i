@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sql_states
+ * NAMESPACE   : sql
+ * DESCRIPTION : This header defines the various functions to initialize the
+ *          grammar adjacency table from state_machine.h for the SQLParser.
+ ******************************************************************************/
 #ifndef SQL_CONSTS_H
 #define SQL_CONSTS_H
 

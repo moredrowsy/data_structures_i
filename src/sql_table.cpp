@@ -2,7 +2,21 @@
 
 namespace sql {
 
-SQLTable::SQLTable(std::string table_name)
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructor which attempts to open a file with the supplied table name.
+ *  If file does not exist, create a new table file.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& table_name: table name
+ *
+ * POST-CONDITIONS:
+ *  initializations
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+SQLTable::SQLTable(const std::string& table_name)
     : _rec_count(0),
       _table_name(table_name),
       _ext(".tbl"),
@@ -29,7 +43,21 @@ SQLTable::SQLTable(std::string table_name)
     }
 }
 
-SQLTable::SQLTable(std::string table_name,
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Constructor create a new file with the given field labels.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& table_name         : table name
+ *  const std::vector<std::string>& fields: list of fields
+ *
+ * POST-CONDITIONS:
+ *  initializations
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+SQLTable::SQLTable(const std::string& table_name,
                    const std::vector<std::string>& fields)
     : _rec_count(0),
       _table_name(table_name),
@@ -42,10 +70,50 @@ SQLTable::SQLTable(std::string table_name,
     init_table();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the number of fields in table.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 std::size_t SQLTable::field_count() const { return _pos_to_fields.size(); }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the number of records in table.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 std::size_t SQLTable::size() const { return _rec_count; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Explicit table deletion, which removes the associated table file and clears
+ *  all Maps.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  Table file deleted and maps/other variables are cleared
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::delete_table() {
     std::remove(_fname.c_str());
     _rec_count = 0;
@@ -57,12 +125,51 @@ void SQLTable::delete_table() {
     _record.set_fname("");
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  RChecks whether field name exists in table.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& field_name: field name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 bool SQLTable::contains(const std::string& field_name) const {
     return _field_to_pos.contains(field_name);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns the map which holds all IndexMaps.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 const FieldMap& SQLTable::map() const { return _map; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Performs insertion of a vector of values into table.
+ *
+ * PRE-CONDITIONS:
+ *  const std::vector<std::string>& values: list of values
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 bool SQLTable::insert(const std::vector<std::string>& values) {
     std::string field_name;
 
@@ -80,13 +187,41 @@ bool SQLTable::insert(const std::vector<std::string>& values) {
     return true;
 }
 
-bool SQLTable::is_match_fields(const std::vector<std::string>& list) {
-    for(const auto& a : list)
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Checks if all fields in list is contained in table.
+ *
+ * PRE-CONDITIONS:
+ *  const std::vector<std::string>& fields: list of field labels
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+bool SQLTable::is_match_fields(const std::vector<std::string>& fields) {
+    for(const auto& a : fields)
         if(!contains(a)) return false;
 
     return true;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Returns a new table with selected data.
+ *
+ * PRE-CONDITIONS:
+ *  const std::vector<std::string>& fields_list: fields list
+ *  QueueTokens& infix                         : queue of SQLTokens
+ *  SQLTable& new_table                        : new table
+ *
+ * POST-CONDITIONS:
+ *  SQLTable& new_table: old table deleted and populated with new data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 bool SQLTable::select(const std::vector<std::string>& fields_list,
                       QueueTokens& infix, SQLTable& new_table) {
     QueueTokens postfix;              // postfix for WHERE condition
@@ -128,11 +263,41 @@ bool SQLTable::select(const std::vector<std::string>& fields_list,
     return true;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return by ref a set of records of specified conditions.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& field: target field
+ *  const std::string& value: value of field
+ *  set_ptr& result         : empty set of records
+ *
+ * POST-CONDITIONS:
+ *  set_ptr& result         : populated record positions
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::make_equal_set(const std::string& field,
                               const std::string& value, set_ptr& result) {
     if(_map[field].contains(value)) *result += _map[field][value];
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return by ref a set of records of specified conditions.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& field: target field
+ *  const std::string& value: value of field
+ *  set_ptr& result         : empty set of records
+ *
+ * POST-CONDITIONS:
+ *  set_ptr& result         : populated record positions
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::make_less_set(const std::string& field, const std::string& value,
                              set_ptr& result) {
     auto low = _map[field].lower_bound(value);
@@ -144,6 +309,21 @@ void SQLTable::make_less_set(const std::string& field, const std::string& value,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return by ref a set of records of specified conditions.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& field: target field
+ *  const std::string& value: value of field
+ *  set_ptr& result         : empty set of records
+ *
+ * POST-CONDITIONS:
+ *  set_ptr& result         : populated record positions
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::make_less_eq_set(const std::string& field,
                                 const std::string& value, set_ptr& result) {
     auto upp = _map[field].upper_bound(value);
@@ -155,6 +335,21 @@ void SQLTable::make_less_eq_set(const std::string& field,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return by ref a set of records of specified conditions.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& field: target field
+ *  const std::string& value: value of field
+ *  set_ptr& result         : empty set of records
+ *
+ * POST-CONDITIONS:
+ *  set_ptr& result         : populated record positions
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::make_greater_set(const std::string& field,
                                 const std::string& value, set_ptr& result) {
     auto upp = _map[field].upper_bound(value);
@@ -166,6 +361,21 @@ void SQLTable::make_greater_set(const std::string& field,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Return by ref a set of records of specified conditions.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& field: target field
+ *  const std::string& value: value of field
+ *  set_ptr& result         : empty set of records
+ *
+ * POST-CONDITIONS:
+ *  set_ptr& result         : populated record positions
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::make_greater_eq_set(const std::string& field,
                                    const std::string& value, set_ptr& result) {
     auto low = _map[field].lower_bound(value);
@@ -177,6 +387,20 @@ void SQLTable::make_greater_eq_set(const std::string& field,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print all records
+ *
+ * PRE-CONDITIONS:
+ *  const std::vector<std::string>& field_names: fields to display
+ *  int width                                  : maximum width to display
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::print(const std::vector<std::string>& field_names, int width) {
     const std::vector<std::string>* field_list = &field_names;
     std::vector<std::string>* v = nullptr;
@@ -196,6 +420,21 @@ void SQLTable::print(const std::vector<std::string>& field_names, int width) {
     delete v;  // delete temp v
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print record of specified position.
+ *
+ * PRE-CONDITIONS:
+ *  long rec_pos                               : record position
+ *  const std::vector<std::string>& field_names: fields to display
+ *  int width                                  : maximum width to display
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::print_rec(long rec_pos,
                          const std::vector<std::string>& field_names,
                          int width) {
@@ -222,6 +461,20 @@ void SQLTable::print_rec(long rec_pos,
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Print header.
+ *
+ * PRE-CONDITIONS:
+ *  const std::vector<std::string>& field_names: fields to display
+ *  int width                                  : maximum width to display
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::print_header(const std::vector<std::string>& field_names,
                             int width) {
     print_rec(0, field_names);
@@ -234,11 +487,38 @@ void SQLTable::print_header(const std::vector<std::string>& field_names,
     std::cout << std::endl;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize all table fields and data.
+ *
+ * PRE-CONDITIONS:
+ *  std::string _fname: valid table file name
+ *
+ * POST-CONDITIONS:
+ *  Maps initialized with data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::init_table() {
     init_fields();
     init_data();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize position to field and field to position maps. Stores field label
+ *  order.
+ *
+ * PRE-CONDITIONS:
+ *  std::string _fname: valid table file name
+ *
+ * POST-CONDITIONS:
+ *  Maps initialized with data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::init_fields() {
     std::vector<std::string> field_names;
     field_names.reserve(REC_ROW);
@@ -256,6 +536,19 @@ void SQLTable::init_fields() {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Initialize IndexMaps to FieldMap from table file.
+ *
+ * PRE-CONDITIONS:
+ *  std::string _fname: valid table file name
+ *
+ * POST-CONDITIONS:
+ *  Maps initialized with data
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::init_data() {
     std::size_t size = _pos_to_fields.size();
     std::vector<std::string> values;
@@ -273,6 +566,21 @@ void SQLTable::init_data() {
     }
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Convert infix expression to postfix expression.
+ *
+ * PRE-CONDITIONS:
+ *  QueueTokens& infix  : Queue of SQL Tokens from parse tree with infix order
+ *  QueueTokens& postfix: empty
+ *
+ * POST-CONDITIONS:
+ *  QueueTokens& infix  : empty
+ *  QueueTokens& postfix: Queue of SQL Tokens with postfix order
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::infix_to_postfix(QueueTokens& infix, QueueTokens& postfix) {
     StackTokens operators;  // temp stack to hold operators
 
@@ -305,6 +613,21 @@ void SQLTable::infix_to_postfix(QueueTokens& infix, QueueTokens& postfix) {
     while(!operators.empty()) postfix.push(operators.pop());  // pop remaining
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Evaluate postfix expression and convert it to record positions to set.
+ *
+ * PRE-CONDITIONS:
+ *  QueueTokens& postfix: Queue of SQL Tokens with postfix order
+ *  set_ptr& result_set : empty set
+ *
+ * POST-CONDITIONS:
+ *  QueueTokens& postfix: empty
+ *  set_ptr& result_set : set with record positions (may be emtpy set)
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::eval_postfix(QueueTokens& postfix, set_ptr& result_set) {
     StackTokens operands;  // temp stack to hold operands
 
@@ -365,6 +688,19 @@ void SQLTable::eval_postfix(QueueTokens& postfix, set_ptr& result_set) {
     result_set = operands.pop()->data();  // one operand left, which is result
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Update field labels and position information.
+ *
+ * PRE-CONDITIONS:
+ *  const std::vector<std::string>& fields: list of fields
+ *
+ * POST-CONDITIONS:
+ *  field maps are cleared and updated to with new field list
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 void SQLTable::update_fields(const std::vector<std::string>& fields) {
     _record.write(fields, 0);
 
@@ -373,6 +709,21 @@ void SQLTable::update_fields(const std::vector<std::string>& fields) {
     init_fields();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Update field labels and position information.
+ *
+ * PRE-CONDITIONS:
+ *  std::string str   : target string
+ *  size_t width      : width of string
+ *  bool show_ellipsis: flag to show ellipsis when truncation occurs
+ *
+ * POST-CONDITIONS:
+ *  std::string str: truncated to width if overlimit
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 std::string SQLTable::truncate(std::string str, size_t width,
                                bool show_ellipsis) {
     if(str.size() > width) {

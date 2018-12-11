@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sql_typedefs
+ * NAMESPACE   : sql
+ * DESCRIPTION : This header defines all the typedef alias for the SQL related
+ *          classes in the sql namespace.
+ ******************************************************************************/
 #ifndef SQL_TYPEDEFS_H
 #define SQL_TYPEDEFS_H
 
@@ -33,6 +42,7 @@ typedef queue::Queue<token_ptr> QueueTokens;
 typedef stack::Stack<token_ptr> StackTokens;
 
 // ----- SQL -----
+typedef bpt_map::Map<int, std::string> QueryCodeMap;
 typedef std::shared_ptr<set::Set<long>> set_ptr;
 
 }  // namespace sql

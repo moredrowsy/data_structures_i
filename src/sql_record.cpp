@@ -2,16 +2,55 @@
 
 namespace sql {
 
-SQLRecord::SQLRecord(std::string fname) : _data(nullptr), _fname(fname) {
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Construct record with a char array of REC_SIZE.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& fname: file name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+SQLRecord::SQLRecord(const std::string& fname) : _data(nullptr), _fname(fname) {
     _data = new char[REC_SIZE]();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Copy constructor.
+ *
+ * PRE-CONDITIONS:
+ *  const SQLRecord& src: source object
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 SQLRecord::SQLRecord(const SQLRecord& src)
     : _data(nullptr), _fname(src._fname) {
     _data = new char[REC_SIZE]();
     std::memcpy(_data, src._data, REC_SIZE);
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Assignment operator.
+ *
+ * PRE-CONDITIONS:
+ *  const SQLRecord& rhs: right hand side object
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  SQLRecord&
+ ******************************************************************************/
 SQLRecord& SQLRecord::operator=(const SQLRecord& rhs) {
     if(this != &rhs) {
         _fname = rhs._fname;
@@ -20,10 +59,50 @@ SQLRecord& SQLRecord::operator=(const SQLRecord& rhs) {
     return *this;
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Deallocates char array.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 SQLRecord::~SQLRecord() { delete[] _data; }
 
-void SQLRecord::set_fname(std::string fname) { _fname = fname; }
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Set new file name.
+ *
+ * PRE-CONDITIONS:
+ *  const std::string& fname: file name
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void SQLRecord::set_fname(const std::string& fname) { _fname = fname; }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Read a record data of size REC_SIZE and return by ref to a vector.
+ *
+ * PRE-CONDITIONS:
+ *  std::vector<std::string>& v: empty vector
+ *  long rpos                  : record position to seek
+ *
+ * POST-CONDITIONS:
+ *  std::vector<std::string>& v: populated vector for size REC_ROW
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 std::streamsize SQLRecord::read(std::vector<std::string>& v, long rpos) {
     std::fstream file(_fname.c_str(), std::ios::in | std::ios::binary);
     file.seekg(rpos * REC_SIZE);
@@ -35,6 +114,20 @@ std::streamsize SQLRecord::read(std::vector<std::string>& v, long rpos) {
     return file.gcount();
 }
 
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Write a record data of size REC_SIZE from vector data.
+ *
+ * PRE-CONDITIONS:
+ *  std::vector<std::string>& v: non-empty vector
+ *  long rpos                  : record position to seek
+ *
+ * POST-CONDITIONS:
+ *  Data written to file of REC_SIZE at rpos
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
 long SQLRecord::write(const std::vector<std::string>& v, long rpos) {
     assert(v.size() <= REC_ROW);
     std::string value;

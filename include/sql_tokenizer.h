@@ -3,12 +3,10 @@
  * ID          : 00991588
  * CLASS       : CS008
  * HEADER      : sql_tokenizer
- * DESCRIPTION : This header declares class SQLTokenizer. The SQLTokenizer will
- *      receive an input/buffer string (via constructor or set_string) and
- *      returns a valid token (via the insertion operator) from its starting
- *      position by its internal state machine, which follows the rules set in
- *      the adjacency matrix. SQLTokenizer also maintains position current
- *      position of the input string when extracting token, from class Token.
+ * NAMESPACE   : sql
+ * DESCRIPTION : This header defines the tokenizer for SQL to extract tokens
+ *          from a char string. The tokens generated have specific SQL states
+ *          ID, which is used by the SQLParser class.
  ******************************************************************************/
 #ifndef STOKENIZER_H
 #define STOKENIZER_H

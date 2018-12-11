@@ -84,7 +84,9 @@ public:
     bool empty() const;
 
     // element access
+    Iterator begin() const;
     Iterator begin();
+    Iterator end() const;
     Iterator end();
     Iterator find(const K& key);
     Iterator lower_bound(const K& key);
@@ -183,7 +185,9 @@ public:
     bool empty() const;
 
     // element access
+    Iterator begin() const;
     Iterator begin();
+    Iterator end() const;
     Iterator end();
     Iterator find(const K& key);
     Iterator lower_bound(const K& key);
@@ -265,8 +269,44 @@ bool Map<K, V>::empty() const {
  *  Map<K, V>::Iterator: points to left most element
  ******************************************************************************/
 template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::begin() const {
+    return Map<K, V>::Iterator(_map.begin());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to left most element in map.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
 typename Map<K, V>::Iterator Map<K, V>::begin() {
     return Map<K, V>::Iterator(_map.begin());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to end of map, which is nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  Map<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename Map<K, V>::Iterator Map<K, V>::end() const {
+    return Map<K, V>::Iterator(_map.end());
 }
 
 /*******************************************************************************
@@ -667,8 +707,44 @@ bool MMap<K, V>::empty() const {
  *  MMap<K, V>::Iterator: points to left most element
  ******************************************************************************/
 template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::begin() const {
+    return MMap<K, V>::Iterator(_mmap.begin());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to left most element in map.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  MMap<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
 typename MMap<K, V>::Iterator MMap<K, V>::begin() {
     return MMap<K, V>::Iterator(_mmap.begin());
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Points to end of map, which is nullptr.
+ *
+ * PRE-CONDITIONS:
+ *  none
+ *
+ * POST-CONDITIONS:
+ *  none
+ *
+ * RETURN:
+ *  MMap<K, V>::Iterator: points to left most element
+ ******************************************************************************/
+template <typename K, typename V>
+typename MMap<K, V>::Iterator MMap<K, V>::end() const {
+    return MMap<K, V>::Iterator(_mmap.end());
 }
 
 /*******************************************************************************

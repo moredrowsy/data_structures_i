@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sql_token
+ * NAMESPACE   : sql
+ * DESCRIPTION : This header defines the infix Tokens for the SQL. The SQLToken
+ *          holds a string with an associated ID to identify its type. It also
+ *          has a private data field (a shared pointer to a set), which can
+ *          hold record positions. This is used during infix to postfix
+ *          conversion and evaluation of postfix expression in SQLTable class.
+ ******************************************************************************/
 #ifndef SQL_TOKEN_H
 #define SQL_TOKEN_H
 

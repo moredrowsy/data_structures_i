@@ -2,7 +2,8 @@
  * AUTHOR      : Thuan Tang
  * ID          : 00991588
  * CLASS       : CS008
- * HEADER      : pair
+ * HEADER      : sql_record
+ * NAMESPACE   : sql
  * DESCRIPTION : This header provides a SQL Record class. It reads/writes
  *      record data at a given position.
  *
@@ -46,13 +47,13 @@ enum RECORD_SIZE {
 
 class SQLRecord {
 public:
-    SQLRecord(std::string fname = "");
+    SQLRecord(const std::string& fname = "");
 
     ~SQLRecord();
     SQLRecord(const SQLRecord& src);
     SQLRecord& operator=(const SQLRecord& rhs);
 
-    void set_fname(std::string fname);  // set file name
+    void set_fname(const std::string& fname);  // set file name
     std::streamsize read(std::vector<std::string>& v, long rpos = 0);
     long write(const std::vector<std::string>& v, long rpos = -1);
 

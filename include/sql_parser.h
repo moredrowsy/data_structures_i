@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * AUTHOR      : Thuan Tang
+ * ID          : 00991588
+ * CLASS       : CS008
+ * HEADER      : sql_parser
+ * NAMESPACE   : sql
+ * DESCRIPTION : This header defines the grammar parser for the SQL. The
+ *          private member tokenizer will extract Tokens from the query buffer,
+ *          which the parser will shift through its own state machine to
+ *          determine if the 'grammar' is valid, but does not determine if the
+ *          query is valid.
+ ******************************************************************************/
 #ifndef SQLPARSER_H
 #define SQLPARSER_H
 
@@ -21,6 +33,7 @@ public:
 
     // ACCESSORS
     explicit operator bool() const;  // boolean conversion for extractor
+    const TokenType& types() const;
 
     // MUTATORS
     void set_string(char* buffer);  // set new buffer for STokenizer
@@ -28,7 +41,7 @@ public:
     bool parse_query(ParseTree& tree, QueueTokens& infix);
 
     // FRIENDS
-    friend SQLParser& operator>>(SQLParser& f, token::Token& t);
+    friend SQLParser& operator<<(SQLParser& p, char* buffer);
 
 private:
     static bool _need_init;                 // need Class initializations?
@@ -51,7 +64,7 @@ private:
     void get_keyword(token::Token& t, int default_id);       // get keyword id
     void get_r_op_subtype(token::Token& t, int default_id);  // get r_op id
     bool get_parse_key(int state, int& key_code);  // get parse key for map
-    token_ptr get_sql_token(token::Token& t);
+    token_ptr get_sql_token(const token::Token& t);
 };
 
 }  // namespace sql
