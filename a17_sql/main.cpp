@@ -2,12 +2,15 @@
 #include "../include/sql.h"  // SQL class
 
 int main() {
-    sql::SQL sql("commands.txt");
-    sql.run();
+    sql::SQL sql1("_!sample.txt");
+    sql1.save_session();
+    std::cout << "Batch file process completed for sql1." << std::endl
+              << std::endl;
 
-    sql::SQL sql1;
-    sql1.load_session("session");
-    sql1.run();
+    std::cout << "Executing SQL::run() for sql2." << std::endl;
+    sql::SQL sql2;
+    sql2.load_session();
+    sql2.run();
 
     return 0;
 }

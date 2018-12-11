@@ -1,0 +1,304 @@
+[Q]uery  [T]able  [L]oad_Commands  [S]ave_Session  [C]hange_Session     e[X]it: T
+Tables Managed in Session: default
+employee
+student
+
+[Q]uery  [T]able  [L]oad_Commands  [S]ave_Session  [C]hange_Session     e[X]it: L
+Filename: commands.txt
+//****************************************************************************
+//		SIMPLE SELECT 
+//****************************************************************************
+
+SQL Query: DONE
+[0] select * from student
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+Flo                  Jackson              Math                 21                   
+Calvin               Woo                  Physics              22                   
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+//------- simple strings -------------------
+SQL Query: DONE
+[1] select * from student where lname = Jackson
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Jackson              Math                 21                   
+
+SQL Query: SELECT SUCCESS
+
+
+//----- quoted strings ---------------------
+SQL Query: DONE
+[2] select * from student where lname = "Del Rio"
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+//-------- non-existing string ------------------
+SQL Query: DONE
+[3] select * from student where lname = "Does Not Exist"
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+
+//****************************************************************************
+//		RELATIONAL OPERATORS:
+//****************************************************************************
+
+//.................
+//:Greater Than   :
+//.................
+SQL Query: DONE
+[4] select * from student where lname > Yang
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+
+SQL Query: SELECT SUCCESS
+
+
+
+//. . . . . . . . . . . . . (Greater Than: Non-existing) . . . . . . . . . . . . . . . . . . . . . 
+SQL Query: DONE
+[5] select * from student where age > 50
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+
+//. . . . . . . . . . . . . (Greater than: last item) . . . . . . . . . . . . . . . . . .
+SQL Query: DONE
+[6] select * from student where age  > 53
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+
+//. . . . . . . . . . . . . (Greater Than: Passed last item) . . . . . . . . . . . . . . . . . . . . . 
+SQL Query: DONE
+[7] select * from student where age > 54
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+
+//.................
+//:Greater Equal  :
+//.................
+SQL Query: DONE
+[8] select * from student where lname >= Yang
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+
+SQL Query: SELECT SUCCESS
+
+//. . . . . .  (Greater Equal non-existing: ) . . . . . . . . . . . 
+SQL Query: DONE
+[9] select * from employee where last >= Jack
+
+TABLE: employee
+last                 first                dep                  
+-------------------- -------------------- -------------------- 
+Johnson              Jimmy                Chemistry            
+Yang                 Bo                   CS                   
+Jackson              Billy                Math                 
+Johnson              Billy                Phys Ed              
+Van Gogh             Jim Bob              Phys Ed              
+
+SQL Query: SELECT SUCCESS
+
+
+
+//.................
+//:Less Than      :
+//.................
+
+
+//. . . . . . . . . . . . . (Less Than: Non-existing) . . . . . . . . . . . . . . . . . . . . . 
+SQL Query: DONE
+[10] select * from student where lname < Jackson
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+//. . . . . . . . . . . . . (Less than: first item) . . . . . . . . . . . . . . . . . .
+SQL Query: DONE
+[11] select * from student where age  < 20
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+
+
+//. . . . . . . . . . . . . (Less Than: before first item) . . . . . . . . . . . . . . . . . . . . . 
+
+SQL Query: DONE
+[12] select * from student where age  < 19
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+
+
+//.................
+//:Less Equal     :
+//.................
+
+SQL Query: DONE
+[13] select * from student where lname <= Smith
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Jackson              Math                 21                   
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+//. . . . . .  (Less Equal non-existing: ) . . . . . . . . . . . 
+SQL Query: DONE
+[14] select * from employee where last <= Peach
+
+TABLE: employee
+last                 first                dep                  
+-------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   
+Johnson              Jimmy                Chemistry            
+Jackson              Billy                Math                 
+Johnson              Billy                Phys Ed              
+
+SQL Query: SELECT SUCCESS
+
+
+//****************************************************************************
+//		LOGICAL OPERATORS
+//****************************************************************************
+
+
+//.................
+//:AND            :
+//.................
+
+SQL Query: DONE
+[15] select * from student where fname = "Flo" and lname = "Yao"
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+
+SQL Query: SELECT SUCCESS
+
+
+
+//.................
+//:OR            :
+//.................
+SQL Query: DONE
+[16] select * from student where fname = Flo or lname = Jackson
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+Flo                  Jackson              Math                 21                   
+
+SQL Query: SELECT SUCCESS
+
+
+
+//.................
+//:OR AND         :
+//.................
+SQL Query: DONE
+[17] select * from student where fname = Flo or major = CS and age <= 23
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+Flo                  Jackson              Math                 21                   
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+
+//.................
+//:AND OR AND     :
+//.................
+
+SQL Query: DONE
+[18] select * from student where age <30 and major=CS or major = Physics and lname = Jackson
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+
+//.................
+//:OR AND OR      :
+//.................
+
+SQL Query: DONE
+[19] select * from student where lname = Yang or major = CS and age < 23 or lname = Jackson
+
+TABLE: student
+fname                lname                major                age                  
+-------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   
+Flo                  Jackson              Math                 21                   
+Anna Grace           Del Rio              CS                   22                   
+
+SQL Query: SELECT SUCCESS
+
+
+[Q]uery  [T]able  [L]oad_Commands  [S]ave_Session  [C]hange_Session     e[X]it: X
