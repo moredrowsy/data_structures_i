@@ -24,6 +24,7 @@ main.o: main.cpp\
 	${INC}/bptree.h\
 	${INC}/pair.h\
 	${INC}/bpt_map.h\
+	${INC}/smart_ptr_utils.h\
 	${INC}/state_machine.h\
 	${INC}/token.h\
 	${INC}/sql_parser.h\

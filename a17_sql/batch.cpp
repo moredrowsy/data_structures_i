@@ -2,7 +2,7 @@
 #include "../include/sql.h"  // SQL class
 
 int main() {
-    sql::SQL sql("_!sample.txt");
+    sql::SQL sql("_!select.txt");
     sql.save_session();
     std::cout << "Batch file process completed." << std::endl;
 
