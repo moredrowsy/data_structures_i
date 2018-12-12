@@ -121,6 +121,33 @@ sql.o: ${SRC}/sql.cpp\
 	${INC}/sql.h
 	$(CXX) $(CXXFLAGS) -c $<
 
+# ftokenizer_map.out entries
+
+stokenizer.o: ${SRC}/stokenizer.cpp\
+	${INC}/stokenizer.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+ftokenizer.o: ${SRC}/ftokenizer.cpp\
+	${INC}/ftokenizer.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+ftokenizer_map.out: $(OBJ) stokenizer.o ftokenizer.o ftokenizer_map.o
+	$(CXX) -o $@ $^ $(LDFLAGS)
+
+ftokenizer_map.o: ftokenizer_map.cpp\
+	${INC}/array_utils.h\
+	${INC}/sort.h\
+	${INC}/vector_utils.h\
+	${INC}/bptree.h\
+	${INC}/pair.h\
+	${INC}/bpt_map.h\
+	${INC}/smart_ptr_utils.h\
+	${INC}/state_machine.h\
+	${INC}/token.h\
+	${INC}/ftokenizer.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+
 .PHONY: clean
 
 clean:

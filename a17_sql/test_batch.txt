@@ -1,139 +1,277 @@
 //****************************************************************************
-//		CREATE AND INSERT
+//		CREATE TABLES AND INSERT RECORDS
 //****************************************************************************
 
-//---- employee table ----------
+
 SQL Query: DONE
-[0] make table employee fields  last, 		first, 			dep
+[0] make table employee fields  last, 		first, 			dep,  		salary, 	year
 SQL Query: MAKE SUCCESS
 
 SQL Query: DONE
-[1] insert into employee values Blow, 		Joe, 			CS
+[1] insert into employee values Blow, 		Joe, 			CS,		 	100000, 	2018
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[2] insert into employee values Johnson, 	"Jimmy", 		Chemistry
+[2] insert into employee values Blow, 		JoAnn,			Physics, 	200000, 	2016
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[3] insert into employee values Yang, 		Bo, 			CS
+[3] insert into employee values Johnson, 	Jack, 			HR, 		150000, 	2014
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[4] insert into employee values "Jackson",	Billy, 			Math
+[4] insert into employee values Johnson, 	"Jimmy", 		Chemistry,	140000, 	2018
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[5] insert into employee values Johnson,	Billy, 			"Phys Ed"
+[5] insert into employee values Yao,	 	Jimmy, 			Math,		145000, 	2014
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[6] insert into employee values "Van Gogh",	"Jim Bob", 		"Phys Ed"
+[6] insert into employee values "Yao", 		Flo, 			CS,			147000, 	2012
 SQL Query: INSERT SUCCESS
 
+SQL Query: DONE
+[7] insert into employee values Yang, 		Bo, 			CS,			160000, 	2013
+SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[7] select * from employee 
+[8] insert into employee values Jackson,	"Flo", 			Math,		165000, 	2017
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[9] insert into employee values Jackson,	Bo,	 			Chemistry,	130000, 	2011
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[10] insert into employee values "Jackson",	Billy, 			Math,	 	170000, 	2017
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[11] insert into employee values Johnson,	"Mary Ann", 	Math,		165000, 	2014
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[12] insert into employee values Johnson,	"Billy Bob", 	Physics,	142000, 	2014
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[13] insert into employee values Johnson,	Billy, 			"Phys Ed",	102000, 	2014
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[14] insert into employee values "Van Gogh",	Vincent, 		Art,		240000, 	2015
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[15] insert into employee values "Van Gogh",	Vincent, 		CS,			245000, 	2015
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[16] insert into employee values "Van Gogh",	"Jim Bob", 		"Phys Ed",	230000, 	2010
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[17] select * from employee 
 
 TABLE: employee
-last                 first                dep                  
--------------------- -------------------- -------------------- 
-Blow                 Joe                  CS                   
-Johnson              Jimmy                Chemistry            
-Yang                 Bo                   CS                   
-Jackson              Billy                Math                 
-Johnson              Billy                Phys Ed              
-Van Gogh             Jim Bob              Phys Ed              
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
 
 SQL Query: SELECT SUCCESS
 
 
-//----- student table ----------
 SQL Query: DONE
-[8] make table student fields 	fname, 			lname, 		major, 				age
+[18] make table student fields fname, lname, major, age, company
 SQL Query: MAKE SUCCESS
 
 SQL Query: DONE
-[9] insert into student values 	Flo, 			Yao, 		CS, 				20
+[19] insert into student values Flo, 			Yao, 		CS, 				20, 	Google
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[10] insert into student values 	"Flo", 			"Jackson", 	Math,	 			21
+[20] insert into student values Bo, 				Yang, 		CS, 				28,		Microsoft
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[11] insert into student values 	Calvin, 		Woo, 		Physics,			22
+[21] insert into student values "Sammuel L.", 	Jackson, 	CS, 				40,		Uber
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[12] insert into student values 	"Anna Grace", 	"Del Rio", 	CS,	 				22
+[22] insert into student values "Flo", 			"Jackson", 	Math,	 			21,		Google
 SQL Query: INSERT SUCCESS
 
 SQL Query: DONE
-[13] select * from student
+[23] insert into student values "Greg", 			"Pearson", 	Physics,			20,		Amazon
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[24] insert into student values "Jim Bob", 		Smith, 		Math,	 			23,		Verizon
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[25] insert into student values Calvin, 			Woo, 		Physics,			22,		Uber
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[26] insert into student values "Anna Grace", 	"Del Rio", 	CS,	 				22,		USAF
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[27] insert into student values "Teresa Mae", 	Gowers, 	Chemistry,			22,		Verizon
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[28] insert into student values Alex,			Smith,		"Gender Studies", 	53,		Amazon
+SQL Query: INSERT SUCCESS
+
+SQL Query: DONE
+[29] select * from student
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
-Flo                  Jackson              Math                 21                   
-Calvin               Woo                  Physics              22                   
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Jim Bob              Smith                Math                 23                   Verizon              
+Calvin               Woo                  Physics              22                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+Alex                 Smith                Gender Studies       53                   Amazon               
 
 SQL Query: SELECT SUCCESS
 
 
 
-
 //****************************************************************************
-//		SIMPLE SELECT 
+//		SIMPLE SELECT:
 //****************************************************************************
 
 SQL Query: DONE
-[14] select * from student
+[30] select * from student
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
-Flo                  Jackson              Math                 21                   
-Calvin               Woo                  Physics              22                   
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Jim Bob              Smith                Math                 23                   Verizon              
+Calvin               Woo                  Physics              22                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+Alex                 Smith                Gender Studies       53                   Amazon               
 
 SQL Query: SELECT SUCCESS
 
 
 //------- simple strings -------------------
 SQL Query: DONE
-[15] select * from student where lname = Jackson
+[31] select * from student where lname = Jackson
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Jackson              Math                 21                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[32] select * from student where major = CS
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[33] select * from student where company = Uber
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Calvin               Woo                  Physics              22                   Uber                 
 
 SQL Query: SELECT SUCCESS
 
 
 //----- quoted strings ---------------------
 SQL Query: DONE
-[16] select * from student where lname = "Del Rio"
+[34] select * from student where lname = "Del Rio"
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[35] select * from student where fname = "Jim Bob"
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Jim Bob              Smith                Math                 23                   Verizon              
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[36] select * from student where fname = "Anna Grace"
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[37] select * from student where fname = "Teresa Mae"
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
 
 SQL Query: SELECT SUCCESS
 
 
 //-------- non-existing string ------------------
 SQL Query: DONE
-[17] select * from student where lname = "Does Not Exist"
+[38] select * from student where lname = "Does Not Exist"
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
 
 SQL Query: SELECT SUCCESS
 
@@ -146,12 +284,105 @@ SQL Query: SELECT SUCCESS
 //:Greater Than   :
 //.................
 SQL Query: DONE
-[18] select * from student where lname > Yang
+[39] select * from student where lname > Yang
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[40] select * from student where major > Math
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Greg                 Pearson              Physics              20                   Amazon               
+Calvin               Woo                  Physics              22                   Uber                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[41] select * from student where fname > "Sammuel L."
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[42] select * from employee where salary > 200000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[43] select * from employee where dep > Chemistry
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Yao                  Jimmy                Math                 145000               2014                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[44] select * from employee where last > Jackson
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[45] select * from employee where first > "Billy Bob"
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
 
 SQL Query: SELECT SUCCESS
 
@@ -159,33 +390,177 @@ SQL Query: SELECT SUCCESS
 
 //. . . . . . . . . . . . . (Greater Than: Non-existing) . . . . . . . . . . . . . . . . . . . . . 
 SQL Query: DONE
-[19] select * from student where age > 50
+[46] select * from student where age > 50
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[47] select * from student where age > 35
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[48] select * from student where fname > T
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[49] select * from employee where salary > 130000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[50] select * from employee where  year > 2009
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
 
 SQL Query: SELECT SUCCESS
 
 
 //. . . . . . . . . . . . . (Greater than: last item) . . . . . . . . . . . . . . . . . .
 SQL Query: DONE
-[20] select * from student where age  > 53
+[51] select * from student where age  > 53
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[52] select * from student where lname > Yao
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[53] select * from student where fname > "Teresa Mae"
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[54] select * from employee where last > "Van Gogh"
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[55] select * from employee where first > Vincent
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[56] select * from employee where salary > 260000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
 
 SQL Query: SELECT SUCCESS
 
 
 //. . . . . . . . . . . . . (Greater Than: Passed last item) . . . . . . . . . . . . . . . . . . . . . 
 SQL Query: DONE
-[21] select * from student where age > 54
+[57] select * from student where age > 54
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[58] select * from student where lname > Zoolander
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[59] select * from employee where last > Zoolaner
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[60] select * from employee where first > Xu
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
 
 SQL Query: SELECT SUCCESS
 
@@ -194,27 +569,95 @@ SQL Query: SELECT SUCCESS
 //:Greater Equal  :
 //.................
 SQL Query: DONE
-[22] select * from student where lname >= Yang
+[61] select * from student where lname >= Yang
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[62] select * from student where fname >= "Sammuel L."
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[63] select * from student where age >= 40
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Alex                 Smith                Gender Studies       53                   Amazon               
 
 SQL Query: SELECT SUCCESS
 
 //. . . . . .  (Greater Equal non-existing: ) . . . . . . . . . . . 
 SQL Query: DONE
-[23] select * from employee where last >= Jack
+[64] select * from employee where last >= Jack
 
 TABLE: employee
-last                 first                dep                  
--------------------- -------------------- -------------------- 
-Johnson              Jimmy                Chemistry            
-Yang                 Bo                   CS                   
-Jackson              Billy                Math                 
-Johnson              Billy                Phys Ed              
-Van Gogh             Jim Bob              Phys Ed              
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[65] select * from employee where first >= Bill
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[66] select * from employee where salary >= 235000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
 
 SQL Query: SELECT SUCCESS
 
@@ -227,23 +670,153 @@ SQL Query: SELECT SUCCESS
 
 //. . . . . . . . . . . . . (Less Than: Non-existing) . . . . . . . . . . . . . . . . . . . . . 
 SQL Query: DONE
-[24] select * from student where lname < Jackson
+[67] select * from student where lname < Jackson
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[68] select * from student where major < Math
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[69] select * from student where fname < "Jim Bob"
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Calvin               Woo                  Physics              22                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[70] select * from employee where salary < 200000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[71] select * from employee where dep < CS
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Van Gogh             Vincent              Art                  240000               2015                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[72] select * from employee where last < Jackson
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[73] select * from employee where first < "Billy Bob"
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Billy                Phys Ed              102000               2014                 
 
 SQL Query: SELECT SUCCESS
 
 
 //. . . . . . . . . . . . . (Less than: first item) . . . . . . . . . . . . . . . . . .
 SQL Query: DONE
-[25] select * from student where age  < 20
+[74] select * from student where age  < 20
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[75] select * from student where lname < "Del Rio"
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[76] select * from student where fname < Alex
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[77] select * from employee where last < Blow
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[78] select * from employee where first < Billy
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[79] select * from employee where salary < 100000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
 
 SQL Query: SELECT SUCCESS
 
@@ -252,11 +825,56 @@ SQL Query: SELECT SUCCESS
 //. . . . . . . . . . . . . (Less Than: before first item) . . . . . . . . . . . . . . . . . . . . . 
 
 SQL Query: DONE
-[26] select * from student where age  < 19
+[80] select * from student where age  < 19
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[81] select * from student where lname < Adams
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[82] select * from student where fname < Adam
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[83] select * from employee where last < Alex
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[84] select * from employee where first < Avory
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[85] select * from employee where dep < Alchemy
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
 
 SQL Query: SELECT SUCCESS
 
@@ -267,28 +885,112 @@ SQL Query: SELECT SUCCESS
 //.................
 
 SQL Query: DONE
-[27] select * from student where lname <= Smith
+[86] select * from student where lname <= Smith
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Jackson              Math                 21                   
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Jim Bob              Smith                Math                 23                   Verizon              
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[87] select * from student where fname <= Greg
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Calvin               Woo                  Physics              22                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[88] select * from student where age <= 40
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Jim Bob              Smith                Math                 23                   Verizon              
+Calvin               Woo                  Physics              22                   Uber                 
+Anna Grace           Del Rio              CS                   22                   USAF                 
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
 
 SQL Query: SELECT SUCCESS
 
 
 //. . . . . .  (Less Equal non-existing: ) . . . . . . . . . . . 
 SQL Query: DONE
-[28] select * from employee where last <= Peach
+[89] select * from employee where last <= Peach
 
 TABLE: employee
-last                 first                dep                  
--------------------- -------------------- -------------------- 
-Blow                 Joe                  CS                   
-Johnson              Jimmy                Chemistry            
-Jackson              Billy                Math                 
-Johnson              Billy                Phys Ed              
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[90] select * from employee where first <= Gary
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[91] select * from employee where salary <= 23500
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Jimmy                Math                 145000               2014                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Jackson              Billy                Math                 170000               2017                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
 
 SQL Query: SELECT SUCCESS
 
@@ -303,12 +1005,70 @@ SQL Query: SELECT SUCCESS
 //.................
 
 SQL Query: DONE
-[29] select * from student where fname = "Flo" and lname = "Yao"
+[92] select * from student where fname = "Flo" and lname = "Yao"
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[93] select * from student where major = "CS" and age < 25
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[94] select * from student where major < Math and age > 25
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Bo                   Yang                 CS                   28                   Microsoft            
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[95] select * from employee where dep = CS and salary > 150000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Yang                 Bo                   CS                   160000               2013                 
+Van Gogh             Vincent              CS                   245000               2015                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[96] select * from employee where last = Jackson and year < 2015
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Jackson              Bo                   Chemistry            130000               2011                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[97] select * from employee where last = Johnson and year >=2014
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
 
 SQL Query: SELECT SUCCESS
 
@@ -318,13 +1078,61 @@ SQL Query: SELECT SUCCESS
 //:OR            :
 //.................
 SQL Query: DONE
-[30] select * from student where fname = Flo or lname = Jackson
+[98] select * from student where fname = Flo or lname = Jackson
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
-Flo                  Jackson              Math                 21                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[99] select * from student where age >=40  or company = Verizon
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Jim Bob              Smith                Math                 23                   Verizon              
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+Alex                 Smith                Gender Studies       53                   Amazon               
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[100] select * from employee where first = Bo or last = Johnson
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Johnson              Jack                 HR                   150000               2014                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Bo                   Chemistry            130000               2011                 
+Johnson              Mary Ann             Math                 165000               2014                 
+Johnson              Billy Bob            Physics              142000               2014                 
+Johnson              Billy                Phys Ed              102000               2014                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[101] select * from employee where year >= 2015 or dep = CS
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Johnson              Jimmy                Chemistry            140000               2018                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Billy                Math                 170000               2017                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
 
 SQL Query: SELECT SUCCESS
 
@@ -334,14 +1142,40 @@ SQL Query: SELECT SUCCESS
 //:OR AND         :
 //.................
 SQL Query: DONE
-[31] select * from student where fname = Flo or major = CS and age <= 23
+[102] select * from student where fname = Flo or major = CS and age <= 23
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
-Flo                  Jackson              Math                 21                   
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Flo                  Jackson              Math                 21                   Google               
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[103] select * from student where lname = Jackson or age < 23 and company > Uber
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+Teresa Mae           Gowers               Chemistry            22                   Verizon              
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[104] select * from employee where last = "Van Gogh" or last = Jackson and salary >= 165000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Billy                Math                 170000               2017                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
+Van Gogh             Jim Bob              Phys Ed              230000               2010                 
 
 SQL Query: SELECT SUCCESS
 
@@ -352,13 +1186,39 @@ SQL Query: SELECT SUCCESS
 //.................
 
 SQL Query: DONE
-[32] select * from student where age <30 and major=CS or major = Physics and lname = Jackson
+[105] select * from student where age <30 and major=CS or major = Physics and company = Amazon
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Greg                 Pearson              Physics              20                   Amazon               
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[106] select * from student where age <=40 and company=Uber or major = CS and company = Google
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Calvin               Woo                  Physics              22                   Uber                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[107] select * from employee where dep = CS and salary >= 160000 or year > 2014 and last = "Van Gogh"
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Yang                 Bo                   CS                   160000               2013                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
 
 SQL Query: SELECT SUCCESS
 
@@ -369,14 +1229,45 @@ SQL Query: SELECT SUCCESS
 //.................
 
 SQL Query: DONE
-[33] select * from student where lname = Yang or major = CS and age < 23 or lname = Jackson 
+[108] select * from student where lname = Yang or major = CS and age < 23 or company = Google 
 
 TABLE: student
-fname                lname                major                age                  
--------------------- -------------------- -------------------- -------------------- 
-Flo                  Yao                  CS                   20                   
-Flo                  Jackson              Math                 21                   
-Anna Grace           Del Rio              CS                   22                   
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Flo                  Yao                  CS                   20                   Google               
+Bo                   Yang                 CS                   28                   Microsoft            
+Flo                  Jackson              Math                 21                   Google               
+Anna Grace           Del Rio              CS                   22                   USAF                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[109] select * from student where major = Physics or major = Math and company = Google or lname = Jackson
+
+TABLE: student
+fname                lname                major                age                  company              
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Sammuel L.           Jackson              CS                   40                   Uber                 
+Flo                  Jackson              Math                 21                   Google               
+Greg                 Pearson              Physics              20                   Amazon               
+Calvin               Woo                  Physics              22                   Uber                 
+
+SQL Query: SELECT SUCCESS
+
+SQL Query: DONE
+[110] select * from employee where dep = CS or year >2014 and year < 2018 or salary >= 265000
+
+TABLE: employee
+last                 first                dep                  salary               year                 
+-------------------- -------------------- -------------------- -------------------- -------------------- 
+Blow                 Joe                  CS                   100000               2018                 
+Blow                 JoAnn                Physics              200000               2016                 
+Yao                  Flo                  CS                   147000               2012                 
+Yang                 Bo                   CS                   160000               2013                 
+Jackson              Flo                  Math                 165000               2017                 
+Jackson              Billy                Math                 170000               2017                 
+Van Gogh             Vincent              Art                  240000               2015                 
+Van Gogh             Vincent              CS                   245000               2015                 
 
 SQL Query: SELECT SUCCESS
 
