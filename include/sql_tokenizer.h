@@ -8,8 +8,8 @@
  *          from a char string. The tokens generated have specific SQL states
  *          ID, which is used by the SQLParser class.
  ******************************************************************************/
-#ifndef STOKENIZER_H
-#define STOKENIZER_H
+#ifndef SQL_TOKENIZER_H
+#define SQL_TOKENIZER_H
 
 #include <cassert>          // assertions
 #include <iostream>         // stream objects
@@ -57,4 +57,4 @@ private:
 
 }  // namespace sql
 
-#endif  // STOKENIZER_H
+#endif  // SQL_TOKENIZER_H

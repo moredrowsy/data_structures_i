@@ -7,8 +7,8 @@
  * DESCRIPTION : This header defines the various functions to initialize the
  *          grammar adjacency table from state_machine.h for the SQLParser.
  ******************************************************************************/
-#ifndef SQL_CONSTS_H
-#define SQL_CONSTS_H
+#ifndef SQL_STATES_H
+#define SQL_STATES_H
 
 #include <cassert>   //assert()
 #include <iomanip>   // setw()
@@ -142,4 +142,4 @@ void print_table(const int _table[][MAX_COLS]);
 
 }  // namespace sql
 
-#endif  // SQL_CONSTS_H
+#endif  // SQL_STATES_H

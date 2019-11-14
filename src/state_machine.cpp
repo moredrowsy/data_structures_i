@@ -182,6 +182,39 @@ void mark_table_generic(int _table[][MAX_COLUMNS], int state,
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Unmark the table's cells with -1 at given state.
+ *
+ * ILLUSTRATION:
+ *  MARK SUCCESS/FAILURE
+ *  state [+0] ---> fail
+ *  state [+1] ---> success
+ *
+ *  MARK CELLS
+ *  state [+0] --- VALUES --> [-1]
+ *  state [+1] --- VALUES --> [-1]
+ *
+ * PRE-CONDITIONS:
+ *  ROWS REQUIRE: 2
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void unmark_table_generic(int _table[][MAX_COLUMNS], int state,
+                          const char columns[]) {
+    // MARK CELLS
+    // state [+0] --- VALUES --> [+1]
+    // state [+1] --- VALUES --> [+1]
+    mark_cells(state + 0, _table, columns, -1);
+    mark_cells(state + 1, _table, columns, -1);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Mark the table's cells with fail/success states and the adjacency values
  *  for searching for one character tokens, ie "." or "*".
  *
@@ -205,6 +238,33 @@ void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
     // MARK CELLS
     // state [+0] --- VALUES --> [+1]
     mark_cell(state + 0, _table, character, state + 1);
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Mark the table's cells with fail/success states and the adjacency values
+ *  for searching for one character tokens, ie "." or "*".
+ *
+ * PRE-CONDITIONS:
+ *  ROWS REQUIRE: 2
+ *  int _table[][MAX_COLUMNS]: integer array
+ *  int state                : 0 to MAX_ROWS - 1
+ *
+ * POST-CONDITIONS:
+ *  Cells are marked with state
+ *
+ * RETURN:
+ *  none
+ ******************************************************************************/
+void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
+                            const char columns[]) {
+    // MARK SUCCESS/FAILURE
+    mark_fail(_table, state + 0);
+    mark_success(_table, state + 1);
+
+    // MARK CELLS
+    // state [+0] --- VALUES --> [+1]
+    mark_cells(state + 0, _table, columns, state + 1);
 }
 
 /*******************************************************************************

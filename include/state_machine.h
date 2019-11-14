@@ -73,8 +73,15 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int column, int state);
 void mark_table_generic(int _table[][MAX_COLUMNS], int state,
                         const char columns[]);
 
+// mark table for generic states
+void unmark_table_generic(int _table[][MAX_COLUMNS], int state,
+                          const char columns[]);
+
 void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
                             const char character);
+
+void mark_table_single_char(int _table[][MAX_COLUMNS], int state,
+                            const char columns[]);
 
 // mark table for two char relations
 void mark_table_duo_chars(int _table[][MAX_COLUMNS], int state, const char a,
