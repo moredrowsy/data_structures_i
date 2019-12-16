@@ -35,6 +35,18 @@ public:
         return duration_cast<duration<double>>(_stop - _start).count();
     };
 
+    double milliseconds() const {
+        using namespace std::chrono;
+        return duration_cast<std::chrono::milliseconds>(_stop - _start)
+                   .count() *
+               0.001;
+    };
+
+    long long microseconds() const {
+        using namespace std::chrono;
+        return duration_cast<std::chrono::microseconds>(_stop - _start).count();
+    };
+
     // MUTATORS
     void start() { _start = std::chrono::high_resolution_clock::now(); }
     void stop() { _stop = std::chrono::high_resolution_clock::now(); }
