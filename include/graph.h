@@ -13,8 +13,9 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <cassert>    // assert()
-#include <iostream>   // stream
+#include <cassert>   // assert()
+#include <iostream>  // stream
+
 #include "bpt_map.h"  // Map class
 #include "queue.h"    // Queue class
 #include "set.h"      // Set class
@@ -22,6 +23,14 @@
 namespace graph {
 
 enum SIZE { CAPACITY = 2 };
+
+template <typename T>
+struct Edge {
+    Edge(std::size_t s, std::size_t t, T w) : source(s), target(t), weight(w) {}
+    std::size_t source;
+    std::size_t target;
+    T weight;
+};
 
 template <typename T>
 class GraphMatrix {
@@ -86,6 +95,8 @@ public:
     // MODIFIERS
     void add_vertex(const T &label) override;
     bool add_weight(std::size_t source, std::size_t target, const U &weight);
+    bool add_Edge(Edge<U> e);
+    bool remove_Edge(Edge<U> e);
 
     // OTHER
     void print_weights();
@@ -145,6 +156,8 @@ public:
     // MODIFIERS
     void add_vertex(const T &label) override;
     bool add_weight(std::size_t source, std::size_t target, const U &weight);
+    bool add_Edge(Edge<U> e);
+    bool remove_Edge(Edge<U> e);
 
     // OTHER
     void print_weights();
@@ -840,6 +853,50 @@ bool WeightedGraphMatrix<T, U>::add_weight(std::size_t source,
 
 /*******************************************************************************
  * DESCRIPTION:
+ *  Add weight from source vertex to target vertex.
+ *
+ * PRE-CONDITIONS:
+ *  Edge<U> e: Edge with source, target vertices and weight of type U
+ *
+ * POST-CONDITIONS:
+ *  added an Edge from source to target with weight
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T, typename U>
+bool WeightedGraphMatrix<T, U>::add_Edge(Edge<U> e) {
+    if(this->add_edge(e.source, e.target)) {
+        _weights[e.source][e.target] = e.weight;
+        return true;
+    } else
+        return false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Add weight from source vertex to target vertex.
+ *
+ * PRE-CONDITIONS:
+ *  Edge<U> e: Edge with source, target vertices and weight of type U
+ *
+ * POST-CONDITIONS:
+ *  removed an Edge from source to target with weight
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T, typename U>
+bool WeightedGraphMatrix<T, U>::remove_Edge(Edge<U> e) {
+    if(this->add_remove(e.source, e.target)) {
+        _weights[e.source][e.target] = 0;
+        return true;
+    } else
+        return false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
  *  Prints weights.
  *
  * PRE-CONDITIONS:
@@ -1335,6 +1392,50 @@ bool WeightedGraphSet<T, U>::add_weight(std::size_t source, std::size_t target,
         _weights[source][target] = weight;
 
     return source < GraphSet<T>::size() && target < GraphSet<T>::size();
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Add weight from source vertex to target vertex.
+ *
+ * PRE-CONDITIONS:
+ *  Edge<U> e: Edge with source, target vertices and weight of type U
+ *
+ * POST-CONDITIONS:
+ *  added an Edge from source to target with weight
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T, typename U>
+bool WeightedGraphSet<T, U>::add_Edge(Edge<U> e) {
+    if(this->add_edge(e.source, e.target)) {
+        _weights[e.source][e.target] = e.weight;
+        return true;
+    } else
+        return false;
+}
+
+/*******************************************************************************
+ * DESCRIPTION:
+ *  Add weight from source vertex to target vertex.
+ *
+ * PRE-CONDITIONS:
+ *  Edge<U> e: Edge with source, target vertices and weight of type U
+ *
+ * POST-CONDITIONS:
+ *  removed an Edge from source to target with weight
+ *
+ * RETURN:
+ *  bool
+ ******************************************************************************/
+template <typename T, typename U>
+bool WeightedGraphSet<T, U>::remove_Edge(Edge<U> e) {
+    if(this->add_remove(e.source, e.target)) {
+        _weights[e.source][e.target] = 0;
+        return true;
+    } else
+        return false;
 }
 
 /*******************************************************************************

@@ -1,6 +1,7 @@
-#include <algorithm>           // min_element()
-#include <iostream>            // stream
-#include <string>              // string
+#include <algorithm>  // min_element()
+#include <iostream>   // stream
+#include <string>     // string
+
 #include "../include/graph.h"  // GraphMatrix class
 
 int main() {
@@ -17,22 +18,14 @@ int main() {
     wg.add_vertex("Los Angles");
     wg.add_vertex("Arcadia");
 
-    wg.add_edge(0, 1);
-    wg.add_weight(0, 1, 2);
-    wg.add_edge(0, 5);
-    wg.add_weight(0, 5, 9);
-    wg.add_edge(1, 2);
-    wg.add_weight(1, 2, 8);
-    wg.add_edge(1, 3);
-    wg.add_weight(1, 3, 15);
-    wg.add_edge(1, 5);
-    wg.add_weight(1, 5, 6);
-    wg.add_edge(2, 3);
-    wg.add_weight(2, 3, 1);
-    wg.add_edge(4, 2);
-    wg.add_weight(4, 2, 7);
-    wg.add_edge(5, 4);
-    wg.add_weight(5, 4, 3);
+    wg.add_Edge(graph::Edge<int>(0, 1, 2));
+    wg.add_Edge(graph::Edge<int>(0, 5, 9));
+    wg.add_Edge(graph::Edge<int>(1, 2, 8));
+    wg.add_Edge(graph::Edge<int>(1, 3, 15));
+    wg.add_Edge(graph::Edge<int>(1, 5, 6));
+    wg.add_Edge(graph::Edge<int>(2, 3, 1));
+    wg.add_Edge(graph::Edge<int>(4, 2, 7));
+    wg.add_Edge(graph::Edge<int>(5, 4, 3));
 
     std::cout << "\nLabels: ";
     wg.print_labels();
@@ -69,22 +62,14 @@ int main() {
     wg_set.add_vertex("Los Angles");
     wg_set.add_vertex("Arcadia");
 
-    wg_set.add_edge(0, 1);
-    wg_set.add_weight(0, 1, 2);
-    wg_set.add_edge(0, 5);
-    wg_set.add_weight(0, 5, 9);
-    wg_set.add_edge(1, 2);
-    wg_set.add_weight(1, 2, 8);
-    wg_set.add_edge(1, 3);
-    wg_set.add_weight(1, 3, 15);
-    wg_set.add_edge(1, 5);
-    wg_set.add_weight(1, 5, 6);
-    wg_set.add_edge(2, 3);
-    wg_set.add_weight(2, 3, 1);
-    wg_set.add_edge(4, 2);
-    wg_set.add_weight(4, 2, 7);
-    wg_set.add_edge(5, 4);
-    wg_set.add_weight(5, 4, 3);
+    wg_set.add_Edge(graph::Edge<int>(0, 1, 2));
+    wg_set.add_Edge(graph::Edge<int>(0, 5, 9));
+    wg_set.add_Edge(graph::Edge<int>(1, 2, 8));
+    wg_set.add_Edge(graph::Edge<int>(1, 3, 15));
+    wg_set.add_Edge(graph::Edge<int>(1, 5, 6));
+    wg_set.add_Edge(graph::Edge<int>(2, 3, 1));
+    wg_set.add_Edge(graph::Edge<int>(4, 2, 7));
+    wg_set.add_Edge(graph::Edge<int>(5, 4, 3));
 
     std::cout << "\nLabels: ";
     wg_set.print_labels();
