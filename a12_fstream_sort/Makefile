@@ -3,7 +3,7 @@ DEBUG_LEVEL     := #-g
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
 OPT             := -O2
 CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS) $(OPT)
-LDFLAGS         := -lm -lstdc++
+LDLIBS          := -lm -lstdc++
 
 INC             := ../include
 SRC             := ../src

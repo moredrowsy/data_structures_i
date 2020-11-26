@@ -3,7 +3,7 @@ DEBUG_LEVEL     := -g
 EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
 OPT             := -O0
 CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS) $(OPT)
-LDFLAGS         := -lm -lstdc++
+LDLIBS          :=-lm -lstdc++
 
 INC             := ../include
 SRC             := ../src
@@ -11,7 +11,7 @@ OBJ             := state_machine.o token.o sql_parser.o sql_record.o\
                    sql_states.o sql_table.o sql_tokenizer.o sql.o	
 
 main.out: $(OBJ) main.o
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDLIBS)
 
 main.o: main.cpp\
 	${INC}/array_utils.h\
@@ -38,7 +38,7 @@ main.o: main.cpp\
 	$(CXX) $(CXXFLAGS) -c $<
 
 batch.out: $(OBJ) batch.o
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDLIBS)
 
 batch.o: batch.cpp\
 	${INC}/array_utils.h\
@@ -64,7 +64,7 @@ batch.o: batch.cpp\
 	$(CXX) $(CXXFLAGS) -c $<
 
 session.out: $(OBJ) session.o
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDLIBS)
 
 session.o: session.cpp\
 	${INC}/array_utils.h\
@@ -132,7 +132,7 @@ ftokenizer.o: ${SRC}/ftokenizer.cpp\
 	$(CXX) $(CXXFLAGS) -c $<
 
 ftokenizer_map.out: $(OBJ) stokenizer.o ftokenizer.o ftokenizer_map.o
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX) -o $@ $^ $(LDLIBS)
 
 ftokenizer_map.o: ftokenizer_map.cpp\
 	${INC}/array_utils.h\

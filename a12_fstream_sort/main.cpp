@@ -2,6 +2,7 @@
 #include <iomanip>                     // setw()
 #include <iostream>                    // stream objects
 #include <string>                      // c_str()
+
 #include "../include/fstream_sort.h"   // FStreamSort class
 #include "../include/fstream_utils.h"  // file stream utilities
 #include "../include/timer.h"          // Timer class
@@ -151,10 +152,10 @@ void test_single_fstream_sort(int sample_size, int buffer_size) {
     std::string in_file = "records.txt", out_file = "fs_results.txt";
     timer::ChronoTimer chrono;
 
-    // chrono.start();
-    // gen_records(in_file, sample_size);
-    // chrono.stop();
-    // gen_time = chrono.seconds();
+    chrono.start();
+    gen_records(in_file, sample_size);
+    chrono.stop();
+    gen_time = chrono.seconds();
 
     in_file_size = filesize(in_file.c_str());
 
@@ -207,10 +208,10 @@ void test_single_fstream_byte_sort(int sample_size, int buffer_size,
     std::string in_file = "records.txt", out_file = "fsb_result.txt";
     timer::ChronoTimer chrono;
 
-    // chrono.start();
-    // gen_records(in_file, sample_size, byte_size, false);
-    // chrono.stop();
-    // gen_time = chrono.seconds();
+    chrono.start();
+    gen_records(in_file, sample_size, byte_size, false);
+    chrono.stop();
+    gen_time = chrono.seconds();
 
     in_file_size = filesize(in_file.c_str());
 
